@@ -1,0 +1,173 @@
+<?php
+require_once('../../includes/classes/core.php');
+$action	= $_REQUEST['act'];
+$error	= '';
+$data	= '';
+
+switch ($action) {
+	case 'get_add_page':
+		$page		= GetPage();
+		$data		= array('page'	=> $page);
+
+		break;
+	case 'get_edit_page':
+		$paytype_id		= $_REQUEST['id'];
+		$page		= GetPage(Getpay_type($paytype_id));
+		$data		= array('page'	=> $page);
+
+		break;
+	case 'get_list' :
+		$count	= $_REQUEST['count'];
+		$hidden	= $_REQUEST['hidden'];
+		$start	= $_REQUEST['start'];
+		$end	= $_REQUEST['end'];
+			
+		$rResult = mysql_query("SELECT 	task_detail.`id`,
+										persons.`name`,
+								       	task_scenar.date,
+								       	phone.first_last_name,
+								       	phone.note,
+										shabloni.`name`,
+								       	phone.phone1,
+								       	phone.phone2,
+								       	task_scenar.b1,
+								       	task_scenar.b2,
+										task_detail.call_content
+								FROM   	`task`
+								JOIN    task_detail ON task.id = task_detail.task_id
+								JOIN	shabloni ON task.template_id = shabloni.id
+								JOIN    task_scenar ON task_detail.id = task_scenar.task_detail_id
+								JOIN    phone ON task_detail.phone_base_id = phone.id
+								JOIN    users ON users.id = task_detail.responsible_user_id 
+								JOIN    persons ON persons.id = users.person_id
+		                        WHERE   task_scenar.product_ids ='' AND task.task_type_id =2 AND task_scenar.b2 > 0 AND task_detail.`status` = 3
+		                        AND DATE(task_scenar.date) >= '$start' AND DATE(task_scenar.date) <= '$end'");
+
+		$data = array(
+				"aaData"	=> array()
+		);
+
+		while ( $aRow = mysql_fetch_array( $rResult ) )
+		{
+			$row = array();
+			for ( $i = 0 ; $i < $count ; $i++ )
+			{
+				/* General output */
+				$row[] = $aRow[$i];
+
+			}
+			$data['aaData'][] = $row;
+		}
+
+		break;
+	case 'save_paytype':
+		$paytype_id 		= $_REQUEST['id'];
+		$paytype_name    = $_REQUEST['name'];
+
+
+
+		if($paytype_name != ''){
+			if(!Checkpay_typeExist($paytype_name, $paytype_id)){
+				if ($paytype_id == '') {
+					Addpay_type( $paytype_id, $paytype_name);
+				}else {
+					Savepay_type($paytype_id, $paytype_name);
+				}
+
+			} else {
+				$error = '"' . $paytype_name . '" უკვე არის სიაში!';
+
+			}
+		}
+
+		break;
+	case 'disable':
+		$paytype_id	= $_REQUEST['id'];
+		Disablepay_type($paytype_id);
+
+		break;
+	default:
+		$error = 'Action is Null';
+}
+
+$data['error'] = $error;
+
+echo json_encode($data);
+
+
+/* ******************************
+ *	Category Functions
+* ******************************
+*/
+
+function Addpay_type($paytype_id, $paytype_name)
+{
+	$user_id	= $_SESSION['USERID'];
+	mysql_query("INSERT INTO 	 	`city`
+									(`user_id`,`name`)
+						VALUES 		('$user_id','$paytype_name')");
+}
+
+function Savepay_type($paytype_id, $paytype_name)
+{
+	$user_id	= $_SESSION['USERID'];
+	mysql_query("	UPDATE  `city`
+					SET     `user_id`='$user_id',
+							`name` = '$paytype_name'
+					WHERE	`id` = $paytype_id");
+}
+
+function Disablepay_type($paytype_id)
+{
+	mysql_query("	UPDATE `city`
+					SET    `actived` = 0
+					WHERE  `id` = $paytype_id");
+}
+
+function Checkpay_typeExist($paytype_name)
+{
+	$res = mysql_fetch_assoc(mysql_query("	SELECT `id`
+											FROM   `city`
+											WHERE  `name` = '$paytype_name' && `actived` = 1"));
+	if($res['id'] != ''){
+		return true;
+	}
+	return false;
+}
+
+
+function Getpay_type($paytype_id)
+{
+	$res = mysql_fetch_assoc(mysql_query("	SELECT  `id`,
+													`name`
+											FROM    `city`
+											WHERE   `id` = $paytype_id" ));
+
+	return $res;
+}
+
+function GetPage($res = '')
+{
+	$data = '
+	<div id="dialog-form">
+	    <fieldset>
+	    	<legend>ძირითადი ინფორმაცია</legend>
+
+	    	<table class="dialog-form-table">
+				<tr>
+					<td style="width: 170px;"><label for="CallType">სახელი</label></td>
+					<td>
+						<input type="text" id="name" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['name'] . '" />
+					</td>
+				</tr>
+
+			</table>
+			<!-- ID -->
+			<input type="hidden" id="paytype_id" value="' . $res['id'] . '" />
+        </fieldset>
+    </div>
+    ';
+	return $data;
+}
+
+?>
