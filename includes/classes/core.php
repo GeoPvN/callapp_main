@@ -51,7 +51,7 @@ class sql_db {
 }
 
 
-	$db = new sql_db ( "localhost", "root", "Gl-1114", "callapp_main" );
+	$db = new sql_db ( "192.168.11.10", "root", "Gl-1114", "callapp_main" );
 
 
 ?>

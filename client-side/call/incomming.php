@@ -708,38 +708,43 @@
 <table id="flesh_panel_table">
     <tr class="tb_head" style="border: 1px solid #E6E6E6;">
         <td>რიგი</td>
-        <td>განყოფილება</td>
         <td>შიდა ნომერი</td>
         <td>თანამშრომელი</td>
-        <td>კომენტარი</td>
+        <td>მდგომარეობა</td>
+        <td>დრო</td>
+        <td>აბონენტი</td>
     </tr>
     <tr style="border: 1px solid #E6E6E6;">
-        <td>2557755</td>
-        <td>პალიტრა</td>
-        <td>102</td>
-        <td>გელა ალბერტიანი</td>
-        <td>4342342</td>
+        <td>2262626</td>
+        <td>EXT100</td>
+        <td>გელა ხოფერია</td>
+        <td>დაკავებული</td>
+        <td>01:11</td>
+        <td>995568919432</td>
     </tr>
     <tr style="border: 1px solid #E6E6E6;">
-        <td>2557755</td>
-        <td>პალიტრა</td>
-        <td>102</td>
-        <td>გელა ალბერტიანი</td>
-        <td>4342342</td>
+        <td>2262626</td>
+        <td>EXT100</td>
+        <td>გელა ხოფერია</td>
+        <td>დაკავებული</td>
+        <td>01:11</td>
+        <td>995568919432</td>
     </tr>
     <tr style="border: 1px solid #E6E6E6;">
-        <td>2557755</td>
-        <td>პალიტრა</td>
-        <td>102</td>
-        <td>გელა ალბერტიანი</td>
-        <td>4342342</td>
+        <td>2262626</td>
+        <td>EXT100</td>
+        <td>გელა ხოფერია</td>
+        <td>დაკავებული</td>
+        <td>01:11</td>
+        <td>995568919432</td>
     </tr>
     <tr style="border: 1px solid #E6E6E6;">
-        <td>2557755</td>
-        <td>პალიტრა</td>
-        <td>102</td>
-        <td>გელა ალბერტიანი</td>
-        <td>4342342</td>
+        <td>2262626</td>
+        <td>EXT100</td>
+        <td>გელა ხოფერია</td>
+        <td>დაკავებული</td>
+        <td>01:11</td>
+        <td>995568919432</td>
     </tr>
 </table>
 </div>
