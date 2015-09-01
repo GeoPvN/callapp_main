@@ -21,6 +21,7 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 		var tName	= "example";											//table name
 		var fName	= "add-edit-form";										//form name
 		var img_name		= "0.jpg";
+		var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
 
 		$(document).ready(function () {
 			LoadTable();
@@ -33,7 +34,7 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 
 		function LoadTable(){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 6, "", 0, "");
+			GetDataTable(tName, aJaxURL, "get_list", 6, "", 0, "", 1, "asc", "", change_colum_main);
 		}
 
 		function LoadDialog(){
@@ -73,8 +74,6 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 					$("#is_user").val();
 				}
 			});
-			GetButtons("add_group", "");
-
 		}
 
 	    // Add - Save
@@ -232,87 +231,6 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 	                }
 	            });
 			}
-		});
-
-        $(document).on("click", "#add_group", function(){
-    		param = new Object();
-    	    //Action
-    		param.act	= "get_add_group_page";
-
-    	    $.ajax({
-    	        url: aJaxURL,
-    		    data: param,
-    	        success: function(data) {
-    				if(typeof(data.error) != "undefined"){
-    					if(data.error != ""){
-    						alert(data.error);
-    					}else{
-    						var buttons = {
-    								"save": {
-    						            text: "შენახვა",
-    						            id: "save_group_dialog",
-    						            click: function () {
-    						            }
-    						        },
-    								"cancel": {
-    						            text: "დახურვა",
-    						            id: "cancel-dialog",
-    						            click: function () {
-    						                $(this).dialog("close");
-    						            }
-    						        }
-							};
-        					$("#add-group-form").html(data.page);
-        					GetDialog("add-group-form",440, "auto", buttons);
-        					GetDataTable1("pages", aJaxURL, "get_pages_list", 2, "", 0, "", "", "", "", "280px", "true");
-    					}
-    				}
-    		    }
-    	    });
-		});
-
-		$(document).on("click", "#save_group_dialog", function(){
-
-		    var data = $(".check1:checked").map(function () { //Get Checked checkbox array
-		        return this.value;
-		    }).get();
-
-			var pages = new Array;
-
- 		    for (var i = 0; i < data.length; i++) {
- 		    	pages.push(data[i]);
- 		    }
-
-     		param = new Object();
-     	    //Action
-     		param.act	= "save_group";
- 			param.nam	= $("#group_name").val();
- 			param.pag	= JSON.stringify(pages);
-
- 			//var link	=  GetAjaxData(param);
-
- 			if( param.nam == "" ){
- 				alert("შეიყვანეთ ჯგუფის სახელი!");
- 			}else{
- 	    	    $.ajax({
- 	    	        url: aJaxURL,
- 	    		    data: param,
- 	    	        success: function(data) {
- 	    				if(typeof(data.error) != "undefined"){
- 	    					if(data.error != ""){
- 	    						alert(data.error);
- 	    					}else{
- 	    						$("#group_permission").html(
- 	    							$("#group_permission").html() + "<option value=" + data.inserted_value + " selected=selected>" + data.inserted_name + "</option>"
- 	    	    				);
- 	    						$("#add-group-form").dialog("close");
- 	    					}
- 	    				}
- 	    		    }
- 	    	    });
- 			}
-
-
 		});
 
 	    function DeleteImage(prod_id) {

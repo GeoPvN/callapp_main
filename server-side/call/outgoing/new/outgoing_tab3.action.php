@@ -95,7 +95,7 @@ switch ($action) {
 	    $sql_details = array(
 	        'user' => 'root',
 	        'pass' => 'Gl-1114',
-	        'db'   => 'palitra',
+	        'db'   => 'callapp_main',
 	        'host' => 'localhost'
 	    );
 	    

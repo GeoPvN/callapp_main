@@ -4,22 +4,19 @@
 		var aJaxURL	= "server-side/view/sc_category.action.php";		//server side folder url
 		var tName	= "example";													//table name
 		var fName	= "add-edit-form";												//form name
-		    	
+		var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
+		
 		$(document).ready(function () {        	
-			LoadTable();	
+			LoadTable(tName,3,'get_list',change_colum_main);	
 						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");			
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL);
 		});
         
-		function LoadTable(){
-			var menuLength = [[ -1, 15, 30, 50], [ "ყველა", 15, 30, 50]];
-			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 3, "", 0, menuLength, 1, "desc");
-    		
-		}
+		function LoadTable(tbl,col_num,act,change_colum){
+	    	GetDataTable(tName, aJaxURL, act, col_num, "", 0, "", 1, "asc", '', change_colum);
+	    }
 		
 		function LoadDialog(){
 			var id		= $("#cat_id").val();
@@ -48,7 +45,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable();
+								LoadTable(tName,3,'get_list',change_colum_main);
 				        		CloseDialog(fName);
 							}
 						}
@@ -76,7 +73,7 @@
                             <th>ID</th>
                             <th style="width: 50%;">ინფორმაციის ქვე კატეგორია</th>
                             <th style="width: 50%;">ინფორმაციის კატეგორია</th>
-                            <th class="check">#</th>
+                            <th class="check" style="width: 20px;">#</th>
                         </tr>
                     </thead>
                     <thead>

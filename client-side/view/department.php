@@ -4,6 +4,7 @@
 		var aJaxURL	= "server-side/view/department.action.php";		//server side folder url
 		var tName	= "example";													//table name
 		var fName	= "add-edit-form";												//form name
+		var change_colum_main = "<'dataTable_buttons'T><'H'CZlfrt><'dataTable_content't><'F'CZip>";
 		    	
 		$(document).ready(function () {        	
 			LoadTable();	
@@ -16,7 +17,7 @@
 		function LoadTable(){
 			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "desc");
+			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "desc", "", change_colum_main);
     		
 		}
 		

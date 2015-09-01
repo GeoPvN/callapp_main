@@ -19,16 +19,14 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
     	<link href="media/css/main/mainpage.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/tooltip.css" rel="stylesheet" type="text/css" />
 </head>
-<script type="text/javascript" src="worker/js/jquery.keyboard.extension-autocomplete.js"></script>
-<script type="text/javascript" src="worker/js/jquery.keyboard.extension-typing.js"></script>
-<script type="text/javascript" src="worker/js/jquery.keyboard.js"></script>
-<script type="text/javascript" src="worker/js/jquery.keyboard.min.js"></script>
+
 <script>
 var aJaxURL	  = "server-side/info/tabel.action.php";		    //server side folder url
 var l_aJaxURL = "server-side/info/tabel/worker_job_time.php"; //list
 var tName	  = "report";											//table name
 var fName	  = "add-edit-form";								    //form name
 var img_name  = "0.jpg";
+var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
 
 $(document).ready(function () {       
 	
@@ -37,7 +35,7 @@ $(document).ready(function () {
 function LoadTable(start, end, person_id, password){
 	var total = [9,10];
 	/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-	GetDataTable3(tName, l_aJaxURL, "get_list", 11, "start=" + start + "&end=" + end + "&person_id=" + person_id + "&password=" + password, 0, "", 1, "desc", total);
+	GetDataTable(tName, l_aJaxURL, "get_list", 11, "start=" + start + "&end=" + end + "&person_id=" + person_id + "&password=" + password, 0, "", 1, "desc", total, change_colum_main);
 }
 
 $(document).on("click", "#save-dialog", function () {

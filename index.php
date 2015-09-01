@@ -9,9 +9,9 @@
 	<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<title>CC Palitra Media</title>
+			<title>CallApp</title>
 
-			<link rel="shortcut icon" type="image/ico" href="media/images/palitra.ico" />
+			<link rel="shortcut icon" type="image/ico" href="media/images/CA-mini.png" />
 			<link rel="stylesheet" type="text/css" media="screen" href="media/css/reset/reset.css" />
 			<!--[if IE]>
 				<link rel="stylesheet" type="text/css" media="screen" href="css/reset/ie.css" />
@@ -108,21 +108,21 @@
                 extruderOpacity:0.4
             });
             $(document).ready(function (){
-            	checker();
-                function checker(){
-                	setTimeout(function(){
-                		$.ajax({
-        		            url: "checker.php",
-        		            type: "POST",
-        		            data: "act=get_checker",
-        		            dataType: "json",
-        		            success: function (data) {
-      		            	   $( "#newsmain" ).html(data.count);
-        		            }
-        		        });
-                		checker();
-                    	}, 3000);
-                }
+//             	checker();
+//                 function checker(){
+//                 	setTimeout(function(){
+//                 		$.ajax({
+//         		            url: "checker.php",
+//         		            type: "POST",
+//         		            data: "act=get_checker",
+//         		            dataType: "json",
+//         		            success: function (data) {
+//       		            	   $( "#newsmain" ).html(data.count);
+//         		            }
+//         		        });
+//                 		checker();
+//                     	}, 3000);
+//                 }
 				
 				$(document).on("click", "#news", function () {
 					location.href='index.php?pg=33#tab-1'
@@ -145,7 +145,6 @@
 		<body style="background: #E2F0FD url(media/images/bg.png);">
 			<div id="npm"></div>
 			<?php require_once(ABSPATH . 'includes/pages.php'); ?>
-			<div class="clear high"></div>
 			
 			<div id="newsmain">
 			

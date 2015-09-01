@@ -26,9 +26,19 @@ class page {
 		$page_name = $row['dest'];
 		
 		echo '<div id="page-container" class="page-' . $this->page_id . '">';
-		echo '<div class="clear high"></div>';
 		require_once 'client-side/'.$page_name;
-		echo '</div>';
+		echo '</div>
+		    <div style="z-index: 99; background: #FFF; width: 100%; height: 40px; position: fixed; bottom: 0; box-shadow: 0px -2px 10px #888888;">
+		    <img style="margin-left: 10px;" src="media/images/CA-1.png" alt="footer" height="40" width="100">
+		    <div style="float: right;background-color: #F7F7F7;padding: 10px;margin-top: 4px; margin-right: 90px;">
+		    <span style="margin-right: 5px;">Mobile</span>
+		    <span style="margin-right: 5px;">Shortcout</span>
+		    <span style="margin-right: 5px;">Tour</span>
+		    <span style="margin-right: 5px;">Feedback</span>
+		    <span style="margin-right: 5px;">Help</span>
+		    <span style="margin-right: 5px;">Support</span>
+		    </div>
+            </div>';
 		
 	}
 	

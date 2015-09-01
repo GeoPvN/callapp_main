@@ -90,7 +90,7 @@ switch ($action) {
     	$sql_details = array(
     	    'user' => 'root',
     	    'pass' => 'Gl-1114',
-    	    'db'   => 'palitra',
+    	    'db'   => 'callapp_main',
     	    'host' => 'localhost'
     	);
     	 
@@ -1119,6 +1119,9 @@ function GetPage($res='', $shabloni)
 
 function GetRecordingsSection($res)
 {
+    mysql_close();
+    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_select_db('asteriskcdrdb');
     $phone = '---';
     $phone1 = '---';
     if($res['phone'] != ''){
@@ -1131,7 +1134,7 @@ function GetRecordingsSection($res)
 	$req = mysql_query("SELECT  `calldate` AS 'time',
 			SUBSTR(`userfield`, 7) as userfield
 			FROM     `cdr`
-			WHERE     (`src` in('100','101','250','150','200') && (`dst` LIKE '%$phone%' or `dst` LIKE '%$phone1%'))");
+			WHERE     (`dst` LIKE '%$phone%' or `dst` LIKE '%$phone1%'))");
 
 	$data .= '
         <fieldset style="margin-top: 10px; width: 333px; float: right;">

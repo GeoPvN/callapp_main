@@ -4,10 +4,6 @@
  * ******************************
  */
 include('../../includes/classes/core.php');
-include('../../includes/classes/log.class.php');
-
-$log 		= new log();
-
 
 $action 	= $_REQUEST['act'];
 $user_id	= $_SESSION['USERID'];
@@ -30,16 +26,16 @@ switch ($action) {
 	case 'get_list':
 	    $count = $_REQUEST['count'];
 	    $hidden = $_REQUEST['hidden'];
-		$rResult = mysql_query("	SELECT 	`persons`.`id`,
-                            				`persons`.`name`,
-                            				`users`.`ext`,
-                            				`persons`.`tin`,
+		$rResult = mysql_query("	SELECT 	`users`.`id`,
+                            				`user_info`.`name`,
+                            				`users`.`extension_id`,
+                            				`user_info`.`tin`,
                             				`position`.`person_position`,
-                            				`persons`.`address`				
-                                    FROM   	`persons` 
-                                    JOIN 	`position` ON `persons`.`position` = `position`.`ID`
-                                    JOIN 	`users` ON `persons`.`id` = `users`.`person_id`
-                                    WHERE  	`persons`.`actived` = 1");
+                            				`user_info`.`address`				
+                                    FROM   	`user_info` 
+                                    JOIN 	`position` ON `user_info`.`position_id` = `position`.`id`
+                                    JOIN 	`users` ON `user_info`.`user_id` = `users`.`id`
+                                    WHERE  	`users`.`actived` = 1");
 
 		$data = array(
 			"aaData"	=> array()
@@ -60,34 +56,6 @@ switch ($action) {
 		}
 
         break;
-	case 'get_pages_list':
-		$count = $_REQUEST['count'];
-		$hidden = $_REQUEST['hidden'];
-		$rResult = mysql_query("SELECT    `pages`.`id`,
-								          `menu_detail`.`title`
-								FROM      `pages`
-								LEFT JOIN `menu_detail` ON `menu_detail`.`page_id` = `pages`.`id`
-								WHERE     (`menu_detail`.`parent` != 0 && menu_detail.url = '#') || (menu_detail.url = '')");
-
-		$data = array(
-				"aaData"	=> array()
-		);
-
-		while ( $aRow = mysql_fetch_array( $rResult ) )
-		{
-			$row = array();
-			for ( $i = 0 ; $i < $count ; $i++ )
-			{
-				/* General output */
-				$row[] = $aRow[$i];
-				if($i == ($count - 1)){
-					$row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check1" value="' . $aRow[$hidden] . '" />';
-				}
-			}
-			$data['aaData'][] = $row;
-		}
-
-		break;
     case 'save_pers':
 		$persons_id 			= $_REQUEST['id'];
     	$name 				= htmlspecialchars($_REQUEST['n'], ENT_QUOTES);
@@ -118,23 +86,6 @@ switch ($action) {
 
 
         break;
-	case 'save_group':
-		$group_name		= $_REQUEST['nam'];
-		$group_pages	= json_decode(stripslashes($_REQUEST['pag']));
-  		$data		= array(
-  			'inserted_value'	=> SaveGroup($group_name, $group_pages),
-  			'inserted_name'		=> $group_name
-  		);
-
-  		GLOBAL $log;
-  		$log->setInsertLog('group');
-
-		break;
-    case 'get_add_group_page':
-    	$page		= GetGroupPage();
-    	$data		= array('page'	=> $page);
-
-    	break;
     case 'disable':
 		$per_id = $_REQUEST['id'];
 		DisableWorker($per_id);
@@ -170,9 +121,9 @@ echo json_encode($data);
  * ******************************
  */
 function CheckUser($user){
-	$res = mysql_query("SELECT 	  `username`
-							FROM  `users`
-							WHERE `username` = '$user'");
+	$res = mysql_query("SELECT `username`
+						FROM   `users`
+						WHERE  `username` = '$user'");
 
 	if(mysql_num_rows($res) > 0){
 		return false;
@@ -258,115 +209,69 @@ function ClearProduct() {
 
 function AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission)
 {
-	mysql_query("INSERT INTO `persons`
-					(`user_id`, `name`, `tin`, `position`, `address`, `image`,`password`, `home_number`, `mobile_number`, `comment`)
+    if($user != '' && $userpassword !='' && $group_permission !=''){
+        $ext			= $_REQUEST['ext'];
+        if(strlen($_REQUEST['userp']) == 32){
+    
+        }else{
+            mysql_query("INSERT	INTO	`users`
+                        (`username`,`password`,`group_id`,`extension_id`)
+                        VALUES
+                        ('$user','$userpassword','$group_permission','$ext')");
+        }
+    }
+    
+    $persons_id = mysql_insert_id();
+    
+	mysql_query("INSERT INTO `user_info`
+					(`user_id`, `name`, `tin`, `position_id`, `address`, `image`, `home_phone`, `mobile_phone`, `comment`)
 				 VALUES
-					($user_id, '$name', '$tin', $position, '$address', '$image','$password', '$home_number', '$mobile_number', '$comment')");
-	$persons_id = mysql_insert_id();
-	GLOBAL $log;
-	$log->setInsertLog('persons');
+					($persons_id, '$name', '$tin', $position, '$address', '$image', '$home_number', '$mobile_number', '$comment')");
 
-	if( $user!= '' && $userpassword!='' && $group_permission!=''){
-	    $ext			= $_REQUEST['ext'];
-	    if(strlen($userpassword) == 32){
-	        	
-	    }else{
-		mysql_query("INSERT	INTO	`users`
-						(`username`, `password`, `person_id`, `group_id`, `ext`)
-					VALUES
-						('$user','$userpassword','$persons_id','$group_permission','$ext')");
-		$log->setInsertLog('users');
-	    }
-	}
 }
 
 function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission)
 {
-	GLOBAL $log;
-	$log->setUpdateLogBefore('persons', $persons_id);
-
-	mysql_query("UPDATE
-	    			`persons`
-				 SET
-				 	`user_id`		= '$user_id',
-				    `name`			= '$name',
-				    `tin`			= '$tin',
-				    `position`		= $position,
-				    `address`		= '$address',
-				    `image`			= '$image',
-				    `password`  	= '$password',
-				    `home_number`	= '$home_number',
-				    `mobile_number` = '$mobile_number',
-				    `comment`		= '$comment'
-				 WHERE
-					`id`		= $persons_id");
-
-	$log->setUpdateLogAfter('persons', $persons_id);
+	mysql_query("UPDATE `user_info` SET
+                    	`user_id`		= '$persons_id',
+                    	`name`			= '$name',
+                    	`tin`			= '$tin',
+                    	`position_id`	= $position,
+                    	`address`		= '$address',
+                    	`image`			= '$image',
+                    	`home_phone`	= '$home_number',
+                    	`mobile_phone`  = '$mobile_number',
+                    	`comment`		= '$comment'
+                  WHERE `user_id` = $persons_id");
 
 	if( $user!= '' && $userpassword!='' && $group_permission!=''){
-		$res = mysql_fetch_assoc( mysql_query("	SELECT	`users`.`id`
-												FROM		`users`
-												WHERE		`users`.`person_id` = '$persons_id'"));
-		if( $res != '' ){
-			GLOBAL $log;
-			$log->setUpdateLogBefore('users', $persons_id);
-			$ext			= $_REQUEST['ext'];
-			if(strlen($userpassword) == 32){
-			    mysql_query("	UPDATE	`users`
-			        LEFT JOIN	`persons` ON `persons`.`id` = `users`.`person_id`
-			        SET
-			        `users`.`username` = '$user',
-			        `users`.`group_id` = '$group_permission',
-			        `users`.`ext` = '$ext'
-			        WHERE		`users`.`person_id` = '$persons_id'	&& `persons`.actived = 1 && `users`.actived = 1");
-			}else{		
-			mysql_query("	UPDATE	`users`
-							LEFT JOIN	`persons` ON `persons`.`id` = `users`.`person_id`
-							SET
-											`users`.`username` = '$user',
-											`users`.`password` = '$userpassword',
-											`users`.`group_id` = '$group_permission',
-			                                `users`.`ext` = '$ext'
-							WHERE		`users`.`person_id` = '$persons_id'	&& `persons`.actived = 1 && `users`.actived = 1");
-			}
-			$log->setUpdateLogAfter('users', $persons_id);
-
+		$ext			= $_REQUEST['ext'];
+		if(strlen($_REQUEST['userp']) == 32){
+		    mysql_query("	UPDATE	`users` SET
+                			        `users`.`username` = '$user',
+                			        `users`.`group_id` = '$group_permission',
+                			        `users`.`extension_id` = '$ext'
+		                    WHERE	`users`.`id` = '$persons_id' AND `users`.actived = 1");
 		}else{
-		    $ext			= $_REQUEST['ext'];
-		    if(strlen($userpassword) == 32){
-			
-		    }else{
-		        mysql_query("INSERT	INTO	`users`
-		            (`users`.`username`, `users`.`password`, `users`.`person_id`, `users`.`group_id`, `users`.`ext`)
-		            VALUES
-		            ('$user','$userpassword','$persons_id','$group_permission','$ext')");
-		    }
-				GLOBAL $log;
-				$log->setInsertLog('users');
+		mysql_query("	UPDATE	`users` SET
+								`users`.`username` = '$user',
+								`users`.`password` = '$userpassword',
+								`users`.`group_id` = '$group_permission',
+                                `users`.`extension_id` = '$ext'
+						WHERE	`users`.`id` = '$persons_id'	&& `users`.actived = 1");
 		}
-
+	}else{
+	    mysql_query("	UPDATE	`users` SET
+                                `users`.`extension_id` = '$ext'
+	                    WHERE	`users`.`id` = '$persons_id' AND `users`.actived = 1");
 	}
 }
 
 function DisableWorker($per_id)
 {
-	GLOBAL $log;
-	$log->setUpdateLogBefore('persons', $per_id);
-
-    mysql_query("UPDATE `persons`
-				 SET    `actived` = 0
-				 WHERE  `id` = '$per_id'");
-
-    $log->setUpdateLogAfter('persons', $per_id);
-
-
-    $log->setUpdateLogBefore('users', $per_id);
-
-    mysql_query("UPDATE `users`
-				 SET    `actived` = 0
-				 WHERE  `users`.`person_id` = '$per_id'");
-
-    $log->setUpdateLogAfter('users', $per_id);
+    mysql_query("UPDATE `users` SET
+                        `actived` = 0
+				 WHERE  `users`.`id` = '$per_id'");
 }
 
 function GetPosition($point)
@@ -394,39 +299,33 @@ function GetPosition($point)
 
 function GetWorker($per_id)
 {
-    $res = mysql_fetch_assoc(mysql_query("	SELECT	`persons`.`id` as `id`,
-													`persons`.`name` as `name`,
-													`persons`.`tin` as `tin`,
-													`persons`.`position` as `position`,
-													`persons`.`address` as `address`,
-													`persons`.`image` as `image`,
-													`persons`.`password` as `password`,
-													`users`.`username` as `username`,
-													`users`.`password` as `user_password`,
-													`users`.`group_id` as `group_id`,
-                                                    `users`.`ext` as `ext`,
-													`persons`.`home_number` as `home_number`,
-													`persons`.`mobile_number` as `mobile_number`,
-    												`persons`.`comment` as `comment`
-											FROM	`persons`
-											LEFT JOIN	`users` ON `users`.`person_id` = `persons`.`id`
-											WHERE	`persons`.`id` = '$per_id'"));
+    $res = mysql_fetch_assoc(mysql_query("	SELECT	`users`.`id` as `id`,
+                                    				`user_info`.`name` as `name`,
+                                    				`user_info`.`tin` as `tin`,
+                                    				`user_info`.`position_id` as `position`,
+                                    				`user_info`.`address` as `address`,
+                                    				`user_info`.`image` as `image`,
+                                    				`users`.`username` as `username`,
+                                    				`users`.`password` as `user_password`,
+                                    				`users`.`group_id` as `group_id`,
+                                    				`users`.`extension_id` as `ext`,
+                                    				`user_info`.`home_phone` as `home_number`,
+                                    				`user_info`.`mobile_phone` as `mobile_number`,
+                                    				`user_info`.`comment` as `comment`
+                                            FROM	`user_info`
+                                            LEFT JOIN	`users` ON `users`.`id` = `user_info`.`user_id`
+                                            WHERE	`user_info`.`user_id` = '$per_id'"));
 	return $res;
 }
 
 function DeleteImage($pers_id)
 {
-	GLOBAL $log;
-	$log->setUpdateLogBefore('persons', $pers_id);
-
 	mysql_query("UPDATE
 	`persons`
 	SET
 	`image`			= NULL
 	WHERE
 	`id`			= $pers_id");
-
-	$log->setUpdateLogAfter('persons', $pers_id);
 }
 
 function GetGroupPermission( $group_id ){
@@ -447,37 +346,6 @@ function GetGroupPermission( $group_id ){
 		}
 	}
 
-	return $data;
-}
-
-function GetGroupPage(){
-	$data = '
-	<div id="dialog-form">
- 	    <fieldset style="width: 400px;">
-	    	<legend>ჯგუფი</legend>
-			<div style=" margin-top: 2px; ">
-				<div style="width: 170px; display: inline;">
-					<label for="group_name">ჯგუფის სახელი :</label>
-					<input type="text" id="group_name" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" style="display: inline; margin-left: 25px;"/>
-				</div>
-			</div>
-        </fieldset>
- 	    <fieldset>
-	    	<legend>გვერდები</legend>
-            <div id="dynamic">
-                <table class="display" id="pages" style="width: 380px !important; ">
-                    <thead>
-                        <tr style=" white-space: no-wrap;" id="datatable_header">
-                            <th >ID</th>
-                            <th style="width: 315px  !important;">გვერდის სახელი</th>
-                            <th style="width: 65px !important;">#</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </fieldset>
-    </div>
-    ';
 	return $data;
 }
 
@@ -547,22 +415,19 @@ function GetPage($res = '')
 			  <h3>მომხმარებელი</h3>
 			  <div>
 				<div>
-					<div style="width: 170px; display: inline;"><label for="user">მომხმარებელი :</label>
-						<input type="text" id="user" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['username'] . '" style="display: inline; margin-left: 42px;"/>
+					<div style="width: 170px; display: inline;"><label for="user" style="float:left;">მომხმარებელი :</label>
+						<input type="text" id="user" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['username'] . '" style="display: inline; margin-left: 51px;"/>
 					</div>
 				</div>
 				<div style=" margin-top: 2px; ">
-					<div style="width: 170px; display: inline;"><label for="user_password">პაროლი :</label>
-						<input type="password" id="user_password" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['user_password'] . '" style="display: inline; margin-left: 84px;"/>
+					<div style="width: 170px; display: inline;"><label for="user_password" style="float:left;">პაროლი :</label>
+						<input type="password" id="user_password" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['user_password'] . '" style="display: inline; margin-left: 87px;"/>
 					</div>
 				</div>
 				<div style=" margin-top: 2px; ">
-					<div style="width: 170px; display: inline; margin-top: 5px;"><label for="group_permission">ჯგუფი :</label>
+					<div style="width: 170px; display: inline; margin-top: 5px;"><label for="group_permission" style="float:left;">ჯგუფი :</label>
 						<select id="group_permission" class="idls" style="display: inline; margin-left: 101px;">' . GetGroupPermission( $res['group_id'] ) . '</select>
 					</div>
-				</div>
-				<div style=" margin-top: 2px; ">
-					<button id="add_group" style="outline:none; float: right; margin-right: 20px;">ჯგუფის დამატება</button>
 				</div>
 			  </div>
 			</div>

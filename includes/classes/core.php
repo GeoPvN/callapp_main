@@ -51,7 +51,7 @@ class sql_db {
 }
 
 
-	$db = new sql_db ( "localhost", "root", "Gl-1114", "palitra" );
+	$db = new sql_db ( "localhost", "root", "Gl-1114", "callapp_main" );
 
 
 ?>

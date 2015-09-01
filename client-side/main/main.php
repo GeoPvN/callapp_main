@@ -21,6 +21,13 @@ $result = mysql_query("
 		<link href="media/css/main/header.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/mainpage.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/tooltip.css" rel="stylesheet" type="text/css" />
+    	<script type="text/javascript">
+
+        function gela(){
+            //$("#page-container").html();
+            $( "#page-container" ).load( "client-side/call/tasks.php" );
+        }
+    	</script>
 </head>
 <body onselectstart='return false;'>
     <div id="ContentHolder">
@@ -421,5 +428,6 @@ $result = mysql_query("
         </table>
     </div>
         </div>
+        <div onclick="gela()">sdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</div>
 </body>
 </html>

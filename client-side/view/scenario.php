@@ -10,9 +10,11 @@
 		var tName	= "example";								//table name
 		var fName	= "add-edit-form";							//form name
 		var tbName	= "tabs";
+		var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
 		    	
 		$(document).ready(function () {
-			LoadTable();			
+			//LoadTable();
+			LoadTable('',4,'get_list',change_colum_main);
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");			
 			MyEvent("add_button", "delete_button", "check-all", tName, fName, aJaxURL, "", "quest_id");			
@@ -33,7 +35,7 @@
 		});
 
 		function GetTable0() {
-			GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc");
+			GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc",'',change_colum_main);
 			GetButtons("add_button_detail", "delete_button_detail");
 			MyEvent("add_button_detail", "delete_button_detail", "check-all-de", "example2", "add-answer", aJaxURL, "", "quest_detail_id", "add_id="+$("#quest_id").val());
         }
@@ -65,9 +67,9 @@
             
         }
         
-		function LoadTable(){			
+		function LoadTable(tbl,col_num,act,change_colum){			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 4, "", 0, "", 0, "desc");    		
+			GetDataTable(tName, aJaxURL, act, col_num, "", 0, "", 0, "desc", '', change_colum);
 		}
 		
 		function LoadDialog(fname){	
@@ -94,7 +96,7 @@
     			if(name_check != ''){
     				$(".add-edit-form-class .ui-dialog-title").html(name_check);
     			}    			
-    			GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc");
+    			GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc",'',change_colum_main);
     			GetButtons("add_button_detail", "delete_button_detail");
     			MyEvent("add_button_detail", "delete_button_detail", "check-all-de", "example2", "add-answer", aJaxURL, "", "quest_detail_id", "add_id="+$("#quest_id").val());   
     			GetDate2("date_input");
@@ -177,7 +179,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable();
+								LoadTable(tName,4,'get_list',change_colum_main);
 				        		CloseDialog(fName);
 							}
 						}
@@ -211,7 +213,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc");
+								GetDataTable("example2", aJaxURL, "get_list_detail", 3, "quest_id="+$("#quest_id").val(), 0, "", 1, "asc",'',change_colum_main);
 				        		CloseDialog("add-answer");
 							}
 						}
@@ -254,7 +256,7 @@
                             <th style="width: 100%;">დასახელება</th>
                             <th style="width: 100%;">კატეგორია</th>
                             <th style="width: 100%;">ქვე-კატეგორია</th>
-                            <th class="check">#</th>
+                            <th class="check" style="width: 20px;">#</th>
                         </tr>
                     </thead>
                     <thead>

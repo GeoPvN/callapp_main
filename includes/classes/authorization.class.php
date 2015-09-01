@@ -40,11 +40,10 @@ class Authorization {
 	 * @return boolean
 	 */
 	function checklogin() {
-		if ($this->username != '' && $this->password != '' ) {			
-			$result = mysql_query("	SELECT 	`id`
-									  FROM	`users`
-									 WHERE	`password` = '$this->password' AND username = '$this->username' AND `actived` = 1
-								");	
+		if ($this->username != '' && $this->password != '' ) {
+			$result = mysql_query("SELECT 	`id`
+								   FROM	    `users`
+								   WHERE	`password` = '$this->password' AND username = '$this->username' AND `actived` = 1");	
 			if (mysql_num_rows($result) == 1) {
 				
 				 	$uid = mysql_fetch_assoc($result);
@@ -198,12 +197,12 @@ class Authorization {
 		$this->sess_id 	= session_id();
 		$this->date		= date("Y-m-d H:i:s");
 			
-		mysql_query("UPDATE `users`
-						SET	`session_id` 	= '$this->sess_id',
-							`login_date` 	= '$this->date',
-							`ip` 			= '$this->ip'
-					  WHERE	`id` = $this->user_id
-					");
+		mysql_query("INSERT INTO `user_log`
+                     (`user_id`, `session_id`, `ip`, `login_date`)
+                     VALUES
+                     ($this->user_id, '$this->sess_id', '$this->ip', '$this->date')");
+		
+		mysql_query("UPDATE `users` SET `logged`='1' WHERE `id`=$this->user_id");
 	}
 	
 	function expire($time)
@@ -216,6 +215,13 @@ class Authorization {
 	function logout(){
 		session_start();
 		session_destroy();
+		$date = date("Y-m-d H:i:s");
+		$user_id = $_SESSION['USERID'];
+		mysql_query("UPDATE `user_log` SET
+                            `logout_date`='$date'
+                     WHERE  `user_id` = '$user_id' AND ISNULL(logout_date)");
+		
+		mysql_query("UPDATE `users` SET `logged`='0' WHERE `id`=$user_id");
 		unset($_SESSION['USERID']);	
 		unset($_SESSION['lifetime']);
 		return true;

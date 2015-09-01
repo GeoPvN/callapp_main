@@ -21,9 +21,11 @@ span{
 }
 
 label{
-	font-size: 13px;
+	font-size: 11px;
 	font-family: BPG arial;
 	font-weight: normal;
+	padding: 0 0 3px 1px;
+	display: block;
 }
 table{
 	font-size: 13px;

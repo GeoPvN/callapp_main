@@ -26,8 +26,8 @@ function GetCss(){
 	<link rel="stylesheet" href="media/css/jNotify.jquery.css" type="text/css" />
 	
 	<!-- jQuery UI -->
-	<link rel="stylesheet" href="media/themes/jQuery-UI/redmond/jquery-ui.min.css" type="text/css" />
-	<link rel="stylesheet" href="media/themes/jQuery-UI/redmond/jquery-ui.datatable.css" type="text/css" />
+	<link rel="stylesheet" href="media/themes/jQuery-UI/smoothness/jquery-ui.min.css" type="text/css" />
+	<link rel="stylesheet" href="media/themes/jQuery-UI/smoothness/jquery-ui.datatable.css" type="text/css" />
 	<!-- <link rel="stylesheet" href="media/themes/jQuery-Mobile/default/jquery.mobile-1.2.0.css" type="text/css" /> -->
 	';
 	return $data;
@@ -66,7 +66,10 @@ function GetJs(){
 	<script type="text/javascript" src="js/jNotify.jquery.min.js"></script>
 	    <script type="text/javascript" src="js/tinymce.min.js"></script>
 	    <script type="text/javascript" src="js/chosen.jquery.min.js"></script>
-	    
+	    <script type="text/javascript" src="js/dataTables.colReorder.js"></script>
+	    <script type="text/javascript" src="js/dataTables.colVis.js"></script>	    
+	    <script type="text/javascript" src="js/dataTables.colResize.js"></script> 
+	    <script type="text/javascript" src="js/jquery.session.js"></script> 
 	    
 	';
 	return $data;

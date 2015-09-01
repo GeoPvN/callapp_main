@@ -17,10 +17,25 @@
 #dialog-form fieldset
 {
     padding: 13px 10px 10px 10px;
-    border: solid 1px #85B1DE;
-    background-color:   #EBF9FF;
+    border: solid 1px #CCC;
+	background-color: #F9F9F9;
     
 }
+
+.hide_said_menu{
+	position: absolute;
+	right: 25px;
+	top: 20px;
+	border: 1px solid #CCC;
+	padding: 2px 5px 4px 5px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.margin_top_10{
+	margin-top: 10px;
+}
+
 #dvLoading{
    background:url('../images/load_d.gif') no-repeat center center;
    height: 100px;
@@ -43,7 +58,7 @@
 	font-family: BPG arial;	
 }
 
-#dialog-form fieldset input, #inputArea textarea
+#dialog-form fieldset input, #inputArea textarea,#dialog-form fieldset textarea
 {
     font-size: 13px;
 	font-family: BPG arial;	
@@ -53,6 +68,41 @@
 	padding-left: 4px;
 	border: 1px solid #EEEEEE;
 }
+#first_div{
+	border: 1px solid #CCC;
+	padding: 5px;
+	text-align: center;
+	vertical-align: middle;
+	width: 137px;
+	float:left;
+}
+#two_div{
+	border: 1px solid #CCC;
+	padding: 5px;
+	text-align: center;
+	vertical-align: middle;
+	width: 110px;
+	float:left;
+}
+#tree_div{
+	border: 1px solid #CCC;
+	padding: 5px;
+	text-align: center;
+	vertical-align: middle;
+	width: 110px;
+	cursor:pointer;
+	float:left;
+}
+#for_div{
+	border: 1px solid #CCC;
+	padding: 5px;
+	text-align: center;
+	vertical-align: middle;
+	width: 20px;
+	cursor:pointer;
+	float:left;
+}
+
 
 #dialog-form fieldset select
 {
@@ -62,6 +112,7 @@
     padding: 3px;
     width: 165px;
 	height: 26px;
+	border: 1px solid #EEEEEE;
 }
 
 #dialog-form .check

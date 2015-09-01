@@ -441,7 +441,7 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 			        if ($('#dialog-form .radio_input').is(':checked')) {
 			        	$( ".quest_body" ).removeClass( "quest_body" );
 			        	$("#next_quest").css('display', 'none');
-			        }    
+			        }
 			        if ($('#dialog-form .check_input').is(':checked')) {
 			        	$( ".quest_body" ).removeClass( "quest_body" );
 			        	$("#next_quest").css('display', 'none');

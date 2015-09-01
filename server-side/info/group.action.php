@@ -166,7 +166,7 @@ function SaveGroup($group_name, $group_pages){
 	mysql_query("INSERT	INTO `group_permission`
 					(`group_permission`.`group_id`, `group_permission`.`page_id`)
 				VALUES
-					('$group_id','31')");
+					('$group_id','7')");
 
 	
 	foreach($parrentaray as $parrent) {
@@ -215,7 +215,7 @@ function UpdateGroup($group_id, $group_pages, $group_name){
 	mysql_query("INSERT	INTO `group_permission`
 	(`group_permission`.`group_id`, `group_permission`.`page_id`)
 	VALUES
-	('$group_id','31')");
+	('$group_id','7')");
 	
 	
 	foreach($parrentaray as $parrent) {
@@ -255,7 +255,7 @@ function GetGroupPage($res = ''){
 	
 	$data = '
 	<div id="dialog-form">
- 	    <fieldset style="width: 400px;">
+ 	    <fieldset>
 	    	<legend>ჯგუფი</legend>
 			<div style=" margin-top: 2px; ">
 				<div style="width: 170px; display: inline;">
@@ -266,7 +266,7 @@ function GetGroupPage($res = ''){
         </fieldset>	
  	    <fieldset>
 	    	<legend>გვერდები</legend>									
-            <div id="dynamic">
+            <div id="dynamic" style="margin-top: 25px;">
                 <table class="display" id="pages" style="width: 380px !important; ">
                     <thead>
                         <tr style=" white-space: no-wrap;" id="datatable_header">

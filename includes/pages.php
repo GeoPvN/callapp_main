@@ -4,7 +4,7 @@ $user_id	= $_SESSION['USERID'];
 $page		= $_REQUEST['pg'];
 $action		= $_REQUEST['act'];
 
-if(!empty($action) && $action == 'logout'){
+if($page == '1'){
 	require_once ("includes/logout.php");
 }else{	
 	require_once ("includes/menu.php");	

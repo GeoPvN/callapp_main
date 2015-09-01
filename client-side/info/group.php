@@ -20,6 +20,7 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 		var tName	= "example";											//table name
 		var fName	= "add-edit-form";										//form name
 		var img_name		= "0.jpg";
+		var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
 
 		$(document).ready(function () {
 			LoadTable();
@@ -32,17 +33,17 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 
 		function LoadTable(){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "");
+			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "asc", "", change_colum_main);
 		}
 
 		function LoadDialog(){
 
 			/* Dialog Form Selector Name, Buttons Array */
-			GetDialog(fName, 450, "auto", "");
+			GetDialog(fName, 479, "auto", "");
 
 			var group_id = $("#group_id").val();
 
-			GetDataTable1("pages", aJaxURL, "get_pages_list&group_id=" + group_id, 2, "", 0, "", "", "", "", "280px", "true");
+			GetDataTable("pages", aJaxURL, "get_pages_list&group_id=" + group_id, 2, "", 0, "", 1, "asc", "", change_colum_main);
 
 		}
 
