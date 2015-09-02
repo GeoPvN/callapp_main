@@ -470,8 +470,8 @@ body .ui-tooltip { border-width: 2px; }
 .ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url("images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x; opacity: .3;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -khtml-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }
 div.ColVis {
 	position: absolute;
-	right: -85px;
-  	top: 89px;
+	right: -86px;
+  	top: 77px;
 }
 
 .ColVis_Button span{

@@ -96,7 +96,7 @@ div.dataTables_wrapper .ui-widget-header {
 }
 
 .dataTables_info {
-	width: 39%;
+	width: 44%;
 	float: left;
 	text-align: left;
 	padding-right: 2px;
@@ -138,7 +138,7 @@ div.dataTables_wrapper .ui-widget-header {
 }
 
 #tabs{
-	width: 800px;
+	width: 85.5%;
 	height: 600px;
 	background: #FFF;
 	padding: 15px;

@@ -556,92 +556,11 @@
 </head>
 
 <body>
-<div id="tabs">
-<div class="callapp_head">შემომავალი ზარი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
-<div class="callapp_tabs">
+<div id="tabs" style="width: 99%">
+<div class="callapp_head">რიგი<hr class="callapp_head_hr"></div>
 
-</div>
 <div class="callapp_filter_show">
-<button id="callapp_show_filter_button">ფილტრი v</button>
-    <div class="callapp_filter_body" myvar="0">
-    <div style="float: left; width: 292px;">
-        <span>
-        <label for="start_date" style="margin-left: 110px;">-დან</label>
-        <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 100px;">
-        </span>
-        <span>
-        <label for="end_date" style="margin-left: 110px;">-მდე</label>
-        <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 100px;">
-        </span>
-        <span style="margin-top: 15px;">
-        <select id="operator_id" style="width: 285px;">
-        <option value="0">ყველა ოპერატორი</option>
-        <option>დათო პაპალაშვილი</option>
-        </select>
-        </span>
-        <span style="margin-top: 15px;">
-        <select id="tab_id" style="width: 285px;">
-        <option value="0">ყველა ზარი</option>
-        <option>ზარები დღეს</option>
-        <option>გადაცემულია გასარკვევად</option>
-        <option>გარკვევის პროცესშია</option>
-        <option>დასრულებულია</option>
-        </select>
-        </span>
-    </div>
-    <div style="float: left; width: 170px; margin-left: 20px;">
-        <span >
-        <div class="callapp_filter_header"><img alt="inc" src="media/images/icons/inc_call.png" height="14" width="14">  შემომავალი ზარი</div>
-        </span>
-        <span style="margin-left: 15px">        
-        <label for="filter_1">დამუშავებული</label>
-        <input class="callapp_filter_body_span_input" id="filter_1" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_2" style="">დაუმუშავებელი</label>
-        <input class="callapp_filter_body_span_input" id="filter_2" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_3">უპასუხო</label>
-        <input class="callapp_filter_body_span_input" id="filter_3" type="checkbox">
-        </span>        
-        </div>
-    <div style="float: left; width: 170px;">
-        <span >
-        <div class="callapp_filter_header"><img alt="out" src="media/images/icons/out_call.png" height="14" width="14">  გამავალი ზარი</div>
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_4">დამუშავებული</label>
-        <input class="callapp_filter_body_span_input" id="filter_4" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_5">დაუმუშავებელი</label>
-        <input class="callapp_filter_body_span_input" id="filter_5" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_6">უპასუხო</label>
-        <input class="callapp_filter_body_span_input" id="filter_6" type="checkbox">
-        </span>
-        
-        </div>
-    <div style="float: left; width: 145px;">
-        <span>
-        <div class="callapp_filter_header"><img alt="inner" src="media/images/icons/inner_call_1.png" height="14" width="14">  შიდა ზარი</div>
-        </span>
-        <span style="margin-left: 15px">        
-        <label for="filter_7">დამუშავებული</label>
-        <input class="callapp_filter_body_span_input" id="filter_7" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_8">დაუმუშავებელი</label>
-        <input class="callapp_filter_body_span_input" id="filter_8" type="checkbox">
-        </span>
-        <span style="margin-left: 15px">
-        <label for="filter_9">უპასუხო</label>
-        <input class="callapp_filter_body_span_input" id="filter_9" type="checkbox">
-        </span>
-    </div>
-</div>
+
 <table id="table_right_menu">
 <tr>
 <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
@@ -701,30 +620,6 @@
 </table>
 </div>
 <style>
-#flesh_panel_table, #flesh_panel_table_mini{
-	box-shadow: 0px 0px 7px #888888;
-}
-#flesh_panel_table{
-	display: none;
-}
-#flesh_panel_table td, #flesh_panel_table_mini td {
-	height: 25px;	
-	vertical-align: middle;
-	text-align: left;
-	padding: 0 5px;
-	background: #FFF;
-	width: 100%;
-}
-.tb_head td{
-	border-right: 1px solid #E6E6E6;	
-}
-#show_flesh_panel,#show_flesh_panel_right{
-    float: left;
-	cursor: pointer;
-}
-.td_center{
-    text-align: center !important;
-}
 .ui-widget-header{
 	box-shadow: 0px 0px 7px #888888;
 }
@@ -732,77 +627,7 @@
 	box-shadow: 0px -2px 10px #888888;
 }
 </style>
-<div id="flesh_panel">
-<div class="callapp_head" style="text-align: right;"><img id="show_flesh_panel" title="პანელის გადიდება" alt="arrow" src="media/images/icons/arrow_left.png" height="18" width="18">ქოლ-ცენტრი<hr class="callapp_head_hr"></div>
-<table id="flesh_panel_table">
-    <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-        <td>რიგი</td>
-        <td>შიდა ნომერი</td>
-        <td>თანამშრომელი</td>
-        <td>სტატუსი</td>
-        <td>დრო</td>
-        <td>აბონენტი</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-</table>
-<table id="flesh_panel_table_mini">
-    <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-        <td>შიდა ნომერი</td>
-        <td>სტატუსი</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT100</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT101</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_out.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT102</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_free.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT103</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_ringing.png" height="17" width="17"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT104</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_off.png" height="17" width="17"></td>
-    </tr>
-</table>
-</div>
+
 
 <!-- jQuery Dialog -->
 <div  id="add-edit-form" class="form-dialog" title="შემომავალი ზარი">
