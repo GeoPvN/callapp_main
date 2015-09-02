@@ -158,7 +158,9 @@
 .show_my_ass{
 	display: block;
 }
- 
+#show_ul a{
+    color: #FFF !important;
+}
     </style>
     <script type="text/javascript">
 
@@ -208,7 +210,7 @@
         		    			  deep_sub_i++;
         		    		  });
       		    		}else{
-      		    			sub_menu += '<li style="border-bottom: 1px solid #3C8EE0;"><a style="font-weight: bold; font-size: 13px; color:#FFF !important;" href="index.php?pg=' + data.nav[i].sub[sub_i].page_id +'">' + data.nav[i].sub[sub_i].title + '</a><span style="display: block;font-family: BPG arial;padding-top: 7px;width: 10px;float: right;padding-right: 10px;"></span></li>';
+      		    			sub_menu += '<li style="border-bottom: 1px solid #3C8EE0;"><a style="font-weight: bold; font-size: 13px; color: #FFF !important;" href="index.php?pg=' + data.nav[i].sub[sub_i].page_id +'">' + data.nav[i].sub[sub_i].title + '</a><span style="display: block;font-family: BPG arial;padding-top: 7px;width: 10px;float: right;padding-right: 10px;"></span></li>';
       		    		}
             		    sub_i++;
       		    		
