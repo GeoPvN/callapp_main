@@ -148,17 +148,7 @@ function GetPage($res,$increment)
                     <button id="add_number">დამატება</button>
 					<button id="delete_number">წაშლა</button>
                 </div>
-				<table style="margin-top: -14px;" id="table_right_menu">
-				<tr>
-					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-					</td>
-						<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-					</td>
-						<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-					</td>
-				</tr>
-				</table>
-                <table class="display" id="table_number" >
+				<table class="display" id="table_number" >
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>

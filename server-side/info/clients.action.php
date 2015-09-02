@@ -108,6 +108,11 @@ function Getincomming($hidden_id)
 
 function GetPage($res,$increment)
 {
+	$image = $res['image'];
+	if(empty($image)){
+		$image = '0.jpg';
+	}
+	
 	$data  .= '
 	<div id="tabs1" style="width: auto; height: 580px;">
 		<ul>
@@ -124,7 +129,7 @@ function GetPage($res,$increment)
 	       <table>
 	    		<tr>
 					<td id="img_colum">
-						<img style="margin-left: 17px;" id="upload_img" src="media/uploads/images/worker/" />
+						<img style="margin-left: 5px;;" id="upload_img" src="media/uploads/images/worker/'.$image.'" />
 					</td>
 				</tr>
 				<tr>
@@ -136,7 +141,7 @@ function GetPage($res,$increment)
 				</tr>
 				</tr>
 					<td>
-						<div style="margin-top:10px; width: 127px; margin-left: 8px;" class="file-uploader">
+						<div style="margin-top:10px; width: 127px; margin-left: -5px;" class="file-uploader">
 							<input id="choose_file" type="file" name="choose_file" class="input" style="display: none;">
 							<button id="choose_button" class="center">აირჩიეთ ფაილი</button>
 						</div>
@@ -185,17 +190,7 @@ function GetPage($res,$increment)
                     <button id="add_client">დამატება</button>
 					<button id="delete_client">წაშლა</button>
                 </div>
-				<table style="margin-top: -14px;" id="table_right_menu">
-				<tr>
-					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-					</td>
-						<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-					</td>
-						<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-					</td>
-				</tr>
-				</table>
-                <table class="display" id="table_client" >
+				<table class="display" id="table_client">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
@@ -333,17 +328,7 @@ function GetPage($res,$increment)
                     <button id="add_project">დამატება</button>
 					<button id="delete_project">წაშლა</button>
                 </div>
-				<table style="margin-top: -14px;" id="table_right_menu">
-					<tr>
-						<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-						</td>
-							<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-						</td>
-							<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-						</td>
-					</tr>
-				</table>
-                <table style="margin-top: 42px;" class="display" id="table_project" >
+				<table style="margin-top: 42px;" class="display" id="table_project" >
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
