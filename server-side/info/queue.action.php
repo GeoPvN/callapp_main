@@ -171,7 +171,7 @@ function GetPage($res,$increment)
                     </thead>
                 </table>
             </fieldset>
-    	    
+    	     
             <fieldset style="display:none;" id="task">
                 <legend>სცენარი</legend>
 	            <span class="hide_said_menu">x</span>

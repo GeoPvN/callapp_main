@@ -24,7 +24,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 	
     if (empty(data))
         data = "";
-
+ 
     if (empty(tname))
         tname = "example";
 

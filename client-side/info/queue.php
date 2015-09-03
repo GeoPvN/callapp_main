@@ -125,7 +125,7 @@
 }
 .ColVis, .dataTable_buttons{
 	z-index: 100;
-}
+} 
 .scrol_table{
 	overflow-y: scroll;
 	height: 260px;
