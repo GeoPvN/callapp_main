@@ -444,7 +444,7 @@
 </head>
 
 <body>
-<div id="tabs" style="width: 95%;">
+<div id="tabs" style="width: 90%;">
 <div class="callapp_head">კლიენტები<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
 <div class="callapp_tabs">
 
@@ -453,7 +453,7 @@
 <button id="add_button">დამატება</button>
 <button id="delete_button">წაშლა</button>
   
-<table style="margin-top: -17px;" id="table_right_menu">
+<table style="margin-top: 10px;" id="table_right_menu">
 <tr>
 <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
 </td>
