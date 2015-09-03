@@ -176,12 +176,18 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 }
 
 function onhovercolor(color){
+	var next_color = '';
 	$( ".display tbody tr" )
 	.mouseenter(function() {		
-		$(this).children('td').css( 'background', color );
+		if($(this).css('backgroundColor') == 'rgb(249, 249, 249)'){
+			next_color = '#F9F9F9';
+		}else{
+			next_color = '#FFF';
+		}		
+		$(this).css( 'background', color );
 	})
 	.mouseleave(function() {
-		$(this).children('td').css( 'background', '#FFF' );
+		$(this).css( 'background', next_color );
 	});
 }
 

@@ -177,6 +177,14 @@ table.display thead th div.DataTables_sort_wrapper span {
 	right: 0;
 }
 
+.display tbody tr{
+	background: #fff;
+}
+
+.display tbody tr.even{
+	background: #F9F9F9;
+}
+
 table.display td, table.display th {
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -210,12 +218,7 @@ table.display .colum_hidden {
 	display: none !important;
 }
 
-table.display th input[type="checkbox"] {
-	margin: 9px 0 9px 9px;
-}
-
 table.display tbody td {
-	background: #FFF;
 	cursor: pointer;
     vertical-align: middle !important;	
 }
@@ -313,3 +316,6 @@ span.style1{
 	text-align:center !important;
 }
 
+.display td:last-child {
+	text-align:center !important;
+}

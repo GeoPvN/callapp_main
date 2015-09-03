@@ -4,40 +4,40 @@ require_once('../../includes/classes/core.php');
 
 // Main Strings
 $action                     = $_REQUEST['act'];
+$user		                = $_SESSION['USERID'];
 $error                      = '';
 $data                       = '';
 
-// Incomming Call Dialog Strings
-$hidden_id                  = $_REQUEST['id'];
-$incomming_id               = $_REQUEST['incomming_id'];
-$incomming_date             = $_REQUEST['incomming_date'];
-$incomming_phone            = $_REQUEST['incomming_phone'];
-$incomming_cat_1            = $_REQUEST['incomming_cat_1'];
-$incomming_cat_1_1          = $_REQUEST['incomming_cat_1_1'];
-$incomming_cat_1_1_1        = $_REQUEST['incomming_cat_1_1_1'];
-$incomming_comment          = $_REQUEST['incomming_comment'];
+
+// Queue Dialog Strings
+$hidden_id                = $_REQUEST['hidden_id'];
+$id                       = $_REQUEST['id'];
+$queue_name               = $_REQUEST['queue_name'];
+$queue_number             = $_REQUEST['queue_number'];
 
 
 switch ($action) {
 	case 'get_add_page':
-		$page		= GetPage('',increment(incomming_call));
+		$page		= GetPage('');
 		$data		= array('page'	=> $page);
 
 		break;
 	case 'get_edit_page':
-		$page		= GetPage(Getincomming($hidden_id));
+		$page		= GetPage(Getincomming($id));
 		$data		= array('page'	=> $page);
 
         break;
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
-	  	$rResult = mysql_query("SELECT  id,
-                            	  	    id,
-                            	  	    date,
-                            	  	    phone,
-                            	  	    cat_1
-                    	  	    FROM    `incomming_call`;");
+	  	$rResult = mysql_query("SELECT 	`queue`.`id`,
+                        				`queue`.`name`,
+                        				`queue`.number,
+                        				'შემომავალი ზარი' AS `scenario_name`,
+                        				GROUP_CONCAT(`queue_detail`.ext_name) AS `ext_name`
+                                FROM    `queue`
+                                LEFT JOIN queue_detail ON queue.id = queue_detail.queue_id
+	  	                        GROUP BY `queue`.`id`;");
 	  
 		$data = array(
 				"aaData"	=> array()
@@ -87,6 +87,10 @@ switch ($action) {
         }
     
         break;
+    case 'save_queue':
+        save_queue($hidden_id,$queue_name,$queue_number,$user);
+    
+        break;        
 	default:
 		$error = 'Action is Null';
 }
@@ -101,18 +105,33 @@ echo json_encode($data);
 * ******************************
 */
 
-function Getincomming($hidden_id)
+function save_queue($hidden_id,$queue_name,$queue_number,$user){
+    if($hidden_id == ''){
+        $insert_id = increment('queue');
+        mysql_query("INSERT INTO `queue`
+                    (`id`, `user_id`, `name`, `number`)
+                    VALUES
+                    ('$insert_id', '$user', '$queue_name', '$queue_number');");
+    }else{
+        mysql_query("UPDATE `queue` SET 
+                            `user_id`='$user',
+                            `name`='$queue_name',
+                            `number`='$queue_number'
+                     WHERE  `id`='$hidden_id';");
+    }
+}
+
+function Getincomming($id)
 {
-	$res = mysql_fetch_assoc(mysql_query("SELECT  incomming_call.id AS id,
-												  incomming_call.`date` AS call_date,
-												  DATE_FORMAT(incomming_call.`date`,'%y-%m-%d') AS `date`,
-												  incomming_call.`phone`														
-										  FROM 	  incomming_call
-										  where   incomming_call.id =  $hidden_id"));
+	$res = mysql_fetch_assoc(mysql_query("SELECT 	`queue`.`id`,
+                                    				`queue`.`name`,
+                                    				`queue`.number
+                                          FROM      `queue`
+                                          WHERE     `queue`.`id` = $id"));
 	return $res;
 }
 
-function GetPage($res,$increment)
+function GetPage($res)
 {
 	$data  .= '
 	<div id="dialog-form">
@@ -121,11 +140,11 @@ function GetPage($res,$increment)
 	       <table class="dialog-form-table">
     	       <tr>
 	               <td style="width: 210px;"><label for="queue_name">დასახელება</label></td>
-	               <td><input id="queue_name" type="text" value=""></td>
+	               <td><input id="queue_name" type="text" value="'.$res['name'].'"></td>
     	       </tr>
 	           <tr>
-	               <td><label for="queue_phone">ნომერი</td>
-	               <td><input id="queue_phone" type="text" value=""></td>
+	               <td><label for="queue_number">ნომერი</td>
+	               <td><input id="queue_number" type="text" value="'.$res['number'].'"></td>
     	       </tr>
 	       </table>
 	    </fieldset>
@@ -150,7 +169,7 @@ function GetPage($res,$increment)
                             <th>ID</th>
                             <th style="width: 100%;">დასახელება</th>
                             <th style="width: 100%;">ნომერი</th>
-                            <th class="check">#</th>
+                            <th class="check" style="width: 8px;">#</th>
                         </tr>
                     </thead>
                     <thead>
@@ -450,7 +469,7 @@ function GetPage($res,$increment)
             </fieldset>
 
 	    </div>
-	</div><input type="hidden" value="'.(($res[id]=='')?$increment:$res[id]).'" id="hidden_id">';
+	</div><input type="hidden" value="'.(($res[id]=='')?'':$res[id]).'" id="hidden_id">';
 
 	return $data;
 }
@@ -460,6 +479,7 @@ function increment($table){
 
     $result   		= mysql_query("SHOW TABLE STATUS LIKE '$table'");
     $row   			= mysql_fetch_array($result);
+    $increment   	= $row['Auto_increment'];
     $increment   	= $row['Auto_increment'];
     $next_increment = $increment+1;
     mysql_query("ALTER TABLE $table AUTO_INCREMENT=$next_increment");

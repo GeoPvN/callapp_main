@@ -4,7 +4,6 @@
 </style>
 <script type="text/javascript">
     var aJaxURL           = "server-side/info/queue.action.php";
-    var aJaxURL_send_sms = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
     var colum_number      = 5;
@@ -17,21 +16,21 @@
     	LoadTable('index',colum_number,main_act,change_colum_main,lenght);
     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
 
-    	    setTimeout(function(){
-    	    	$('.ColVis, .dataTable_buttons').css('display','none');
-  	    	}, 10);
+    	    
     });
 
     function LoadTable(tbl,col_num,act,change_colum,lenght){
     	GetDataTable(tName+tbl, aJaxURL, act, col_num, "", 0, lenght, 1, "asc", '', change_colum);
-    	
+    	setTimeout(function(){
+	    	$('.ColVis, .dataTable_buttons').css('display','none');
+	    }, 10);
     }
     
     function LoadDialog(fName){
     	var buttons = {
 				"save": {
 		            text: "შენახვა",
-		            id: "save-dialog"
+		            id: "save_queue"
 		        },
 	        	"cancel": {
 		            text: "დახურვა",
@@ -86,10 +85,27 @@
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();
     	$(".add-edit-form-class").css("width", "420");
-        //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
 
+    $(document).on("click", "#save_queue", function () {
+        param 			= new Object();
+        
+        param.act		    = 'save_queue';
+	    param.hidden_id		= $('#hidden_id').val();
+    	param.queue_name	= $('#queue_name').val();
+    	param.queue_number	= $('#queue_number').val();
+    	
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                CloseDialog('add-edit-form');
+                LoadTable('index',colum_number,main_act,change_colum_main,lenght);
+            }
+        });
+    });
+    
     $(document).on("click", "#show_copy_prit_exel", function () {
         if($(this).attr('myvar') == 0){
             $('.ColVis,.dataTable_buttons').css('display','block');
@@ -162,7 +178,7 @@
             <th style="width: 100%;">ნომერი</th>
             <th style="width: 100%;">შიდა ნომრები</th>
             <th style="width: 100%;">სცენარი</th>
-            <th class="check">#</th>
+            <th class="check" style="width: 20px;"></th>
         </tr>
     </thead>
     <thead>
