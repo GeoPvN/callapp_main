@@ -15,7 +15,7 @@ if ($check) {
 	$login->ip();
 	$login->savelogin();
 	$login->expire(60);
-	echo '<meta http-equiv=refresh content="0; URL=index.php">';
+	echo '<meta http-equiv=refresh content="0; URL=index.php?pg=7">';
 	
 }else {
 
