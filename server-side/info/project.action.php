@@ -8,58 +8,38 @@ $error                      = '';
 $data                       = '';
 
 // Incomming Call Dialog Strings
-$hidden_id                  = $_REQUEST['id'];
-$incomming_id               = $_REQUEST['incomming_id'];
-$incomming_date             = $_REQUEST['incomming_date'];
-$incomming_phone            = $_REQUEST['incomming_phone'];
-$incomming_cat_1            = $_REQUEST['incomming_cat_1'];
-$incomming_cat_1_1          = $_REQUEST['incomming_cat_1_1'];
-$incomming_cat_1_1_1        = $_REQUEST['incomming_cat_1_1_1'];
-$incomming_comment          = $_REQUEST['incomming_comment'];
+$hidden_id         = $_REQUEST['id'];
+$project_name      = $_REQUEST['project_name'];
+$project_type      = $_REQUEST['project_type'];
+$project_add_date  = $_REQUEST['project_add_date'];
+
+
 
 
 switch ($action) {
 	case 'get_add_page':
-		$page		= GetPage('',increment(incomming_call));
+		$page		= GetPage('',object($hidden_id));
 		$data		= array('page'	=> $page);
 
 		break;
 	case 'get_edit_page':
-		$page		= GetPage(Getincomming($hidden_id));
+		$page		= GetPage(object($hidden_id));
 		$data		= array('page'	=> $page);
 
 		break;
-    case 'next_quest':
-        $page 		= next_quest($hidden_id, $_REQUEST[next_id]);
-        $data		= array('ne_id'	=> $page);
+	case 'save-project':
+		$hidden_id		  = $_REQUEST['project_hidden_id'];
+    	$hidden_client_id = $_REQUEST['hidden_client_id'];
+    	
+    	if($hidden_id==''){
+    		Addproject($hidden_client_id, $project_name, $project_type, $project_add_date);
+    	}else{
+    		Saveproject($hidden_id,$project_name, $project_type, $project_add_date);
+    	}
+    		
+    	break;
     
-        break;
-	case 'get_list':
-        $count = 		$_REQUEST['count'];
-		$hidden = 		$_REQUEST['hidden'];
-	  	$rResult = mysql_query("SELECT id,id,date,phone,cat_1,cat_1_1,cat_1_1_1,`comment` FROM `incomming_call`;");
-	  
-		$data = array(
-				"aaData"	=> array()
-		);
-
-		while ( $aRow = mysql_fetch_array( $rResult ) )
-		{
-			$row = array();
-			for ( $i = 0 ; $i < $count ; $i++ )
-			{
-				/* General output */
-				$row[] = $aRow[$i];
-				if($i == ($count - 1)){
-					$row[] = '<input style="margin-left: 16px;" type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
-				}
-			}
-			$data['aaData'][] = $row;
-		}
-	
-	    break;
-   
-	default:
+   default:
 		$error = 'Action is Null';
 }
 
@@ -73,32 +53,65 @@ echo json_encode($data);
 * ******************************
 */
 
-function next_quest($task_detail_id, $val) {
-    $res = mysql_fetch_array(mysql_query("  SELECT 	`scenario_destination`.`destination`
-        FROM 	`task`
-        JOIN	task_detail ON task.id = task_detail.task_id
-        JOIN	scenario ON task.template_id = scenario.id
-        JOIN    scenario_detail ON scenario.id = scenario_detail.scenario_id
-        JOIN    scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id
-        WHERE	task_detail.id = $task_detail_id AND scenario_destination.answer_id = $val"));
+function Addproject($hidden_client_id, $project_name, $project_type, $project_add_date){
+	
+	$user = $_SESSION['USERID'];
 
-    return $res[0];
+	mysql_query("INSERT INTO `project` 
+						(`user_id`, `client_id`, `name`, `type_id`, `create_date`, `actived`) 
+					VALUES 
+						('$user', '$hidden_client_id', '$project_name', '$project_type', '$project_add_date', '1')");
 
 }
 
-function Getincomming($hidden_id)
-{
-	$res = mysql_fetch_assoc(mysql_query("SELECT  incomming_call.id AS id,
-												  incomming_call.`date` AS call_date,
-												  DATE_FORMAT(incomming_call.`date`,'%y-%m-%d') AS `date`,
-												  incomming_call.`phone`														
-										  FROM 	  incomming_call
-										  where   incomming_call.id =  $hidden_id"));
+function Saveproject($hidden_id,$project_name, $project_type, $project_add_date){
+	
+	$user = $_SESSION['USERID'];
+	
+	mysql_query("UPDATE  `project`
+	 				SET  `user_id`='$user', 
+						 `name`='$project_name', 
+						 `type_id`='$project_type', 
+						 `create_date`='$project_add_date' 
+				WHERE `id`='$hidden_id'");
+
+}
+
+
+function Get_type($count){
+	$data = '';
+	$req = mysql_query("SELECT id, `name`
+						FROM `call_type`");
+
+	$data .= '<option value="0" selected="selected">----</option>';
+	while( $res = mysql_fetch_assoc($req)){
+
+		if($res['id'] == $count){
+			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+		}else{
+			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+		}
+	}
+	return $data;
+}
+function object($hidden_id){
+	
+	$res = mysql_fetch_assoc(mysql_query("SELECT  id,
+												  `name`,
+												  type_id,
+												  create_date
+											FROM `project`
+											WHERE id='$hidden_id'"));
 	return $res;
 }
 
-function GetPage($res,$increment)
-{
+function GetPage($res,$increment){
+	if ($res[id]=='') {
+		$incr_id=increment(project);
+	}else{
+		$incr_id=$res[id];
+	}
+	
 	$data  .= '
 	
 	<div id="dialog-form">
@@ -109,25 +122,23 @@ function GetPage($res,$increment)
 	               <td colspan="2"><label for="incomming_cat_1_1_1">დასახელება</label></td>
     	       </tr>
 	           <tr>
-	               <td colspan="2"><input id="project_name" style="resize: vertical;width: 250px;"></input></td>
+	               <td colspan="2"><input id="project_name" style="resize: vertical;width: 250px;" value="'.$res[name].'"></td>
     	       </tr>
 	       		<tr>
 	               <td colspan="2"><label style="margin-top: 30px;" for="incomming_comment">ტიპი</label></td>
 	           </tr>
 	           <tr>
-	               <td>
-						<select style="margin-top: 10px; width: 250px;" id="project_type" type="text" value="">
-									<option value="1" selected="selected">შემომავალი</option>
-									<option value="2" selected="selected">გამავალი</option>
-									<option value="0" selected="selected"></option>
+               		<td>
+						<select style="margin-top: 10px; width: 257px;"  id="project_type">'. Get_type($res[type_id]).'</select>
 					</td>
+	               
 	           </tr>
 			   <tr>
                              
         	       <td><label style="margin-top: 30px;" for="client_person_phone2">შექმნის თარიღი</label></td>
                </tr>
     	       <tr>
-                   <td><input id="project_add_date" type="text" value=""></td>
+                   <td><input id="project_add_date" type="text" value="'.$res[create_date].'"></td>
                </tr>
 	       </table>
 		 </fieldset>
@@ -156,7 +167,7 @@ function GetPage($res,$increment)
                             <th style="width: 70px;">რიგი</th>
                             <th style="width: 100px;">შიდა ნომ.</th>
                             <th style="width: 100px;">ტცენარი</th>
-							<th class="check">#</th>
+							<th style="width: 11px;" class="check"></th>
 						</tr>
                     </thead>
                     <thead>
@@ -177,7 +188,7 @@ function GetPage($res,$increment)
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
 							<th>
-				                <input style="margin-left: 25px;" type="checkbox" name="check-all" id="check-all">
+				                <input type="checkbox" name="check-all" id="check-all">
 				            </th>
 						</tr>
                     </thead>
@@ -187,7 +198,8 @@ function GetPage($res,$increment)
     	</div>
 	</div>
 	</div>
-	<input type="hidden" value="'.$res[id].'" id="hidden_id">';
+	<input type="hidden" value="'.$res[id].'" id="project_hidden_id">
+	<input type="hidden" value="'.$incr_id.'" id="hidden_project_id">';
 
 	return $data;
 }
@@ -200,7 +212,7 @@ function increment($table){
     $row   			= mysql_fetch_array($result);
     $increment   	= $row['Auto_increment'];
     $next_increment = $increment+1;
-    mysql_query("ALTER TABLE $table AUTO_INCREMENT=$next_increment");
+    mysql_query("ALTER TABLE '$table' AUTO_INCREMENT=$next_increment");
 
     return $increment;
 }

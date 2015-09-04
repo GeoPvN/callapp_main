@@ -11,28 +11,24 @@
     var tbName1			  = "tabs1";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 7;
+    var colum_number      = 6;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
-    var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
-    
+   
     $(document).ready(function () {
+        
     	GetButtons("add_button","delete_button");
-    	LoadTable('index',colum_number,main_act,change_colum_main,dLength);
+    	LoadTable('index',colum_number,main_act,change_colum_main);
     	SetEvents("add_button", "delete_button", "", tName+'index', dialog, aJaxURL);
-    	$('#operator_id,#tab_id').chosen({ search_contains: true });
-    	$('.callapp_filter_body').css('display','none');
     	
-
-    	    $.session.clear(); 
-    	    
-    	    setTimeout(function(){
-    	    	$('.ColVis, .dataTable_buttons').css('display','none');
-  	    	}, 10);
     });
 
-    function LoadTable(tbl,col_num,act,change_colum, dLength){
-    	GetDataTable(tName+tbl, aJaxURL, act, col_num, "", 0, dLength, 1, "asc", '', change_colum);
+    function LoadTable(tbl,col_num,act,change_colum){
+        
+        client_id	= $("#hidden_client_id").val();
+        project_id	= $("#hidden_project_id").val();
+        
+    	GetDataTable(tName+tbl, aJaxURL, act, col_num, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', change_colum);
     	
     }
     
@@ -54,9 +50,8 @@
 				    };
 		        GetDialog(fName, 789, "auto", buttons, 'left top');
 		        GetTabs(tbName1);
-		        var Length_client_table = [[3, 30, 50, -1], [3, 30, 50, "ყველა"]];
-		        LoadTable('project',6,'get_list',"<'dataTable_content't><'F'p>", dLength);
-		        LoadTable('client',6,'get_list',"<'dataTable_content't><'F'p>", Length_client_table);
+		        LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
+		        LoadTable('client',6,'get_list_person',"<'scrol_table't>");
 		        SetEvents("add_project", "delete_project", "", tName+'project', "add-edit-form-project", aJaxURL_object);
 		        SetEvents("add_client", "delete_client", "", tName+'client', "add-edit-form-client", aJaxURL_client);
 		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project").button(); 
@@ -76,8 +71,7 @@
 				        }
 				    };
 		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left top');
-		        var Length_number_table = [[3, 30, 50, -1], [3, 30, 50, "ყველა"]];
-		        LoadTable('number',5,'get_list',"<'dataTable_content't><'F'p>",Length_number_table);
+		        LoadTable('number',5,'get_list_number',"<'scrol_table2't>");
 		        SetEvents("add_number", "delete_number", "", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
 		        $("#add_number, #delete_number").button(); 
 		        GetDate1('project_add_date');
@@ -86,7 +80,7 @@
 		    	var buttons = {
 						"save": {
 				            text: "შენახვა",
-				            id: "save-client"
+				            id: "save-client_person"
 				        },
 			        	"cancel": {
 				            text: "დახურვა",
@@ -121,7 +115,6 @@
         $("#right_side fieldset").hide();
         $("#" + id).show();
         $(".add-edit-form-class").css("width", "1244");
-        //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -135,7 +128,7 @@
     function show_right_side1(id){
         $("#right_side_project fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-project-class").css("width", "915");
+        $(".add-edit-form-project-class").css("width", "900");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side1();
         var str = $("."+id).children('img').attr('src');
@@ -187,6 +180,7 @@
     });
 
     $(document).on("click", "#show_copy_prit_exel", function () {
+        
         if($(this).attr('myvar') == 0){
             $('.ColVis,.dataTable_buttons,#table_right_menu_content').css('display','block');
             $(this).css('background','#2681DC');
@@ -213,7 +207,7 @@
         var file_size = this.files[0].size;
         var file_type = file_url.split('.').pop().toLowerCase();
         var path	  = "../../media/uploads/file/";
-
+		
         if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
             alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
         }else if(file_size > '15728639'){
@@ -227,13 +221,13 @@
 			    data: {
 					act: "file_upload",
 					button_id: "file_name",
-					table_name: 'incomming_call',
+					table_name: 'client_contract',
 					file_name: Math.ceil(Math.random()*99999999999),
 					file_name_original: file_name,
 					file_type: file_type,
 					file_size: file_size,
 					path: path,
-					table_id: $("#incomming_id").val(),
+					table_id: $("#hidden_clientcontract_id").val(),
 
 				},
 		        success: function(data) {			        
@@ -247,6 +241,7 @@
 								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
 								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
 								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+								
 								$("#paste_files").html(tbody);
 							}							
 						}						
@@ -265,7 +260,7 @@
     function delete_file(id){
     	$.ajax({
             url: "server-side/upload/file.action.php",
-            data: "act=delete_file&file_id="+id+"&table_name=incomming_call",
+            data: "act=delete_file&file_id="+id+"&table_name=client_contract",
             success: function(data) {
                
             	var tbody = '';
@@ -305,25 +300,171 @@
         }
     }
 
-    $(document).on("click", "#send_sms", function (fName) {
-	    param 			= new Object();
+    // Add - Save
+	$(document).on("click", "#save-dialog", function () {
+		param = new Object();
 
-	    param.sms_hidde_id		= sms_id;
-    	param.phone			= $("#sms_phone").val();
-    	param.text			= $("#sms_text").val();
-    	param.sms_inc_increm_id	= $("#sms_inc_increm_id").val();
-    	
-    	 $.ajax({
-		        url: aJaxURL_send_sms,
+        //Action
+    	param.act	= "save_client";
+
+	    param.id				= $("#hidden_id").val();
+
+	    param.identity_code		= $("#identity_code").val();
+	    param.client_name		= $("#client_name").val();
+	    param.jurid_address		= $("#jurid_address").val();
+	    param.fact_address		= $("#fact_address").val();
+
+	    //კონტრაქტი//
+	    param.contract_number		= $("#contract_number").val();
+	    param.add_date				= $("#add_date").val();
+	    param.contract_start_date	= $("#contract_start_date").val();
+	    param.contract_end_date		= $("#contract_end_date").val();
+	    param.contract_price		= $("#contract_price").val();
+	    param.angarish_period		= $("#angarish_period").val();
+	    param.angarish_period1		= $("#angarish_period1").val();
+
+	    //დოკუმენტი//
+	    param.invois			= $("input[id='invois']:checked").val();
+	    param.migeba_chabareba	= $("input[id='migeba_chabareba']:checked").val();
+	    param.angarishfaqtura	= $("input[id='angarishfaqtura']:checked").val();
+	   
+	   
+	   if(param.identity_code == ""){
+			alert("შეავსეთ საიდენტიპიკაციო კოდი!");
+		}else if(param.client_name == ""){
+			alert("შეავსეთ  დასახელება!");
+		}else{
+		    $.ajax({
+		        url: aJaxURL,
 			    data: param,
 		        success: function(data) {
-                    $("#sms_text").val('');
-                    alert('SMS წარმატებით გაიგზავნა');
-                    LoadTable1_1();
-                    CloseDialog("sms_dialog");
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('index',colum_number,main_act,change_colum_main);
+							$("#add-edit-form").dialog("close");
+						}
+					}
 			    }
 		    });
-		});
+		}
+
+	});
+
+	$(document).on("click", "#save-client_person", function () {
+		param = new Object();
+
+        //Action
+    	param.act	= "save-client_person";
+
+	    param.hidden_client_id	= $("#hidden_client_id").val();
+	    param.hidden_id	= $("#person_hidden_id").val();
+	    
+	    param.person_name		= $("#person_name").val();
+	    param.person_surname	= $("#person_surname").val();
+	    param.person_posityon	= $("#person_posityon").val();
+	    param.person_mobile		= $("#person_mobile").val();
+		param.person_phone		= $("#person_phone").val();
+	    param.person_comment	= $("#person_comment").val();
+	    
+	   
+	   
+	   if(param.person_name == ""){
+			alert("შეავსეთ სახელი!");
+		}else{
+		    $.ajax({
+		        url: aJaxURL_client,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('client',6,'get_list_person',"<'scrol_table't>");
+							$("#add-edit-form-client").dialog("close");
+						}
+					}
+			    }
+		    });
+		}
+
+	});
+	$(document).on("click", "#save-project", function () {
+		param = new Object();
+
+        //Action
+    	param.act	= "save-project";
+
+	    param.hidden_client_id	= $("#hidden_client_id").val();
+	    param.project_hidden_id	= $("#project_hidden_id").val();
+	    
+	    param.project_name		= $("#project_name").val();
+	    param.project_type		= $("#project_type").val();
+	    param.project_add_date	= $("#project_add_date").val();
+	   
+	    
+	   
+	   
+	   if(param.person_name == ""){
+			alert("შეავსეთ სახელი!");
+		}else{
+		    $.ajax({
+		        url: aJaxURL_object,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							
+							 LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
+							$("#add-edit-form-project").dialog("close");
+						}
+					}
+			    }
+		    });
+		}
+
+	});
+
+	$(document).on("click", "#save-number", function () {
+		param = new Object();
+
+        //Action
+    	param.act	= "save-number";
+
+	    param.number_hidden_id	= $("#number_hidden_id").val();
+	    
+	    param.hidden_project_id	= $("#hidden_project_id").val();
+	    
+	    param.project_number	= $("#project_number").val();
+	    param.project_queue		= $("#project_queue").val();
+	    
+	   
+	    
+	   
+	   
+	   if(param.person_name == ""){
+			alert("შეავსეთ სახელი!");
+		}else{
+		    $.ajax({
+		        url: aJaxURL_sub_project,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('number',5,'get_list_number',"<'scrol_table2't>");
+							$("#add-edit-form-number").dialog("close");
+						}
+					}
+			    }
+		    });
+		}
+
+	});
 </script>
 <style type="text/css">
 .callapp_tabs{
@@ -406,6 +547,18 @@
 	font-family: pvn;
 	font-weight: bold;
 }
+.scrol_table{
+	overflow-y: scroll;
+	height: 175px;
+}
+.scrol_table1{
+	overflow-y: scroll;
+	height: 298px;
+}
+.scrol_table2{
+	overflow-y: scroll;
+	height: 195px;
+}
 #table_right_menu{
     position: relative;
     float: right;
@@ -444,82 +597,85 @@
 </head>
 
 <body>
-<div id="tabs" style="width: 90%;">
-<div class="callapp_head">კლიენტები<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
-<div class="callapp_tabs">
+	<div id="tabs" style="width: 90%;">
+		<div class="callapp_head">კლიენტები<span class="callapp_refresh">
+			<img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">განახლება</span><hr class="callapp_head_hr">
+		</div>
+		
+		<div class="callapp_tabs">
+		</div>
+		
+		<div class="callapp_filter_show">
+		
+			<button id="add_button">დამატება</button>
+			<button id="delete_button">წაშლა</button>
+		  
+			<table style="margin-top: 10px;" id="table_right_menu">
+				<tr>
+					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+						<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+					</td>
+					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+						<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+					</td>
+					<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+						<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+					</td>
+				</tr>
+			</table>
+		
+			<table class="display" id="table_index">
+			    <thead>
+			        <tr id="datatable_header">
+			            <th>ID</th>
+			            <th style="width: 20px;">№</th>
+			            <th style="width: 100%;">დასახელება</th>
+			            <th style="width: 100%;">საიდენტიფიკაციო კოდი</th>
+			          	<th style="width: 100%;">იურიდიული მისამართი</th>                            
+			            <th style="width: 100%;">ფაქტიური მისამართი</th>
+			            <th style="width: 11px;" class="check"></th>
+			        </tr>
+			    </thead>
+			    <thead>
+			        <tr class="search_header">
+			            <th class="colum_hidden">
+			        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+			            </th>
+			            <th>
+			            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+			            </th>
+			            <th>
+			                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+			            </th>    
+			            <th>
+			                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+			            </th>
+			            <th>
+			                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+			            </th>                         
+			            <th>
+			                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+			            </th>
+			            <th>
+			                <input type="checkbox" name="check-all" id="check-all">
+			            </th>
+			        </tr>
+			    </thead>
+			</table>
+		</div>
+	</div>
 
-</div>
-<div class="callapp_filter_show">
-<button id="add_button">დამატება</button>
-<button id="delete_button">წაშლა</button>
-  
-<table style="margin-top: 10px;" id="table_right_menu">
-<tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-</td>
-</tr>
-</table>
-
-<table class="display" id="table_index">
-    <thead>
-        <tr id="datatable_header">
-            <th>ID</th>
-            <th style="width: 20px;">№</th>
-            <th style="width: 100%;">კლიენტი</th>
-            <th style="width: 100%;">საიდენტიფიკაციო კოდი</th>
-            <th style="width: 100%;">დასახელება</th>
-            <th style="width: 100%;">იურიდიული მისამართი</th>                            
-            <th style="width: 100%;">ფაქტიური მისამართი</th>
-            <th class="check">#</th>
-        </tr>
-    </thead>
-    <thead>
-        <tr class="search_header">
-            <th class="colum_hidden">
-        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-            </th>    
-            <th>
-                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-            </th>                         
-            <th>
-                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-                <input type="checkbox" name="check-all" id="check-all">
-            </th>
-        </tr>
-    </thead>
-</table>
-</div>
-</div>
-
-
-<!-- jQuery Dialog -->
-<div  id="add-edit-form" class="form-dialog" title="კლიენტი-მანიმენი">
-</div>
-<!-- jQuery Dialog -->
-<div  id="add-edit-form-client" class="form-dialog" title="კლიენტი">
-</div>
-<!-- jQuery Dialog -->
-<div  id="add-edit-form-project" class="form-dialog" title="პროექტი">
-</div>
-<div  id="add-edit-form-number" class="form-dialog" title="ნომერი">
-</div>
+	<!-- jQuery Dialog -->
+	<div  id="add-edit-form" class="form-dialog" title="კლიენტი-მანიმენი">
+	</div>
+	
+	<div  id="add-edit-form-client" class="form-dialog" title="კლიენტი">
+	</div>
+	
+	<div  id="add-edit-form-project" class="form-dialog" title="პროექტი">
+	</div>
+	
+	<div  id="add-edit-form-number" class="form-dialog" title="ნომერი">
+	</div>
 
 </body>
