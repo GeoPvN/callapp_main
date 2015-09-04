@@ -71,6 +71,7 @@ function GetJs(){
 	    <script type="text/javascript" src="js/dataTables.colResize.js"></script> 
 	    <script type="text/javascript" src="js/jquery.session.js"></script> 
 	    
+	    
 	';
 	return $data;
 }

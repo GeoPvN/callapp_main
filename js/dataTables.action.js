@@ -41,7 +41,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     var oTable = "";
 
     //Defoult Length
-    var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    var dLength = [[-1, 30, 50, -1], [-1, 30, 50, "ყველა"]];
 
     if (!empty(length))
         dLength = length;
@@ -68,6 +68,8 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
         "iDisplayLength": dLength[0][0],
         "aLengthMenu": dLength,                                                                         //Custom Select Options
         "sAjaxSource": aJaxURL,
+        "scrollY":        "250px",
+        "scrollCollapse": true,
         "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
         	if(!empty(total)){
 	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -136,32 +138,33 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
             }
         }
     });    
+
     //new $.fn.dataTable.ColReorder(oTable);
-    $(".display thead input").keyup(function () {
+    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").keyup(function () {
     	
         /* Filter on the column (the index) of this element */
-        oTable.fnFilter(this.value, $(".display thead input").index(this));
+        oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").index(this));
     });
 
     /*
     * Support functions to provide a little bit of 'user friendlyness' to the textboxes in
     * the footer
     */
-    $(".display thead input").each(function (i) {
+    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").each(function (i) {
         asInitVals[i] = this.value;
     });
 
-    $(".display thead input").focus(function () {
+    $("#"+tname+" thead input,  .dataTables_scrollHead .dataTable thead input").focus(function () {
         if (this.className == "search_init") {
             this.className = "";
             this.value = "";
         }
     });
 
-    $(".display thead input").blur(function (i) {
+    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").blur(function (i) {
         if (this.value == "") {
             this.className = "search_init";
-            this.value = asInitVals[$(".display thead input").index(this)];
+            this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").index(this)];
         }
     });
 
@@ -456,7 +459,7 @@ function GetButtons(add, dis, exp, cancel, clear) {
 *              Server Side aJaxURL,
 *			   Custom Request
 */
-function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data) {
+function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,act,change_colum,lenght,other_act) {
     if (empty(c_data))
         c_data = "";
         $("#"+tname+" tbody").off("dblclick");
@@ -492,15 +495,11 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data) {
 
         if (empty != "dataTables_empty") {
             var rID = $(nTds[0]).text();
-		if(c_data == 1){
-			custom = "dep_now="+$(nTds[8]).text();
-		}else{
-			custom = ''
-		}
+            
             $.ajax({
                 url: aJaxURL,
                 type: "POST",
-                data: "act=get_edit_page&id=" + rID + "&" + c_data + "&" + custom,
+                data: "act=get_edit_page&id=" + rID + "&" + c_data,
                 dataType: "json",
                 success: function (data) {
                     if (typeof (data.error) != "undefined") {
@@ -511,7 +510,6 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data) {
                             if ($.isFunction(window.LoadDialog)) {
                                 //execute it
                                 LoadDialog(fname);
-                                custom ='';
                             }
                         }
                     }
@@ -538,6 +536,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data) {
 	                    if (data.error != "") {
 	                        alert(data.error);
 	                    } else {
+	                    	LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
 	                        $("#" + check).attr("checked", false);
 	                    }
                 }
@@ -556,6 +555,97 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data) {
 			$(this).dialog("destroy");
 		}
 	});
+}
+
+function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID, closeButtonID, DialogHeight, DialogPosition, DialogOpenAct, DeleteAct, EditDialogAct, TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam){
+	GetButtons(addButton,deleteButton);
+	
+	$(document).on("click", "#" + addButton, function () {
+    	var buttons = {
+				"save": {
+		            text: "შენახვა",
+		            id: saveButtonID
+		        },
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: closeButtonID,
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+    	GetDialog('add-edit-form' + dialogID, DialogHeight, "auto", buttons, DialogPosition);
+        param 			= new Object();        
+        param.act		  = DialogOpenAct;
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+            	$('#add-edit-form' + dialogID).html(data.page);            	
+            }
+        });
+    });
+
+    $(document).on("click", "#" + deleteButton, function () {
+    	var data = $(".check:checked").map(function () {
+            return this.value;
+        }).get();
+    	
+
+        for (var i = 0; i < data.length; i++) {
+            $.ajax({
+                url: aJaxURL,
+                type: "POST",
+                data: "act=" + DeleteAct + "&id=" + data[i],
+                dataType: "json",
+                success: function (data) {
+	                    if (data.error != "") {
+	                        alert(data.error);
+	                    } else {
+	                    	LoadTable(TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam);	                        
+	                    }
+                }
+            });
+        }
+    });
+    
+	$(document).on("dblclick", "#table_" + TableID + " tbody tr", function () {
+        var nTds = $("td", this);
+        var empty = $(nTds[0]).attr("class");
+        
+        if (empty != "dataTables_empty") {
+            var rID = $(nTds[0]).text();
+            
+            $.ajax({
+                url: aJaxURL,
+                type: "POST",
+                data: "act=" + EditDialogAct + "&id=" + rID,
+                dataType: "json",
+                success: function (data) {
+                	var buttons = {
+            				"save": {
+            		            text: "შენახვა",
+            		            id: saveButtonID
+            		        },
+            	        	"cancel": {
+            		            text: "დახურვა",
+            		            id: closeButtonID,
+            		            click: function () {
+            		            	$(this).dialog("close");
+            		            }
+            		        }
+            		};
+                	GetDialog('add-edit-form' + dialogID, DialogHeight, "auto", buttons, DialogPosition);
+                    $('#add-edit-form' + dialogID).html(data.page);
+                }
+            });
+        }
+    });
+	
+	/* Check All */
+    $("#" + Check).on("click", function () {
+    	$("#table_" + TableID + " INPUT[type='checkbox']").prop("checked", $("#" + Check).is(":checked"));
+    });
 }
 
 /**

@@ -12,8 +12,12 @@ $data                       = '';
 // Queue Dialog Strings
 $hidden_id                = $_REQUEST['hidden_id'];
 $id                       = $_REQUEST['id'];
+$global_id		          = $_REQUEST['global_id'];
+$id_in_up                 = $_REQUEST['id_in_up'];
 $queue_name               = $_REQUEST['queue_name'];
 $queue_number             = $_REQUEST['queue_number'];
+$in_num_name              = $_REQUEST['in_num_name'];
+$in_num_num               = $_REQUEST['in_num_num'];
 
 
 switch ($action) {
@@ -27,6 +31,24 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
         break;
+    case 'get_in_num_page':
+        $page		= get_in_num('');
+        $data		= array('page'	=> $page);
+    
+        break;
+    case 'disable':
+        mysql_query("UPDATE `queue` SET `actived`='0' WHERE `id`='$id';");
+    
+        break;
+    case 'disable_ext':
+        mysql_query("UPDATE `queue_detail` SET `actived`='0' WHERE `id`='$id';");
+    
+        break;
+    case 'get_edit_in_num_page':
+        $page		= get_in_num(Get_in_num_query($id));
+        $data		= array('page'	=> $page);
+    
+        break;
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
@@ -37,6 +59,7 @@ switch ($action) {
                         				GROUP_CONCAT(`queue_detail`.ext_name) AS `ext_name`
                                 FROM    `queue`
                                 LEFT JOIN queue_detail ON queue.id = queue_detail.queue_id
+	  	                        WHERE `queue`.`actived` = 1 AND `queue_detail`.`actived` = 1
 	  	                        GROUP BY `queue`.`id`;");
 	  
 		$data = array(
@@ -61,12 +84,11 @@ switch ($action) {
     case 'get_list_ext':
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
-        $rResult = mysql_query("SELECT  id,
-                        	  	    id,
-                        	  	    date,
-                        	  	    phone,
-                        	  	    cat_1
-                	  	    FROM    `incomming_call`;");
+        $rResult = mysql_query("SELECT  `id`,
+                                        `ext_name`,
+                                        `ext_number` 
+                                FROM    `queue_detail`
+                                WHERE   `queue_id` = $hidden_id AND `actived` = 1");
          
         $data = array(
             "aaData"	=> array()
@@ -88,9 +110,12 @@ switch ($action) {
     
         break;
     case 'save_queue':
-        save_queue($hidden_id,$queue_name,$queue_number,$user);
+        save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id);
     
-        break;        
+        break;
+    case 'save_in_num':
+        $data		= array('global_id'	=> save_in_num($hidden_id,$in_num_name,$in_num_num,$user,$global_id,$id_in_up));
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -105,9 +130,13 @@ echo json_encode($data);
 * ******************************
 */
 
-function save_queue($hidden_id,$queue_name,$queue_number,$user){
+function save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id){
     if($hidden_id == ''){
-        $insert_id = increment('queue');
+        if($global_id == ''){
+            $insert_id = increment('queue');
+        }else{
+            $insert_id = $global_id;
+        }
         mysql_query("INSERT INTO `queue`
                     (`id`, `user_id`, `name`, `number`)
                     VALUES
@@ -121,6 +150,35 @@ function save_queue($hidden_id,$queue_name,$queue_number,$user){
     }
 }
 
+function save_in_num($hidden_id,$in_num_name,$in_num_num,$user,$global_id,$id_in_up){
+    if($hidden_id == ''){
+        if($global_id == ''){
+            $insert_id = increment('queue');
+        }else{
+            $insert_id = $global_id;
+        }
+        mysql_query("INSERT INTO `queue_detail`
+                    (`queue_id`, `user_id`, `ext_name`, `ext_number`)
+                    VALUES
+                    ('$insert_id', '$user', '$in_num_name', '$in_num_num');");
+    }else{
+        if($id_in_up == ''){
+        mysql_query("INSERT INTO `queue_detail`
+                     (`user_id`, `queue_id`, `ext_name`, `ext_number`)
+                     VALUES
+                     ('$user', '$hidden_id', '$in_num_name', '$in_num_num');");
+        }else{
+            mysql_query("UPDATE `queue_detail` SET
+                                `user_id`='$user',
+                                `ext_name`='$in_num_name',
+                                `ext_number`='$in_num_num'
+                         WHERE  `id`='$id_in_up';");
+        }
+    }
+
+    return $insert_id;
+}
+
 function Getincomming($id)
 {
 	$res = mysql_fetch_assoc(mysql_query("SELECT 	`queue`.`id`,
@@ -129,6 +187,16 @@ function Getincomming($id)
                                           FROM      `queue`
                                           WHERE     `queue`.`id` = $id"));
 	return $res;
+}
+
+function Get_in_num_query($id)
+{
+    $res = mysql_fetch_assoc(mysql_query("SELECT 	`id`,
+                                                    `ext_name`,
+                                    				`ext_number`
+                                          FROM 		`queue_detail`
+                                          WHERE		`id` = $id"));
+    return $res;
 }
 
 function GetPage($res)
@@ -167,9 +235,9 @@ function GetPage($res)
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 100%;">დასახელება</th>
-                            <th style="width: 100%;">ნომერი</th>
-                            <th class="check" style="width: 8px;">#</th>
+                            <th style="width: 221px;">დასახელება</th>
+                            <th style="width: 120px;">ნომერი</th>
+                            <th class="check" style="width: 8px;"></th>
                         </tr>
                     </thead>
                     <thead>
@@ -184,7 +252,7 @@ function GetPage($res)
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>                         
                             <th>
-                            	<input type="checkbox" name="check-all" id="check-all">
+                            	<input style="margin-left: 9px;" type="checkbox" name="check-all" id="check-all">
                             </th>           
                         </tr>
                     </thead>
@@ -260,7 +328,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -287,7 +355,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -314,7 +382,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -341,7 +409,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -368,7 +436,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -395,7 +463,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -422,7 +490,7 @@ function GetPage($res)
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
                 	    <td style="width: ;"></td>
-	    <td style="width: ;">15</td>
+	                    <td style="width: ;">15</td>
                 	    <td style="width: ;">16</td>
                 	    <td style="width: ;">17</td>
                 	    <td style="width: ;">18</td>
@@ -469,11 +537,32 @@ function GetPage($res)
             </fieldset>
 
 	    </div>
-	</div><input type="hidden" value="'.(($res[id]=='')?'':$res[id]).'" id="hidden_id">';
+	</div>
+	<input type="hidden" value="'.(($res[id]=='')?'':$res[id]).'" id="hidden_id">
+	<input type="hidden" value="" id="global_id">';
 
 	return $data;
 }
 
+function get_in_num($res){
+    $data ='<div id="dialog-form">
+            <fieldset>
+            <legend>ძირითადი ინფორმაცია</legend>
+                <table class="dialog-form-table">
+                    <tr>
+                	   <td><label for="in_num_name">დასახელება</label></td>
+	                   <td><label for="in_num_num">ნომერი</label></td>
+                    </tr>
+	                <tr>
+                       <td><input value="'.$res['ext_name'].'" id="in_num_name" style="width: 100px;" type="text"></td>
+                	   <td><input value="'.$res['ext_number'].'" id="in_num_num" style="width: 100px;" type="text"></td>
+                    </tr>
+	            </table>
+            </fieldset>
+            </div>
+            <input type="hidden" value="'.$res['id'].'" id="id_in_up">';
+    return $data;
+}
 
 function increment($table){
 

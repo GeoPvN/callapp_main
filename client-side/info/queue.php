@@ -13,14 +13,12 @@
     
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
-    	LoadTable('index',colum_number,main_act,change_colum_main,lenght);
-    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
-
-    	    
+    	LoadTable('index',colum_number,main_act,change_colum_main,lenght,'');
+    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL, '', 'index',colum_number,main_act,change_colum_main,lenght,'');
     });
 
-    function LoadTable(tbl,col_num,act,change_colum,lenght){
-    	GetDataTable(tName+tbl, aJaxURL, act, col_num, "", 0, lenght, 1, "asc", '', change_colum);
+    function LoadTable(tbl,col_num,act,change_colum,lenght,other_act){
+    	GetDataTable(tName+tbl, aJaxURL, act, col_num, other_act, 0, lenght, 1, "asc", '', change_colum);
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
 	    }, 10);
@@ -41,10 +39,12 @@
 		        }
 		    };
         GetDialog(fName, 420, "auto", buttons, 'left top');
-        var lenght_1 = [[-1, 30, 50, -1], [-1, 30, 50, "ყველა"]];
-        LoadTable('ext',3,'get_list_ext',"<'scrol_table't>",lenght_1);
-        GetButtons("add_button_ext","delete_button_ext");
+        LoadTable('ext',3,'get_list_ext',"<'scrol_table't>",'','hidden_id='+$('#hidden_id').val());
+              // ServerLink,  AddButtonID,    DeleteButtonID,     CheckAllID,  DialogID,   SaveDialogID,  CloseDialogID,  DialogHeight,  DialogPosition,  DialogOpenAct,     DeleteAct        EditDialogAct        TableID  ColumNum     TableAct       TableFunction      TablePageNum     TableOtherParam
+        MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'scrol_table't>",      '',        'hidden_id='+$('#hidden_id').val());
     }
+
+
 
     function show_right_side(id){
         $("#right_side fieldset").hide();
@@ -93,6 +93,7 @@
         
         param.act		    = 'save_queue';
 	    param.hidden_id		= $('#hidden_id').val();
+	    param.global_id		= $('#global_id').val();
     	param.queue_name	= $('#queue_name').val();
     	param.queue_number	= $('#queue_number').val();
     	
@@ -102,6 +103,27 @@
             success: function(data) {
                 CloseDialog('add-edit-form');
                 LoadTable('index',colum_number,main_act,change_colum_main,lenght);
+            }
+        });
+    });
+
+    $(document).on("click", "#save_in_num", function () {
+        param 			= new Object();
+        
+        param.act		  = 'save_in_num';
+        param.hidden_id	  = $('#hidden_id').val();
+        param.global_id	  = $('#global_id').val();
+        param.id_in_up	  = $('#id_in_up').val();
+	    param.in_num_name = $('#in_num_name').val();
+	    param.in_num_num  = $('#in_num_num').val();
+	    
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                CloseDialog('add-edit-form-in_num');
+                $('#global_id').val(data.global_id);
+                LoadTable('ext',3,'get_list_ext',"<'scrol_table't>",'','hidden_id='+$('#hidden_id').val());
             }
         });
     });
@@ -142,10 +164,7 @@
 .ColVis, .dataTable_buttons{
 	z-index: 100;
 } 
-.scrol_table{
-	overflow-y: scroll;
-	height: 260px;
-}
+
 </style>
 </head>
 
@@ -219,10 +238,7 @@
 <div  id="add-edit-form" class="form-dialog" title="შემომავალი ზარი">
 </div>
 <!-- jQuery Dialog -->
-<div  id="add-edit-form-sms" class="form-dialog" title="ახალი SMS">
-</div>
-<!-- jQuery Dialog -->
-<div  id="add-edit-form-mail" class="form-dialog" title="ახალი E-mail">
+<div  id="add-edit-form-in_num" class="form-dialog" title="შიდა ნომერი">
 </div>
 
 </body>
