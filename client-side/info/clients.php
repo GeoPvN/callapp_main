@@ -29,7 +29,9 @@
         project_id	= $("#hidden_project_id").val();
         
     	GetDataTable(tName+tbl, aJaxURL, act, col_num, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', change_colum);
-    	
+    	setTimeout(function(){
+    		$('.ColVis, .dataTable_buttons').css('display','none');
+    	}, 10);
     }
     
     function LoadDialog(fName){
@@ -50,6 +52,19 @@
 				    };
 		        GetDialog(fName, 789, "auto", buttons, 'left top');
 		        GetTabs(tbName1);
+		        
+		  
+		        $(document).on("tabsactivate", "#tabs1", function() {
+		        	var tab = GetSelectedTab(tbName1);
+		            console.log(tab);
+			        if(tab==1){
+				       
+			        	$("#right_side fieldset").hide();
+			        	$(".add-edit-form-class").css("width", "789");
+			            //$('#add-edit-form').dialog({ position: 'top' });
+			            hide_right_side();
+				    }
+		        });
 		        LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
 		        LoadTable('client',6,'get_list_person',"<'scrol_table't>");
 		        SetEvents("add_project", "delete_project", "", tName+'project', "add-edit-form-project", aJaxURL_object);

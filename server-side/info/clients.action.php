@@ -42,7 +42,15 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
-
+	case 'disable':
+		$hidden_id        = $_REQUEST['id'];
+		mysql_query("	UPDATE  `client`
+								SET
+								`actived` = 0
+						WHERE `id`='$hidden_id'
+		");
+	
+		break;
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
@@ -553,8 +561,7 @@ function GetPage($res,$increment){
 							</tr>				
                         </table>
 				 </div>
-											
-				<fieldset>
+				
 			</fieldset>
     	    <fieldset style="display:none;" id="task">
                 <legend>დოკუმენტი</legend>
@@ -598,19 +605,19 @@ function GetPage($res,$increment){
                     <thead>
                         <tr class="search_header">
                             <th class="colum_hidden">
-                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
                             <th>
-                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
                             <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
                             <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
                             <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
 							<th>
 				                <input type="checkbox" name="check-all" id="check-all">

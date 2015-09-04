@@ -27,6 +27,15 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
+	case 'disable':
+		$hidden_id        = $_REQUEST['id'];
+		mysql_query("	UPDATE  `project`
+		SET
+		`actived` = 0
+		WHERE `id`='$hidden_id'
+		");
+	
+		break;
 	case 'save-project':
 		$hidden_id		  = $_REQUEST['project_hidden_id'];
     	$hidden_client_id = $_REQUEST['hidden_client_id'];
