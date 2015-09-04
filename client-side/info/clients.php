@@ -265,7 +265,52 @@
 		    });
         }
     });
+    //ufload image//
+    $(document).on("click", "#choose_button", function () {
+	    $("#choose_file").click();
+	});
+    $(document).on("change", "#choose_file", function () {
+        var file_url  = $(this).val();
+        var file_name = this.files[0].name;
+        var file_size = this.files[0].size;
+        var file_type = file_url.split('.').pop().toLowerCase();
+        var path	  = "../../media/uploads/file/";
+		
+        if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+            alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
+        }else if(file_size > '15728639'){
+            alert("ფაილის ზომა 15MB-ზე მეტია");
+        }else{
+        	$.ajaxFileUpload({
+		        url: "server-side/upload/file.action.php",
+		        secureuri: false,
+     			fileElementId: "choose_file",
+     			dataType: 'json',
+			    data: {
+					act: "file_upload",
+					button_id: "choose_file",
+					table_name: 'client',
+					file_name: Math.ceil(Math.random()*99999999999),
+					file_name_original: file_name,
+					file_type: file_type,
+					file_size: file_size,
+					path: path,
+					table_id: $("#hidden_client_id").val(),
 
+				},
+		        success: function(data) {			        
+			        if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#upload_img").attr("src", "media/uploads/images/worker/" + data.name);
+							console.log(data.page[1].name)	;					
+						}						
+					}					
+			    }
+		    });
+        }
+    });
     function download_file(file){
         var download_file	= "media/uploads/file/"+file;
     	var download_name 	= file;
