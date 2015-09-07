@@ -533,6 +533,29 @@
 		}
 
 	});
+
+	function view_image(id){
+		param = new Object();
+
+        //Action
+    	param.act	= "view_img";
+    	param.id    = id;
+    	
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{						
+						GetDialog("add-edit-form-img", 401, "auto", '', 'center top');
+						$("#add-edit-form-img").html(data.page);
+					}
+				}
+		    }
+	    });
+	}
 </script>
 <style type="text/css">
 .callapp_tabs{
@@ -731,6 +754,9 @@
 	</div>
 	
 	<div  id="add-edit-form-number" class="form-dialog" title="ნომერი">
+	</div>
+	
+	<div  id="add-edit-form-img" class="form-dialog" title="ფოტო">
 	</div>
 
 </body>

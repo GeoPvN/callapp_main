@@ -193,7 +193,11 @@ switch ($action) {
     	}
 	    
 	    break;
-	    
+    case 'view_img':
+        $page		= GetIMG($_REQUEST[id]);
+		$data		= array('page'	=> $page);
+         
+        break;
    default:
 		$error = 'Action is Null';
 }
@@ -410,7 +414,7 @@ function GetPage($res,$increment){
 				<tr>
 					<td id="act">
 						<span>
-							<a href="#" id="view_image" class="complate">View</a> | <a href="#" id="delete_image" image_id="'.$res[image_id].'" class="delete">Delete</a>
+							<a href="#" onclick="view_image('.$res[image_id].')" class="complate">View</a> | <a href="#" id="delete_image" image_id="'.$res[image_id].'" class="delete">Delete</a>
 						</span>
 					</td>
 				</tr>
@@ -665,6 +669,19 @@ function show_file($res){
             	    </div>
 	            </div>';
 	return $data;
+}
+
+function GetIMG($id){
+    $res = mysql_fetch_array(mysql_query("SELECT rand_name FROM `file` WHERE id = $id"));
+    
+    $data = '<div id="dialog-form">
+	           <fieldset>
+                <img style="margin: auto;display: block;" width="350" height="350"  src="media/uploads/file/'.$res[0].'">
+               </fieldset>
+            </div>
+            ';
+    
+    return $data;
 }
 
 function increment($table){
