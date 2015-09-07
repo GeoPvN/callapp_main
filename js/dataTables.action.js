@@ -41,7 +41,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     var oTable = "";
 
     //Defoult Length
-    var dLength = [[-1, 30, 50, -1], [-1, 30, 50, "ყველა"]];
+    var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
 
     if (!empty(length))
         dLength = length;
@@ -68,8 +68,6 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
         "iDisplayLength": dLength[0][0],
         "aLengthMenu": dLength,                                                                         //Custom Select Options
         "sAjaxSource": aJaxURL,
-        "scrollY":        "250px",
-        "scrollCollapse": true,
         "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
         	if(!empty(total)){
 	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -140,31 +138,31 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     });    
 
     //new $.fn.dataTable.ColReorder(oTable);
-    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").keyup(function () {
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").keyup(function () {
     	
         /* Filter on the column (the index) of this element */
-        oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").index(this));
+        oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this));
     });
 
     /*
     * Support functions to provide a little bit of 'user friendlyness' to the textboxes in
     * the footer
     */
-    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").each(function (i) {
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").each(function (i) {
         asInitVals[i] = this.value;
     });
 
-    $("#"+tname+" thead input,  .dataTables_scrollHead .dataTable thead input").focus(function () {
+    $("#"+tname+" thead input,  .dataTables_scrollFoot .dataTable tfoot input").focus(function () {
         if (this.className == "search_init") {
             this.className = "";
             this.value = "";
         }
     });
 
-    $("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").blur(function (i) {
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").blur(function (i) {
         if (this.value == "") {
             this.className = "search_init";
-            this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollHead .dataTable thead input").index(this)];
+            this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this)];
         }
     });
 

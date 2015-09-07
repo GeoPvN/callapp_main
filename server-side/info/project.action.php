@@ -175,7 +175,7 @@ function GetPage($res,$increment){
                             <th style="width: 70px;">ნომერი</th>
                             <th style="width: 70px;">რიგი</th>
                             <th style="width: 100px;">შიდა ნომ.</th>
-                            <th style="width: 100px;">ტცენარი</th>
+                            <th style="width: 100px;">სცენარი</th>
 							<th style="width: 11px;" class="check"></th>
 						</tr>
                     </thead>

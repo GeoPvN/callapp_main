@@ -27,11 +27,12 @@
         
         client_id	= $("#hidden_client_id").val();
         project_id	= $("#hidden_project_id").val();
-        
-    	GetDataTable(tName+tbl, aJaxURL, act, col_num, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', change_colum);
+
+        GetDataTable(tName+tbl, aJaxURL, act, col_num, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', change_colum);
+
     	setTimeout(function(){
     		$('.ColVis, .dataTable_buttons').css('display','none');
-    	}, 10);
+    	}, 90);
     }
     
     function LoadDialog(fName){
@@ -69,7 +70,7 @@
 		        LoadTable('client',6,'get_list_person',"<'scrol_table't>");
 		        SetEvents("add_project", "delete_project", "", tName+'project', "add-edit-form-project", aJaxURL_object);
 		        SetEvents("add_client", "delete_client", "", tName+'client', "add-edit-form-client", aJaxURL_client);
-		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project").button(); 
+		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
 	       break;
 		   case "add-edit-form-project":
 		    	var buttons = {
@@ -298,19 +299,26 @@
 					table_id: $("#hidden_client_id").val(),
 
 				},
-		        success: function(data) {			        
-			        if(typeof(data.error) != 'undefined'){
-						if(data.error != ''){
-							alert(data.error);
-						}else{
-							$("#upload_img").attr("src", "media/uploads/images/worker/" + data.name);
-							console.log(data.page[1].name)	;					
-						}						
-					}					
+		        success: function(data) {	
+							$("#upload_img").attr("src", "media/uploads/file/" + data.page[0].rand_name);
+							$('#choose_button').attr('id','choose_buttondisabled')
 			    }
 		    });
         }
     });
+
+    $(document).on("click", "#delete_image", function () {
+	    $.ajax({
+            url: "server-side/upload/file.action.php",
+            data: "act=delete_file&file_id="+$(this).attr('image_id')+"&table_name=client",
+            success: function(data) {
+               $('#upload_img').attr('src','media/uploads/file/0.jpg');               
+               $("#choose_button").button();
+               $('#choose_buttondisabled').attr('id','choose_button')
+            }
+        });
+	});
+    
     function download_file(file){
         var download_file	= "media/uploads/file/"+file;
     	var download_name 	= file;
@@ -607,18 +615,7 @@
 	font-family: pvn;
 	font-weight: bold;
 }
-.scrol_table{
-	overflow-y: scroll;
-	height: 175px;
-}
-.scrol_table1{
-	overflow-y: scroll;
-	height: 298px;
-}
-.scrol_table2{
-	overflow-y: scroll;
-	height: 195px;
-}
+
 #table_right_menu{
     position: relative;
     float: right;

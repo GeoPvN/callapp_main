@@ -345,11 +345,13 @@ function Getclient($hidden_id)
 													client_contract.validity_period_start,
 													client_documents.invoice,
 													client_documents.report_invoice,
-													client_documents.taking_over_act
-													
+													client_documents.taking_over_act,
+													file.rand_name AS `image`,
+	                                                file.id AS `image_id`
 											FROM 	client
 											LEFT JOIN client_contract ON client.id=client_contract.client_id
 											LEFT JOIN client_documents ON client_documents.client_id=client.id
+	                                        LEFT JOIN file ON client.id=file.client_id AND file.actived = 1
 											WHERE 	client.id='$hidden_id'"));
 	return $res;
 }
@@ -368,6 +370,8 @@ function GetPage($res,$increment){
 	$image = $res['image'];
 	if(empty($image)){
 		$image = '0.jpg';
+	}else{
+	    $disable_img = 'disabled';
 	}
 	if ($res[invoice]==1) {
 		$inv_check="checked";
@@ -400,13 +404,13 @@ function GetPage($res,$increment){
 	       <table>
 	    		<tr>
 					<td id="img_colum">
-						<img style="margin-left: 5px;;" id="upload_img" src="media/uploads/images/worker/'.$image.'" />
+						<img style="margin-left: 5px;;" id="upload_img" src="media/uploads/file/'.$image.'" />
 					</td>
 				</tr>
 				<tr>
 					<td id="act">
 						<span>
-							<a href="#" id="view_image" class="complate">View</a> | <a href="#" id="delete_image" class="delete">Delete</a>
+							<a href="#" id="view_image" class="complate">View</a> | <a href="#" id="delete_image" image_id="'.$res[image_id].'" class="delete">Delete</a>
 						</span>
 					</td>
 				</tr>
@@ -414,7 +418,7 @@ function GetPage($res,$increment){
 					<td>
 						<div style="margin-top:10px; width: 127px; margin-left: -5px;" class="file-uploader">
 							<input id="choose_file" type="file" name="choose_file" class="input" style="display: none;">
-							<button id="choose_button" class="center">აირჩიეთ ფაილი</button>
+							<button id="choose_button'.$disable_img.'" class="center" >აირჩიეთ ფაილი</button>
 						</div>
 					</td>
 				</tr>
@@ -595,10 +599,10 @@ function GetPage($res,$increment){
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 100%;">დასახელება</th>
-                            <th style="width: 100%;">ტიპი</th>
-                            <th style="width: 100%;">შექმნის თარიღი</th>
-                            <th style="width: 100%;">ნომრები</th>
+                            <th style="width: 200px;">დასახელება</th>
+                            <th style="width: 160px;">ტიპი</th>
+                            <th style="width: 140px;">შექმნის თარიღი</th>
+                            <th style="width: 100px;">ნომრები</th>
 							<th style="width: 11px;" class="check"></th>
                         </tr>
                     </thead>
@@ -643,10 +647,10 @@ function show_file($res){
 									FROM   `file`
 									WHERE  `client_contract_id` = $res[contract_id] AND `actived` = 1");
 	while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
-		$str_file_contract .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 137px;float:left;">'.$file_res_incomming[file_date].'</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;">'.$file_res_incomming[name].'</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
+		$str_file_contract .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 137px;float:left;height: 25px;">'.$file_res_incomming[file_date].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;">'.$file_res_incomming[name].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;height: 25px;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
 	}
 	$data = '<div style="margin-top: 45px;">
                     <div style="width: 100%; border:1px solid #CCC;float: left;">

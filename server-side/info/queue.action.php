@@ -223,7 +223,7 @@ function GetPage($res)
 	       <spam class="task" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'task\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/task.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სცენარი</div></spam>
         </div>
 	    
-	    <div style="width: 445px;float: left;margin-left: 10px;" id="right_side">
+	    <div style="width: 574px;float: left;margin-left: 10px;" id="right_side">
             <fieldset style="display:none;" id="info">
                 <legend>შიდა ნომერი</legend>
 	            <span class="hide_said_menu">x</span>
@@ -235,12 +235,12 @@ function GetPage($res)
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 221px;">დასახელება</th>
-                            <th style="width: 120px;">ნომერი</th>
+                            <th style="width: 280px;">დასახელება</th>
+                            <th style="width: 200px;">ნომერი</th>
                             <th class="check" style="width: 8px;"></th>
                         </tr>
-                    </thead>
-                    <thead>
+                    </thead>                    
+	                <thead>
                         <tr class="search_header">
                             <th class="colum_hidden">
                         	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
@@ -253,7 +253,7 @@ function GetPage($res)
                             </th>                         
                             <th>
                             	<input style="margin-left: 9px;" type="checkbox" name="check-all" id="check-all">
-                            </th>           
+                            </td>           
                         </tr>
                     </thead>
                 </table>

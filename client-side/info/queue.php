@@ -39,9 +39,9 @@
 		        }
 		    };
         GetDialog(fName, 420, "auto", buttons, 'left top');
-        LoadTable('ext',3,'get_list_ext',"<'scrol_table't>",'','hidden_id='+$('#hidden_id').val());
+        LoadTable('ext',3,'get_list_ext',"<'F'lip>",'','hidden_id='+$('#hidden_id').val());
               // ServerLink,  AddButtonID,    DeleteButtonID,     CheckAllID,  DialogID,   SaveDialogID,  CloseDialogID,  DialogHeight,  DialogPosition,  DialogOpenAct,     DeleteAct        EditDialogAct        TableID  ColumNum     TableAct       TableFunction      TablePageNum     TableOtherParam
-        MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'scrol_table't>",      '',        'hidden_id='+$('#hidden_id').val());
+        MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'F'lip>",      '',        'hidden_id='+$('#hidden_id').val());
     }
 
 
@@ -49,7 +49,7 @@
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "871");
+        $(".add-edit-form-class").css("width", "1000");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -123,7 +123,13 @@
             success: function(data) {
                 CloseDialog('add-edit-form-in_num');
                 $('#global_id').val(data.global_id);
-                LoadTable('ext',3,'get_list_ext',"<'scrol_table't>",'','hidden_id='+$('#hidden_id').val());
+                var myId = '';
+                if(data.global_id !== null){
+                	myId = data.global_id;
+                }else{
+                	myId = $('#hidden_id').val();
+                }
+                LoadTable('ext',3,'get_list_ext',"<'F'lip>",'','hidden_id='+myId);
             }
         });
     });
@@ -164,7 +170,23 @@
 .ColVis, .dataTable_buttons{
 	z-index: 100;
 } 
-
+#table_ext_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_ext_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_ext_info{
+	width: 32%;
+}
+#table_ext_paginate{
+	margin-left: 0px;
+}
 </style>
 </head>
 

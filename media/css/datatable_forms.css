@@ -75,6 +75,7 @@
 	vertical-align: middle;
 	width: 137px;
 	float:left;
+	height: 25px;
 }
 #two_div{
 	border: 1px solid #CCC;
@@ -83,6 +84,7 @@
 	vertical-align: middle;
 	width: 110px;
 	float:left;
+	height: 25px;
 }
 #tree_div{
 	border: 1px solid #CCC;
@@ -92,6 +94,7 @@
 	width: 110px;
 	cursor:pointer;
 	float:left;
+	height: 25px;
 }
 #for_div{
 	border: 1px solid #CCC;
@@ -101,6 +104,7 @@
 	width: 20px;
 	cursor:pointer;
 	float:left;
+	height: 25px;
 }
 
 

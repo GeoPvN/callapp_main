@@ -53,7 +53,7 @@ switch ($action) {
 				unlink($path);
 			}
 			move_uploaded_file ( $_FILES [$element] ['tmp_name'], $path);
-			mysql_query("INSERT INTO `file` (`user_id`, `".$table_name."_id`, `name`, `rand_name`) VALUES ('$user', '$table_id', '$original_name', '$rand_name')");
+			mysql_query("INSERT INTO `file` (`user_id`, `".$table_name."_id`, `name`, `rand_name`, `file_date`) VALUES ('$user', '$table_id', '$original_name', '$rand_name', NOW())");
 			$file_tbale = mysql_query("     SELECT `name`,
                                     			   `rand_name`,
                                     			   `file_date`,
