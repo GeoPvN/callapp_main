@@ -502,7 +502,7 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
 							<th>
-				                <input style="margin-left: 9px;" type="checkbox" name="check-all" id="check-all">
+				                <input style="margin-left: 9px;" type="checkbox" name="check-all-client" id="check-all-client">
 				            </th>
                         </tr>
                     </thead>
@@ -628,7 +628,7 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
 							<th>
-				                <input type="checkbox" name="check-all" id="check-all">
+				                <input type="checkbox" name="check-all-project" id="check-all-project">
 				            </th>
                         </tr>
                     </thead>

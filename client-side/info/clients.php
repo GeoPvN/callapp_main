@@ -68,8 +68,8 @@
 		        });
 		        LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
 		        LoadTable('client',6,'get_list_person',"<'scrol_table't>");
-		        SetEvents("add_project", "delete_project", "", tName+'project', "add-edit-form-project", aJaxURL_object);
-		        SetEvents("add_client", "delete_client", "", tName+'client', "add-edit-form-client", aJaxURL_client);
+		        SetEvents("add_project", "delete_project", "check-all-project", tName+'project', "add-edit-form-project", aJaxURL_object);
+		        SetEvents("add_client", "delete_client", "check-all-client", tName+'client', "add-edit-form-client", aJaxURL_client);
 		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
 	       break;
 		   case "add-edit-form-project":
@@ -88,7 +88,7 @@
 				    };
 		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left top');
 		        LoadTable('number',5,'get_list_number',"<'scrol_table2't>");
-		        SetEvents("add_number", "delete_number", "", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
+		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
 		        $("#add_number, #delete_number").button(); 
 		        GetDate1('project_add_date');
 		   break;
@@ -126,7 +126,7 @@
 		   break;  
 		}
     }
-    
+
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
@@ -300,8 +300,8 @@
 
 				},
 		        success: function(data) {	
-							$("#upload_img").attr("src", "media/uploads/file/" + data.page[0].rand_name);
-							$('#choose_button').attr('id','choose_buttondisabled')
+					$("#upload_img").attr("src", "media/uploads/file/" + data.page[0].rand_name);
+					$('#choose_button').attr('id','choose_buttondisabled');
 			    }
 		    });
         }

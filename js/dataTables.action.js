@@ -546,7 +546,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
         }
 
     });
-
+    
     /* Check All */
     $("#" + check).on("click", function () {
     	$("#" + tname + " INPUT[type='checkbox']").prop("checked", $("#" + check).is(":checked"));
