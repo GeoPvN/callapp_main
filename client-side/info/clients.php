@@ -679,7 +679,7 @@
 <body>
 	<div id="tabs" style="width: 90%;">
 		<div class="callapp_head">კლიენტები<span class="callapp_refresh">
-			<img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">განახლება</span><hr class="callapp_head_hr">
+			<img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14"> განახლება</span><hr class="callapp_head_hr">
 		</div>
 	
 		
