@@ -19,7 +19,7 @@
         
     	GetButtons("add_button","delete_button");
     	LoadTable('index',colum_number,main_act,change_colum_main);
-    	SetEvents("add_button", "delete_button", "", tName+'index', dialog, aJaxURL);
+    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
     	
     });
 
@@ -658,11 +658,9 @@
 		<div class="callapp_head">კლიენტები<span class="callapp_refresh">
 			<img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">განახლება</span><hr class="callapp_head_hr">
 		</div>
+	
 		
-		<div class="callapp_tabs">
-		</div>
-		
-		<div class="callapp_filter_show">
+		<div >
 		
 			<button id="add_button">დამატება</button>
 			<button id="delete_button">წაშლა</button>
@@ -719,7 +717,7 @@
 			        </tr>
 			    </thead>
 			</table>
-		</div>
+		
 	</div>
 
 	<!-- jQuery Dialog -->

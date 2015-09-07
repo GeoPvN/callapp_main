@@ -404,7 +404,7 @@ function GetPage($res,$increment){
 	       <table>
 	    		<tr>
 					<td id="img_colum">
-						<img style="margin-left: 5px;;" id="upload_img" src="media/uploads/file/'.$image.'" />
+						<img style="margin-left: 5px;" width="105" height="105" id="upload_img" src="media/uploads/file/'.$image.'" />
 					</td>
 				</tr>
 				<tr>
