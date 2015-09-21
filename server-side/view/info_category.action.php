@@ -130,7 +130,7 @@ function Get_category($par_id)
 	$data = '';
 	$req = mysql_query("SELECT `id`, `name`
 						FROM `info_category`
-						WHERE actived=1 && parent_id=0 ");
+						WHERE actived=1");
 
 
 	$data .= '<option value="0" selected="selected">----</option>';

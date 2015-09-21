@@ -46,11 +46,69 @@
 		            }
 		        }
 		    };
-        GetDialog(fName, 741, "auto", buttons, 'left top');
+        GetDialog(fName, 575, "auto", buttons, 'left+43 top');
         LoadTable('sms',5,'get_list',"<'dataTable_buttons'T><'dataTable_content't><'F'p>");
         LoadTable('mail',5,'get_list',"<'dataTable_buttons'T><'dataTable_content't><'F'p>");
-        $("#client_checker,#add_sms,#add_mail").button();       
+        $("#client_checker,#add_sms,#add_mail").button();
+        GetDate2("date_input");
+		GetDateTimes1("date_time_input");
+		$('.quest_body').css('display','none');
+		$('.1').css('display','block');
+		$('#next_quest').attr('next_id',$('.1').attr('id'));
+		$('#next_quest, #back_quest').button();
+		$('#back_quest').prop('disabled',true);
     }
+
+    $(document).on("click", "#next_quest", function () {
+        var input_radio = '';
+        var input_checkbox = '';
+        var input = '';
+        input_radio = $('#' + $(this).attr('next_id') + ' .radio_input:checked').attr('next_quest');
+        input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
+        input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
+        
+        if(input_radio == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_radio).css('display','block');
+        	$('#next_quest').attr('next_id',input_radio);
+        	$('#back_quest').prop('disabled',false);
+        }
+        if(input == undefined){
+        	
+        }else{
+            if(input==0){
+            	$('#next_quest').prop('disabled',true);
+            }else{
+        	
+        	$('#'+input).css('display','block');
+        	$('#next_quest').attr('next_id',input);
+            }
+        }
+        if(input_checkbox == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_checkbox).css('display','block');
+        	$('#next_quest').attr('next_id',input_checkbox);
+        }
+    });
+
+    $(document).on("click", "#back_quest", function () {
+    	$('#next_quest').prop('disabled',false);
+    	$('#next_quest').attr('next_id',$(".quest_body:visible").attr("id"));
+    	
+    	var str = $(".quest_body:visible").attr("class");
+    	var res = str.replace("quest_body ", "");
+    	back_id = (res-1);
+    	if(back_id<1){
+    		back_id = 1;
+    		$('#back_quest').prop('disabled',true);
+    	}
+    	$('.quest_body').css('display','none');
+    	$('.'+back_id).css('display','block');
+    })
 
     $(document).on("change", "#operator_id", function () {
         if($(this).val() != 0){
@@ -200,11 +258,13 @@
     function hide_right_side(){
     	$("#side_menu").children('spam').children('div').css('color','#FFF');
         $(".info").children('img').attr('src','media/images/icons/info.png');
+        $(".scenar").children('img').attr('src','media/images/icons/scenar.png');
         $(".task").children('img').attr('src','media/images/icons/task.png');
         $(".sms").children('img').attr('src','media/images/icons/sms.png');
         $(".mail").children('img').attr('src','media/images/icons/mail.png');
         $(".record").children('img').attr('src','media/images/icons/record.png');
         $(".file").children('img').attr('src','media/images/icons/file.png');
+        $("#record fieldset").show();
     }
     
     function show_main(id,my_this){
@@ -223,7 +283,7 @@
     }
     
     $(document).on("click", ".hide_said_menu", function () {
-    	$("#right_side fieldset").hide();
+    	$("#right_side fieldset").hide();    	
     	$(".add-edit-form-class").css("width", "741");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
@@ -448,6 +508,128 @@
         $('#flesh_panel').css('z-index','99');
         $('#show_flesh_panel').attr('title','პანელის გადიდება');
     });
+
+    $(document).on("click", "#save-dialog", function () {
+		   
+		param 				= new Object();
+		param.act			= "save_incomming";
+	    	
+		param.id					= $("#hidden_id").val();
+			
+		// --------------------------------------------------
+		var items          = {};
+    	var checker        = {};
+    	var inp_checker    = {};
+    	var radio_checker  = {};
+    	var date_checker   = {};
+    	var date_date_checker = {};
+    	
+    	$('#add-edit-form .check_input:checked').each(function() {
+	    	
+    		key      = this.name;
+    		value    = this.value;
+    		ansver_val    = $(this).attr('ansver_val');
+    		
+    		checker[key] = checker[key] + "," + value;
+
+    	});
+    	
+    	items.checker = checker;
+    	
+        $('#add-edit-form .inputtext').each(function() {
+	    	
+    		inp_key      = this.id;
+    		inp_value    = this.value;
+    		inp_q_id     = $(this).attr('q_id');
+    		
+    	    if(inp_value != ''){
+    		 inp_checker[inp_key] = inp_checker[inp_key] + "," + inp_value;
+    	    }
+    	});
+    	
+    	items.input   = inp_checker;
+
+        $('#dialog-form .radio_input:checked').each(function() {
+	    	
+    		radio_key      = this.name;
+    		radio_value    = this.value;
+    		ansver_val     = $(this).attr('ansver_val');
+    		
+    		radio_checker[radio_key] = checker[radio_key] + "," + radio_value;
+
+    	});
+    	
+    	items.radio = radio_checker;
+
+        $('#add-edit-form .date_input').each(function() {
+	    	
+        	date_key      = this.id;
+    		date_value    = this.value;
+    	    if(date_value != ''){
+    	    	date_checker[date_key] = date_checker[date_key] + "," + date_value;
+    	    }
+    	});
+    	
+    	items.date   = date_checker;
+
+        $('#add-edit-form .date_time_input').each(function() {	
+	    	
+        	date_time_key      = this.id;
+        	date_time_value    = this.value;
+    	    if(date_time_value != ''){
+    	    	date_checker[date_time_key] = date_checker[date_time_key] + "," + date_time_value;
+    	    }
+    	});
+    	
+    	items.date_time   = date_date_checker;
+
+		//----------------------------------------------------
+		
+		// Incomming Vars
+		param.hidden_id				= $("#hidden_id").val();
+		param.incomming_phone		= $("#incomming_phone").val();
+		param.incomming_cat_1		= $("#incomming_cat_1").val();
+		param.incomming_cat_1_1		= $("#incomming_cat_1_1").val();
+		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
+		param.incomming_comment		= $("#incomming_comment").val();
+
+		// Incomming Client Vars
+		param.client_status			= $('input[name=client_status]:checked').val();
+		param.client_person_number	= $("#client_person_number").val();
+		param.client_person_lname	= $("#client_person_lname").val();
+		param.client_person_fname	= $("#client_person_fname").val();
+		param.client_person_phone1	= $("#client_person_phone1").val();
+		param.client_person_phone2	= $("#client_person_phone2").val();
+		param.client_person_mail1	= $("#client_person_mail1").val();
+    	param.client_person_mail2	= $("#client_person_mail2").val();
+    	param.client_person_addres1	= $("#client_person_addres1").val();
+		param.client_person_addres2	= $("#client_person_addres2").val();
+		param.client_person_note	= $("#client_person_note").val();
+		
+		param.client_number			= $("#client_number").val();
+		param.client_name	        = $("#client_name").val();
+		param.client_phone1			= $("#client_phone1").val();
+		param.client_phone2			= $("#client_phone2").val();
+		param.client_mail1	        = $("#client_mail1").val();
+		param.client_mail2			= $("#client_mail2").val();
+		param.client_note			= $("#client_note").val();
+		
+		var link = GetAjaxData(param);		
+	    	$.ajax({
+		        url: aJaxURL,
+			    data: link + "&checker=" + JSON.stringify(items.checker) + "&input=" + JSON.stringify(items.input)  + "&radio=" + JSON.stringify(items.radio) + "&date=" + JSON.stringify(items.date) + "&date_time=" + JSON.stringify(items.date_time),
+		        success: function(data) {       
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+						    LoadTable();
+						    CloseDialog("add-edit-form");
+						}
+					}
+		    	}
+		   });
+	});
 </script>
 <style type="text/css">
 .callapp_tabs{

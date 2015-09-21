@@ -6,6 +6,7 @@ require_once('../../includes/classes/core.php');
 $action                     = $_REQUEST['act'];
 $error                      = '';
 $data                       = '';
+$user_id	                = $_SESSION['USERID'];
 
 // Incomming Call Dialog Strings
 $hidden_id                  = $_REQUEST['id'];
@@ -17,6 +18,26 @@ $incomming_cat_1_1          = $_REQUEST['incomming_cat_1_1'];
 $incomming_cat_1_1_1        = $_REQUEST['incomming_cat_1_1_1'];
 $incomming_comment          = $_REQUEST['incomming_comment'];
 
+
+$client_status              = $_REQUEST['client_status'];
+$client_person_number       = $_REQUEST['client_person_number'];
+$client_person_lname        = $_REQUEST['client_person_lname'];
+$client_person_fname        = $_REQUEST['client_person_fname'];
+$client_person_phone1       = $_REQUEST['client_person_phone1'];
+$client_person_phone2       = $_REQUEST['client_person_phone2'];
+$client_person_mail1        = $_REQUEST['client_person_mail1'];
+$client_person_mail2        = $_REQUEST['client_person_mail2'];
+$client_person_addres1      = $_REQUEST['client_person_addres1'];
+$client_person_addres2      = $_REQUEST['client_person_addres2'];
+$client_person_note         = $_REQUEST['client_person_note'];
+
+$client_number              = $_REQUEST['client_number'];
+$client_name                = $_REQUEST['client_name'];
+$client_phone1              = $_REQUEST['client_phone1'];
+$client_phone2              = $_REQUEST['client_phone2'];
+$client_mail1               = $_REQUEST['client_mail1'];
+$client_mail2               = $_REQUEST['client_mail2'];
+$client_note                = $_REQUEST['client_note'];
 
 switch ($action) {
 	case 'get_add_page':
@@ -37,7 +58,18 @@ switch ($action) {
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
-	  	$rResult = mysql_query("SELECT id,id,date,phone,cat_1,cat_1_1,cat_1_1_1,`comment` FROM `incomming_call`;");
+	  	$rResult = mysql_query("SELECT 	incomming_call.id,
+                        				incomming_call.id,
+                        				incomming_call.date,
+                        				incomming_call.phone,
+                        				cat_1.`name`,
+                        				cat_1_1.`name`,
+                        				cat_1_1_1.`name`,
+                        				`comment`
+                                FROM 	`incomming_call`
+                                LEFT JOIN	info_category AS cat_1 ON incomming_call.cat_1 = cat_1.id
+                                LEFT JOIN	info_category AS cat_1_1 ON incomming_call.cat_1_1 = cat_1_1.id
+                                LEFT JOIN	info_category AS cat_1_1_1 ON incomming_call.cat_1_1_1 = cat_1_1_1.id");
 	  
 		$data = array(
 				"aaData"	=> array()
@@ -65,6 +97,77 @@ switch ($action) {
         $data		= array('page'	=> $page);
     
         break;
+    case 'save_incomming':
+        if($hidden_id == ''){
+            incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note);
+        }else{
+            incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note);
+        }
+        $checker     = json_decode($_REQUEST[checker]);
+        $input       = json_decode($_REQUEST[input]);
+        $radio       = json_decode($_REQUEST[radio]);
+        $date        = json_decode($_REQUEST[date]);
+        $date_time   = json_decode($_REQUEST[date_time]);
+        
+        mysql_query("DELETE FROM scenario_results
+                     WHERE incomming_call_id=$hidden_id;");
+        foreach ($checker as $key => $value) {
+            
+            $quest_id = str_replace("checkbox","",$key);            
+            $val = substr($value,10);
+            $last =  preg_split("/[\s,^]+/",$val);
+            foreach($last as $answer){               
+                mysql_query("INSERT INTO `scenario_results` 
+                            (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                            VALUES
+                            ('$user_id', '$hidden_id', '1', '$quest_id', '$answer', NULL)");
+            }
+        }
+        
+        foreach ($radio as $key => $value) {
+			    $quest_id = str_replace("radio","",$key);            
+                $val = substr($value,10);
+                $last =  preg_split("/[\s,^]+/",$val);
+			    mysql_query("INSERT INTO `scenario_results` 
+                            (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                            VALUES
+                            ('$user_id', '$hidden_id', '1', '$quest_id', '$last[0]', NULL)");
+		}
+        
+		foreach ($input as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+                         (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                         VALUES
+                         ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+		
+		foreach ($date as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+		        VALUES
+		        ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+		
+		foreach ($date_time as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+		        VALUES
+		        ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+            
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -79,6 +182,56 @@ echo json_encode($data);
 * ******************************
 */
 
+function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note){
+    mysql_query("INSERT INTO    `incomming_call` 
+                 (`id`,`user_id`,`date`,`phone`,`cat_1`,`cat_1_1`,`cat_1_1_1`,`comment`)
+                 VALUES
+                 ('$incomming_id','$user_id','$incomming_date','$incomming_phone','$incomming_cat_1','$incomming_cat_1_1','$incomming_cat_1_1_1','$incomming_comment')");
+    
+    mysql_query("INSERT INTO `personal_info` 
+                 (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`)
+                 VALUES
+                 ('$user_id', '$incomming_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '', '', '', '', '$client_note');");
+}
+
+function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note){
+    mysql_query("UPDATE `incomming_call` SET 
+                        `user_id`='$user_id',
+                        `phone`='$incomming_phone',
+                        `cat_1`='$incomming_cat_1',
+                        `cat_1_1`='$incomming_cat_1_1',
+                        `cat_1_1_1`='$incomming_cat_1_1_1',
+                        `comment`='$incomming_comment'
+                 WHERE  `id`='$hidden_id'");
+    
+    mysql_query("UPDATE `personal_info` SET
+                        `user_id`='$user_id',
+                        `client_person_number`='$client_person_number',
+                        `client_person_lname`='$client_person_lname',
+                        `client_person_fname`='$client_person_fname',
+                        `client_person_phone1`='$client_person_phone1',
+                        `client_person_phone2`='$client_person_phone2',
+                        `client_person_mail1`='$client_person_mail1',
+                        `client_person_mail2`='$client_person_mail2',
+                        `client_person_note`='$client_person_note',
+                        `client_person_addres1`='$client_person_addres1',
+                        `client_person_addres2`='$client_person_addres2',
+                        `client_number`='$client_number',
+                        `client_name`='$client_name',
+                        `client_phone1`='$client_phone1',
+                        `client_phone2`='$client_phone2',
+                        `client_mail1`='$client_mail1',
+                        `client_mail2`='$client_mail2',
+                        `client_city1`=NULL,
+                        `client_city2`=NULL,
+                        `client_addres1`=NULL,
+                        `client_addres2`=NULL,
+                        `client_index1`=NULL,
+                        `client_index2`=NULL,
+                        `client_note`='$client_note'
+                WHERE   `incomming_call_id`='$hidden_id'");
+}
+
 function next_quest($task_detail_id, $val) {
     $res = mysql_fetch_array(mysql_query("  SELECT 	`scenario_destination`.`destination`
         FROM 	`task`
@@ -92,14 +245,89 @@ function next_quest($task_detail_id, $val) {
 
 }
 
+function get_cat_1($id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = 0");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+    
+}
+function get_cat_1_1($id,$child_id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = $id");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $child_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+function get_cat_1_1_1($id,$child_id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = $id");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $child_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+
 function Getincomming($hidden_id)
 {
-	$res = mysql_fetch_assoc(mysql_query("SELECT  incomming_call.id AS id,
-												  incomming_call.`date` AS call_date,
-												  DATE_FORMAT(incomming_call.`date`,'%y-%m-%d') AS `date`,
-												  incomming_call.`phone`														
-										  FROM 	  incomming_call
-										  where   incomming_call.id =  $hidden_id"));
+	$res = mysql_fetch_assoc(mysql_query("SELECT    incomming_call.id AS id,
+                                    				incomming_call.`date` AS call_date,
+                                    				DATE_FORMAT(incomming_call.`date`,'%y-%m-%d') AS `date`,
+                                    				incomming_call.`phone`,
+                                    				incomming_call.cat_1,
+                                    				incomming_call.cat_1_1,
+                                    				incomming_call.cat_1_1_1,
+                                    				incomming_call.`comment`,
+                                    				personal_info.`client_person_number`,
+                                    				personal_info.`client_person_lname`,
+                                    				personal_info.`client_person_fname`,
+                                    				personal_info.`client_person_phone1`,
+                                    				personal_info.`client_person_phone2`,
+                                    				personal_info.`client_person_mail1`,
+                                    				personal_info.`client_person_mail2`,
+                                    				personal_info.`client_person_note`,
+	                                                personal_info.`client_person_addres1`,
+	                                                personal_info.`client_person_addres2`,
+                                    				personal_info.`client_number`,
+                                    				personal_info.`client_name`,
+                                    				personal_info.`client_phone1`,
+                                    				personal_info.`client_phone2`,
+                                    				personal_info.`client_mail1`,
+                                    				personal_info.`client_mail2`,
+                                    				personal_info.`client_note`
+                                        FROM 	   incomming_call
+                                        LEFT JOIN  personal_info ON incomming_call.id = personal_info.incomming_call_id
+                                        WHERE      incomming_call.id =  $hidden_id"));
 	return $res;
 }
 
@@ -107,7 +335,7 @@ function GetPage($res,$increment)
 {
 	$data  .= '
 	<div id="dialog-form">
-	    <fieldset style="width: 600px;  float: left;">
+	    <fieldset style="width: 430px;  float: left;">
 	       <legend>ძირითადი ინფორმაცია</legend>
 	       <table class="dialog-form-table">
 	           <tr>
@@ -116,14 +344,14 @@ function GetPage($res,$increment)
             	   <td></td>
 	           </tr>
     	       <tr>
-	               <td style="width: 210px;"><label for="incomming_id">მომართვის №</label></td>
-	               <td style="width: 210px;"><label for="incomming_date">თარიღი</label></td>
+	               <td style="width: 150px;"><label for="incomming_id">მომართვის №</label></td>
+	               <td style="width: 150px;"><label for="incomming_date">თარიღი</label></td>
 	               <td><label for="incomming_phone">ტელეფონი</td>
     	       </tr>
 	           <tr>
-	               <td><input id="incomming_id" type="text" value="'.(($res[id]=='')?$increment:$res[id]).'"></td>
-	               <td><input id="incomming_date" type="text" value=""></td>
-	               <td><input id="incomming_phone" type="text" value=""></td>
+	               <td><input style="width: 110px;" id="incomming_id" type="text" value="'.(($res['id']=='')?$increment:$res['id']).'"></td>
+	               <td><input style="width: 125px;" id="incomming_date" type="text" value="'.$res['call_date'].'"></td>
+	               <td><input style="width: 110px;" id="incomming_phone" type="text" value="'.$res['phone'].'"></td>
     	       </tr>
 	       </table>
 	       <table class="dialog-form-table">
@@ -131,19 +359,19 @@ function GetPage($res,$increment)
 	               <td><label for="incomming_cat_1">კატეგორია 1</label></td>
 	           </tr>
 	           <tr>
-	               <td><select id="incomming_cat_1" style="width: 598px;"></select></td>
+	               <td><select id="incomming_cat_1" style="width: 420px;">'.get_cat_1($res['cat_1']).'</select></td>
 	           </tr>
 	           <tr>
 	               <td><label for="incomming_cat_1_1">კატეგორია 1.1</label></td>
 	           </tr>
 	           <tr>
-	               <td><select id="incomming_cat_1_1" style="width: 598px;"></select></td>
+	               <td><select id="incomming_cat_1_1" style="width: 420px;">'.get_cat_1_1($res['cat_1'],$res['cat_1_1']).'</select></td>
 	           </tr>
 	           <tr>
 	               <td><label for="incomming_cat_1_1_1">კატეგორია 1.1.1</label></td>
     	       </tr>
 	           <tr>
-	               <td><select id="incomming_cat_1_1_1" style="width: 598px;"></select></td>
+	               <td><select id="incomming_cat_1_1_1" style="width: 420px;">'.get_cat_1_1_1($res['cat_1_1'],$res['cat_1_1_1']).'</select></td>
     	       </tr>
 	       </table>
 	       <table class="dialog-form-table">
@@ -151,120 +379,16 @@ function GetPage($res,$increment)
 	               <td><label for="incomming_comment">დამატებითი ინფორმაცია</label></td>
 	           </tr>
 	           <tr>
-	               <td><textarea id="incomming_comment" style="resize: vertical;width: 592px;"></textarea></td>
+	               <td><textarea id="incomming_comment" style="resize: vertical;width: 415px;height: 149px;">'.$res['comment'].'</textarea></td>
 	           </tr>
 	       </table>
-	       <fieldset>
-	           <legend>სცენარი</legend>';
-	           $query = mysql_query("SELECT 	`quest_1`.id,
-            				                    `quest_1`.`name`,
-            				                    `quest_1`.note,
-                                                `scenario`.`name`,
-        		                                `scenario_detail`.id AS sc_det_id,
-        		                                `scenario_detail`.`sort`
-                                    FROM        `scenario`
-                                    JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
-                                    JOIN        quest_1 ON scenario_detail.quest_id = quest_1.id
-                                    WHERE       scenario.id = 1 AND scenario_detail.actived = 1
-                                    ORDER BY    scenario_detail.sort ASC");
-		
-		$data .= '<div id="dialog-form" style="width:100%; overflow-y:scroll; max-height:400px;">
-                    <fieldset>
-                        <legend>კითხვები</legend>';
-		
-		while ($row = mysql_fetch_array($query)) {
-		    
-		    $last_q = mysql_query("  SELECT quest_detail.id
-                                     FROM `quest_detail`
-                                     JOIN scenario_detail ON scenario_detail.quest_id = quest_detail.quest_id
-                                     AND scenario_detail.scenario_id = 1
-                                     WHERE quest_detail.quest_id = $row[0]");
-		    
-		    $data .= '<div class="quest_body '.$row[5].'" id="'.$row[0].'"><textarea style="width: 540px; height:100px; resize: none; background: #EBF9FF;" class="idle">'. $row[2] .'</textarea>
-		            <table class="dialog-form-table">
-		    		<tr>
-						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .'</td>
-		                </tr>
-		                    ';
-		    
-            while ($last_a = mysql_fetch_array($last_q)){
-                
-            
-		     
-		    $query1 = mysql_query(" SELECT CASE 	WHEN quest_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:540px; text-align:left;\"><input',IF(scenar_1.answer_$last_a[0] = quest_detail.answer,' checked',''), ' class=\"check_input\" ansver_val=\"',quest_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', quest_1.id, '\" value=\"', quest_detail.id, '\"><label style=\"float:left; padding: 7px;\">', quest_detail.answer, '</label></td></tr>')
-                        							WHEN quest_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:540px; text-align:left;\"><input value=\"',IF(ISNULL(scenar_1.answer_$last_a[0]), '', scenar_1.answer_$last_a[0]),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" q_id=\"',quest_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td></tr>')
-							                        WHEN quest_detail.quest_type_id = 3 THEN CONCAT('<tr><td>',production.`name`,'</td><td>',production.`price`,'</td><td>',production.`description`,'</td><td>',production.`comment`,'</td><td><input',IF(scenar_1.answer_$last_a[0] = production.id,' checked',''), ' ansver_val=\"',production.`name`,'\" class=\"prod_inp\" type=\"checkbox\" name=\"checkbox|', quest_1.id, '|',quest_detail.id, '\" value=\"', production.`id`, '\"> <input style=\"width:30px;height: 15px;\" min=0 class=\"prod_count\" type=\"number\" ></td></tr>')
-		                                            WHEN quest_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:540px; text-align:left;\"><input',IF(scenar_1.answer_$last_a[0] = quest_detail.answer,' checked',''), ' class=\"radio_input\" ansver_val=\"',quest_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', quest_1.id, '\" value=\"', quest_detail.id, '\"><label style=\"float:left; padding: 7px;\">', quest_detail.answer, '</label></td></tr>')
-		                                            WHEN quest_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:540px; text-align:left;\"><input value=\"',IF(scenar_1.answer_$last_a[0] != '',scenar_1.answer_$last_a[0],''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" q_id=\"',quest_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td></tr>')
-		                                            WHEN quest_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:540px; text-align:left;\"><input value=\"',IF(scenar_1.answer_$last_a[0] != '',scenar_1.answer_$last_a[0],''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" q_id=\"',quest_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td></tr>')
-                            				END AS `ans`,
-                            				quest_detail.quest_type_id,scenar_1.answer_$last_a[0]
-                                    FROM `quest_detail`
-                                    JOIN  quest_1 ON quest_detail.quest_id = quest_1.id
-                                    LEFT JOIN production ON quest_detail.product_id = production.id
-                                    LEFT JOIN scenar_1 ON scenar_1.task_detail_id = '$res[id]'
-                                    WHERE quest_detail.id = $last_a[0] AND quest_detail.actived = 1
-                                    ORDER BY quest_1.id, quest_detail.quest_type_id ASC");
-
-		
-		        
-		          $g =0;
-		                        while ($row1 = mysql_fetch_array($query1)) {
-		                            $q_type = $row1[1];		                            
-		                            
-    		                        if($row1[1] == 3){
-            		                        $tr .= $row1[0];
-            		                        $data1 = ' <style>
-            		
-            		                        #prod{
-                                            border:2px solid #85B1DE; width:100%;
-                                          }
-                                          #prod #prodtr{
-                                            background:#F2F2F2;
-                                          }
-                                          #prod th{
-                                            width:0%; padding:5px; border:1px solid #85B1DE;
-                                          }
-                                          #prod td{
-                                            border:1px solid #85B1DE; padding:2px;
-                                          }
-                                          #prod tr{
-                                            background: #FEFEFE
-                                          }
-            		
-                                          </style>
-                                      <table id="prod">
-                                      <tr id="prodtr">
-                                      <th style="width: 100%;">დასახელება</th>
-                                      <th style="width: 100%;">ფასი</th>
-                                      <th style="width: 100%;">აღწერა</th>
-                                      <th style="width: 100%;">კომენტარი</th>
-                                      <th style="width: 20px;">#</th>
-                                      </tr>
-                                          '.$tr.'
-                                      </table>';
-                                  }else{
-                                      
-                                    $data .= $row1[0];
-                                  }
-		
-                            }}
-                    if($q_type == 3){
-                        $data .= $data1;
-                    }
-                    $data .= '</table>
-                    <hr><br></div>';
-            
-		}
-		
-		$data .= '<button id="back_quest" back_id="0" style="float:left;">უკან</button><button id="next_quest" style="float:right;" next_id="0">წინ</button></fieldset>
-		</div>
-	       </fieldset>	       
+	       
 	    </fieldset>
 	    
 	    
-        <div id="side_menu" style="float: left;height: 404px;width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
+        <div id="side_menu" style="float: left;height: 485px;width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
 	       <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ინფო</div></spam>
+	       <spam class="scenar" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'scenar\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/scenar.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სცენარი</div></spam>
 	       <spam class="task" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'task\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/task.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დავალება</div></spam>
 	       <spam class="sms" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'sms\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/sms.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">SMS</div></spam>
 	       <spam class="mail" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'mail\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/mail.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">E-mail</div></spam>
@@ -272,7 +396,7 @@ function GetPage($res,$increment)
 	       <spam class="file" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'file\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/file.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ფაილი</div></spam>
 	    </div>
 	    
-	    <div style="width: 445px;float: left;margin-left: 10px;" id="right_side">
+	    <div style="width: 619px;float: left;margin-left: 10px;" id="right_side">
             <fieldset style="display:none;" id="info">
                 <legend>მომართვის ავტორი</legend>
 	            <span class="hide_said_menu">x</span>
@@ -290,44 +414,44 @@ function GetPage($res,$increment)
                                
                            </tr>
                            <tr>
-                               <td><input style="width: 400px;" id="client_person_number" type="text" value=""></td>
-                               
+                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
+                                  
                            </tr>
                         </table>
                         <table class="margin_top_10">
                             <tr>
-                                <td style="width: 230px;"><label for="client_lname">სახელი</label></td>
+                                <td style="width: 328px;"><label for="client_lname">სახელი</label></td>
 	                            <td><label for="client_person_fname">გვარი</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_lname" type="text" value=""></td>
-	                            <td><input id="client_person_fname" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
                             </tr>
                         </table>
                         <table class="margin_top_10">
                             <tr>
-                                <td style="width: 230px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+                                <td style="width: 328px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
         	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_phone1" type="text" value=""></td>
-        	                    <td><input id="client_person_phone2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
                             </tr>
     	                    <tr>
-                                <td style="width: 230px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+                                <td style="width: 328px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
         	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_mail1" type="text" value=""></td>
-        	                    <td><input id="client_person_mail2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
                             </tr>
 	                        <tr>
-                                <td style="width: 230px;"><label for="client_person_addres1">მისამართი 1</label></td>
+                                <td style="width: 328px;"><label for="client_person_addres1">მისამართი 1</label></td>
         	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_addres1" type="text" value=""></td>
-        	                    <td><input id="client_person_addres2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['client_person_addres1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['client_person_addres2'].'"></td>
                             </tr>
                         </table>                	    
     	                <table class="margin_top_10">
@@ -335,7 +459,7 @@ function GetPage($res,$increment)
         	                    <td><label for="client_person_note">შენიშვნა</label></td>
         	                </tr>
         	                <tr>
-        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 400px;"></textarea></td>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 577px;">'.$res['client_person_note'].'</textarea></td>
         	                </tr>
     	                </table>
         	    </div>
@@ -351,7 +475,7 @@ function GetPage($res,$increment)
                                <td></td>
                            </tr>
                            <tr>
-                               <td><input id="client_number" type="text" value=""></td>
+                               <td><input style="width: 483px;" id="client_number" type="text" value="'.$res['client_number'].'"></td>
                                <td><button id="client_checker" style="margin-left: 5px;">შემოწმება</button></td>
                            </tr>
                         </table>
@@ -360,25 +484,25 @@ function GetPage($res,$increment)
                                 <td><label for="client_name">დასახელება</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 400px;" id="client_name" type="text" value=""></td>
+                                <td><input style="width: 565px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
                             </tr>
                         </table>
                         <table class="margin_top_10">
                             <tr>
-                                <td style="width: 230px;"><label for="client_phone1">ტელეფონი 1</label></td>
+                                <td style="width: 312px;"><label for="client_phone1">ტელეფონი 1</label></td>
         	                    <td><label for="client_phone2">ტელეფონი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_phone1" type="text" value=""></td>
-        	                    <td><input id="client_phone2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_phone1" type="text" value="'.$res['client_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_phone2" type="text" value="'.$res['client_phone2'].'"></td>
                             </tr>
     	                    <tr>
-                                <td style="width: 230px;"><label for="client_mail1">ელ-ფოსტა 1</label></td>
+                                <td style="width: 312px;"><label for="client_mail1">ელ-ფოსტა 1</label></td>
         	                    <td><label for="client_mail2">ელ-ფოსტა 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_mail1" type="text" value=""></td>
-        	                    <td><input id="client_mail2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_mail1" type="text" value="'.$res['client_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_mail2" type="text" value="'.$res['client_mail2'].'"></td>
                             </tr>
                         </table>
                 	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;float: left;">
@@ -432,7 +556,7 @@ function GetPage($res,$increment)
         	                   <td><label for="client_note">შენიშვნა</label></td>
         	               </tr>
         	               <tr>
-        	                   <td><textarea id="client_note" style="resize: vertical;width: 400px;"></textarea></td>
+        	                   <td><textarea id="client_note" style="resize: vertical;width: 565px;">'.$res['client_note'].'</textarea></td>
         	               </tr>
     	               </table>
 	               </div>
@@ -444,36 +568,36 @@ function GetPage($res,$increment)
                                
                            </tr>
                            <tr>
-                               <td><input style="width: 400px;" id="client_person_number" type="text" value=""></td>
+                               <td><input style="width: 565px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
                                
                            </tr>
                         </table>
                         <table class="margin_top_10">
                             <tr>
-                                <td style="width: 230px;"><label for="client_lname">სახელი</label></td>
+                                <td style="width: 312px;"><label for="client_lname">სახელი</label></td>
 	                            <td><label for="client_person_fname">გვარი</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_lname" type="text" value=""></td>
-	                            <td><input id="client_person_fname" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
                             </tr>
                         </table>
                         <table class="margin_top_10">
                             <tr>
-                                <td style="width: 230px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+                                <td style="width: 312px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
         	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_phone1" type="text" value=""></td>
-        	                    <td><input id="client_person_phone2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
                             </tr>
     	                    <tr>
-                                <td style="width: 230px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+                                <td style="width: 312px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
         	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input id="client_person_mail1" type="text" value=""></td>
-        	                    <td><input id="client_person_mail2" type="text" value=""></td>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
                             </tr>
                         </table>                	    
     	                <table class="margin_top_10">
@@ -481,7 +605,7 @@ function GetPage($res,$increment)
         	                    <td><label for="client_person_note">შენიშვნა</label></td>
         	                </tr>
         	                <tr>
-        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 400px;"></textarea></td>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 565px;">'.$res['client_person_note'].'</textarea></td>
         	                </tr>
     	                </table>
 	               </div>
@@ -498,48 +622,48 @@ function GetPage($res,$increment)
 	                   <td><label for="task_type_id">დავალების ტიპი</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 420px;" id="task_type_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_type_id"></select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_start_date">პერიოდი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><input style="float: left;" id="task_start_date" type="text" value=""><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	                   <td style="width: 350px;"><input style="float: left;" id="task_start_date" type="text" value=""><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
 	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 420px;" id="task_departament_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_departament_id"></select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_recipient_id">ადრესატი</label></td>
 	                   <td><label for="task_controler_id">მაკონტროლებელი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 174px;" id="task_recipient_id"></select></td>
-	                   <td><select style="width: 174px;" id="task_controler_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_recipient_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_controler_id"></select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_priority_id">პრიორიტეტი</label></td>
 	                   <td><label for="task_status_id">სტატუსი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 174px;" id="task_priority_id"></select></td>
-	                   <td><select style="width: 174px;" id="task_status_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_priority_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_description">არწერა</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><textarea style="resize: vertical;width: 413px;" id="task_description"></textarea></td>
+	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_description"></textarea></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_note">არწერა</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><textarea style="resize: vertical;width: 413px;" id="task_note"></textarea></td>
+	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_note"></textarea></td>
 	               </tr>
 	            </table>
             </fieldset>
@@ -634,7 +758,74 @@ function GetPage($res,$increment)
                 <legend>ფაილი</legend>
 	            <span class="hide_said_menu">x</span>
 	                '.show_file($res).'
-            </fieldset>
+            </fieldset>';
+	                    
+	                    $query = mysql_query("SELECT 	`question`.id,
+            				                    `question`.`name`,
+            				                    `question`.note,
+                                                `scenario`.`name`,
+        		                                `scenario_detail`.id AS sc_det_id,
+        		                                `scenario_detail`.`sort`
+                                    FROM        `scenario`
+                                    JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
+                                    JOIN        question ON scenario_detail.quest_id = question.id
+                                    WHERE       scenario.id = 1 AND scenario_detail.actived = 1
+                                    ORDER BY    scenario_detail.sort ASC");
+		
+		$data .= '
+                    <fieldset style="display:none;height: 465px;" id="scenar">
+                        <legend>კითხვები</legend>';
+		
+while ($row = mysql_fetch_array($query)) {
+		    
+		    $last_q = mysql_query("  SELECT question_detail.id
+                                     FROM `question_detail`
+                                     JOIN scenario_detail ON scenario_detail.quest_id = question_detail.quest_id
+                                     AND scenario_detail.scenario_id = 1
+                                     WHERE question_detail.quest_id = $row[0]");
+		    
+		    $data .= '<div class="quest_body '.$row[5].'" id="'.$row[0].'"><textarea style="width: 590px; height:100px; resize: none; background: #F9F9F9;" class="idle">'. $row[2] .'</textarea>
+		            <table class="dialog-form-table">
+		    		<tr>
+						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .'</td>
+		                </tr>
+		                    ';
+		    
+            while ($last_a = mysql_fetch_array($last_q)){
+                
+            
+		     
+		    $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+                        							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+							                        WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+		                                            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+		                                            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+                            				END AS `ans`,
+                            				question_detail.quest_type_id
+                                    FROM question_detail		                            
+                                    LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id
+		                            LEFT JOIN incomming_call ON incomming_call.id = scenario_results.incomming_call_id
+		                            LEFT JOIN scenario_destination ON scenario_destination.answer_id = $last_a[0]
+                                    WHERE question_detail.id = $last_a[0]");
+
+		
+		        
+		          $g =0;
+		                        while ($row1 = mysql_fetch_array($query1)) {
+		                            $q_type = $row1[1];	
+                                      
+                                    $data .= $row1[0];
+
+                            }}
+                    
+                    $data .= '</table>
+                    <hr><br></div>';
+            
+		}
+		
+		$data .= '<button id="back_quest" back_id="0" style="float:left;">უკან</button><button id="next_quest" style="float:right;" next_id="0">წინ</button></fieldset>
+		</div>
+	       </fieldset>
 	    </div>
 	</div><input type="hidden" value="'.$res[id].'" id="hidden_id">';
 
@@ -734,7 +925,6 @@ function GetMailSendPage(){
 }
 
 function show_record($res){
-    $res[phone] = 'ტესტ';
     $record_incomming = mysql_query("SELECT  `datetime`,
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                              `file_name`
@@ -812,18 +1002,18 @@ function show_file($res){
                                      FROM   `file`
                                      WHERE  `incomming_call_id` = $res[id] AND `actived` = 1");
     while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
-        $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 137px;float:left;">'.$file_res_incomming[file_date].'</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;">'.$file_res_incomming[name].'</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
+        $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">'.$file_res_incomming[file_date].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">'.$file_res_incomming[name].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 160px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
     }
     $data = '<div style="margin-top: 15px;">
                     <div style="width: 100%; border:1px solid #CCC;float: left;">    	            
-    	                   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 137px;float:left;">თარიღი</div>
-                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;">დასახელება</div>
-                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;">ჩამოტვირთვა</div>
+    	                   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">თარიღი</div>
+                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">დასახელება</div>
+                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 160px;float:left;">ჩამოტვირთვა</div>
                            <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 20px;float:left;">-</div>
-    	                   <div style="border: 1px solid #CCC;text-align: center;vertical-align: middle;float: left;width: 421px;"><button id="upload_file" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name" id="file_name"></div>
+    	                   <div style="text-align: center;vertical-align: middle;float: left;width: 595px;"><button id="upload_file" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name" id="file_name"></div>
                            <div id="paste_files">
                            '.$str_file_incomming.'
                            </div>

@@ -5,7 +5,7 @@ $error	= '';
 $data	= '';
 
 $user_id	       = $_SESSION['USERID'];
-$quest_id          = $_REQUEST['quest_id'];
+$quest_id          = $_REQUEST['id'];
 $quest_detail_id   = $_REQUEST['quest_detail_id'];
 $add_id            = $_REQUEST['add_id'];
 $name              = $_REQUEST['name'];
@@ -66,9 +66,9 @@ switch ($action) {
 	    	
 	    $rResult = mysql_query("SELECT 	`scenario_detail`.`id`,
 	                                    `scenario_detail`.`sort`,
-                        				`quest_1`.`name`
+                        				`question`.`name`
                                 FROM 	`scenario_detail`
-                                LEFT JOIN quest_1 ON scenario_detail.quest_id = quest_1.id
+                                LEFT JOIN question ON scenario_detail.quest_id = question.id
                                 WHERE 	`scenario_detail`.`actived` = 1 AND `scenario_detail`.`scenario_id` = $quest_id");
 	
 	    $data = array(
@@ -126,7 +126,7 @@ switch ($action) {
 	    if($_REQUEST['quest_detail_id'] == ''){
 	        save_answer($user_id, $quest_id1, $add_id);
 	    }else{
-	        update_answer($quest_detail_id, $quest_id1, $quest_id);
+	        update_answer($quest_detail_id, $quest_id1, $_REQUEST['quest_id']);
 	    }
 		
 		break;
@@ -165,16 +165,6 @@ function save($user_id, $name, $cat, $le_cat)
                     (`user_id`,`name`,`scenario_cat_id`,`scenario_le_cat_id`)
                     VALUES
                     ('$user_id','$name','$cat','$le_cat')");
-        $rr = mysql_fetch_array(mysql_query("   SELECT 	`id`,
-                                                		`name`
-                                                FROM 	`scenario`
-                                                ORDER BY `id` DESC
-                                                LIMIT 1 "));
-        mysql_query("CREATE TABLE `scenar_$rr[0]` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT,
-                      `task_detail_id` int(11) NULL,
-                      PRIMARY KEY (`id`)
-                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
         
     }else{
         $error = 'ესეთი სახელი უკვე არსებობს!';
@@ -208,37 +198,17 @@ function save_answer($user_id, $quest_id1, $add_id)
         $sort_key = $sort[0]+1;
     }
     
-    $answer_check = mysql_num_rows(mysql_query("SELECT quest_1.id
-                                    FROM `quest_1`
-                                    JOIN quest_detail ON quest_1.id = quest_detail.quest_id
-                                    WHERE quest_1.id = $quest_id1"));
+    $answer_check = mysql_num_rows(mysql_query("SELECT question.id
+                                                FROM `question`
+                                                JOIN question_detail ON question.id = question_detail.quest_id
+                                                WHERE question.id = $quest_id1"));
     
     if($answer_check > 0){
     mysql_query("INSERT INTO `scenario_detail`
                 (`user_id`,`quest_id`,`scenario_id`,`sort`)
                 VALUES
                 ('$user_id','$quest_id1','$add_id','$sort_key')");
-    
-    $rr = mysql_query("   SELECT 	`scenario_detail`.`scenario_id`,
-                                                    `scenario_detail`.quest_id,
-                                                    `quest_detail`.`quest_type_id`,
-                                                    `quest_detail`.`id`
-                                            FROM 	`scenario_detail`
-                                            JOIN	`quest_1` ON scenario_detail.quest_id = quest_1.id
-                                            JOIN	`quest_detail` ON quest_1.id = quest_detail.quest_id
-                                            WHERE   `scenario_detail`.scenario_id = $add_id");
-    while ($rrr = mysql_fetch_assoc($rr)) {
-    if($rrr[quest_type_id] <= 4){
-        $q_t = "VARCHAR(80)";
-    }elseif ($rrr[quest_type_id] == 5){
-        $q_t = "date";
-    }elseif ($rrr[quest_type_id] == 6){
-        $q_t = "datetime";
-    }
-    
-    mysql_query("  ALTER TABLE scenar_$rrr[scenario_id]
-                   ADD ( `answer_$rrr[id]` $q_t NULL)");
-    }
+
     }else{
         $error = 'ამ კითხვას არ აქვს პასუხები! ჯერ პასუხები შეავსეთ და მერე დაამატეტ კითხვა სცენარში!';
     }    
@@ -249,26 +219,7 @@ function save_answer($user_id, $quest_id1, $add_id)
 }
 
 function update_answer($quest_detail_id, $quest_id1, $quest_id)
-{    
-    $rr = mysql_fetch_array(mysql_query("   SELECT 	`scenario_detail`.`scenario_id`,
-                                    				`scenario_detail`.quest_id,
-                                    				`quest_detail`.`quest_type_id`
-                                            FROM 	`scenario_detail`
-                                            JOIN	`quest_1` ON scenario_detail.quest_id = quest_1.id
-                                            JOIN	`quest_detail` ON quest_1.id = quest_detail.quest_id
-                                            WHERE   `scenario_detail`.`id` = $quest_detail_id
-                                            "));
-    if($rr[2] <= 4){
-        $q_t = "VARCHAR(50)";
-    }elseif ($rr[2] == 5){
-        $q_t = "date";
-    }elseif ($rr[2] == 6){
-        $q_t = "datetime";
-    }
-    
-    mysql_query("ALTER TABLE scenar_$rr[0] CHANGE `quest_$rr[1]` `quest_$quest_id1` $q_t");
-    mysql_query("ALTER TABLE scenar_$rr[0] CHANGE `answer_$rr[1]` `answer_$quest_id1` $q_t");
-    
+{
     mysql_query("	UPDATE  `scenario_detail`
                     SET     `quest_id`      = '$quest_id1',
                             `scenario_id`   = '$quest_id'
@@ -276,9 +227,7 @@ function update_answer($quest_detail_id, $quest_id1, $quest_id)
 }
 
 function disable($quest_id)
-{    
-    mysql_query("DROP TABLE scenar_$quest_id");
-    
+{
     mysql_query("	UPDATE  `scenario`
                     SET     `actived` = 0
                     WHERE	`id`      = $quest_id");
@@ -286,15 +235,6 @@ function disable($quest_id)
 
 function disable_det($quest_detail_id)
 {
-    $rr = mysql_fetch_array(mysql_query("   SELECT  `scenario_id`,
-                                            		`quest_id`
-                                            FROM 	`scenario_detail`
-                                            WHERE 	`id` = $quest_detail_id"));
-    
-    mysql_query("ALTER TABLE scenar_$rr[0]
-                 DROP COLUMN quest_$rr[1],
-                 DROP COLUMN answer_$rr[1]");
-    
     mysql_query("	UPDATE  `scenario_detail`
                     SET     `actived` = 0
                     WHERE	`id`      = $quest_detail_id");
@@ -302,16 +242,16 @@ function disable_det($quest_detail_id)
 
 function GetQuest($quest_detail_id, $rr)
 {
-    $rrr = mysql_fetch_array(mysql_query("  SELECT  `quest_1`.`id`
+    $rrr = mysql_fetch_array(mysql_query("  SELECT  `question`.`id`
                                             FROM 	`scenario`
                                             LEFT JOIN scenario_detail ON scenario.id = scenario_detail.scenario_id
-                                            LEFT JOIN quest_1 ON scenario_detail.quest_id = quest_1.id
+                                            LEFT JOIN question ON scenario_detail.quest_id = question.id
                                             WHERE 	`scenario_detail`.`id` = $rr"));
     
-    $req = mysql_query("	SELECT 	`quest_1`.`id`,
-                                    `quest_1`.`name`
-                            FROM 	`quest_1`
-                            WHERE 	`quest_1`.`actived` = 1" );
+    $req = mysql_query("	SELECT 	`question`.`id`,
+                                    `question`.`name`
+                            FROM 	`question`
+                            WHERE 	`question`.`actived` = 1" );
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -365,11 +305,11 @@ function GetLeCat($cat_id,$le_cat_id)
 
 function GetAlScenQuest($scenarquest,$dest)
 {
-    $req = mysql_query("	SELECT  `quest_1`.`id`,
-                    				`quest_1`.`name`
+    $req = mysql_query("	SELECT  `question`.`id`,
+                    				`question`.`name`
                             FROM    `scenario`
                             JOIN 	`scenario_detail` ON `scenario`.`id` = `scenario_detail`.`scenario_id`
-                            JOIN 	`quest_1` ON `scenario_detail`.`quest_id` = `quest_1`.`id`
+                            JOIN 	`question` ON `scenario_detail`.`quest_id` = `question`.`id`
                             WHERE 	`scenario`.`id` = $scenarquest AND scenario_detail.actived = 1 AND scenario.actived = 1" );
 
     $data .= '<option value="0" selected="selected">----</option>';
@@ -390,18 +330,18 @@ function GetList($quest_id,$quest_detail_id)
         $checker = "scenario.`id` = $quest_id";
     }
     if($quest_detail_id != ''){
-        $checker = "scenario_detail.`id` = $quest_detail_id";
+        $checker = "scenario_detail.`id` = $quest_id";
     }
 	$res = mysql_fetch_assoc(mysql_query("	SELECT  `scenario`.`id` AS `scenario_id`,
                                     				`scenario`.`name` AS `scenario_name`,
                                     				`scenario_detail`.`id` AS `sc_detal_id`,
 	                                                `scenario_detail`.`quest_id` AS `quest_id`,
-                                    				`quest_1`.`name` AS `quest_name`,
+                                    				`question`.`name` AS `quest_name`,
                                                     `scenario`.`scenario_cat_id`,
                                     				`scenario`.`scenario_le_cat_id`
                                             FROM 	`scenario`
                                             LEFT JOIN scenario_detail ON scenario.id = scenario_detail.scenario_id
-                                            LEFT JOIN quest_1 ON scenario_detail.quest_id = quest_1.id
+                                            LEFT JOIN question ON scenario_detail.quest_id = question.id
                                             WHERE 	$checker"));
 
 	return $res;
@@ -420,43 +360,42 @@ function GetPage($res = '')
 				<tr>
 					<td style="width: 170px;"><label for="name">სახელი</label></td>
 					<td>
-						<input type="text" id="name" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['scenario_name'] . '" />
+						<textarea type="text" id="name" style="margin: 0px; width: 226px; resize:vertical;">' . $res['scenario_name'] . '</textarea>
 					</td>
 				</tr>
                 <tr>
-					<td style="width: 170px;"><label for="cat">კატეგორია</label></td>
+					<td style="width: 170px;"><label for="">კატეგორია</label></td>
 					<td>
 						<select style="width: 231px;" id="cat" class="idls object">'. GetCat($res[scenario_cat_id]).'</select>
 					</td>
 				</tr>
 			    <tr>
-					<td style="width: 170px;"><label for="le_cat">ქვე-კატეგორია</label></td>
+					<td style="width: 170px;"><label for="">ქვე-კატეგორია</label></td>
 					<td>
 						<select style="width: 231px;" id="le_cat" class="idls object">'. GetLeCat($res[scenario_cat_id],$res[scenario_le_cat_id]).'</select>
 					</td>
 				</tr>
 			</table>';
-			if($_REQUEST['quest_id'] != ''){
+			if($_REQUEST['id'] != ''){
 			    if($_REQUEST['quest_detail_id'] == ''){
-    			    $data .=  ' <div id="tabs" style="width: 98%; margin: 0 auto; margin-top: 25px;">
-                            	<ul>
-                            		<li><a href="#tab-0">დიალოგური ფანჯარა</a></li>
-                            		<li><a href="#tab-1">კითხვების რიგითობა</a></li>
-                            	</ul>
-                            	<div id="tab-0">
+    			    $data .=  ' <div id="taab" style="margin: 0 auto; margin-top: 25px;">
+                            	<div id="callapp_tab">
+                            		<span id="tab1">დიალოგური ფანჯარა</span>
+                            		<span id="tab2">კითხვების რიგითობა</span>
+                            	</div>
+                            	<div id="tab_content_1">
     			        
-    			                <div id="dt_example" class="inner-table">
     			                <div id="button_area">
                     			    <button id="add_button_detail">დამატება</button>
                     			    <button id="delete_button_detail">წაშლა</button>
                 			    </div>
-                			    <table class="" id="example2">
+                			    <table class="" id="table_quest" style="background-color: #FFF;">
                     			    <thead >
                         			    <tr id="datatable_header">
                             			    <th style="display:none;">ID</th>
     			                            <th style="width: 60px;">#</th>
                             			    <th style="width: 100%;">დასახელება</th>
-                            			    <th class="check">#</th>
+                            			    <th class="check"></th>
                         			    </tr>
                     			    </thead>
                     			    <thead>
@@ -465,7 +404,7 @@ function GetPage($res = '')
                             			    <th>
                             			    </th>
     			                            <th>
-                            			         <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                            			         <input style="width: 100%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
                             			    <th>
                             			         <input type="checkbox" name="check-all" id="check-all-de">
@@ -473,18 +412,17 @@ function GetPage($res = '')
                         			    </tr>
                     			    </thead>
                 			    </table>
-    			                </div>
     			             </div>
-                        	<div id="tab-1">';
+                        	<div id="tab_content_2">';
                 			    $i = 1;
                 			    
-                			  $query = mysql_query("SELECT 	    `quest_1`.id,
-                                            			        `quest_1`.`name`,
-                                            			        `quest_1`.note,
+                			  $query = mysql_query("SELECT 	    `question`.id,
+                                            			        `question`.`name`,
+                                            			        `question`.note,
                                             			        `scenario`.`name`
                                 			        FROM        `scenario`
                                 			        JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
-                                			        JOIN        quest_1 ON scenario_detail.quest_id = quest_1.id
+                                			        JOIN        question ON scenario_detail.quest_id = question.id
                                 			        WHERE       scenario.id = $res[scenario_id] AND scenario_detail.actived = 1
                                 			        ORDER BY    scenario_detail.sort ASC");
                 			  
@@ -512,27 +450,25 @@ function GetPage($res = '')
             		    if($answer_id==''){
             		        $answer_id = 0;
             		    }
-                			    		$query1 = mysql_query(" SELECT 	CASE 	WHEN quest_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(quest_detail.id in($answer_id) ,' checked',''), ' class=\"check_input\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', quest_1.id, '\" value=\"', quest_detail.id, '\"><label style=\"float:left; padding: 7px;\">', quest_detail.answer, '</label></td>')
-                                                    							WHEN quest_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"inputtext\"style=\"float:left;\" type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td>')
-                                                    							WHEN quest_detail.quest_type_id = 3 THEN CONCAT('<tr><td>',production.`name`,'</td><td>',production.`price`,'</td><td>',production.`description`,'</td><td>',production.`comment`,'</td><td><input class=\"prod_inp\" type=\"checkbox\" name=\"checkbox|', quest_1.id, '|',quest_detail.id, '\" value=\"', production.`id`, '\"></td></tr>')
-                                                    							WHEN quest_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(quest_detail.id in($answer_id),' checked',''), ' class=\"radio_input\" style=\"float:left;\" type=\"radio\" name=\"radio', quest_1.id, '\" value=\"', quest_detail.id, '\"><label style=\"float:left; padding: 7px;\">', quest_detail.answer, '</label></td>')
-                                                    							WHEN quest_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_input\"style=\"float:left;\" type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td>')
-                                                    							WHEN quest_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_time_input\"style=\"float:left;\" type=\"text\" id=\"input|', quest_1.id, '|', quest_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', quest_1.id, '|', quest_detail.id, '\">',quest_detail.answer,'</label></td>')
+                			    		$query1 = mysql_query(" SELECT 	CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(question_detail.id in($answer_id) ,' checked',''), ' class=\"check_input\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question.id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td>')
+                                                    							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"inputtext\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
+                                                    							WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(question_detail.id in($answer_id),' checked',''), ' class=\"radio_input\" style=\"float:left;\" type=\"radio\" name=\"radio', question.id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td>')
+                                                    							WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
+                                                    							WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_time_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
                                                     				    END AS `ans`,
-                                                                		quest_detail.quest_type_id,
-                			    		                                IF(quest_detail.id in($answer_id) ,quest_detail.id,'') AS `checked_quest`,
+                                                                		question_detail.quest_type_id,
+                			    		                                IF(question_detail.id in($answer_id) ,question_detail.id,'') AS `checked_quest`,
                 			    		                                scenario_detail.id as sc_id,
-                			    		                                quest_detail.id as as_id,
+                			    		                                question_detail.id as as_id,
                 			    		                                scenario_destination.destination as dest
-                                                                FROM `quest_detail`
-                                                                JOIN  quest_1 ON quest_detail.quest_id = quest_1.id
-                                                                LEFT JOIN production ON quest_detail.product_id = production.id
-                                                                LEFT JOIN scenario_detail ON quest_1.id = scenario_detail.quest_id
-                			    		                        LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = quest_detail.id
+                                                                FROM `question_detail`
+                                                                JOIN  question ON question_detail.quest_id = question.id
+                                                                LEFT JOIN scenario_detail ON question.id = scenario_detail.quest_id
+                			    		                        LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = question_detail.id
                                                                 LEFT JOIN scenario ON scenario_detail.scenario_id = scenario.id 
-                                                                WHERE quest_detail.quest_id = $row[0] AND quest_detail.actived = 1 AND scenario.id = $res[scenario_id]
-                                                                GROUP BY quest_detail.id
-                                                                ORDER BY quest_1.id, quest_detail.quest_type_id ASC");
+                                                                WHERE question_detail.quest_id = $row[0] AND question_detail.actived = 1 AND scenario.id = $res[scenario_id]
+                                                                GROUP BY question_detail.id
+                                                                ORDER BY question.id, question_detail.quest_type_id ASC");
                 			    			
                 			    		
                 			    
@@ -606,14 +542,15 @@ function GetPage($res = '')
 			                    <tr>
                 					<td style="width: 170px;"><label for="quest_id1">კითხვა</label></td>
                 					<td>
-                						<select style="width: 231px;" id="quest_id1" class="idls object">'. GetQuest($res['quest_id'],$_REQUEST['quest_detail_id']).'</select>
+                						<select style="width: 231px;" id="quest_id1" class="idls object">'. GetQuest($res['quest_id'],$_REQUEST['id']).'</select>
                 					</td>
                 				</tr>                				
-                			</table>';
+                			</table>
+                			<script>$("#name, #cat, #le_cat").prop("disabled", true);</script>';
 			}
 			$data .=  '<!-- ID -->
 			<input type="hidden" id="quest_id" value="' . $res['scenario_id'] . '" />
-			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['quest_detail_id'].'" />
+			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['id'].'" />
 			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
 			<input type="hidden" id="dest_checker" value="0" />
         </fieldset>

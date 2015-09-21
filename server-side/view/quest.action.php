@@ -5,7 +5,7 @@ $error	= '';
 $data	= '';
 
 $user_id	       = $_SESSION['USERID'];
-$quest_id          = $_REQUEST['quest_id'];
+$quest_id          = $_REQUEST['id'];
 $quest_detail_id   = $_REQUEST['quest_detail_id'];
 $add_id            = $_REQUEST['add_id'];
 $name              = $_REQUEST['name'];
@@ -29,11 +29,11 @@ switch ($action) {
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
 			
-		$rResult = mysql_query("SELECT 	`quest_1`.`id`,
-                        				`quest_1`.`name`,
-                        				`quest_1`.`note`
-                                FROM 	`quest_1`
-                                WHERE 	`quest_1`.`actived` = 1");
+		$rResult = mysql_query("SELECT 	`question`.`id`,
+                        				`question`.`name`,
+                        				`question`.`note`
+                                FROM 	`question`
+                                WHERE 	`question`.`actived` = 1");
 
 		$data = array(
 				"aaData"	=> array()
@@ -59,15 +59,13 @@ switch ($action) {
 	    $hidden	= $_REQUEST['hidden'];
 	    
 	    mysql_query("SET @i = 0;");
-	    $rResult = mysql_query("SELECT 	`quest_detail`.`id`,
+	    $rResult = mysql_query("SELECT 	`question_detail`.`id`,
 	                                    @i := @i+1 AS `order_id`,
-                        				IF(quest_detail.quest_type_id = 3,`production`.`name`,`quest_detail`.`answer`) AS `answer`,
-                        				`quest_type`.`name` AS `quest_type`
-                                FROM 	`quest_detail`
-                                JOIN	`quest_1` ON quest_detail.quest_id = quest_1.id
-                                JOIN	`quest_type` ON quest_detail.quest_type_id = quest_type.id
-                                LEFT JOIN `production` ON `quest_detail`.`product_id` = `production`.`id`
-                                WHERE 	`quest_detail`.`actived` = 1 AND quest_1.id = $quest_id");
+                        				`question_detail`.`answer` AS `answer`,
+                        				`question_type`.`name` AS `quest_type`
+                                FROM 	`question_detail`
+                                JOIN	`question_type` ON question_detail.quest_type_id = question_type.id
+                                WHERE 	`question_detail`.`actived` = 1 AND question_detail.quest_id = $quest_id");
 	
 	    $data = array(
 	        "aaData"	=> array()
@@ -145,7 +143,7 @@ function save($user_id, $name, $note)
     global $error;
     $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM quest_1 WHERE `name` = '$name'"));
     if($name_cheker == 0){
-    mysql_query("INSERT INTO `quest_1`
+    mysql_query("INSERT INTO `question`
                 (`user_id`,`name`,`note`)
                 VALUES
                 ('$user_id','$name','$note')");
@@ -157,7 +155,7 @@ function save($user_id, $name, $note)
 
 function update($quest_id, $name, $note)
 {
-    mysql_query("	UPDATE  `quest_1`
+    mysql_query("	UPDATE  `question`
                     SET     `name` = '$name',
                             `note` = '$note'
                     WHERE	`id`   = $quest_id");
@@ -166,17 +164,22 @@ function update($quest_id, $name, $note)
 function save_answer($user_id, $answer, $quest_type_id, $quest_id, $hidden_product_id)
 {
     global $error;
+    if($quest_id==''){
+        $quest_id_inc = mysql_fetch_row(mysql_query("SELECT id+1 FROM question ORDER BY id DESC LIMIT 1"));
+        $quest_id = (($quest_id_inc[0]=='')?'1':$quest_id_inc[0]);
+        $error = $quest_id;
+    }
     if($answer == ''){
         $name_checker = "`product_id` = '$hidden_product_id'";
     }else{
         $name_checker = "`answer` = '$answer'";
     }
-    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM quest_detail WHERE $name_checker AND `quest_id` = '$quest_id'"));
+    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM question_detail WHERE $name_checker AND `quest_id` = '$quest_id'"));
     if($name_cheker == 0){
-    mysql_query("INSERT INTO `quest_detail`
-                (`user_id`,`answer`,`quest_id`,`quest_type_id`,`product_id`)
+    mysql_query("INSERT INTO `question_detail`
+                (`user_id`,`answer`,`quest_id`,`quest_type_id`)
                 VALUES
-                ('$user_id','$answer','$quest_id','$quest_type_id','$hidden_product_id')");
+                ('$user_id','$answer','$quest_id','$quest_type_id')");
     }else{
         $error = 'ესეთი სახელი უკვე არსებობს!';
     }
@@ -185,24 +188,23 @@ function save_answer($user_id, $answer, $quest_type_id, $quest_id, $hidden_produ
 
 function update_answer($quest_detail_id,  $answer, $quest_type_id, $quest_id, $hidden_product_id)
 {
-    mysql_query("	UPDATE  `quest_detail`
+    mysql_query("	UPDATE  `question_detail`
                     SET     `answer`        = '$answer',
                             `quest_id`      = '$quest_id',
-                            `quest_type_id` = '$quest_type_id',
-                            `product_id`    = '$hidden_product_id'
+                            `quest_type_id` = '$quest_type_id'
                     WHERE	`id`            =  $quest_detail_id");
 }
 
 function disable($quest_id)
 {
-    mysql_query("	UPDATE  `quest_1`
+    mysql_query("	UPDATE  `question`
                     SET     `actived` = 0
                     WHERE	`id`      = $quest_id");
 }
 
 function disable_det($quest_detail_id)
 {
-    mysql_query("	UPDATE  `quest_detail`
+    mysql_query("	UPDATE  `question_detail`
                     SET     `actived` = 0
                     WHERE	`id`      = $quest_detail_id");
 }
@@ -210,40 +212,49 @@ function disable_det($quest_detail_id)
 function GetList($quest_id,$quest_detail_id)
 {
     if($quest_id != ''){
-        $checker = "and quest_1.`id` = $quest_id";
+        $checker = "and question.`id` = $quest_id";
     }
     if($quest_detail_id != ''){
-        $checker = "and quest_detail.`id` = $quest_detail_id";
+        $checker = "and question_detail.`id` = $quest_id";
     }
-	$res = mysql_fetch_assoc(mysql_query("	SELECT 	    `quest_1`.`id` AS `quest_id`,
-                                						`quest_1`.`name`,
-                                						`quest_1`.`note`,
-                                						`quest_detail`.`id` AS `quest_detail_id`,
-                                						`quest_detail`.`answer`,
-                                						`quest_detail`.`quest_type_id`,
-                                						`production`.`name` AS `product_name`,
-                                						`production`.price,
-                                						`production`.description,
-                                						`genre`.`name` AS `genre_name`,
-                                						`department`.`name` AS `dep_name`,
-	                                                    `production`.`id` AS `prod_id`
-                                            FROM 	    `quest_1`
-                                            LEFT JOIN	`quest_detail` ON quest_1.id = quest_detail.quest_id
-                                            LEFT JOIN	`quest_type` ON quest_detail.quest_type_id = quest_type.id
-                                            LEFT JOIN	`production` ON quest_detail.product_id = production.id
-                                            LEFT JOIN	`genre` ON production.genre_id = genre.id
-                                            LEFT JOIN	`department` ON production.production_category_id = department.id
-                                            WHERE 	    `quest_1`.`actived` = 1 $checker"));
+	$res = mysql_fetch_assoc(mysql_query(
+	    "	SELECT 	    `question`.`id` AS `quest_id`,
+                                						`question`.`name`,
+                                						`question`.`note`,
+                                						`question_detail`.`id` AS `quest_detail_id`,
+                                						`question_detail`.`answer`,
+                                						`question_detail`.`quest_type_id`
+                                            FROM 	    `question`
+                                            LEFT JOIN	`question_detail` ON question.id = question_detail.quest_id
+                                            LEFT JOIN	`question_type` ON question_detail.quest_type_id = question_type.id
+                                            WHERE 	    `question`.`actived` = 1 $checker"));
 
 	return $res;
 }
 
 function GetQuestType($quset_type_id)
 {
-    $req = mysql_query("	SELECT 	`quest_type`.`id`,
-                                    `quest_type`.`name`
-                            FROM 	`quest_type`
-                            WHERE 	`quest_type`.`actived` = 1" );
+    if($_REQUEST[add_id] != ''){
+        $ch_q = $_REQUEST[add_id];
+    }else{
+        $ch_q = $_REQUEST[quest_detail_id];
+    }
+    $rr  = mysql_fetch_array(mysql_query("  SELECT quest_type_id
+                                            FROM `question`
+                                            JOIN question_detail ON question.id = question_detail.quest_id
+                                            WHERE question.id = $ch_q
+                                            ORDER BY question_detail.id ASC
+                                            LIMIT 1"));
+    if($rr[0] == ''){
+        $type_where = '';
+    }else{
+        $type_where = "AND question_type.id = $rr[0]";
+    }
+    
+    $req = mysql_query("	SELECT 	`question_type`.`id`,
+                                    `question_type`.`name`
+                            FROM 	`question_type`
+                            WHERE 	`question_type`.`actived` = 1 $type_where" );
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -268,32 +279,35 @@ function GetPage($res = '')
 				<tr>
 					<td style="width: 170px;"><label for="name">სახელი</label></td>
 					<td>
-						<input type="text" id="name" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['name'] . '" />
+						<textarea id="name" style="margin: 0px; width: 504px; resize:vertical;" >' . $res['name'] . '</textarea>
 					</td>
 				</tr>
     
 			</table>';
-			if($_REQUEST['quest_id'] != ''){
-			    if($_REQUEST['quest_detail_id'] == ''){
-    			    $data .=  ' <div id="dt_example" class="inner-table" style="width: 430px;">
+			
+			    if($_REQUEST['dialog_check'] == 0){
+    			    $data .=  ' 
     			                <div id="button_area">
                     			    <button id="add_button_detail">დამატება</button>
                     			    <button id="delete_button_detail">წაშლა</button>
                 			    </div>
-                			    <table class="" id="example1" style="width: 430px;">
-                    			    <thead style="width: 430px;">
+                			    <table class="" id="table_quest" style="width: 100%; background: #FFF;">
+                    			    <thead>
                         			    <tr id="datatable_header">
-                            			    <th style="width: 10%; display:none;">ID</th>
-    			                            <th style="width: 10%;">#</th>
-                            			    <th style="width: 10%;">დასახელება</th>
-                            			    <th style="width: 10%;">ტიპი</th>
-                            			    <th class="check">#</th>
+                            			    <th>ID</th>
+    			                            <th style="width: 10px;"></th>
+                            			    <th style="width: 100%;">დასახელება</th>
+                            			    <th style="width: 100%;">ტიპი</th>
+                            			    <th class="check"></th>
                         			    </tr>
                     			    </thead>
-                    			    <thead style="width: 430px;">
+                    			    <thead>
                         			    <tr class="search_header">
-                            			    <th class="colum_hidden" style="display:none;"></th>		    
-                            			    <th>
+                            			    <th class="colum_hidden">
+    			                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                            			    </th>                            			    
+    			                            <th>
+    			                            <input style="width: 20px;" type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
     			                            <th>
                             			    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
@@ -307,10 +321,10 @@ function GetPage($res = '')
                         			    </tr>
                     			    </thead>
                 			    </table>
-    			                </div>';
+    			                ';
 			    }
-			}
-			if($_REQUEST['quest_detail_id'] != '' || $_REQUEST['add_id'] != ''){
+			
+			if($_REQUEST['dialog_check'] == 1){
 			    $data .=  ' <table class="dialog-form-table">  
 			                    <tr>
                 					<td style="width: 170px;"><label for="quest_type_id">ტიპი</label></td>
@@ -325,41 +339,18 @@ function GetPage($res = '')
                 					</td>
                 				</tr>                				
                 			</table>
-                			<table id="product">
-        						<tr>
-        							  <td style="width: 170px;"><label for="production_name">დასახელება</label></td>
-                                      <td>
-                    						<div class="seoy-row" id="goods_name_seoy">
-                    							<input type="text" id="production_name" class="idle seoy-address" onblur="this.className=\'idle seoy-address\'" onfocus="this.className=\'activeField seoy-address\'" value="' . $res[product_name] . '" />
-                    							<button id="goods_name_btn" class="combobox">production_name</button>
-                    						</div>
-            				          </td>
-        				    	</tr>
-        						<tr>
-        							<td style="padding-top: 11px;"><label for="genre">ჟანრი</label></td>
-        							<td style="padding-top: 11px;"><input type="text" style="margin-bottom: 10px;" id="genre" class="idle" disabled onblur="this.className=\'idle\'" value="'.$res[genre_name].'"/></td>
-        						</tr>
-        						<tr>
-        							<td><label for="category">განყოფილება</label></td>
-        							<td><input type="text" style="margin-bottom: 10px;" id="category" class="idle" disabled onblur="this.className=\'idle\'" value="'.$res[dep_name].'"/></td>
-        						</tr>
-        						<tr>
-        							<td><label for="description">აღწერილობა</label></td>
-        							<td><input type="text" style="margin-bottom: 10px;" id="description" class="idle" disabled onblur="this.className=\'idle\'" value="'.$res[description].'"/></td>
-        						</tr>
-        						<tr>
-        							<td><label for="price">ფასი</label></td>
-        							<td><input type="text" style="margin-bottom: 10px;" id="price" class="idle" disabled onblur="this.className=\'idle\'" value="'.$res[price].'"/></td>
-        							    <input type="text" id="hidden_product_id" class="idle" onblur="this.className=\'idle\'" style="display:none;" value="'.$res[prod_id].'"/>
-        						</tr>
-        					</table>';
+                			<script type="text/javascript">
+                						    $("#add-edit-form-answer #name").val($("#add-edit-form #name").val());
+                						    $("#add-edit-form-answer #name").prop("disabled", true);
+                						    $("#add-edit-form-answer #name").css("width","226");                						    
+                						    </script>';
 			}else{
 			    $data .=  '<table class="dialog-form-table">   
 			                    <tr>
 			                         <td><label for="quest_type_id">მინიშნება</label></td>
 			                    </tr>             				
                                 <tr>			                         
-			                         <td><textarea  style="width: 423px; height:60px; resize: none;" id="note" class="idle" name="note" cols="300" >'.$res['note'].'</textarea></td>
+			                         <td><textarea  style="width: 99.5%; height:60px; resize: vertical;" id="note" name="note" cols="300" >'.$res['note'].'</textarea></td>
                 				</tr>
                 			</table>';
 			}

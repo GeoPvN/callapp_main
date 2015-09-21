@@ -548,8 +548,17 @@
 				if(typeof(data.error) != "undefined"){
 					if(data.error != ""){
 						alert(data.error);
-					}else{						
-						GetDialog("add-edit-form-img", 401, "auto", '', 'center top');
+					}else{
+						var buttons = {
+					        	"cancel": {
+						            text: "დახურვა",
+						            id: "cancel-dialog",
+						            click: function () {
+						            	$(this).dialog("close");
+						            }
+						        }
+						    };
+						GetDialog("add-edit-form-img", 401, "auto", buttons, 'center top');
 						$("#add-edit-form-img").html(data.page);
 					}
 				}

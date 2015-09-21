@@ -673,10 +673,14 @@ function show_file($res){
 
 function GetIMG($id){
     $res = mysql_fetch_array(mysql_query("SELECT rand_name FROM `file` WHERE id = $id"));
-    
+    if (empty($res[0])) {
+        $image = '0.jpg';
+    }else{
+        $image = $res[0];
+    }
     $data = '<div id="dialog-form">
 	           <fieldset>
-                <img style="margin: auto;display: block;" width="350" height="350"  src="media/uploads/file/'.$res[0].'">
+                <img style="margin: auto;display: block;" width="350" height="350"  src="media/uploads/file/'.$image.'">
                </fieldset>
             </div>
             ';

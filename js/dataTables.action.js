@@ -21,7 +21,6 @@ Sort Colum ID,
 Sort Method
 */
 function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total, colum_change) {
-	
     if (empty(data))
         data = "";
  
@@ -515,6 +514,39 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
             });
         }
     });
+    
+    $(document).keydown(function(event){
+        if(event.which=="17"){
+        	cntrlIsPressed = true;
+        }
+        if(event.which=="46"){
+        	$("#" + dis).click();
+        }
+    });
+
+    $(document).keyup(function(){
+        cntrlIsPressed = false;
+    });
+
+    var cntrlIsPressed = false;
+
+    
+    $("#" + tname + " tbody").on("click", "td:not(:last-child)", function () {
+        var nTds = $($(this).siblings())[0];        
+        var rID  = $(nTds).text();
+        
+        if(cntrlIsPressed)
+        {
+        	
+        }else{
+        	if(!$("INPUT[name='check_"+rID+"']").is(":checked")){
+        		$(".check").prop("checked", false);
+        	}
+        }
+        
+        $("INPUT[name='check_"+rID+"']").prop("checked", !$("INPUT[name='check_"+rID+"']").is(":checked"));
+        
+    });
 
     /* Disable Event */
     $("#" + dis).on("click", function () {
@@ -559,7 +591,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
 	});
 }
 
-function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID, closeButtonID, DialogHeight, DialogPosition, DialogOpenAct, DeleteAct, EditDialogAct, TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam){
+function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID, closeButtonID, DialogHeight, DialogPosition, DialogOpenAct, DeleteAct, EditDialogAct, TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam,InDialogTable,CustomAddAct,CustomEditAct){
 	GetButtons(addButton,deleteButton);
 	
 	$(document).on("click", "#" + addButton, function () {
@@ -577,13 +609,14 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
 		        }
 		    };
     	GetDialog('add-edit-form' + dialogID, DialogHeight, "auto", buttons, DialogPosition);
-        param 			= new Object();        
-        param.act		  = DialogOpenAct;
         $.ajax({
             url: aJaxURL,
-            data: param,
+            data: "act=" + DialogOpenAct + "&" + CustomAddAct,
             success: function(data) {
-            	$('#add-edit-form' + dialogID).html(data.page);            	
+            	$('#add-edit-form' + dialogID).html(data.page);
+            	if(InDialogTable == 1){
+                	GetTable();
+                }
             }
         });
     });
@@ -611,6 +644,38 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
         }
     });
     
+    $(document).keydown(function(event){
+        if(event.which=="17"){
+        	cntrlIsPressed = true;
+        }
+        if(event.which=="46"){
+        	$("#" + deleteButton).click();
+        }
+    });
+
+    $(document).keyup(function(){
+        cntrlIsPressed = false;
+    });
+
+    var cntrlIsPressed = false;
+    
+    $("#table_" + TableID + " tbody").on("click", "td:not(:last-child)", function () {
+        var nTds = $($(this).siblings())[0];        
+        var rID  = $(nTds).text();
+        
+        if(cntrlIsPressed)
+        {
+        	
+        }else{
+        	if(!$("#table_" + TableID + " INPUT[name='check_"+rID+"']").is(":checked")){
+        		$("#table_" + TableID + " .check").prop("checked", false);
+        	}
+        }
+        
+        $("#table_" + TableID + " INPUT[name='check_"+rID+"']").prop("checked", !$("#table_" + TableID + " INPUT[name='check_"+rID+"']").is(":checked"));
+        
+    });
+    
 	$(document).on("dblclick", "#table_" + TableID + " tbody tr", function () {
         var nTds = $("td", this);
         var empty = $(nTds[0]).attr("class");
@@ -621,7 +686,7 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
             $.ajax({
                 url: aJaxURL,
                 type: "POST",
-                data: "act=" + EditDialogAct + "&id=" + rID,
+                data: "act=" + EditDialogAct + "&id=" + rID + "&" + CustomEditAct,
                 dataType: "json",
                 success: function (data) {
                 	var buttons = {
@@ -639,6 +704,9 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
             		};
                 	GetDialog('add-edit-form' + dialogID, DialogHeight, "auto", buttons, DialogPosition);
                     $('#add-edit-form' + dialogID).html(data.page);
+                    if(InDialogTable == 1){
+                    	GetTable();
+                    }
                 }
             });
         }
@@ -679,6 +747,7 @@ function GetDialog(fname, width, height, buttons, position) {
 
     $("#" + fname).dialog({
     	position: position,
+    	left: 100,
         resizable: false,
         width: width,
         height: height,
