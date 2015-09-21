@@ -51,6 +51,8 @@
         LoadTable('mail',5,'get_list',"<'dataTable_buttons'T><'dataTable_content't><'F'p>");
         $("#client_checker,#add_sms,#add_mail").button();
         GetDate2("date_input");
+        GetDate1("task_end_date");
+        GetDate1("task_start_date");
 		GetDateTimes1("date_time_input");
 		$('.quest_body').css('display','none');
 		$('.1').css('display','block');
