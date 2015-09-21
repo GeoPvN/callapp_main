@@ -66,8 +66,8 @@
 			            hide_right_side();
 				    }
 		        });
-		        LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
-		        LoadTable('client',6,'get_list_person',"<'scrol_table't>");
+		        LoadTable('project',5,'get_list_project',"<'F'lip>");
+		        LoadTable('client',6,'get_list_person',"<'F'lip>");
 		        SetEvents("add_project", "delete_project", "check-all-project", tName+'project', "add-edit-form-project", aJaxURL_object);
 		        SetEvents("add_client", "delete_client", "check-all-client", tName+'client', "add-edit-form-client", aJaxURL_client);
 		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
@@ -87,7 +87,7 @@
 				        }
 				    };
 		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left top');
-		        LoadTable('number',5,'get_list_number',"<'scrol_table2't>");
+		        LoadTable('number',5,'get_list_number',"<'F'lip>");
 		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
 		        $("#add_number, #delete_number").button(); 
 		        GetDate1('project_add_date');
@@ -449,7 +449,7 @@
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('client',6,'get_list_person',"<'scrol_table't>");
+							LoadTable('client',6,'get_list_person',"<'F'lip>");
 							$("#add-edit-form-client").dialog("close");
 						}
 					}
@@ -486,7 +486,7 @@
 							alert(data.error);
 						}else{
 							
-							 LoadTable('project',5,'get_list_project',"<'scrol_table1't>");
+							 LoadTable('project',5,'get_list_project',"<'F'lip>");
 							$("#add-edit-form-project").dialog("close");
 						}
 					}
@@ -524,7 +524,7 @@
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('number',5,'get_list_number',"<'scrol_table2't>");
+							LoadTable('number',5,'get_list_number',"<'F'lip>");
 							$("#add-edit-form-number").dialog("close");
 						}
 					}
@@ -591,6 +591,47 @@
 	margin-left: 5px;
 }
 
+#table_client_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_client_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+
+#table_project_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_project_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+
+#table_number_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_number_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_client_paginate{
+	margin-left: 45px;
+}
+#table_number_paginate{
+	margin-left: -22px;
+}
 .callapp_head{
 	font-family: pvn;
 	font-weight: bold;
@@ -715,7 +756,7 @@
 			    <thead>
 			        <tr id="datatable_header">
 			            <th>ID</th>
-			            <th style="width: 20px;">№</th>
+			            <th style="width: 30%;">№</th>
 			            <th style="width: 100%;">დასახელება</th>
 			            <th style="width: 100%;">საიდენტიფიკაციო კოდი</th>
 			          	<th style="width: 100%;">იურიდიული მისამართი</th>                            

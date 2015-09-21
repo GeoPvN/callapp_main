@@ -475,7 +475,7 @@ function GetPage($res,$increment){
                             <th>ID</th>
                             <th style="width: 100%;">სახელი</th>
                             <th style="width: 100%;">გვარი</th>
-                            <th style="width: 103px;">თანამდებობა</th>
+                            <th style="width: 100%;">თანამდებობა</th>
                             <th style="width: 100%;">მობილური</th>
 							<th style="width: 100%;">ტელეფონი</th>
 							<th style="width: 11px;" class="check"></th>
@@ -501,7 +501,7 @@ function GetPage($res,$increment){
 							<th>
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
-							<th>
+	               			<th>
 				                <input style="margin-left: 9px;" type="checkbox" name="check-all-client" id="check-all-client">
 				            </th>
                         </tr>
