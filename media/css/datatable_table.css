@@ -221,6 +221,9 @@ table.display .colum_hidden {
 table.display tbody td {
 	cursor: pointer;
     vertical-align: middle !important;	
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 table.display tbody td {

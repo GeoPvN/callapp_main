@@ -241,8 +241,8 @@
             </th>                         
             <th>
             	<div class="callapp_checkbox">
-                <input type="checkbox" id="check-all" name="check-all" />
-                <label for="check-all"></label>
+                    <input type="checkbox" id="check-all" name="check-all" />
+                    <label for="check-all"></label>
                 </div>
             </th>           
         </tr>

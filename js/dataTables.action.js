@@ -101,6 +101,13 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
                 success: function (data) {
                     fnCallback(data);
                     onhovercolor('#2681DC');
+                    $('#'+tname+' tbody td').each(function(index){
+                		$this = $(this);
+                		var titleVal = $this.text();
+                		if (titleVal != '') {
+                		  $this.attr('title', titleVal);
+                		}
+                	});
                     if (typeof (data.error) != "undefined") {
                         if (data.error != "") {
                             alert(data.error);
@@ -172,7 +179,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 		  function () {
 		    $(this).removeClass("ui-state-hover");
 		  }
-    );    
+    );	
 }
 
 function onhovercolor(color){
