@@ -159,7 +159,7 @@ function GetPage($res,$increment){
 	   
 	    </div>
 	    
-	    <div style="width: 445px; float: left; margin-left: 10px;" id="right_side_project">
+	    <div style="width: 545px; float: left; margin-left: 10px;" id="right_side_project">
             <fieldset style="display:none;" id="phone">
                 <legend>ნომერი</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
@@ -197,7 +197,10 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
 							<th>
-				                <input type="checkbox" name="check-all-number" id="check-all-number">
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-number" name="check-all" />
+				                    <label for="check-all-number"></label>
+				                </div>
 				            </th>
 						</tr>
                     </thead>
