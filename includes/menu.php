@@ -226,9 +226,11 @@
         	$("#sidemenu").html(menu);       
       		if(location.search){
       			var words = location.search;
-      			var n = words.split("=");      			
+      			var n = words.split("=");
       			var str = $('#img_'+n[n.length - 1]).attr('src');
+      			if(str == undefined){}else{
       			str = str.substr(0, (str.length - 9));
+      			}
       			$('#img_'+n[n.length - 1]).attr("src", ""+str+".png");
       			$('#link_'+n[n.length - 1]).css('color','#FFF');
       			$($('#img_'+n[n.length - 1]).parent()[0]).css('background-color','#2681DC');
