@@ -51,7 +51,7 @@
 				            }
 				        }
 				    };
-		        GetDialog(fName, 789, "auto", buttons, 'left top');
+		        GetDialog(fName, 801, "auto", buttons, 'left top');
 		        GetTabs(tbName1);
 		        
 		  
@@ -130,7 +130,7 @@
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1244");
+        $(".add-edit-form-class").css("width", "1256");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -144,7 +144,7 @@
     function show_right_side1(id){
         $("#right_side_project fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-project-class").css("width", "900");
+        $(".add-edit-form-project-class").css("width", "956");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side1();
         var str = $("."+id).children('img').attr('src');
@@ -184,7 +184,7 @@
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();
-    	$(".add-edit-form-class").css("width", "789");
+    	$(".add-edit-form-class").css("width", "801");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
@@ -761,7 +761,7 @@
 			            <th style="width: 100%;">საიდენტიფიკაციო კოდი</th>
 			          	<th style="width: 100%;">იურიდიული მისამართი</th>                            
 			            <th style="width: 100%;">ფაქტიური მისამართი</th>
-			            <th style="width: 11px;" class="check"></th>
+			            <th style="width: 11px; margin-top: 3px;" class="check"></th>
 			        </tr>
 			    </thead>
 			    <thead>
@@ -785,8 +785,11 @@
 			                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
 			            </th>
 			            <th>
-			                <input type="checkbox" name="check-all" id="check-all">
-			            </th>
+			            	<div class="callapp_checkbox">
+			                    <input type="checkbox" id="check-all" name="check-all" />
+			                    <label for="check-all"></label>
+			                </div>
+			            </th>  
 			        </tr>
 			    </thead>
 			</table>

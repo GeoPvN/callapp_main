@@ -75,7 +75,10 @@ switch ($action) {
 				/* General output */
 				$row[] = $aRow[$i];
 				if($i == ($count - 1)){
-					$row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+					$row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
 				}
 			}
 			$data['aaData'][] = $row;
@@ -107,7 +110,10 @@ switch ($action) {
     			/* General output */
     			$row[] = $aRow[$i];
     			if($i == ($count - 1)){
-    				$row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+    				$row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
     			}
     		}
     		$data['aaData'][] = $row;
@@ -143,7 +149,10 @@ switch ($action) {
     				/* General output */
     				$row[] = $aRow[$i];
     				if($i == ($count - 1)){
-    					$row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+    					$row[] = '<div class="callapp_checkbox">
+	                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+	                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+	                              </div>';
     				}
     			}
     			$data['aaData'][] = $row;
@@ -176,7 +185,10 @@ switch ($action) {
     					/* General output */
     					$row[] = $aRow[$i];
     					if($i == ($count - 1)){
-    						$row[] = '<input  type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+    						$row[] = '<div class="callapp_checkbox">
+		                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+		                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+		                              </div>';
     					}
     				}
     				$data['aaData'][] = $row;
@@ -400,7 +412,7 @@ function GetPage($res,$increment){
 		</ul>
 	<div id="tab-0">
 	<div id="dialog-form">
-	    <fieldset style="width: 600px;  float: left;">
+	    <fieldset style="width: 609px;  float: left;">
 	       <legend>ძირითადი ინფორმაცია</legend>
 			<table>
 			<tr>
@@ -473,11 +485,11 @@ function GetPage($res,$increment){
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 100%;">სახელი</th>
-                            <th style="width: 100%;">გვარი</th>
-                            <th style="width: 100%;">თანამდებობა</th>
-                            <th style="width: 100%;">მობილური</th>
-							<th style="width: 100%;">ტელეფონი</th>
+                            <th style="width: 100px;">სახელი</th>
+                            <th style="width: 100px;">გვარი</th>
+                            <th style="width: 100px;">თანამდებობა</th>
+                            <th style="width: 90px;">მობილური</th>
+							<th style="width: 90px;">ტელეფონი</th>
 							<th style="width: 11px;" class="check"></th>
                         </tr>
                     </thead>
@@ -502,7 +514,10 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
 	               			<th>
-				                <input style="margin-left: 9px;" type="checkbox" name="check-all-client" id="check-all-client">
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-client" name="check-all" />
+				                    <label for="check-all-client"></label>
+				                </div>
 				            </th>
                         </tr>
                     </thead>
@@ -599,14 +614,14 @@ function GetPage($res,$increment){
                     <button id="add_project">დამატება</button>
 					<button id="delete_project">წაშლა</button>
                 </div>
-				<table class="display" id="table_project" >
+				<table class="display" id="table_project" ">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 200px;">დასახელება</th>
-                            <th style="width: 160px;">ტიპი</th>
-                            <th style="width: 140px;">შექმნის თარიღი</th>
-                            <th style="width: 100px;">ნომრები</th>
+                            <th style="width: 150px;">დასახელება</th>
+                            <th style="width: 90px;">ტიპი</th>
+                            <th style="width: 110px;">შექმნის თარიღი</th>
+                            <th style="width: 246px;">ნომრები</th>
 							<th style="width: 11px;" class="check"></th>
                         </tr>
                     </thead>
@@ -628,7 +643,10 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" style="width: 100%;"/>
                             </th>
 							<th>
-				                <input type="checkbox" name="check-all-project" id="check-all-project">
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-project" name="check-all" />
+				                    <label for="check-all-project"></label>
+				                </div>
 				            </th>
                         </tr>
                     </thead>
