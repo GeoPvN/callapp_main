@@ -11,7 +11,7 @@
 		$(document).ready(function () {        	
 			GetButtons("add_button","delete_button");
 	    	LoadTable('index',colum_number,main_act,change_colum_main);
-	    	SetEvents("add_button", "delete_button", "", tName+'index', dialog, aJaxURL);
+	    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
 		});
         
 		function LoadTable(tbl,col_num,act,change_colum){
@@ -130,7 +130,10 @@
                 <input type="text" name="search_sub_category" value="ფილტრი" class="search_init" />
             </th>
             <th>
-            	<input type="checkbox" name="check-all" id="check-all">
+            	<div class="callapp_checkbox">
+                    <input type="checkbox" id="check-all" name="check-all" />
+                    <label for="check-all"></label>
+                </div>
             </th>
         </tr>
     </thead>

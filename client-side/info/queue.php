@@ -41,7 +41,7 @@
         GetDialog(fName, 420, "auto", buttons, 'left top');
         LoadTable('ext',3,'get_list_ext',"<'F'lip>",'','hidden_id='+$('#hidden_id').val());
               // ServerLink,  AddButtonID,    DeleteButtonID,     CheckAllID,  DialogID,   SaveDialogID,  CloseDialogID,  DialogHeight,  DialogPosition,  DialogOpenAct,     DeleteAct        EditDialogAct        TableID  ColumNum     TableAct       TableFunction      TablePageNum     TableOtherParam
-        MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'F'lip>",      '',        'hidden_id='+$('#hidden_id').val());
+        MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all-ext', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'F'lip>",      '',        'hidden_id='+$('#hidden_id').val());
     }
 
 

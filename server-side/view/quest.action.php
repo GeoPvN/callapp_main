@@ -47,7 +47,10 @@ switch ($action) {
 				/* General output */
 				$row[] = $aRow[$i];
 				if($i == ($count - 1)){
-				    $row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+				    $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
 				}
 			}
 			$data['aaData'][] = $row;
@@ -79,7 +82,10 @@ switch ($action) {
 	            /* General output */
 	            $row[] = $aRow[$i];
 	            if($i == ($count - 1)){
-	                $row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+	                $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
 	            }
 	        }
 	        $data['aaData'][] = $row;
@@ -304,19 +310,22 @@ function GetPage($res = '')
                     			    <thead>
                         			    <tr class="search_header">
                             			    <th class="colum_hidden">
-    			                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+    			                                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>                            			    
     			                            <th>
-    			                            <input style="width: 20px;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+    			                                 <input style="width: 20px;" type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
     			                            <th>
-                            			    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                            			         <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
                             			    <th>
-                            			    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                            			         <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
                             			    <th>
-                            			    <input type="checkbox" name="check-all" id="check-all-de">
+                                			     <div class="callapp_checkbox">
+                                                    <input type="checkbox" id="check-all-de" name="check-all" />
+                                                    <label for="check-all-de"></label>
+                                                 </div>
                             			    </th>
                         			    </tr>
                     			    </thead>

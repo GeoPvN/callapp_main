@@ -105,7 +105,10 @@ switch ($action) {
                 /* General output */
                 $row[] = $aRow[$i];
                 if($i == ($count - 1)){
-                    $row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
+                    $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
                 }
             }
             $data['aaData'][] = $row;
@@ -255,7 +258,10 @@ function GetPage($res)
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>                         
                             <th>
-                            	<input style="margin-left: 9px;" type="checkbox" name="check-all" id="check-all">
+                            	<div class="callapp_checkbox">
+                                    <input type="checkbox" id="check-all-ext" name="check-all" />
+                                    <label for="check-all-ext"></label>
+                                </div>
                             </td>           
                         </tr>
                     </thead>
