@@ -13,7 +13,7 @@
 			GetButtons("add_button", "delete_button");			
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL);
 		});
-        
+         
 		function LoadTable(tbl,col_num,act,change_colum){
 	    	GetDataTable(tName, aJaxURL, act, col_num, "", 0, "", 1, "asc", '', change_colum);
 	    	setTimeout(function(){

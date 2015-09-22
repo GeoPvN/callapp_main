@@ -3,7 +3,7 @@ require_once('../../includes/classes/core.php');
 $action	= $_REQUEST['act'];
 $error	= '';
 $data	= '';
-
+ 
 $user_id	       = $_SESSION['USERID'];
 $quest_id          = $_REQUEST['id'];
 $quest_detail_id   = $_REQUEST['quest_detail_id'];

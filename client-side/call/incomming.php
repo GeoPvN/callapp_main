@@ -10,7 +10,7 @@
     var colum_number      = 9;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
-    
+     
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
     	LoadTable('index',colum_number,main_act,change_colum_main);

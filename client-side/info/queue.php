@@ -10,7 +10,7 @@
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
     var lenght = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
-    
+     
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
     	LoadTable('index',colum_number,main_act,change_colum_main,lenght,'');

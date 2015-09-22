@@ -3,7 +3,7 @@ require_once('../../includes/classes/core.php');
 $action	= $_REQUEST['act'];
 $error	= '';
 $data	= '';
-
+ 
 switch ($action) {
 	case 'get_add_page':
 		$page		= GetPage();

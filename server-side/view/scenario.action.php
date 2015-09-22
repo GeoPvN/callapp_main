@@ -21,7 +21,7 @@ switch ($action) {
 	case 'get_add_page':
 		$page		= GetPage(GetList($add_id));
 		$data		= array('page'	=> $page);
-
+ 
 		break;
 	case 'get_edit_page':
 		$page		= GetPage(GetList($quest_id,$quest_detail_id));

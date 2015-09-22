@@ -8,7 +8,7 @@
 		    	
 		$(document).ready(function () {        	
 			LoadTable();	
-						
+ 						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");			
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL);

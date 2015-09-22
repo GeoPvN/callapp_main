@@ -20,7 +20,7 @@ switch ($action) {
 		$page		= GetPage(GetCategory($cat_id));
         
         $data		= array('page'	=> $page);
-        
+         
         break;
  	case 'get_list' :
 		$count	= $_REQUEST['count'];

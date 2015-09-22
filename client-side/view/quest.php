@@ -12,7 +12,7 @@
 		var fName	= "add-edit-form";							//form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'fipl>";
 		var lenght = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
-		    	
+ 		    	
 		$(document).ready(function () {
 			LoadTable('index',3,'get_list',change_colum_main,'',lenght);
 			MyEvent(   aJaxURL,  'add_button', 'delete_button', 'check-all', '', 'save-dialog', 'cancel-dialog',      735,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'index',   3,        'get_list', change_colum_main,      '',        'hidden_id='+$('#hidden_id').val(),1,'','');

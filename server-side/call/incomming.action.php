@@ -7,7 +7,7 @@ $action                     = $_REQUEST['act'];
 $error                      = '';
 $data                       = '';
 $user_id	                = $_SESSION['USERID'];
-
+ 
 // Incomming Call Dialog Strings
 $hidden_id                  = $_REQUEST['id'];
 $incomming_id               = $_REQUEST['incomming_id'];

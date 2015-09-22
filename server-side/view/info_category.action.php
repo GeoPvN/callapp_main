@@ -3,7 +3,7 @@
  *	Category aJax actions
  * ******************************
 */
-
+ 
 include('../../includes/classes/core.php');
 $action	= $_REQUEST['act'];
 $error	= '';

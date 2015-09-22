@@ -19,7 +19,7 @@
 	        MyEvent(   aJaxURL,  'add_button', 'delete_button', 'check-all', '', 'save-dialog', 'cancel-dialog',      835,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'index',   4,        'get_list', "<'dataTable_buttons'T><'F'fipl>",      '',        'hidden_id='+$('#hidden_id').val(),1,'');
 	        
 		});
-
+ 
 		function GetTable() {
 			LoadTable('quest',3,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'fipl>",      lenght,        $("#quest_id").val(),'','add_id='+$("#quest_id").val(),'quest_detail_id='+$("#quest_id").val());
