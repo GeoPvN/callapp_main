@@ -654,6 +654,7 @@ function GetPage($res,$increment){
 	        </div>
 	</div>
 	</div>
+	
 	<input type="hidden" value="'.$res[id].'" id="hidden_id">
 	<input type="hidden" value="'.$hid_id.'" id="hidden_client_id">
 	<input type="hidden" value="'.$hid_contract_id.'" id="hidden_clientcontract_id">';

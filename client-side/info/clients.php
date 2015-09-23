@@ -57,12 +57,11 @@
 		  
 		        $(document).on("tabsactivate", "#tabs1", function() {
 		        	var tab = GetSelectedTab(tbName1);
-		            console.log(tab);
+		            
 			        if(tab==1){
 				       
 			        	$("#right_side fieldset").hide();
 			        	$(".add-edit-form-class").css("width", "801");
-			            //$('#add-edit-form').dialog({ position: 'top' });
 			            hide_right_side();
 				    }
 		        });
