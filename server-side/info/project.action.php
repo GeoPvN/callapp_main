@@ -172,10 +172,10 @@ function GetPage($res,$increment){
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 70px;">ნომერი</th>
-                            <th style="width: 70px;">რიგი</th>
-                            <th style="width: 100px;">შიდა ნომ.</th>
-                            <th style="width: 100px;">სცენარი</th>
+                            <th style="width: 73px;">ნომერი</th>
+                            <th style="width: 73px;">რიგი</th>
+                            <th style="width: 110px;">შიდა ნომ.</th>
+                            <th style="width: 150px;">სცენარი</th>
 							<th style="width: 11px;" class="check"></th>
 						</tr>
                     </thead>
@@ -199,7 +199,7 @@ function GetPage($res,$increment){
 							<th>
 				            	<div class="callapp_checkbox">
 				                    <input type="checkbox" id="check-all-number" name="check-all" />
-				                    <label for="check-all-number"></label>
+				                    <label style="margin-top: 3px;" for="check-all-number"></label>
 				                </div>
 				            </th>
 						</tr>

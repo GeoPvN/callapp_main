@@ -57,12 +57,11 @@
 		  
 		        $(document).on("tabsactivate", "#tabs1", function() {
 		        	var tab = GetSelectedTab(tbName1);
-		            console.log(tab);
+		            
 			        if(tab==1){
 				       
 			        	$("#right_side fieldset").hide();
-			        	$(".add-edit-form-class").css("width", "789");
-			            //$('#add-edit-form').dialog({ position: 'top' });
+			        	$(".add-edit-form-class").css("width", "801");
 			            hide_right_side();
 				    }
 		        });
@@ -70,7 +69,7 @@
 		        LoadTable('client',6,'get_list_person',"<'F'lip>");
 		        SetEvents("add_project", "delete_project", "check-all-project", tName+'project', "add-edit-form-project", aJaxURL_object);
 		        SetEvents("add_client", "delete_client", "check-all-client", tName+'client', "add-edit-form-client", aJaxURL_client);
-		        $("#choose_button, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
+		        $("#choose_button, #upload_file, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
 	       break;
 		   case "add-edit-form-project":
 		    	var buttons = {
@@ -130,7 +129,7 @@
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1256");
+        $(".add-edit-form-class").css("width", "1265");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -253,10 +252,11 @@
 						}else{
 							var tbody = '';
 							for(i = 0;i <= data.page.length;i++){
-								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
-								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
-								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
-								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 112px;float:left;height: 25px;\">" + data.page[i].file_date + "</div>";
+								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;\">" + data.page[i].name + "</div>";
+								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+								
+								tbody += "<div style=\"width: 45px;\" id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">წაშლა</div>";
 								
 								$("#paste_files").html(tbody);
 							}							
@@ -336,10 +336,11 @@
             		$("#paste_files").html('');
             	};
 				for(i = 0;i <= data.page.length;i++){
-					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
-					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
-					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
-					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 112px;float:left;height: 25px;\">" + data.page[i].file_date + "</div>";
+					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;\">" + data.page[i].name + "</div>";
+					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+					tbody += "<div style=\"width: 45px;\" id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">წაშლა</div>";
+					
 					$("#paste_files").html(tbody);
 				}	
             }
@@ -728,9 +729,7 @@
 
 <body>
 	<div id="tabs" style="width: 90%;">
-		<div class="callapp_head">კლიენტები<span class="callapp_refresh">
-			<img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14"> განახლება</span><hr class="callapp_head_hr">
-		</div>
+		<div class="callapp_head">კლიენტები<hr class="callapp_head_hr"></div>
 	
 		
 		<div >
@@ -787,7 +786,7 @@
 			            <th>
 			            	<div class="callapp_checkbox">
 			                    <input type="checkbox" id="check-all" name="check-all" />
-			                    <label for="check-all"></label>
+			                    <label for="check-all" style="margin-top: 3px;"></label>
 			                </div>
 			            </th>  
 			        </tr>
