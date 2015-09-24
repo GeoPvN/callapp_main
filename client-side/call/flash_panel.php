@@ -1,5 +1,5 @@
 <?php
-
+ 
 require_once("AsteriskManager/config.php");
 //include("AsteriskManager/sesvars.php");
 

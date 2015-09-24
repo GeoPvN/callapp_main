@@ -1,5 +1,5 @@
 <?php
-
+ 
 class AsteriskManager
 {
     var $socket = NULL;

@@ -7,7 +7,7 @@ $action                     = $_REQUEST['act'];
 $user		                = $_SESSION['USERID'];
 $error                      = '';
 $data                       = '';
-
+ 
 
 // Queue Dialog Strings
 $hidden_id                = $_REQUEST['hidden_id'];

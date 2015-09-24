@@ -1,6 +1,6 @@
 <head>
 <style type="text/css">
-
+ 
 </style>
 <script type="text/javascript">
     var aJaxURL           = "server-side/info/queue.action.php";

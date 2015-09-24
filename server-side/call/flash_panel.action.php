@@ -1,5 +1,5 @@
 <?php
-
+ 
 mysql_connect('localhost', 'root', 'Gl-1114');
 mysql_select_db('asteriskcdrdb');
 

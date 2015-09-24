@@ -1,7 +1,7 @@
 <?php
 // MySQL Connect Link
 require_once('../../includes/classes/core.php');
-
+ 
 // Main Strings
 $action                     = $_REQUEST['act'];
 $error                      = '';
