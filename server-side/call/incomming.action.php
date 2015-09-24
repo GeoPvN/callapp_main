@@ -7,6 +7,7 @@ $action                     = $_REQUEST['act'];
 $error                      = '';
 $data                       = '';
 $user_id	                = $_SESSION['USERID'];
+$open_number                = $_REQUEST['open_number'];
  
 // Incomming Call Dialog Strings
 $hidden_id                  = $_REQUEST['id'];
@@ -46,7 +47,7 @@ switch ($action) {
 
 		break;
 	case 'get_edit_page':
-		$page		= GetPage(Getincomming($hidden_id));
+		$page		= GetPage(Getincomming($hidden_id,$open_number));
 		$data		= array('page'	=> $page);
 
 		break;
@@ -62,14 +63,16 @@ switch ($action) {
                         				incomming_call.id,
                         				incomming_call.date,
                         				incomming_call.phone,
-                        				cat_1.`name`,
-                        				cat_1_1.`name`,
-                        				cat_1_1_1.`name`,
+                        				IF(personal_info.client_person_fname!='',personal_info.client_person_fname,personal_info.client_name) AS `name`,
+                        				cat_1.`name` AS `cat_1`,
+                        				cat_1_1.`name` AS `cat_1_1`,
+                        				cat_1_1_1.`name` AS `cat_1_1_1`,
                         				`comment`
                                 FROM 	`incomming_call`
                                 LEFT JOIN	info_category AS cat_1 ON incomming_call.cat_1 = cat_1.id
                                 LEFT JOIN	info_category AS cat_1_1 ON incomming_call.cat_1_1 = cat_1_1.id
-                                LEFT JOIN	info_category AS cat_1_1_1 ON incomming_call.cat_1_1_1 = cat_1_1_1.id");
+                                LEFT JOIN	info_category AS cat_1_1_1 ON incomming_call.cat_1_1_1 = cat_1_1_1.id
+                                LEFT JOIN personal_info ON incomming_call.id = personal_info.incomming_call_id");
 	  
 		$data = array(
 				"aaData"	=> array()
@@ -92,6 +95,16 @@ switch ($action) {
         $data		= array('page'	=> $page);
     
         break;
+    case 'cat_2':
+        $page		= get_cat_1_1($_REQUEST['cat_id'],'');
+        $data		= array('page'	=> $page);
+    
+        break;
+    case 'cat_3':
+        $page		= get_cat_1_1_1($_REQUEST['cat_id'],'');
+        $data		= array('page'	=> $page);
+    
+        break;
     case 'send_mail':
         $page		= GetMailSendPage();
         $data		= array('page'	=> $page);
@@ -109,8 +122,14 @@ switch ($action) {
         $date        = json_decode($_REQUEST[date]);
         $date_time   = json_decode($_REQUEST[date_time]);
         
+        if($hidden_id == ''){
+            $inc_id = $incomming_id;
+        }else{
+            $inc_id = $hidden_id;
+        }
+        
         mysql_query("DELETE FROM scenario_results
-                     WHERE incomming_call_id=$hidden_id;");
+                     WHERE incomming_call_id=$inc_id;");
         foreach ($checker as $key => $value) {
             
             $quest_id = str_replace("checkbox","",$key);            
@@ -120,7 +139,7 @@ switch ($action) {
                 mysql_query("INSERT INTO `scenario_results` 
                             (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
                             VALUES
-                            ('$user_id', '$hidden_id', '1', '$quest_id', '$answer', NULL)");
+                            ('$user_id', '$inc_id', '1', '$quest_id', '$answer', NULL)");
             }
         }
         
@@ -131,7 +150,7 @@ switch ($action) {
 			    mysql_query("INSERT INTO `scenario_results` 
                             (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
                             VALUES
-                            ('$user_id', '$hidden_id', '1', '$quest_id', '$last[0]', NULL)");
+                            ('$user_id', '$inc_id', '1', '$quest_id', '$last[0]', NULL)");
 		}
         
 		foreach ($input as $key => $value) {
@@ -142,7 +161,7 @@ switch ($action) {
 		    mysql_query("INSERT INTO `scenario_results`
                          (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
                          VALUES
-                         ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+                         ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
 		
 		foreach ($date as $key => $value) {
@@ -153,7 +172,7 @@ switch ($action) {
 		    mysql_query("INSERT INTO `scenario_results`
 		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
 		        VALUES
-		        ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
 		
 		foreach ($date_time as $key => $value) {
@@ -164,7 +183,7 @@ switch ($action) {
 		    mysql_query("INSERT INTO `scenario_results`
 		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
 		        VALUES
-		        ('$user_id', '$hidden_id', '1', '$quest_id', '$answer_id', '$val')");
+		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
             
         break;
@@ -232,19 +251,6 @@ function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,
                 WHERE   `incomming_call_id`='$hidden_id'");
 }
 
-function next_quest($task_detail_id, $val) {
-    $res = mysql_fetch_array(mysql_query("  SELECT 	`scenario_destination`.`destination`
-        FROM 	`task`
-        JOIN	task_detail ON task.id = task_detail.task_id
-        JOIN	scenario ON task.template_id = scenario.id
-        JOIN    scenario_detail ON scenario.id = scenario_detail.scenario_id
-        JOIN    scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id
-        WHERE	task_detail.id = $task_detail_id AND scenario_destination.answer_id = $val"));
-
-    return $res[0];
-
-}
-
 function get_cat_1($id){
     $req = mysql_query("  SELECT  `id`,
                                   `name`
@@ -298,8 +304,13 @@ function get_cat_1_1_1($id,$child_id){
     return $data;
 }
 
-function Getincomming($hidden_id)
+function Getincomming($hidden_id,$open_number)
 {
+    if($hidden_id == ''){
+        $filter = "incomming_call.`phone` = '$open_number' AND DATE(incomming_call.date) = DATE(NOW())";
+    }else{
+        $filter = "incomming_call.id =  $hidden_id";
+    }
 	$res = mysql_fetch_assoc(mysql_query("SELECT    incomming_call.id AS id,
                                     				incomming_call.`date` AS call_date,
                                     				DATE_FORMAT(incomming_call.`date`,'%y-%m-%d') AS `date`,
@@ -327,12 +338,18 @@ function Getincomming($hidden_id)
                                     				personal_info.`client_note`
                                         FROM 	   incomming_call
                                         LEFT JOIN  personal_info ON incomming_call.id = personal_info.incomming_call_id
-                                        WHERE      incomming_call.id =  $hidden_id"));
+                                        WHERE      $filter
+                                	    ORDER BY incomming_call.id DESC
+                                        LIMIT 1"));
 	return $res;
 }
 
 function GetPage($res,$increment)
 {
+    echo $increment;
+    if($increment == '' && $res == ''){
+        $increment = increment(incomming_call);
+    }
 	$data  .= '
 	<div id="dialog-form">
 	    <fieldset style="width: 430px;  float: left;">
@@ -350,7 +367,7 @@ function GetPage($res,$increment)
     	       </tr>
 	           <tr>
 	               <td><input style="width: 110px;" id="incomming_id" type="text" value="'.(($res['id']=='')?$increment:$res['id']).'"></td>
-	               <td><input style="width: 125px;" id="incomming_date" type="text" value="'.$res['call_date'].'"></td>
+	               <td><input style="width: 125px;" id="incomming_date" type="text" value="'.(($res['call_date']=='')?date("Y-m-d H:i:s"):$res['call_date']).'"></td>
 	               <td><input style="width: 110px;" id="incomming_phone" type="text" value="'.$res['phone'].'"></td>
     	       </tr>
 	       </table>
@@ -776,6 +793,13 @@ function GetPage($res,$increment)
                     <fieldset style="display:none;height: 465px;" id="scenar">
                         <legend>კითხვები</legend>';
 		
+		if($res[id] == ''){
+		    $inc_id = 0;
+		    $inc_checker = " AND scenario_results.incomming_call_id = 0";
+		}else{
+		    $inc_id = $res[id];
+		    $inc_checker = " AND scenario_results.incomming_call_id = $res[id]";
+		}
 while ($row = mysql_fetch_array($query)) {
 		    
 		    $last_q = mysql_query("  SELECT question_detail.id
@@ -795,18 +819,19 @@ while ($row = mysql_fetch_array($query)) {
                 
             
 		     
-		    $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
-                        							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
-							                        WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
-		                                            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
-		                                            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $res[id] && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+		    $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+                        							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+							                        WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+		                                            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
+		                                            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label></td></tr>')
                             				END AS `ans`,
                             				question_detail.quest_type_id
                                     FROM question_detail		                            
-                                    LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id
+                                    LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
 		                            LEFT JOIN incomming_call ON incomming_call.id = scenario_results.incomming_call_id
 		                            LEFT JOIN scenario_destination ON scenario_destination.answer_id = $last_a[0]
-                                    WHERE question_detail.id = $last_a[0]");
+                                    WHERE question_detail.id = $last_a[0]
+		                            ");
 
 		
 		        

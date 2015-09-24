@@ -20,7 +20,7 @@ require_once("AsteriskManager/config.php");
 		        url: 'AsteriskManager/liveState.php',
 			    data: 'sesvar=hideloggedoff&value=true&stst=1',
 		        success: function(data) {
-					$("#jq").html(data);						
+					$("#flesh_panel_table").html(data);						
 			    }
             }).done(function(data) { 
                 setTimeout(runAjax, 1000);
@@ -33,7 +33,7 @@ require_once("AsteriskManager/config.php");
             	dataType: "html",
 		        url: 'server-side/call/flash_panel.action.php',
 		        success: function(data) {
-					$("#level").html(data);						
+					$(".level").html(data);						
 			    }
             }).done(function(data) { 
                 setTimeout(runAjax1, 1000);
@@ -41,51 +41,68 @@ require_once("AsteriskManager/config.php");
 		}
 		
     </script>
-</head>
+    <style type='text/css'>
 
-<style type='text/css'>
+#flesh_panel_table, #flesh_panel_table_mini{
+	box-shadow: 0px 0px 7px #888888;
+	margin-top: 20px;
+}
 
-#box-table-b
-{
-	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-	font-size: 12px;
-	text-align: center;
-	border-collapse: collapse;
-	border-top: 7px solid #71A9D3;
-	border-bottom: 7px solid #71A9D3;
+#flesh_panel_table td, #flesh_panel_table_mini td {
+	height: 25px;	
+	vertical-align: middle;
+	text-align: left;
+	padding: 0 5px;
+	background: #FFF;
 }
-#box-table-b th
-{
-	font-size: 13px;
-	font-weight: normal;
-	padding: 8px;
-	background: #e8edff;
-	border-right: 1px solid #71A9D3;
-	border-left: 1px solid #71A9D3;
-	color: #039;
+.tb_head td{
+	border-right: 1px solid #E6E6E6;	
 }
-#box-table-b td
-{
-	padding: 8px;
-	background: #e8edff; 
-	border-right: 1px solid #71A9D3;
-	border-left: 1px solid #71A9D3;
-	color: #669;
+#show_flesh_panel,#show_flesh_panel_right{
+    float: left;
+	cursor: pointer;
+}
+.td_center{
+    text-align: center !important;
+}
+.ui-widget-header{
+	box-shadow: 0px 0px 7px #888888;
+}
+.display{
+	box-shadow: 0px -2px 10px #888888;
+}
+.callapp_head{
+	font-family: pvn;
+	font-weight: bold;
+	font-size: 20px;
+	color: #2681DC;
+}
+.callapp_head_hr{
+	border: 1px solid #2681DC;
 }
 </style>
+</head>
 
 <body>
+<div id="tabs" style="width: 90%">
+<div class="callapp_head">Flash Panel<hr class="callapp_head_hr"></div>
+    
+
+    
+<div class="callapp_filter_show">    
+
     <table style=" margin: 0 auto;" border="1">
 		<tr>				
 			<td>		
-			   <div id="jq" style="height: 520px; margin-top: 50px;"></div>
+			   <table id="flesh_panel_table">
+			   </table>
 			</td>
 			<td style="width: 20px;">
 			</td>
 			<td>
-				<p style="margin-top: 50px;">Service Level</p>
-				<div id="level" style="height: 380px; margin-top: 16px;"></div>
+				<table id="flesh_panel_table" class="level"></table>
 			</td>			
 		</tr>
 	</table>
+</div>
 </body>

@@ -192,6 +192,7 @@ input{
 	position: relative;
 }
 .callapp_checkbox label {
+	margin-top: 2px;
 	width: 10px;
 	height: 10px;
 	cursor: pointer;

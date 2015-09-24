@@ -25,6 +25,7 @@
     	    setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 10);
+    	    runAjax();
     });
 
     function LoadTable(tbl,col_num,act,change_colum){
@@ -47,8 +48,8 @@
 		        }
 		    };
         GetDialog(fName, 575, "auto", buttons, 'left+43 top');
-        LoadTable('sms',5,'get_list',"<'dataTable_buttons'T><'dataTable_content't><'F'p>");
-        LoadTable('mail',5,'get_list',"<'dataTable_buttons'T><'dataTable_content't><'F'p>");
+        LoadTable('sms',5,'get_list',"<'F'lip>");
+        LoadTable('mail',5,'get_list',"<'F'lip>");
         $("#client_checker,#add_sms,#add_mail").button();
         GetDate2("date_input");
         GetDate1("task_end_date");
@@ -60,6 +61,32 @@
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
     }
+
+
+    $(document).on("change", "#incomming_cat_1", function () {
+    	param 			= new Object();
+		param.act		= "cat_2";
+		param.cat_id    = $('#incomming_cat_1').val();
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#incomming_cat_1_1").html(data.page);
+            }
+        });
+    });
+    $(document).on("change", "#incomming_cat_1_1", function () {
+    	param 			= new Object();
+		param.act		= "cat_3";
+		param.cat_id    = $('#incomming_cat_1_1').val();
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#incomming_cat_1_1_1").html(data.page);
+            }
+        });
+    });
 
     $(document).on("click", "#next_quest", function () {
         var input_radio = '';
@@ -485,7 +512,26 @@
 			    }
 		    });
  	    });
-
+    
+    $(document).on("click", ".open_dialog", function () {
+        $.ajax({
+            url: aJaxURL,
+            type: "POST",
+            data: "act=get_edit_page&id=&open_number=" + $(this).text(),
+            dataType: "json",
+            success: function (data) {
+                if (typeof (data.error) != "undefined") {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                        $("#add-edit-form").html(data.page); 
+                    	LoadDialog('add-edit-form');
+                    }
+                }
+            }
+        });        
+    });
+    
     $(document).on("click", "#show_flesh_panel", function () {
         //$('#flesh_panel').css('width','425px');
         $( "#flesh_panel" ).animate({
@@ -495,7 +541,7 @@
         $('#show_flesh_panel').attr('id','show_flesh_panel_right');
         $('#flesh_panel_table_mini').css('display','none');
         $('#flesh_panel_table').css('display','block');
-        $('#flesh_panel').css('z-index','100');
+        $('#flesh_panel').css('z-index','99');
         $('#show_flesh_panel_right').attr('title','პანელის დაპატარევება');
     });
     $(document).on("click", "#show_flesh_panel_right", function () {
@@ -588,8 +634,10 @@
 		//----------------------------------------------------
 		
 		// Incomming Vars
+    	param.incomming_id          = $("#incomming_id").val();
 		param.hidden_id				= $("#hidden_id").val();
 		param.incomming_phone		= $("#incomming_phone").val();
+		param.incomming_date        = $("#incomming_date").val();
 		param.incomming_cat_1		= $("#incomming_cat_1").val();
 		param.incomming_cat_1_1		= $("#incomming_cat_1_1").val();
 		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
@@ -625,13 +673,35 @@
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-						    LoadTable();
+							LoadTable('index',colum_number,main_act,change_colum_main);
 						    CloseDialog("add-edit-form");
 						}
 					}
 		    	}
 		   });
 	});
+    function runAjax() {    	
+        $.ajax({
+        	async: false,
+        	dataType: "html",
+	        url: 'AsteriskManager/liveState.php',
+		    data: 'sesvar=hideloggedoff&value=true&stst=1',
+	        success: function(data) {
+				$("#flesh_panel_table").html(data);	
+				$.ajax({
+		        	async: false,
+		        	dataType: "html",
+			        url: 'AsteriskManager/liveStatemini.php',
+				    data: 'sesvar=hideloggedoff&value=true&stst=1',
+			        success: function(data) {
+						$("#flesh_panel_table_mini").html(data);						
+				    }
+		        });
+		    }
+        }).done(function(data) { 
+            setTimeout(runAjax, 1000);
+        });        
+	}
 </script>
 <style type="text/css">
 .callapp_tabs{
@@ -719,13 +789,13 @@
     float: right;
     width: 70px;
     top: 28px;
-	z-index: 99;
+	z-index: 50;
 	border: 1px solid #E6E6E6;
 	padding: 4px;
 }
 
 .ColVis, .dataTable_buttons{
-	z-index: 100;
+	z-index: 50;
 }
 #flesh_panel{
     height: 630px;
@@ -734,7 +804,35 @@
     top: 0;
     padding: 15px;
     right: 8px;
-	z-index: 99;
+	z-index: 49;
+}
+#table_sms_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_sms_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_sms_paginate{
+	margin: 0;
+}
+#table_mail_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_mail_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_mail_paginate{
+	margin: 0;
 }
 </style>
 </head>
@@ -843,12 +941,12 @@
             <th>ID</th>
             <th style="width: 20px;">№</th>
             <th style="width: 100%;">თარიღი</th>
-            <th style="width: 100%;">განყოფილებები</th>
-            <th style="width: 100%;">კატეგორია</th>
-            <th style="width: 100%;">ქვე-კატეგორია</th>                            
-            <th style="width: 100%;">სახელი</th>
             <th style="width: 100%;">ტელეფონი</th>
-            <th style="width: 100%;">ზარის სტატუსი</th>
+            <th style="width: 100%;">სახელი</th>
+            <th style="width: 100%;">კატეგორია 1</th>
+            <th style="width: 100%;">კატეგორია 1_1</th>            
+            <th style="width: 100%;">კატეგორია 1_1_1</th>
+            <th style="width: 100%;">კომენტარი</th>
         </tr>
     </thead>
     <thead>
@@ -919,72 +1017,8 @@
 <div id="flesh_panel">
 <div class="callapp_head" style="text-align: right;"><img id="show_flesh_panel" title="პანელის გადიდება" alt="arrow" src="media/images/icons/arrow_left.png" height="18" width="18">ქოლ-ცენტრი<hr class="callapp_head_hr"></div>
 <table id="flesh_panel_table">
-    <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-        <td>რიგი</td>
-        <td>შიდა ნომერი</td>
-        <td>თანამშრომელი</td>
-        <td>სტატუსი</td>
-        <td>დრო</td>
-        <td>აბონენტი</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>2262626</td>
-        <td>EXT100</td>
-        <td>გელა ხოფერია</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-        <td>01:11</td>
-        <td>995568919432</td>
-    </tr>
 </table>
 <table id="flesh_panel_table_mini">
-    <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-        <td>შიდა ნომერი</td>
-        <td>სტატუსი</td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT100</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_inc.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT101</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_out.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT102</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_free.png" height="14" width="14"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT103</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_ringing.png" height="17" width="17"></td>
-    </tr>
-    <tr style="border: 1px solid #E6E6E6;">
-        <td>EXT104</td>
-        <td class="td_center"><img alt="inner" src="media/images/icons/flesh_off.png" height="17" width="17"></td>
-    </tr>
 </table>
 </div>
 

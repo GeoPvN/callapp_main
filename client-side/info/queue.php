@@ -96,6 +96,7 @@
 	    param.global_id		= $('#global_id').val();
     	param.queue_name	= $('#queue_name').val();
     	param.queue_number	= $('#queue_number').val();
+    	param.queue_scenar  = $('#queue_scenar').val();
     	
         $.ajax({
             url: aJaxURL,
