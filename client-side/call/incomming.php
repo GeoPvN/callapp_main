@@ -21,16 +21,14 @@
     	GetDate('end_date');
 
     	    $.session.clear(); 
-
-    	    setTimeout(function(){
-    	    	$('.ColVis, .dataTable_buttons').css('display','none');
-  	    	}, 10);
     	    runAjax();
     });
 
     function LoadTable(tbl,col_num,act,change_colum){
     	GetDataTable(tName+tbl, aJaxURL, act, col_num, "", 0, "", 1, "asc", '', change_colum);
-    	
+    	setTimeout(function(){
+	    	$('.ColVis, .dataTable_buttons').css('display','none');
+	    	}, 50);
     }
     
     function LoadDialog(fName){
@@ -50,7 +48,7 @@
         GetDialog(fName, 575, "auto", buttons, 'left+43 top');
         LoadTable('sms',5,'get_list',"<'F'lip>");
         LoadTable('mail',5,'get_list',"<'F'lip>");
-        $("#client_checker,#add_sms,#add_mail").button();
+        $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
         GetDate2("date_input");
         GetDate1("task_end_date");
         GetDate1("task_start_date");
@@ -89,12 +87,14 @@
     });
 
     $(document).on("click", "#next_quest", function () {
-        var input_radio = '';
+        var input_radio    = '';
         var input_checkbox = '';
-        var input = '';
+        var input          = '';
+        var select         = '';
         input_radio = $('#' + $(this).attr('next_id') + ' .radio_input:checked').attr('next_quest');
         input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
         input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
+        select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
         
         if(input_radio == undefined){
             
@@ -121,6 +121,13 @@
         	$('.quest_body').css('display','none');
         	$('#'+input_checkbox).css('display','block');
         	$('#next_quest').attr('next_id',input_checkbox);
+        }
+        if(select == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+select).css('display','block');
+        	$('#next_quest').attr('next_id',select);
         }
     });
 
@@ -514,10 +521,12 @@
  	    });
     
     $(document).on("click", ".open_dialog", function () {
+    	var queoue = $($(this).siblings())[0];
+    	queoue = $(queoue).text();
         $.ajax({
             url: aJaxURL,
             type: "POST",
-            data: "act=get_edit_page&id=&open_number=" + $(this).text(),
+            data: "act=get_edit_page&id=&open_number=" + $(this).text() + "&queue=" + queoue,
             dataType: "json",
             success: function (data) {
                 if (typeof (data.error) != "undefined") {
@@ -530,6 +539,23 @@
                 }
             }
         });        
+    });
+    
+    $(document).on("click", "#show_all_scenario", function () {
+        if($(this).attr('who') == 0){            
+        $('#scenar').css('overflow-y','scroll');
+        $('.quest_body').css('display','block');
+        $('#next_quest').prop('disabled', true);
+        $(this).attr('who',1);
+        $('#show_all_scenario span').text('დამალვა');
+        }else{
+        	$('#scenar').css('overflow-y','visible');
+            $('.quest_body').css('display','none');
+            $('.1').css('display','block');
+            $('#next_quest').prop('disabled', false);
+            $(this).attr('who',0);
+            $('#show_all_scenario span').text('ყველას ჩვენება');
+        }
     });
     
     $(document).on("click", "#show_flesh_panel", function () {
@@ -571,6 +597,7 @@
     	var radio_checker  = {};
     	var date_checker   = {};
     	var date_date_checker = {};
+    	var select ={};
     	
     	$('#add-edit-form .check_input:checked').each(function() {
 	    	
@@ -625,11 +652,23 @@
         	date_time_key      = this.id;
         	date_time_value    = this.value;
     	    if(date_time_value != ''){
-    	    	date_checker[date_time_key] = date_checker[date_time_key] + "," + date_time_value;
+    	    	date_date_checker[date_time_key] = date_date_checker[date_time_key] + "," + date_time_value;
     	    }
     	});
     	
     	items.date_time   = date_date_checker;
+
+        $('#add-edit-form .hand_select').each(function() {
+
+	    	//alert($("option:selected",this).val());
+        	select_key      = this.id;
+        	select_value    = $("option:selected",this).val();
+    		
+        	select[select_key] = select[select_key] + "," + select_value;
+
+    	});
+    	
+    	items.select_op   = select;
 
 		//----------------------------------------------------
 		
@@ -642,6 +681,7 @@
 		param.incomming_cat_1_1		= $("#incomming_cat_1_1").val();
 		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
 		param.incomming_comment		= $("#incomming_comment").val();
+		param.scenario_id           = $("#scenario_id").val();
 
 		// Incomming Client Vars
 		param.client_status			= $('input[name=client_status]:checked').val();
@@ -667,7 +707,7 @@
 		var link = GetAjaxData(param);		
 	    	$.ajax({
 		        url: aJaxURL,
-			    data: link + "&checker=" + JSON.stringify(items.checker) + "&input=" + JSON.stringify(items.input)  + "&radio=" + JSON.stringify(items.radio) + "&date=" + JSON.stringify(items.date) + "&date_time=" + JSON.stringify(items.date_time),
+			    data: link + "&checker=" + JSON.stringify(items.checker) + "&input=" + JSON.stringify(items.input)  + "&radio=" + JSON.stringify(items.radio) + "&date=" + JSON.stringify(items.date) + "&date_time=" + JSON.stringify(items.date_time) + "&select_op=" + JSON.stringify(items.select_op),
 		        success: function(data) {       
 					if(typeof(data.error) != "undefined"){
 						if(data.error != ""){

@@ -64,10 +64,11 @@ switch ($action) {
 	    mysql_query("SET @i = 0;");
 	    $rResult = mysql_query("SELECT 	`question_detail`.`id`,
 	                                    @i := @i+1 AS `order_id`,
-                        				`question_detail`.`answer` AS `answer`,
+                        				IF(answer REGEXP '[0-9]',scenario_handbook.`name`,question_detail.answer) AS `answer`,
                         				`question_type`.`name` AS `quest_type`
                                 FROM 	`question_detail`
                                 JOIN	`question_type` ON question_detail.quest_type_id = question_type.id
+	                            LEFT JOIN	`scenario_handbook` ON question_detail.answer = scenario_handbook.id
                                 WHERE 	`question_detail`.`actived` = 1 AND question_detail.quest_id = $quest_id");
 	
 	    $data = array(
@@ -274,6 +275,24 @@ function GetQuestType($quset_type_id)
     return $data;
 }
 
+function GetHandBook($id){
+    $req = mysql_query("	SELECT 	`scenario_handbook`.`id`,
+                                    `scenario_handbook`.`name`
+                            FROM 	`scenario_handbook`
+                            WHERE 	`scenario_handbook`.`actived` = 1" );
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+
 function GetPage($res = '')
 {	
     $data = '
@@ -341,17 +360,30 @@ function GetPage($res = '')
                 						<select style="width: 231px;" id="quest_type_id" class="idls object">'. GetQuestType($res['quest_type_id']).'</select>
                 					</td>
                 				</tr>              				
-                                <tr>
+                                <tr id="show_answer">
                 					<td style="width: 170px;"><label for="answer" id="qlabel">პასუხი</label></td>
                 					<td>
                 						<input type="text" id="answer" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['answer'] . '" />
                 					</td>
-                				</tr>                				
+                				</tr>
+                				<tr style="display:none;" id="show_handbook">
+                					<td style="width: 170px;"><label for="handbook" id="qlabel">ცნობარი</label></td>
+                					<td>
+                						<select id="handbook" style="width: 230px;">'.GetHandBook($res['answer']).'</select>
+                					</td>
+                				</tr>              				
                 			</table>
                 			<script type="text/javascript">
                 						    $("#add-edit-form-answer #name").val($("#add-edit-form #name").val());
                 						    $("#add-edit-form-answer #name").prop("disabled", true);
-                						    $("#add-edit-form-answer #name").css("width","226");                						    
+                						    $("#add-edit-form-answer #name").css("width","226");
+                						    if($("#quest_type_id").val()==7){
+                                		        $("#show_handbook").css("display","table-row");
+                                		        $("#show_answer").css("display","none");
+                                		    }else{
+                                		    	$("#show_answer").css("display","table-row");
+                                		    	$("#show_handbook").css("display","none");
+                                		    }
                 						    </script>';
 			}else{
 			    $data .=  '<table class="dialog-form-table">   

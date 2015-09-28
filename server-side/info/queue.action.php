@@ -56,10 +56,11 @@ switch ($action) {
 	  	$rResult = mysql_query("SELECT 	`queue`.`id`,
                         				`queue`.`name`,
                         				`queue`.number,
-                        				'შემომავალი ზარი' AS `scenario_name`,
+                        				`scenario`.`name` AS `scenario_name`,
                         				GROUP_CONCAT(`queue_detail`.ext_name) AS `ext_name`
                                 FROM    `queue`
                                 LEFT JOIN queue_detail ON queue.id = queue_detail.queue_id
+	  	                        LEFT JOIN scenario ON scenario.id = queue.scenario_id
 	  	                        WHERE `queue`.`actived` = 1 AND `queue_detail`.`actived` = 1
 	  	                        GROUP BY `queue`.`id`;");
 	  

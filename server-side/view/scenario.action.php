@@ -464,7 +464,8 @@ function GetPage($res = '')
                                                     							WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(question_detail.id in($answer_id),' checked',''), ' class=\"radio_input\" style=\"float:left;\" type=\"radio\" name=\"radio', question.id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td>')
                                                     							WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
                                                     							WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_time_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
-                                                    				    END AS `ans`,
+                                                                                WHEN question_detail.quest_type_id = 7 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><select class=\"hand_select\"style=\"float:left;\"  id=\"hand_select|', question.id, '|', question_detail.id, '\" ><option>',scenario_handbook.name,'</option></select> <label style=\"float:left; padding: 7px;\" for=\"hand_select|', question.id, '|', question_detail.id, '\"></label></td>')        				    
+                                            			    		    END AS `ans`,
                                                                 		question_detail.quest_type_id,
                 			    		                                IF(question_detail.id in($answer_id) ,question_detail.id,'') AS `checked_quest`,
                 			    		                                scenario_detail.id as sc_id,
@@ -475,6 +476,7 @@ function GetPage($res = '')
                                                                 LEFT JOIN scenario_detail ON question.id = scenario_detail.quest_id
                 			    		                        LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = question_detail.id
                                                                 LEFT JOIN scenario ON scenario_detail.scenario_id = scenario.id 
+                			    		                        LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id 
                                                                 WHERE question_detail.quest_id = $row[0] AND question_detail.actived = 1 AND scenario.id = $res[scenario_id]
                                                                 GROUP BY question_detail.id
                                                                 ORDER BY question.id, question_detail.quest_type_id ASC");

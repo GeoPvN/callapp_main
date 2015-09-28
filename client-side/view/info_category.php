@@ -4,7 +4,7 @@
 		var aJaxURL	          = "server-side/view/info_category.action.php";
 		var tName             = "table_";
 	    var dialog            = "add-edit-form";
-	    var colum_number      = 3;
+	    var colum_number      = 4;
 	    var main_act          = "get_list";
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
  		    	
@@ -94,7 +94,7 @@
 
 <body>
 <div id="tabs">
-<div class="callapp_head">კითხვა/პასუხი<hr class="callapp_head_hr"></div>
+<div class="callapp_head">კატეგორიები<hr class="callapp_head_hr"></div>
 <div id="button_area">
 	<button id="add_button">დამატება</button>
 	<button id="delete_button">წაშლა</button>
@@ -115,6 +115,7 @@
             <th>ID</th>
             <th style="width: 50%;">ინფორმაციის ქვე კატეგორია</th>
             <th style="width: 50%;">ინფორმაციის კატეგორია</th>
+            <th style="width: 50%;">კლიენტი</th>
             <th class="check">#</th>
         </tr>
     </thead>
@@ -125,6 +126,9 @@
             </th>
             <th>
                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_sub_category" value="ფილტრი" class="search_init" />
             </th>
             <th>
                 <input type="text" name="search_sub_category" value="ფილტრი" class="search_init" />

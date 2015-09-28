@@ -218,8 +218,8 @@
             <th>ID</th>
             <th style="width: 100%;">დასახელება</th>
             <th style="width: 100%;">ნომერი</th>
-            <th style="width: 100%;">შიდა ნომრები</th>
             <th style="width: 100%;">სცენარი</th>
+            <th style="width: 100%;">შიდა ნომრები</th>
             <th class="check" style="width: 20px;"></th>
         </tr>
     </thead>

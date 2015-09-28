@@ -28,9 +28,11 @@ switch ($action) {
 	    
 	    $rResult = mysql_query("SELECT	`info`.`id`,
                                 		`info`.`name`,
-                                		(SELECT `name` FROM `info_category` WHERE `id` = `info`.`parent_id`)
+                                		(SELECT `name` FROM `info_category` WHERE `id` = `info`.`parent_id`),
+	                                    `client`.`name`
 							    FROM	`info_category` AS `info`
-	    						WHERE	`actived` = 1");
+	                            LEFT JOIN client ON info.client_id = client.id
+	    						WHERE	`info`.`actived` = 1");
 	    
 		$data = array(
 			"aaData"	=> array()
@@ -148,13 +150,31 @@ function Get_category($par_id)
 	return $data;
 }
 
-
+function Get_Client($id){
+    $data = '';
+    $req = mysql_query("SELECT `id`,`name`
+                        FROM  `client`
+                        WHERE `actived` = 1");
+    
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
 
 function GetCategory($cat_id) 
 {
     $res = mysql_fetch_assoc(mysql_query("SELECT `id`,
     											 `name`,
-    											 `parent_id`
+    											 `parent_id`,
+                                                 `client_id`
 									      FROM   `info_category`
 									      WHERE  `id` = $cat_id" ));
     
@@ -178,7 +198,13 @@ function GetPage($res = '')
 				<tr>
 					<td style="width: 170px;"><label for="category">კატეგორია</label></td>
 					<td>
-						<select id="parent_id" class="idls large">' . Get_Category($res['parent_id'])  . '</select>
+						<select id="parent_id" class="idls large">' . Get_Category($res['client_id'])  . '</select>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 170px;"><label for="category">კატეგორია</label></td>
+					<td>
+						<select id="parent_id" class="idls large">' . Get_Client($res['parent_id'])  . '</select>
 					</td>
 				</tr>
 			</table>

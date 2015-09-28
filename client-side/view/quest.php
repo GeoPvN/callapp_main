@@ -31,11 +31,10 @@
 		function GetTable() {
 			LoadTable('quest',4,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'fipl>",      lenght,        'id='+$("#quest_id").val(),'','dialog_check=1&add_id='+$("#quest_id").val(),'dialog_check=1&quest_detail_id='+$("#quest_id").val());
-			
         }
 		
 	    // Add - Save
-	    $(document).on("click", "#save-dialog", function () {	
+	    $(document).on("click", "#save-dialog", function () {
 	    	param 			= new Object();
 
 		    param.act		       = "save_quest";
@@ -63,6 +62,15 @@
 			    });
 			}	    					
 		});
+	    $(document).on("change", "#quest_type_id", function () {
+		    if($(this).val()==7){
+		        $('#show_handbook').css('display','table-row');
+		        $('#show_answer').css('display','none');
+		    }else{
+		    	$('#show_answer').css('display','table-row');
+		    	$('#show_handbook').css('display','none');
+		    }
+	    });
 
 	    $(document).on("click", "#save-answer", function () {	
 	    	param 			= new Object();
@@ -72,7 +80,11 @@
 		    param.id	            = $("#add-edit-form-answer #quest_id").val();
 	    	param.quest_detail_id   = $("#add-edit-form-answer #quest_detail_id").val();
 	    	param.quest_type_id	    = $("#add-edit-form-answer #quest_type_id").val();
-	    	param.answer		    = $("#add-edit-form-answer #answer").val();
+	    	if($("#add-edit-form-answer #answer").val() == ''){
+	    		  param.answer		    = $("#add-edit-form-answer #handbook").val();
+	    	}else{
+	    		  param.answer		    = $("#add-edit-form-answer #answer").val();
+	    	}
 	    	param.hidden_product_id	= $("#add-edit-form-answer #hidden_product_id").val();
 	        var ar_daamato = 0;
 	    	$('#table_quest td:nth-child(4)').each(function(){
