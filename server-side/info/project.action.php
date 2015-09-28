@@ -7,6 +7,7 @@ $action                     = $_REQUEST['act'];
 $error                      = '';
 $data                       = '';
 
+
 // Incomming Call Dialog Strings
 $hidden_id         = $_REQUEST['id'];
 $project_name      = $_REQUEST['project_name'];

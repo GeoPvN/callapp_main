@@ -7,6 +7,7 @@ $action                     = $_REQUEST['act'];
 $error                      = '';
 $data                       = '';
 
+
 // Incomming Call Dialog Strings
 //კლიენტი//
 $hidden_id       = $_REQUEST['id'];

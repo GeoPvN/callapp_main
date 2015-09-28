@@ -14,6 +14,7 @@
     var colum_number      = 6;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+    
    
     $(document).ready(function () {
         
