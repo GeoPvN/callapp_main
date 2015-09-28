@@ -434,7 +434,7 @@ function GetPage($res,$increment){
 					<td>
 						<div style="margin-top:10px; width: 127px; margin-left: -5px;" class="file-uploader">
 							<input id="choose_file" type="file" name="choose_file" class="input" style="display: none;">
-							<button id="choose_button'.$disable_img.'" class="ui-button-text" >აირჩიეთ ფაილი</button>
+							<button id="choose_button'.$disable_img.'" class="center" >აირჩიეთ ფაილი</button>
 						</div>
 					</td>
 				</tr>

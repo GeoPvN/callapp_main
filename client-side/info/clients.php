@@ -270,6 +270,8 @@
     $(document).on("click", "#choose_button", function () {
 	    $("#choose_file").click();
 	});
+
+	
     $(document).on("change", "#choose_file", function () {
         var file_url  = $(this).val();
         var file_name = this.files[0].name;
