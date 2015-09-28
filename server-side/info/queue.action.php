@@ -7,7 +7,7 @@ $action                     = $_REQUEST['act'];
 $user		                = $_SESSION['USERID'];
 $error                      = '';
 $data                       = '';
-
+ 
 
 // Queue Dialog Strings
 $hidden_id                = $_REQUEST['hidden_id'];
@@ -18,6 +18,7 @@ $queue_name               = $_REQUEST['queue_name'];
 $queue_number             = $_REQUEST['queue_number'];
 $in_num_name              = $_REQUEST['in_num_name'];
 $in_num_num               = $_REQUEST['in_num_num'];
+$queue_scenar             = $_REQUEST['queue_scenar'];
  
 
 switch ($action) {
@@ -116,7 +117,7 @@ switch ($action) {
     
         break;
     case 'save_queue':
-        save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id);
+        save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id,$queue_scenar);
     
         break;
     case 'save_in_num':
@@ -136,7 +137,7 @@ echo json_encode($data);
 * ******************************
 */
 
-function save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id){
+function save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id,$queue_scenar){
     if($hidden_id == ''){
         if($global_id == ''){
             $insert_id = increment('queue');
@@ -144,14 +145,15 @@ function save_queue($hidden_id,$queue_name,$queue_number,$user,$global_id){
             $insert_id = $global_id;
         }
         mysql_query("INSERT INTO `queue`
-                    (`id`, `user_id`, `name`, `number`)
+                    (`id`, `user_id`, `name`, `number`, `scenario_id`)
                     VALUES
-                    ('$insert_id', '$user', '$queue_name', '$queue_number');");
+                    ('$insert_id', '$user', '$queue_name', '$queue_number',$queue_scenar);");
     }else{
         mysql_query("UPDATE `queue` SET 
                             `user_id`='$user',
                             `name`='$queue_name',
-                            `number`='$queue_number'
+                            `number`='$queue_number',
+                            `scenario_id`='$queue_scenar'
                      WHERE  `id`='$hidden_id';");
     }
 }
@@ -189,7 +191,8 @@ function Getincomming($id)
 {
 	$res = mysql_fetch_assoc(mysql_query("SELECT 	`queue`.`id`,
                                     				`queue`.`name`,
-                                    				`queue`.number
+                                    				`queue`.`number`,
+	                                                `queue`.`scenario_id`
                                           FROM      `queue`
                                           WHERE     `queue`.`id` = $id"));
 	return $res;
@@ -203,6 +206,22 @@ function Get_in_num_query($id)
                                           FROM 		`queue_detail`
                                           WHERE		`id` = $id"));
     return $res;
+}
+
+function getscenario($id){
+    $res = mysql_query("SELECT  `id`,
+                		        `name`
+                        FROM 	`scenario`
+                        WHERE 	`actived` = 1");
+    $data = '<option value="0" selected>-----</option>';
+    while ($req = mysql_fetch_assoc($res)){
+        if($req['id'] == $id){
+            $data .= '<option value="'.$req['id'].'" selected>'.$req['name'].'</option>';
+        }else{
+            $data .= '<option value="'.$req['id'].'" >'.$req['name'].'</option>';
+        }
+    }
+    return $data;
 }
 
 function GetPage($res)
@@ -276,7 +295,7 @@ function GetPage($res)
                        <td style="width: 210px;"><label for="queue_scenar">დასახელება</label></td>                   
                     </tr>
     	            <tr>
-                       <td><select id="queue_scenar"></select></td>
+                       <td><select id="queue_scenar" style="width: 300px;">'.getscenario($res['scenario_id']).'</select></td>
                     </tr>
 	            </table>
 	    <style>

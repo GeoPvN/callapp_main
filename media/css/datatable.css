@@ -2,7 +2,7 @@ body {
     font-size: 13px;
 	font-family: BPG arial;
 }
-
+ 
 @font-face {
 	font-family: "BPG Arial";
 	src:	url("../fonts/bpg_arial.eot");
@@ -192,6 +192,7 @@ input{
 	position: relative;
 }
 .callapp_checkbox label {
+	margin-top: 2px;
 	width: 10px;
 	height: 10px;
 	cursor: pointer;

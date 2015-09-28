@@ -1,5 +1,5 @@
 <?php
-
+ 
 mysql_connect('localhost', 'root', 'Gl-1114');
 mysql_select_db('asteriskcdrdb');
 
@@ -66,16 +66,15 @@ $p75 = round($w75 * 100 / $w91);
 $p90 = round($w90 * 100 / $w91);
 
  $data = '
- 		<table id="box-table-b">
- 			<thead>
-		 		<tr>
-			 		<th style="width: 80px;">პასუხი</th>
-		 			<th style="width: 80px;">რაოდ.</th>
-		 			<th style="width: 80px;">დელტა</th>
-		 			<th>%</th>
+         		<tr>
+                  <td colspan="4" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">Service Level</td>
+                </tr>
+		 		<tr class="tb_head" style="border: 1px solid #E6E6E6;">
+			 		<td style="width: 80px;">პასუხი</td>
+		 			<td style="width: 80px;">რაოდ.</td>
+		 			<td style="width: 80px;">დელტა</td>
+		 			<td>%</th>
 		 		</tr>
- 			<thead>
- 			<tbody>
 	 			<tr class="odd">
 			 		<td>15 წამში</td>
 		 			<td>'.$w15.'</td>
@@ -118,8 +117,6 @@ $p90 = round($w90 * 100 / $w91);
 		 			<td>'.$d91.'</td>
 		 			<td>100%</td>
 		 		</tr>
-	 		<tbody>
- 		</table>
  		';
  
  echo  $data;

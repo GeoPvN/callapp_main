@@ -395,7 +395,7 @@ function GetPage($res = '')
                     			    <button id="add_button_detail">დამატება</button>
                     			    <button id="delete_button_detail">წაშლა</button>
                 			    </div>
-                			    <table class="" id="table_quest" style="background-color: #FFF;">
+                			    <table class="display" id="table_quest" style="background-color: #FFF;">
                     			    <thead >
                         			    <tr id="datatable_header">
                             			    <th style="display:none;">ID</th>

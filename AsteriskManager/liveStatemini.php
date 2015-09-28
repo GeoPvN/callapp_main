@@ -37,6 +37,9 @@ foreach ($queues as $key=>$val) {
   $queue[] = $key;
 }
 
+///QUEUES
+//echo "<h2>".$lang[$language]['agent_status']."</h2><br/>";
+
 $color['unavailable']="flesh_off.png";
 $color['unknown']="#dadada";
 $color['busy']="flesh_inc.png";
@@ -47,7 +50,6 @@ $color['paused']="#000000";
 
 foreach($filter_queues  as $qn) {
 	if($filter=="" || stristr($qn,$filter)) {
-	    
 		$contador=1;
 		if(!isset($queues[$qn]['members'])) continue;
 
@@ -85,12 +87,8 @@ foreach($filter_queues  as $qn) {
                             <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">სთეიშენები</td>
                           </tr>
 					      <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-					        <td style="width:75px">რიგი</td>
                             <td style="width:75px">შიდა ნომერი</td>
-                            <td style="width:115px">თანამშრომელი</td>
                             <td style="width:50px">სტატუსი</td>
-                            <td style="width:50px">დრო</td>
-                            <td style="width:100px">აბონენტი</td>
                           </tr>';
 				}
 
@@ -109,9 +107,7 @@ foreach($filter_queues  as $qn) {
 				$agent_name = agent_name($aname);
 
 				echo '<tr style="border: 1px solid #E6E6E6;">';
-				echo "<td>$qn</td>";
 				echo "<td>$agent_name</td>";
-				echo "<td>დათო პაპალაშვილი</td>";
 
 				if($stat<>"") {
 				$aval="paused";
@@ -125,57 +121,16 @@ foreach($filter_queues  as $qn) {
 			$mystringaval = $lang[$language][$aval2];
 
 			if($mystringaval=="") $mystringaval = $aval;
-			echo '<td class="td_center"><img alt="inner" src="media/images/icons/'.$color[$aval].'" height="14" width="14"></td>';
-			echo "<td>$dur</td>";
-			echo "<td style='cursor: pointer;' class='open_dialog'>$clid</td>";			
+			echo '<td class="td_center"><img alt="inner" src="media/images/icons/'.$color[$aval].'" height="14" width="14"></td>';	
 			echo "</tr>";
 			$contador++;
 			}
 			}
 		if($contador>1) {
-		    
+		//echo "</table><br/>\n";
 		}
 	}
 }
-
-foreach($filter_queues as $qn) {
-	$position=1;
-	if(!isset($queues[$qn]['calls']))  continue;
-
-	foreach($queues[$qn]['calls'] as $key=>$val) {
-		if($position==1) {
-			echo "<tr>";
-			echo "<td>რიგი</td>";
-			echo "<td>პოზიცია</th>";
-			echo "<td>ნომერი</td>";
-			echo "<td>ლოდინის დრო</td>";
-			echo "</tr>";
-		}
-
-		if($position%2) {
-			$odd="class='odd'";
-		} else {
-			$odd="";
-		}
-			
-		echo "<tr $odd>";
-		echo "<td>$qn</td><td>$position</td>";
-		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['callerid']."</td>";
-		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['duration_str']." წუთი</td>";
-        echo "</tr>";
-		$position++;
-	}
-			
-	if($position>1) {
-
-	}
-}
-
-$time = microtime();
-$time = explode(" ", $time);
-$time = $time[1] + $time[0];
-$endtime = $time;
-$totaltime = ($endtime - $begintime);
 
 ?>
 
