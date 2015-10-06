@@ -60,7 +60,10 @@
 		$('#back_quest').prop('disabled',true);
     }
 
-
+    $(document).on("click", ".callapp_refresh", function () {
+    	LoadTable('index',colum_number,main_act,change_colum_main);
+    });
+    
     $(document).on("change", "#incomming_cat_1", function () {
     	param 			= new Object();
 		param.act		= "cat_2";
@@ -320,7 +323,7 @@
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();    	
-    	$(".add-edit-form-class").css("width", "741");
+    	$(".add-edit-form-class").css("width", "575");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
@@ -703,6 +706,8 @@
 		param.client_mail1	        = $("#client_mail1").val();
 		param.client_mail2			= $("#client_mail2").val();
 		param.client_note			= $("#client_note").val();
+		param.client_addres1        = $("#client_addres1").val();
+		param.client_addres2        = $("#client_addres2").val();
 		
 		var link = GetAjaxData(param);		
 	    	$.ajax({

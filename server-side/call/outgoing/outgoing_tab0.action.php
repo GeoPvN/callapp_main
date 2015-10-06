@@ -1,169 +1,216 @@
 <?php
-/* ******************************
- *	Request aJax actions
- * ******************************
-*/
+// MySQL Connect Link
+require_once('../../../includes/classes/core.php');
+ 
+// Main Strings
+$action                     = $_REQUEST['act'];
+$error                      = '';
+$data                       = '';
+$user_id	                = $_SESSION['USERID'];
+$open_number                = $_REQUEST['open_number'];
+$queue                      = $_REQUEST['queue'];
+$scenario_id                = $_REQUEST['scenario_id'];
+$status                     = $_REQUEST['status'];
+ 
+// Incomming Call Dialog Strings
+$hidden_id                  = $_REQUEST['id'];
+$incomming_id               = $_REQUEST['incomming_id'];
+$incomming_date             = $_REQUEST['incomming_date'];
+$incomming_phone            = $_REQUEST['incomming_phone'];
+$incomming_cat_1            = $_REQUEST['incomming_cat_1'];
+$incomming_cat_1_1          = $_REQUEST['incomming_cat_1_1'];
+$incomming_cat_1_1_1        = $_REQUEST['incomming_cat_1_1_1'];
+$incomming_comment          = $_REQUEST['incomming_comment'];
 
-require_once ('../../../includes/classes/core.php');
-$action = $_REQUEST['act'];
-$error	= '';
-$data	= '';
 
-$user				= $_SESSION['USERID'];
-$task_id 			= $_REQUEST['id'];
+$client_status              = $_REQUEST['client_status'];
+$client_person_number       = $_REQUEST['client_person_number'];
+$client_person_lname        = $_REQUEST['client_person_lname'];
+$client_person_fname        = $_REQUEST['client_person_fname'];
+$client_person_phone1       = $_REQUEST['client_person_phone1'];
+$client_person_phone2       = $_REQUEST['client_person_phone2'];
+$client_person_mail1        = $_REQUEST['client_person_mail1'];
+$client_person_mail2        = $_REQUEST['client_person_mail2'];
+$client_person_addres1      = $_REQUEST['client_person_addres1'];
+$client_person_addres2      = $_REQUEST['client_person_addres2'];
+$client_person_note         = $_REQUEST['client_person_note'];
 
-$cur_date			= $_REQUEST['cur_date'];
-$done_start_time	= $_REQUEST['done_start_time'];
-$done_end_time		= $_REQUEST['done_end_time'];
-$task_type_id		= $_REQUEST['task_type_id'];
-$template_id		= $_REQUEST['template_id'];
-$task_department_id	= $_REQUEST['task_department_id'];
-$persons_id			= $_REQUEST['persons_id'];
-$status				= $_REQUEST['status'];
+$client_number              = $_REQUEST['client_number'];
+$client_name                = $_REQUEST['client_name'];
+$client_phone1              = $_REQUEST['client_phone1'];
+$client_phone2              = $_REQUEST['client_phone2'];
+$client_mail1               = $_REQUEST['client_mail1'];
+$client_mail2               = $_REQUEST['client_mail2'];
+$client_note                = $_REQUEST['client_note'];
 
+$type = $_REQUEST['type'];
 
 switch ($action) {
 	case 'get_add_page':
-		$page		= GetPage($res='');
+		$page		= GetPage('','');
 		$data		= array('page'	=> $page);
-		
-        break;
-    case 'get_task':
-        $page		= Gettask();
+
+		break;
+	case 'get_edit_page':
+		$page		= GetPage(Getincomming($hidden_id,$open_number),'',$open_number,$queue);
+		$data		= array('page'	=> $page);
+
+		break;
+    case 'ststus':
+        $page 		= getStatus($type);
         $data		= array('page'	=> $page);
-        
+    
         break;
-    case 'set_task':
-    	$set_task_department_id		= $_REQUEST['set_task_department_id'];
-    	$set_persons_id				= $_REQUEST['set_persons_id'];
-    	$set_priority_id			= $_REQUEST['set_priority_id'];
-    	$set_start_time				= $_REQUEST['set_start_time'];
-    	$set_done_time				= $_REQUEST['set_done_time'];
-    	$set_body					= $_REQUEST['set_body'];
-    	
-    	$set_task_id = mysql_fetch_assoc(mysql_query("SELECT `task_id` FROM `task_detail` WHERE `id` = '$task_id'"));
-    	$tas = $set_task_id[task_id]; 
-        GetSetTask($task_id, $tas, $set_task_department_id, $set_persons_id, $set_priority_id, $set_start_time, $set_done_time, $set_body);
-        
-        break;
-    case 'get_edit_page':
+	case 'get_list':
+        $count = 		$_REQUEST['count'];
+		$hidden = 		$_REQUEST['hidden'];
+	  	$rResult = mysql_query("SELECT 	`outgoing_call_template_detail`.`id`,
+                        				`outgoing_call_template_detail`.`id`,
+                        				`outgoing_call_template`.`upload_date`,
+                        				`outgoing_call_template_detail`.`phone1`,
+                        				`outgoing_call_template_detail`.`phone2`,
+                        				CONCAT(`outgoing_call_template_detail`.`firstname`,' ',`outgoing_call_template_detail`.`lastname`),
+                        				`outgoing_call_template_detail`.`pid`,
+                        				`user_info`.`name`
+                                FROM 	`outgoing_call_template`
+                                JOIN 	`outgoing_call_template_detail` ON `outgoing_call_template`.`id` = `outgoing_call_template_detail`.`outgoing_call_template_id`
+                                LEFT JOIN `users` ON `outgoing_call_template_detail`.`responsible_user_id` = `users`.`id`
+                                LEFT JOIN `user_info` ON `users`.`id` = `user_info`.`user_id`
+                                WHERE 	`outgoing_call_template`.`actived` = 1 AND `outgoing_call_template_detail`.`status` = '$status'");
 	  
-		$page		= GetPage(Getincomming($task_id));
-        
+		$data = array(
+				"aaData"	=> array()
+		);
+
+		while ( $aRow = mysql_fetch_array( $rResult ) )
+		{
+			$row = array();
+			for ( $i = 0 ; $i < $count ; $i++ )
+			{
+				/* General output */
+				$row[] = $aRow[$i];
+				if($i == ($count - 2)){
+				    $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
+				}
+			}
+			$data['aaData'][] = $row;
+		}
+	
+	    break;
+    case 'send_sms':
+        $page		= GetSmsSendPage();
         $data		= array('page'	=> $page);
-        
+    
         break;
-        
-    case 'disable':
-    	$id_delete	= $_REQUEST['id_delete'];
-    	
-    	mysql_query("DELETE FROM `task_detail` WHERE `id`='$id_delete'");
-        
+    case 'cat_2':
+        $page		= get_cat_1_1($_REQUEST['cat_id'],'');
+        $data		= array('page'	=> $page);
+    
         break;
-	
- 	case 'get_list' :
-	    
-        $user		= $_SESSION['USERID'];
-
-    	// DB table to use
-    	$table = 'outgoing0';
-    	 
-    	// Table's primary key
-    	$primaryKey = 'id';
-    	 
-    	// Array of database columns which should be read and sent back to DataTables.
-    	// The `db` parameter represents the column name in the database, while the `dt`
-    	// parameter represents the DataTables column identifier. In this case simple
-    	// indexes
-    	$columns = array(
-    	    array( 'db' => 'id', 			    'dt' => 0 ),
-    	    array( 'db' => 'original_id', 		'dt' => 1 ),
-    	    array( 'db' => 'person_n',  		'dt' => 2 ),
-    	    array( 'db' => 'first_last_name',   'dt' => 3 ),
-    	    array( 'db' => 'task_type_name',    'dt' => 4 ),
-    	    array( 'db' => 'depart_name',		'dt' => 5 ),
-    	    array( 'db' => 'end_date',			'dt' => 6 ),
-    	    array( 'db' => 'note',			    'dt' => 7 ),    	     
-    	);
-    	 
-    	// SQL server connection information
-    	$sql_details = array(
-    	    'user' => 'root',
-    	    'pass' => 'Gl-1114',
-    	    'db'   => 'callapp_main',
-	        'host' => 'localhost'
-    	);
-    	 
-    	 
-    	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    	 * If you just want to use the basic configuration for DataTables with PHP
-    	 * server-side, there is no need to edit below this line.
-    	*/
-    	mysql_close();
-    	require( '../../../includes/ssp.class.php' );
-    	 
-    	$where_param = " where `status` = 0 and user_id = $user ";
-    	
-    	$data = SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns, $where_param);
-
+    case 'cat_3':
+        $page		= get_cat_1_1_1($_REQUEST['cat_id'],'');
+        $data		= array('page'	=> $page);
+    
         break;
-    case 'save_outgoing':
-	
-		$user_id		= $_SESSION['USERID'];
-		
-		if(empty($task_id)){
-			$task_id = mysql_insert_id();
-			Addtask($cur_date, $done_start_time, $done_end_time, $task_type_id, $template_id, $task_department_id, $persons_id, $status);
-			//Addsite_user($incomming_call_id, $personal_pin, $friend_pin, $personal_id);
-		}else{
-			
-			Savetask($task_id, $cur_date, $done_start_time, $done_end_time, $task_type_id, $template_id, $task_department_id, $persons_id);
-			//Savesite_user($incom_id, $personal_pin, $name, $personal_phone, $mail,  $personal_id);
-			
+    case 'send_mail':
+        $page		= GetMailSendPage();
+        $data		= array('page'	=> $page);
+    
+        break;
+    case 'save_incomming':
+        if($hidden_id == ''){
+            incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id);
+        }else{
+            incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note);
+        }
+        $checker     = json_decode($_REQUEST[checker]);
+        $input       = json_decode($_REQUEST[input]);
+        $radio       = json_decode($_REQUEST[radio]);
+        $date        = json_decode($_REQUEST[date]);
+        $date_time   = json_decode($_REQUEST[date_time]);
+        $select_op   = json_decode($_REQUEST[select_op]);
+        
+        if($hidden_id == ''){
+            $inc_id = $incomming_id;
+        }else{
+            $inc_id = $hidden_id;
+        }
+        
+        mysql_query("DELETE FROM scenario_results
+                     WHERE incomming_call_id=$inc_id;");
+        foreach ($checker as $key => $value) {
+            
+            $quest_id = str_replace("checkbox","",$key);            
+            $val = substr($value,10);
+            $last =  preg_split("/[\s,^]+/",$val);
+            foreach($last as $answer){               
+                mysql_query("INSERT INTO `scenario_results` 
+                            (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                            VALUES
+                            ('$user_id', '$inc_id', '1', '$quest_id', '$answer', NULL)");
+            }
+        }
+        
+        foreach ($radio as $key => $value) {
+			    $quest_id = str_replace("radio","",$key);            
+                $val = substr($value,10);
+                $last =  preg_split("/[\s,^]+/",$val);
+			    mysql_query("INSERT INTO `scenario_results` 
+                            (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                            VALUES
+                            ('$user_id', '$inc_id', '1', '$quest_id', '$last[0]', NULL)");
+		}
+        
+		foreach ($input as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+                         (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+                         VALUES
+                         ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
 		
+		foreach ($date as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+		        VALUES
+		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+		
+		foreach ($date_time as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+		        VALUES
+		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+		
+		foreach ($select_op as $key => $value) {
+		    $var               = preg_split("/[\s,|]+/",$key);
+		    $val               = substr($value,10);
+		    $quest_id          = $var[1];
+		    $answer_id         = $var[2];
+		    mysql_query("INSERT INTO `scenario_results`
+		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
+		        VALUES
+		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+            
         break;
-        
-    case 'get_responsible_person_add_page':
-        $page 		= GetResoniblePersonPage();
-        $data		= array('page'	=> $page);
-        
-        break;
-    case 'save_task':
-    	// task_detail------------------------
-    	$phone				= $_REQUEST['p_phone'];
-    	$person_n			= $_REQUEST['p_person_n'];
-    	$first_name			= $_REQUEST['p_first_name'];
-    	$mail				= $_REQUEST['p_mail'];
-    	$last_name 			= $_REQUEST['p_last_name'];
-    	$person_status 		= $_REQUEST['p_person_status'];
-    	$addres 			= $_REQUEST['p_addres'];
-    	$b_day				= $_REQUEST['p_b_day'];
-    	$city_id 			= $_REQUEST['p_city_id'];
-    	$family_id 			= $_REQUEST['p_family_id'];
-    	$profesion 			= $_REQUEST['p_profesion'];
-    	$user				= $_SESSION['USERID'];
-    	//------------------------------------
-    	
-    	mysql_query("INSERT INTO `task_detail` 
-    			( `user_id`, `task_id`, `person_n`, `first_name`, `last_name`, `person_status`, `phone`, `mail`, `addres`, `b_day`, `city_id`, `family_id`, `profesion`, `actived`) 
-    			VALUES 
-    			( '$user', '$task_id', '$person_n', '$first_name', '$last_name', '$person_status', '$phone', '$mail', '$addres', '$b_day', '$city_id', '$family_id', '$profesion', '1')");
-        
-        break;
-        
-    case 'change_responsible_person':
-        $responsible_person = $_REQUEST['rp'];
-        $number_p = $_REQUEST['number'];
-        $note_p = $_REQUEST['note_p'];
-        $sorce_p = $_REQUEST['sorce_p'];
-        
-        ChangeResponsiblePerson($number_p, $responsible_person, $note_p, $sorce_p);
-        
-        break;
-    case '':
-    default:
-       $error = 'Action is Null';
+	default:
+		$error = 'Action is Null';
 }
 
 $data['error'] = $error;
@@ -173,2080 +220,917 @@ echo json_encode($data);
 
 /* ******************************
  *	Request Functions
- * ******************************
- */
+* ******************************
+*/
 
-function GetSetTask($task_id, $tas, $set_task_department_id, $set_persons_id, $set_priority_id, $set_start_time, $set_done_time, $set_body)
-{
-	$c_date		= date('Y-m-d H:i:s');
-	$user  = $_SESSION['USERID'];
-	mysql_query("UPDATE `task` SET
-	`user_id`				='$user',
-	`responsible_user_id`	='$set_persons_id',
-	`date`					='$c_date',
-	`start_date`			='$set_start_time',
-	`end_date`				='$set_done_time',
-	`department_id`			='$set_task_department_id',
-	`priority_id`			='$set_priority_id',
-	`comment`				='$set_body'
-	WHERE `id`				='$tas'
-	");
-	
-	mysql_query("UPDATE `task_detail` SET
-						`status`	='0'
-				WHERE   `id`		='$task_id'
-				");
+function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id){
+    mysql_query("INSERT INTO    `incomming_call` 
+                 (`id`,`user_id`,`date`,`phone`,`cat_1`,`cat_1_1`,`cat_1_1_1`,`comment`,`scenario_id`)
+                 VALUES
+                 ('$incomming_id','$user_id','$incomming_date','$incomming_phone','$incomming_cat_1','$incomming_cat_1_1','$incomming_cat_1_1_1','$incomming_comment','$scenario_id')");
+    
+    mysql_query("INSERT INTO `personal_info` 
+                 (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`)
+                 VALUES
+                 ('$user_id', '$incomming_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '', '', '', '', '$client_note');");
 }
 
-function checkgroup($user){
-	$res = mysql_fetch_assoc(mysql_query("
-											SELECT users.group_id
-											FROM    users
-											WHERE  users.id = $user
-										"));
-	return $res['group_id'];
-	
+function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note){
+    mysql_query("UPDATE `incomming_call` SET 
+                        `user_id`='$user_id',
+                        `phone`='$incomming_phone',
+                        `cat_1`='$incomming_cat_1',
+                        `cat_1_1`='$incomming_cat_1_1',
+                        `cat_1_1_1`='$incomming_cat_1_1_1',
+                        `comment`='$incomming_comment'
+                 WHERE  `id`='$hidden_id'");
+    
+    mysql_query("UPDATE `personal_info` SET
+                        `user_id`='$user_id',
+                        `client_person_number`='$client_person_number',
+                        `client_person_lname`='$client_person_lname',
+                        `client_person_fname`='$client_person_fname',
+                        `client_person_phone1`='$client_person_phone1',
+                        `client_person_phone2`='$client_person_phone2',
+                        `client_person_mail1`='$client_person_mail1',
+                        `client_person_mail2`='$client_person_mail2',
+                        `client_person_note`='$client_person_note',
+                        `client_person_addres1`='$client_person_addres1',
+                        `client_person_addres2`='$client_person_addres2',
+                        `client_number`='$client_number',
+                        `client_name`='$client_name',
+                        `client_phone1`='$client_phone1',
+                        `client_phone2`='$client_phone2',
+                        `client_mail1`='$client_mail1',
+                        `client_mail2`='$client_mail2',
+                        `client_city1`=NULL,
+                        `client_city2`=NULL,
+                        `client_addres1`=NULL,
+                        `client_addres2`=NULL,
+                        `client_index1`=NULL,
+                        `client_index2`=NULL,
+                        `client_note`='$client_note'
+                WHERE   `incomming_call_id`='$hidden_id'");
 }
 
-
-function Addtask($cur_date, $done_start_time, $done_end_time, $task_type_id, $template_id, $task_department_id, $persons_id, $status)
-{  
-	$user		= $_SESSION['USERID'];
-	mysql_query("INSERT INTO `task` 
-				( `user_id`, `responsible_user_id`, `date`, `start_date`, `end_date`, `department_id`, `template_id`, `task_type_id`, `status`, `actived`)
-				VALUES
-				( '$user', '$persons_id', '$cur_date', '$done_start_time', '$done_end_time', '$task_department_id', '$template_id', '$task_type_id', '$status', '1')
-				");
-
-}
-function Addsite_user($incomming_call_id, $personal_pin, $friend_pin, $personal_id)
-{
-	
-	$user		= $_SESSION['USERID'];
-	mysql_query("INSERT INTO `site_user` 	(`incomming_call_id`, `site`, `pin`, `friend_pin`, `name`, `phone`, `mail`, `personal_id`, `user`)
-						           		 VALUES 
-											( '$incomming_call_id', '243', '$personal_pin', '$friend_pin', '11111111', 22222, '333', '$personal_id', '$user')");
-
-}
-
-function Getshabl($templ){
-
-	$req = mysql_query("	SELECT 	`id`,
-			`name`
-			FROM 	shabloni
-			WHERE 	id = $templ
-			GROUP BY 	`shabloni`.`name`
-			");
-
-			$res = mysql_fetch_assoc($req);
-			$shabl_name .= $res[name];
-
-			return $shabl_name;
-}
-
-function Getstatus($status){
-	$req = mysql_query("	SELECT 	`id`,
-									`name`
-							FROM 	`status`
-                            WHERE   id != 0
-							");
-
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $status){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Savetask($task_id, $cur_date, $done_start_time, $done_end_time, $task_type_id, $template_id, $task_department_id, $persons_id)
-{
-	$c_date		= date('Y-m-d H:i:s');
-	$user  = $_SESSION['USERID'];
-	mysql_query("UPDATE `task` SET  
-								`user_id`				='$user',
-								`responsible_user_id`	='$persons_id', 
-								`date`					='$c_date',
-								`planned_end_date`		='$planned_end_date',
-								`fact_end_date`			='$fact_end_date', 
-								`call_duration`			='$call_duration', 
-								`priority_id`			='$priority_id',
-								`template_id` 			='$template_id',
-								`phone`					='$phone', 
-								`comment`				='$comment', 
-								`problem_comment`		='$problem_comment', 
-								`status`='0', 
-								`actived`='1'
-								 WHERE `id`				='$task_id'
-									");
-
-
-}
-function Savesite_user($incom_id, $personal_pin, $name, $personal_phone, $mail,  $personal_id)
-{
-
-	$user  = $_SESSION['USERID'];
-	mysql_query("UPDATE 	`site_user` 
-				SET			
-							`site`						='243', 
-							`pin`						='$personal_pin', 
-							`name`						='$name', 
-							`phone`						='$personal_phone', 
-							`mail`						='$mail', 
-							`personal_id`				='$personal_id', 
-							`user`						='$user'
-							 WHERE `incomming_call_id`	='$incom_id'
-							
-					");
-
-}
-
-
-function Getcall_status($status)
-{
-	$data = '';
-	$req = mysql_query("SELECT 	`id`, `call_status`
-						FROM 	`status`
-						WHERE 	actived=1");
-	
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		
-		if($res['id'] == $call_status_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['$status'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['$status'] . '</option>';
-		}
-	}
-	return $data;
-}
-	function Getpay_type($pay_type_id)
-	{
-		$data = '';
-		$req = mysql_query("SELECT 	`id`, `name`
-							FROM 	`pay_type`
-							WHERE 	actived=1");
-	
-	
-		$data .= '<option value="0" selected="selected">----</option>';
-		while( $res = mysql_fetch_assoc($req)){
-			if($res['id'] == $pay_type_id){
-				$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-			} else {
-				$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-			}
-		}
-	
-		return $data;
-	}
-	function Get_bank($bank_id)
-	{
-		$data = '';
-		$req = mysql_query("SELECT 	`id`, `name`
-							FROM 	`bank`
-							WHERE 	actived=1");
-	
-	
-		$data .= '<option value="0" selected="selected">----</option>';
-		while( $res = mysql_fetch_assoc($req)){
-			if($res['id'] == $bank_id){
-				$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-			} else {
-				$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-			}
-		}
-	
-		return $data;
-	}
-	
-function Getbank_object($bank_object_id)
-{  
-	$data = '';
-	$req = mysql_query("SELECT  id,
-						     	`name`
-						FROM 	bank_object
-						WHERE 	bank_object.bank_id=$bank_object_id && actived =1");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $bank_object_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getbank_object_edit($bank_object_id)
-{
-
-	$data = '';
-	$req = mysql_query("SELECT  id,
-								`name`
-						FROM 	bank_object
-						WHERE 	bank_object.id=$bank_object_id && actived =1");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $bank_object_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-	
-function Getcard_type($card_type_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT 	`id`, `name`
-						FROM 	`card_type`
-						WHERE 	actived=1");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $card_type_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-function Getcard_type1($card_type1_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT 	`id`, `name`
-						FROM 	`card_type`
-						WHERE 	actived=1");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $card_type1_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-function Getpay_aparat($pay_aparat_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT 	`id`, `name`
-						FROM 	`pay_aparat`
-						WHERE 	actived=1");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $pay_aparat_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-function Getobject($object_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT 	`id`, `name`
-						FROM 	`object`
-						WHERE 	actived=1");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $object_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-function Getcategory($category_id)
-
-{ 			
-
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `category`
-						WHERE actived=1 && parent_id=0 ");
-
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $category_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getcategory1($category_id)
-{
-
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `category`
-						WHERE actived=1 && parent_id=$category_id");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $category_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-	
-}
-
-function Getcategory1_edit($category_id)
-{
-
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `category`
-						WHERE actived=1 && id=$category_id");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $category_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-
-}
-
-function Getcall_type($call_type_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `call_type`
-						WHERE actived=1");
-		
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $call_type_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getpriority($priority_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `priority`
-						WHERE actived=1 ");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $priority_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-
-function Gettemplate($template_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `template`
-						WHERE actived=1 ");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $template_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-
-function Gettask_type($task_type_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-					    FROM `task_type`
-					    WHERE actived=1");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $task_type_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getdepartment($department_id){
-	$req = mysql_query("	SELECT 	`id`,
-									`name`
-							FROM 	department
-							WHERE 	actived=1
-							");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $department_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-
-function Getpersonss($persons_id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `persons`
-						WHERE actived=1 ");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $persons_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getpattern($id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `pattern`
-						WHERE actived=1 ");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getshipping($id)
-{
-	$data = '';
-	$req = mysql_query("SELECT `id`, `name`
-						FROM `shipping`
-						WHERE actived=1 ");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getshablon($id,$templ){
-	if($templ !=''){
-		$req = mysql_query("	SELECT 	`id`,
-				`name`
-				FROM 	shabloni
-				WHERE 	id = $templ
-				GROUP BY 	`shabloni`.`name`
-				");
-	}else{
-		$req = mysql_query("	SELECT 	`id`,
-				`name`
-				FROM 	shabloni
-				WHERE 	scenar_id = $id
-				GROUP BY 	`shabloni`.`name`
-				");
-		}
-
-				$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-	if(($res['id'] == $id)or ($res['id'] == $templ)){
-	$data .= '<option value="' . $res['name'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-		$data .= '<option value="' . $res['name'] . '">' . $res['name'] . '</option>';
-		}
-		}
-
-		return $data;
-}
-
-
-function Getcity($city_id){
-	$req = mysql_query("	SELECT 	`id`,
-									`name`
-							FROM 	city
-							WHERE 	actived=1
-							");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $city_id){
-			$data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getscenar(){
-	$req = mysql_query("	SELECT 	`id`,
-									`name`
-							FROM 	shabloni
-							GROUP BY 	`shabloni`.`name`
-							");
-
-	$data .= '<option value="0" selected="selected">----</option>';
-	while( $res = mysql_fetch_assoc($req)){
-		if($res['id'] == $id){
-			$data .= '<option value="' . $res['name'] . '" selected="selected">' . $res['name'] . '</option>';
-		} else {
-			$data .= '<option value="' . $res['name'] . '">' . $res['name'] . '</option>';
-		}
-	}
-
-	return $data;
-}
-
-function Getincomming($task_id)
-{
-$res = mysql_fetch_assoc(mysql_query("	SELECT 	task_detail.id,
-			    								`task`.`date`,
-												`task_detail`.`status`,
-												`task`.start_date,
-												task.end_date,
-												task.`task_type_id`,
-												task.`template_id`,
-												IF(task_detail.phone_base_inc_id != '', incomming_call.phone, phone.phone1) as phone,
-												IF(task_detail.phone_base_inc_id != '', '', phone.phone2) as phone2,
-												IF(task_detail.phone_base_inc_id != '', '', phone.born_day) as b_day,
-												IF(task_detail.phone_base_inc_id != '', incomming_call.first_name, phone.first_last_name) as first_name,
-												IF(task_detail.phone_base_inc_id != '', '', phone.addres) as addres,
-												IF(task_detail.phone_base_inc_id != '', '', phone.person_n) as person_n,
-												IF(task_detail.phone_base_inc_id != '', '', phone.city) as city_id,
-												IF(task_detail.phone_base_inc_id != '', '', phone.mail) as mail,
-												IF(task_detail.phone_base_inc_id != '', '', phone.sex) as sex,
-												IF(task_detail.phone_base_inc_id != '', '', phone.age) as age,
-												IF(task_detail.phone_base_inc_id != '', '', phone.profession) as profession,
-												IF(task_detail.phone_base_inc_id != '', '', phone.interes) as interes,
-                                                DATE_FORMAT(task_scenar.`date`,'%y-%m-%d') as `out_date`,
-												task_scenar.hello_comment,
-												task_detail.call_content,
-												task_scenar.hello_quest,
-												task_scenar.info_comment,
-												task_scenar.info_quest,
-												task_scenar.payment_comment,
-												task_scenar.payment_quest,
-												task_scenar.result_comment,
-												task_scenar.result_quest,
-												task_scenar.send_date,
-												task_scenar.preface_quest,
-												task_scenar.preface_name,
-												task_scenar.d1,
-												task_scenar.d2,
-												task_scenar.d3,
-												task_scenar.d4,
-												task_scenar.d5,
-												task_scenar.d6,
-												task_scenar.d7,
-												task_scenar.d8,
-												task_scenar.d9,
-												task_scenar.d10,
-												task_scenar.d11,
-												task_scenar.d12,
-												task_scenar.q1,
-												task_scenar.b1,
-												task_scenar.b2,
-                                                task_scenar.result_quest1,
-												task_scenar.result_comment1
-										FROM 	`task`
-										LEFT JOIN	task_detail ON task.id = task_detail.task_id
-										LEFT JOIN	task_type ON task.task_type_id = task_type.id
-										LEFT JOIN	pattern ON task.template_id = pattern.id
-										LEFT JOIN	task_scenar ON task_detail.id = task_scenar.task_detail_id
-										LEFT JOIN incomming_call ON task_detail.phone_base_inc_id = incomming_call.id
-										LEFT JOIN phone ON task_detail.phone_base_id = phone.id
-			    						WHERE	task_detail.id = '$task_id'
-			" ));
-	
-	return $res;
-}
-
-function GetPage($res='', $shabloni)
-{
-
-		$data  .= '<div id="dialog-form">
-							<div style="float: left; width: 710px;">
-								<fieldset >
-							    	<legend>ძირითადი ინფორმაცია</legend>
-						
-							    	<table width="65%" class="dialog-form-table">
-										<tr>
-											<td style="width: 180px;"><label for="">დავალების №</label></td>
-											<td style="width: 180px;"><label for="">თარიღი</label></td>
-										</tr>
-										<tr>
-											<td>
-												<input type="text" id="id" class="idle" onblur="this.className=\'idle\'" disabled value="' . $res['id']. '" disabled="disabled" />
-											</td>
-											<td>
-												<input type="text" id="c_date" class="idle" onblur="this.className=\'idle\'" disabled  value="' .  $res['date']. '" disabled="disabled" />
-											</td>		
-										</tr>
-									</table><br>
-								
-														
-								<fieldset style="width:250px; float:left;">
-							    	<legend>დავალების ტიპი</legend>
-								<table class="dialog-form-table">
-							    		<tr>
-											<td><select style="width: 305px;" id="task_type_id_seller" disabled class="idls object">'.Gettask_type($res['task_type_id']).'</select></td>
-										</tr>
-									</table>
-								</fieldset>
-								<fieldset style="width:340px; float:left; margin-left:10px;">
-							    	<legend>სცენარის დასახელება</legend>
-								<table class="dialog-form-table">
-							    		<tr>
-											<td><select style="width: 375px;" id="shabloni" disabled class="idls object">'.Getshablon('',$res['template_id']).'</select></td>
-										</tr>
-									</table>
-								</fieldset>
-						        ';
-		
-						$test = Getshabl($res['template_id']);
-						
-						for($key=1;$key<28;$key++){
-						
-						$rows1 = mysql_query("	SELECT 	quest_id,
-														notes,
-														qvota
-												FROM 	shabloni
-												WHERE 	`name`='$test' and quest_id='$key'");
-						$row = mysql_fetch_assoc($rows1);
-							
-								$notes[] = array('id' => $row[quest_id],'notes' => $row[notes], 'qvota' => $row[qvota]);
-							
-						}
-						// სატელეფონო გაყიდვები დასაწყისი
-						$data .= '
-							<div id="quest">
-						<div id="seller" class="'.(($notes[0][id]!="")?"":"dialog_hidden").'" >
-									<ul>
-										<li style="margin-left:0;" id="0" onclick="seller(this.id)" class="seller_select">მისალმება</li>
-										<li id="1" onclick="seller(this.id)" class="">შეთავაზება</li>
-										<li id="2" onclick="seller(this.id)" class="">შედეგი</li>
-									</ul>
-									<div id="seller-0" >
-									<fieldset style="width:97%;   float:left; overflow-y:scroll; max-height:400px;" class="'.(($notes[0][id]!="")?"":"dialog_hidden").'">
-									<fieldset style="width:97%;" >
-								    	<legend>მისალმება</legend>
-									<table class="dialog-form-table">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[0][notes].'</textarea></td>
-											</tr>
-											<tr>
-												<td style="text-align:right;"><span></span></td>
-											</tr>
-									</table>
-									</fieldset>
-									<table class="dialog-form-table" style="width:500px;">
-								    		<tr>
-												<td style="text-align:right;"><span>აქვს</span></td>
-					  							<td><input type="radio" name="hello_quest1" value="1" '.(($res['hello_quest']=='1')?"checked=\"checked\"":"").'></td>
-					  							<td><span>(ვაგრძელებთ)</span></td>
-					  						</tr>
-											<tr>
-												<td style="text-align:right;"><span>სურს სხვა დროს</span></td>
-					  							<td><input type="radio" name="hello_quest1" value="2" '.(($res['hello_quest']=='2')?"checked=\"checked\"":"").'></td>
-					  							<td><span>(ვიფორმირებთ დავალებას)</span></td>
-					  						</tr>
-					  						<tr>
-												<td style="text-align:right;"><span>არ სურს</span></td>
-					  							<td><input type="radio" name="hello_quest1" value="3" '.(($res['hello_quest']=='3')?"checked=\"checked\"":"").'></td>
-					  							<td><span>(ვასრულებთ)</span></td>
-					  						</tr>
-									</table>
-					  				<fieldset style="width:97%; float:left; ">
-								    	<legend>კომენტარი</legend>
-									<table class="dialog-form-table">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:80px; resize: vertical;" id="hello_comment" class="idle" name="content" cols="300" >' . $res['hello_comment'] . '</textarea></td>
-											</tr>
-									</table>
-									</fieldset>
-											<button style="float:right; margin-top:10px;" onclick="seller(1)" class="next"> >> </button>
-											
-									</fieldset>
-									 </div>
-
-														
-														
-									<div id="seller-1" class="dialog_hidden">
-									<fieldset style="width:97%; float:left; overflow-y:scroll; max-height:400px;">
-									<fieldset style="width:97%;" class="'.(($notes[1][id]!="")?"":"dialog_hidden").'">
-								    	<legend>შეთავაზება</legend>
-									<table class="dialog-form-table">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[1][notes].'</textarea></td>
-											</tr>
-											<tr>
-												<td style="text-align:right;"><span></span></td>
-											</tr>
-									</table>
-									</fieldset>
-									<fieldset style="width:97%;" class="'.(($notes[2][id]!="")?"":"dialog_hidden").'">
-								    	<legend>პროდუქტი</legend>
-									<div id="dt_example" class="inner-table">
-								        <div style="width:100%;" id="container" >        	
-								            <div id="dynamic">
-								            	<div id="button_area">
-								            		<button id="add_button_product">დამატება</button>
-													<button id="delete_button_product">წაშლა</button>
-							        			</div>
-								                <table class="" id="sub1" style="width: 100%;">
-								                    <thead>
-														<tr  id="datatable_header">
-															<th style="width:4%;">#</th>
-															<th style="width:100px;">პროდუქტი</th>
-									                        <th style="width:30px;">რ-ბა</th>
-															<th style="width:30px;">ერთ. ფასი</th>
-									                        <th style="width:30px;">სულ ფასი</th>
-															<th style="width:100%">აღწერილობა</th>
-															<th style="width:100%">შენიშვნა</th>
-															<th style="width:5%;">#</th>
-														</tr>
-													</thead>
-													<thead>
-														<tr class="search_header">
-															<th>
-																<input style="width:20px;" type="text" name="search_overhead" value="" class="search_init" />
-															</th>
-															<th>
-																<input style="width:100px;" type="text" name="search_overhead" value="ფილტრი" class="search_init" />
-															</th>
-															<th>
-																<input style="width:20px;" type="text" name="search_partner" value="" class="search_init" />
-															</th>
-															<th>
-																<input style="width:20px;" type="text" name="search_overhead" value="" class="search_init" />
-															</th>
-															<th>
-																<input style="width:20px;" type="text" name="search_partner" value="" class="search_init" />
-															</th>
-									                        <th>
-																<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-															</th>
-									                        <th>
-																<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-															</th>
-															<th>
-                            									<input type="checkbox" name="check-all" id="prod_all_p">
-                            								</th>
-														</tr>
-													</thead>
-            									    <tfoot>
-                                                        <tr id="datatable_header" class="search_header">
-                                							<th style="width: 150px"></th>							
-                                							<th style="width: 150px"></th>
-                                							<th style="width: 150px"></th>
-                                							<th style="width: 150px; text-align: right;">ჯამი<br>სულ</th>
-                                							<th style="width: 100px; text-align: right;"></th>					
-                                							<th style="width: 150px"></th>							
-                                							<th style="width: 150px"></th>
-                                							<th style="width: 150px"></th>
-                                                        </tr>
-                                                    </tfoot>
-								                </table>
-								            </div>
-								            <div class="spacer">
-								            </div>
-								        </div>
-										<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content_3" disabled class="idle" name="content" cols="300" >'.$notes[2][notes].'</textarea></td>
-											</tr>
-											<tr>
-												<td style="text-align:right;"><span></span></td>
-											</tr>
-										</table>
-									</fieldset>
-					  				<fieldset style="width:97%; float:left; " class="'.(($notes[3][id]!="")?"":"dialog_hidden").'">
-								    	<legend>საჩუქარი</legend>														
-									<div id="dt_example" class="inner-table">
-								        <div style="width:100%;" id="container" >        	
-								            <div id="dynamic">
-								            	<div id="button_area">
-								            		<button id="add_button_gift">დამატება</button>
-					  								<!--button id="delete_button_gift">წაშლა</button-->
-							        			</div>
-								                <table class="" id="sub2" style="width: 100%;">
-								                    <thead>
-														<tr  id="datatable_header">
-															<th style="width:4%;">#</th>
-															<th style="width:100px;">პაკეტი</th>
-															<th style="width:20px;">ფასი</th>
-															<th style="width:100%;">აღწერილობა</th>
-															<th style="width:100%;">შენიშვნა</th>
-					  										<th style="width:5%;">#</th>
-														</tr>
-													</thead>
-													<thead>
-														<tr class="search_header">
-															<th>
-																<input style="width:20px;" type="text" name="search_overhead" value="" class="search_init" />
-															</th>
-					  										<th>
-																<input style="width:100px;" type="text" name="search_overhead" value="ფილტრი" class="search_init" />
-															</th>
-															<th>
-																<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-															</th>
-															<th>
-																<input style="width:100px;" type="text" name="search_overhead" value="ფილტრი" class="search_init" />
-															</th>
-															<th>
-																<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-															</th>
-					  										<th>
-                            									<input type="checkbox" name="check-all" id="check-all_g">
-                            								</th>
-					  										
-														</tr>
-													</thead>
-								                </table>
-								            </div>
-								            <div class="spacer">
-								            </div>
-								        </div>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content_4" disabled class="idle" name="content" cols="300" >'.$notes[3][notes].'</textarea></td>
-											</tr>
-											<tr>
-												<td style="text-align:right;"><span></span></td>
-											</tr>
-									</table>
-									</fieldset>
-											<fieldset class="'.(($notes[20][id]!="")?"":"dialog_hidden").'">
-												<legend>ინფორმაცია</legend>
-											<table class="dialog-form-table" style="width:250px; float:left;">
-									    		<tr>
-													<td style="text-align:right;">მოისმინა ბოლომდე</td>
-													<td><input type="radio" name="info_quest" value="1" '.(($res['info_quest']=='1')?"checked":"").'></td>
-													
-												</tr>
-												<tr>
-													<td style="text-align:right;">მოისმინა და კითხვები დაგვისვა</td>
-													<td><input type="radio" name="info_quest" value="2" '.(($res['info_quest']=='2')?"checked":"").'></td>		
-												</tr>
-												<tr>
-													<td style="text-align:right;">შეგვაწყვეტინა</td>
-													<td><input type="radio" name="info_quest" value="3" '.(($res['info_quest']=='3')?"checked":"").'></td>
-												</tr>
-											</table>
-											<table class="dialog-form-table" style="width:350px; float:left; margin-left: 15px;">
-												<tr>
-													<td>კომენტარი</td>
-												</tr>
-									    		<tr>
-													<td><textarea  style="width: 100%; height:50px; resize: vertical;" id="info_comment" class="idle" name="content" cols="300" >' . $res['info_comment'] . '</textarea></td>
-												</tr>
-											</table>
-											</fieldset>
-											<button style="float:right; margin-top:10px;" onclick="seller(2)" class="next"> >> </button>
-											<button style="float:right; margin-top:10px;" onclick="seller(0)" class="back"> << </button>
-									
-									</fieldset>
-													
-									 </div>
-									 <div id="seller-2" class="dialog_hidden">
-											<fieldset style="width:97%; float:left; overflow-y:scroll; max-height:400px;">
-											<fieldset style="width:97%;" class="'.(($notes[4][id]!="")?"":"dialog_hidden").'">
-										    	<legend>შედეგი</legend>
-											<table class="dialog-form-table">
-										    		<tr>
-														<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[4][notes].'</textarea></td>
-													</tr>
-													<tr>
-														<td style="text-align:right;"><span></span></td>
-													</tr>
-											</table>
-											<table class="dialog-form-table">
-										    	<tr>
-													<td style="text-align:right;"><span>დადებითი</span></td>
-						  							<td><input type="radio" name="result_quest" value="1" '.(($res['result_quest']=='1')?"checked":"").'></td>
-						  							<td><span>(ვაგრძელებთ)</span></td>
-						  						</tr>
-												<tr>
-													<td style="text-align:right;"><span>უარყოფითი</span></td>
-						  							<td><input type="radio" name="result_quest" value="2" '.(($res['result_quest']=='2')?"checked":"").'></td>
-						  							<td><span>(ვასრულებთ)</span></td>
-						  						</tr>
-						  						<tr>
-													<td style="text-align:right;"><span>მოიფიქრებს</span></td>
-						  							<td><input type="radio" name="result_quest" value="3" '.(($res['result_quest']=='3')?"checked":"").'></td>
-						  							<td><span>(ვუთანხმებთ განმეორებითი ზარის დროს. ვიფორმირებთ დავალებას)</span></td>
-						  						</tr>	
-											</table>
-						  					<table class="dialog-form-table">
-										    		<tr>
-						  								<td><span style="color:#649CC3">კომენტარი</span></td>
-													</tr>
-													<tr>
-														<td><textarea  style="width: 400px; height:60px; resize: vertical;" id="result_comment" class="idle" name="content" cols="300" >' . $res['result_comment'] . '</textarea></td>
-														
-													</tr>
-											</table>
-											</fieldset>
-											
-															
-																
-							  				<fieldset style="width:97%; float:left; " class="'.(($notes[5][id]!="")?"":"dialog_hidden").'">
-										    	<legend>მიწოდება</legend>
-											<table class="dialog-form-table">
-										    		<tr>
-														<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[5][notes].'</textarea></td>
-													</tr>
-													<tr>
-														<td style="text-align:right;"><span></span></td>
-													</tr>
-											</table>
-											<table class="dialog-form-table">
-										    		<tr>
-														<td style="width:150px;">მიწოდება დაიწყება</td>
-														<td><select style="width: 305px;" id="send_date" class="idls object">'.Getshipping($res['send_date']).'</select></td>			
-													</tr>
-											</table>
-											</fieldset>
-											<fieldset style="width:97%; float:left; " class="'.(($notes[6][id]!="")?"":"dialog_hidden").'">
-										    	<legend>ანგარიშსწორება</legend>
-											<table class="dialog-form-table">
-										    		<tr>
-														<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[6][notes].'</textarea></td>
-													</tr>
-													<tr>
-														<td style="text-align:right;"><span></span></td>
-													</tr>
-											</table>
-											<table class="dialog-form-table">
-										    	<tr>
-						  							<td><input type="radio" name="payment_quest" value="1" '.(($res['payment_quest']=='1')?"checked":"").'></td>
-						  							<td><span>ნაღდი</span></td>
-						  						</tr>
-												<tr>
-						  							<td><input type="radio" name="payment_quest" value="2" '.(($res['payment_quest']=='2')?"checked":"").'></td>
-						  							<td><span>უნაღდო</span></td>
-						  						</tr>
-											</table>
-						  					<table class="dialog-form-table">
-										    		<tr>
-						  								<td><span style="color:#649CC3">კომენტარი</span></td>
-													</tr>
-													<tr>
-														<td><textarea  style="width: 680px; height:60px; resize: vertical;" id="payment_comment" class="idle" name="content" cols="300" >' . $res['payment_comment'] . '</textarea></td>
-													</tr>
-											</table>
-											</fieldset>
-													
-													<button style="float:right; margin-top:10px;" onclick="seller(1)" class="next"> << </button>
-											</fieldset>		
-									 </div>
-									
-							</div>';
-							// სატელეფონო გაყიდვები დასასრული
-							
-						$data .= '<div id="ggg" class="'.(($notes[24][id]!="")?"":"dialog_hidden").'" >
-
-						<div id="seller-0" >
-						<fieldset style="width:97%;   float:left; overflow-y:scroll; max-height:400px;" class="'.(($notes[24][id]!="")?"":"dialog_hidden").'">
-						<legend>სხვა სცენარი</legend>
-						<fieldset style="width:97%;" >
-						<legend>მისალმება</legend>
-						<table class="dialog-form-table">
-						<tr>
-						<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[24][notes].'</textarea></td>
-						</tr>
-						<tr>
-						<td style="text-align:right;"><span></span></td>
-						</tr>
-						</table>
-						
-						<table class="dialog-form-table" style="width:500px;">
-						<tr>
-						<td style="text-align:right;"><span>აქვს</span></td>
-						<td><input type="radio" name="hello_quest" value="1" '.(($res['hello_quest']=='1')?"checked":"").'></td>
-						<td><span>(ვაგრძელებთ)</span></td>
-						</tr>
-						<tr>
-						<td style="text-align:right;"><span>სურს სხვა დროს</span></td>
-						<td><input type="radio" name="hello_quest" value="2" '.(($res['hello_quest']=='2')?"checked":"").'></td>
-						<td><span>(ვიფორმირებთ დავალებას)</span></td>
-						</tr>
-						<tr>
-						<td style="text-align:right;"><span>არ სურს</span></td>
-						<td><input type="radio" name="hello_quest" value="3" '.(($res['hello_quest']=='3')?"checked":"").'></td>
-						<td><span>(ვასრულებთ)</span></td>
-						</tr>
-						</table>
-						
-						<table class="dialog-form-table">
-						<tr>
-							<td><span style="color:#649CC3">კომენტარი</span></td>
-						</tr>
-						<tr>
-						<td><textarea  style="width: 680px; height:80px; resize: vertical;" id="hello_comment1" class="idle" name="content" cols="300" >' . $res['hello_comment'] . '</textarea></td>
-						</tr>
-						</table>
-						</fieldset>		
-						
-						<fieldset style="width:97%;" class="'.(($notes[25][id]!="")?"":"dialog_hidden").'">
-						<legend>შეთავაზება</legend>
-						<table class="dialog-form-table">
-						<tr>
-						<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[25][notes].'</textarea></td>
-						</tr>
-						<tr>
-						<td style="text-align:right;"><span></span></td>
-						</tr>
-						</table>
-						</fieldset>				        
-							
-										            <fieldset style="width:97%;" class="'.(($notes[26][id]!="")?"":"dialog_hidden").'">
-										            <legend>შედეგი</legend>
-										            <table class="dialog-form-table">
-										            <tr>
-										            <td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" disabled class="idle" name="content" cols="300" >'.$notes[26][notes].'</textarea></td>
-										            </tr>
-										            <tr>
-										            <td style="text-align:left;"><span style="font-weight:bold;">სურს თუ არა საიტზე რეგისტრაცია?</span></td>
-										            </tr>
-										            </table>
-						<table class="dialog-form-table">
-										            <tr>
-										            <td style="text-align:right;"><span>დიახ</span></td>
-										            <td><input type="radio" name="result_quest1" value="1" '.(($res['result_quest1']=='1')?"checked":"").'></td>
-										            </tr>
-										            <tr>
-										            <td style="text-align:right;"><span>არა</span></td>
-										            <td><input type="radio" name="result_quest1" value="2" '.(($res['result_quest1']=='2')?"checked":"").'></td>
-										            </tr>
-										            <tr>
-										            <td style="text-align:right;"><span>სხვა</span></td>
-										            <td><input type="radio" name="result_quest1" value="3" '.(($res['result_quest1']=='3')?"checked":"").'></td>
-										            </tr>
-							  						    </table>
-							  						    <table class="dialog-form-table">
-							  						    <tr>
-							  						    <td><span style="color:#649CC3">კომენტარი</span></td>
-								</tr>
-								<tr>
-									<td><textarea  style="width: 680px; height:60px; resize: vertical;" id="result_comment1" class="idle" name="content" cols="300" >' . $res['result_comment1'] . '</textarea></td>
-	
-								</tr>
-							  						    </table>
-							  						    </fieldset>
-												</fieldset>
-										 </div>
-						
-								</div>';
-
-						// სატელეფონო კვლევა დასაწყისი
-						$data .= '<div id="research" class="'.(($notes[7][id]!="")?"":"dialog_hidden").'">
-									<ul>
-										<li style="margin-left:0;" id="r0" onclick="research(this.id)" class="seller_select">შესავალი</li>
-										<li id="r1" onclick="research(this.id)" '.(($notes[22][id]!="")?"style=\"display:none; !important;\"":"").'>დემოგრაფიული ბლოკი</li>
-										<li id="r2" onclick="research(this.id)" '.(($notes[22][id]!="")?"style=\"display:none; !important;\"":"").'>ძირითადი ნაწილი</li>
-									</ul>
-									<div id="research-0">
-									<fieldset style="width:97%; float:left; overflow-y:scroll; max-height:400px;">
-									<fieldset style="width:97%;" class="'.(($notes[7][id]!="")?"":"dialog_hidden").'">
-								    	<legend>შესავალი</legend>
-									<table class="dialog-form-table">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >'.$notes[7][notes].'</textarea></td>
-											</tr>
-											<tr>
-												<td style="text-align:right;"><span></span></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="width:500px;">
-								    		<tr>
-												<td style="text-align:center;"><span>უარი მონაწილეობაზე</span></td>
-					  							<td><input type="radio" name="preface_quest" value="1" '.(($res['preface_quest']=='1')?"checked":"").'></td>
-					  							
-					  						</tr>
-									</table>
-									</fieldset>
-									<table class="dialog-form-table" '.(($notes[22][id]!="")?"style=\"display:none; !important;\"":"style=\"width:300px;\"").' >
-								    		<tr>
-												<td style="font-weight:bold;">თქვენი სახელი, როგორ მოგმართოთ?</td>
-					  						</tr>
-											<tr>
-												<td><input type="text" style="width:100%;" id="preface_name" class="idle" onblur="this.className=\'idle\'"  value="' . $res['preface_name']. '" /></td>
-					  						</tr>
-									</table>
-																
-									<div class="'.(($notes[22][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">B1</td>
-												<td style="font-weight:bold;">რას ურჩევდით ბიბლუსს?</td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td><textarea  style="width: 500px; height:60px; resize: vertical;" id="biblus_quest1" class="idle" name="content" cols="300" >'. $res['b1'].'</textarea></td>
-												
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-											<tr>
-												<td style="">მინიშნება</td>
-											</tr>			
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >'.$notes[22][notes].'</textarea></td>
-											</tr>
-									</table>
-									<hr>
-									</div>
-														
-									<div class="'.(($notes[23][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">B2</td>
-												<td style="font-weight:bold;">რამდენად კმაყოფილი ხართ ამ ფილიალში მიღებული მომსახურებით ?</td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td><input type="text" style="width:100%;" id="biblus_quest2" class="idle" onblur="this.className=\'idle\'"  value="' . $res['b2']. '" /></td>
-					  						
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-											<tr>
-												<td style="">მინიშნება</td>
-											</tr>
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" class="idle" disabled name="content" cols="300" >'.$notes[23][notes].'</textarea></td>
-											</tr>
-									</table>
-									</div>
-														
-											<button '.(($notes[22][id]!="")?"style=\"display:none; !important;\"":"style=\"float:right; margin-top:10px;\"").'  onclick="research(\'r1\')" class="next"> >> </button>
-									</fieldset>
-									 </div>
-
-											
-									<div id="research-1" class="dialog_hidden">
-									<fieldset style="width:97%; float:left; overflow-y:scroll; max-height:400px;">
-									<fieldset style="width:97%;">
-								    	<legend>დემოგრაფიული ბლოკი</legend>
-														<div class="'.(($notes[8][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D1</td>
-												<td style="font-weight:bold;">თუ შეიძლება მითხარით, მუდმივად ცხოვრობთ თუ არა ამ მისამართზე?<br><span style="font-weight:normal;">(6 თვე მაინც უნდა ცხოვრებდეს)</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px;">დიახ</td>
-												<td><input type="radio" name="d1" value="1" '.(($res['d1']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td>არა</td>
-												<td><input type="radio" name="d1" value="2" '.(($res['d1']=='2')?"checked":"").'></td>
-												
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >'.$notes[8][notes].'</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[9][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D2</td>
-												<td style="font-weight:bold;">თუ შეიძლება მითხარით, ხომ არ მიგიღიათ მონაწილეობა რაიმე კვლევაში ბოლო 6 თვის განმავლობაში?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px;">დიახ</td>
-												<td><input type="radio" name="d2" value="1" '.(($res['d2']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td>არა</td>
-												<td><input type="radio" name="d2" value="2" '.(($res['d2']=='2')?"checked":"").'></td>
-												
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >'.$notes[9][notes].'</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[10][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D3</td>
-												<td style="font-weight:bold;">გთხოვთ დამიზუსტოთ, თბილისის რომელ რაიონში ცხოვრობთ?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:150px; text-align:right;">ვაკე-საბურთალო</td>
-												<td><input type="radio" name="d3" value="1" '.(($res['d3']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">გლდანი-ნაძალადევი</td>
-												<td><input type="radio" name="d3" value="2" '.(($res['d3']=='2')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:150px; text-align:right;">დიდუბე-ჩუღურეთი</td>
-												<td><input type="radio" name="d3" value="3" '.(($res['d3']=='3')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">ისანი-სამგორი</td>
-												<td><input type="radio" name="d3" value="4" '.(($res['d3']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td style="width:150px; text-align:right;">ძვ.თბილისი</td>
-												<td><input type="radio" name="d3" value="5" '.(($res['d3']=='5')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">ვდიდგორი</td>
-												<td><input type="radio" name="d3" value="6" '.(($res['d3']=='6')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[10][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-												</div>
-															
-									<div class="'.(($notes[11][id]!="")?"":"dialog_hidden").'">
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D4</td>
-												<td style="font-weight:bold;">გთხოვთ მითხრათ, ხომ არ მუშაობთ თქვენ ან თქვენი ოჯახის წევრი, ახლობელი/მეგობარი </span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:250px;">ტელევიზია (დაასრულეთ)</td>
-												<td><input type="radio" name="d4" value="1" '.(($res['d4']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td>რადიო (დაასრულეთ)</td>
-												<td><input type="radio" name="d4" value="2" '.(($res['d4']=='2')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>პრესა, ბეჭდვითი მედია (დაასრულეთ)</td>
-												<td><input type="radio" name="d4" value="3" '.(($res['d4']=='3')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>სარეკლამო  (დაასრულეთ)</td>
-												<td><input type="radio" name="d4" value="4" '.(($res['d4']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>კვლევითი კომპანია (დაასრულეთ)</td>
-												<td><input type="radio" name="d4" value="5" '.(($res['d4']=='5')?"checked":"").'></td>
-												
-											</tr>
-											<tr>
-												<td>არცერთი (გააგრძელეთ)</td>
-												<td><input type="radio" name="d4" value="6" '.(($res['d4']=='6')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[11][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-												</div>
-																
-									<div class="'.(($notes[12][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D5</td>
-												<td style="font-weight:bold;">სქესი</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px;">მამაკაცი</td>
-												<td><input type="radio" name="d5" value="1" '.(($res['d5']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td>ქალი</td>
-												<td><input type="radio" name="d5" value="2" '.(($res['d5']=='2')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[12][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[13][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D6</td>
-												<td style="font-weight:bold;">ასაკი</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px; text-align:right;">12-17</td>
-												<td><input type="radio" name="d6" value="1" '.(($res['d6']=='1')?"checked":"").'></td>
-												<td style="width:50px; text-align:right;">35-44</td>
-												<td><input type="radio" name="d6" value="2" '.(($res['d6']=='2')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:50px; text-align:right;">18-24</td>
-												<td><input type="radio" name="d6" value="3" '.(($res['d6']=='3')?"checked":"").'></td>
-												<td style="width:50px; text-align:right;">45-54</td>
-												<td><input type="radio" name="d6" value="4" '.(($res['d6']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td style="width:50px; text-align:right;">25-34</td>
-												<td><input type="radio" name="d6" value="5" '.(($res['d6']=='5')?"checked":"").'></td>
-												<td style="width:50px; text-align:right;">55-65</td>
-												<td><input type="radio" name="d6" value="6" '.(($res['d6']=='6')?"checked":"").'></td>
-												
-											</tr>
-											<tr>
-												<td></td>
-												<td></td>
-												<td style="width:50px; text-align:right;">65 +</td>
-												<td><input type="radio" name="d6" value="7" '.(($res['d6']=='7')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[13][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-													</div>
-															
-									<div class="'.(($notes[14][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D7</td>
-												<td style="font-weight:bold;">ჩამოთვლილთაგან რომელი გამოხატავს ყველაზე უკეთ თქვენი ოჯახის მატერიალურ მდგომარეობას?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:150px;">ძალიან დაბალი</td>
-												<td><input type="radio" name="d7" value="1" '.(($res['d7']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td>დაბალი</td>
-												<td><input type="radio" name="d7" value="2" '.(($res['d7']=='2')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>საშუალო</td>
-												<td><input type="radio" name="d7" value="3" '.(($res['d7']=='3')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>მაღალი</td>
-												<td><input type="radio" name="d7" value="4" '.(($res['d7']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td>კძალიან მაღალი</td>
-												<td><input type="radio" name="d7" value="5" '.(($res['d7']=='5')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[14][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[15][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D8</td>
-												<td style="font-weight:bold;">თუ შეიძლება მითხარით, რამდენ ლარს შეადგენს თქვენი ოჯახის ყოველთვიური შემოსავალი?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:90px; text-align:right;">200 ლარამდე</td>
-												<td><input type="radio" name="d8" value="1" '.(($res['d8']=='1')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">100-1500</td>
-												<td><input type="radio" name="d8" value="2" '.(($res['d8']=='2')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:80px; text-align:right;">200-500</td>
-												<td><input type="radio" name="d8" value="3" '.(($res['d8']=='3')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">1500-2000</td>
-												<td><input type="radio" name="d8" value="4" '.(($res['d8']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td style="width:80px; text-align:right;">500-1000</td>
-												<td><input type="radio" name="d8" value="5" '.(($res['d8']=='5')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">2000+</td>
-												<td><input type="radio" name="d8" value="6" '.(($res['d8']=='6')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td></td>
-												<td></td>
-												<td style="width:80px; text-align:right;">მპგ</td>
-												<td><input type="radio" name="d8" value="7" '.(($res['d8']=='7')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[15][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[16][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D9</td>
-												<td style="font-weight:bold;">თუ შეიძლება მითხარით, რამდენ ლარს შეადგენს თქვენი პირადი ყოველთვიური შემოსავალი?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:90px; text-align:right;">200 ლარამდე</td>
-												<td><input type="radio" name="d9" value="1" '.(($res['d9']=='1')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">100-1500</td>
-												<td><input type="radio" name="d9" value="2" '.(($res['d9']=='2')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:80px; text-align:right;">200-500</td>
-												<td><input type="radio" name="d9" value="3" '.(($res['d9']=='3')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">1500-2000</td>
-												<td><input type="radio" name="d9" value="4" '.(($res['d9']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td style="width:80px; text-align:right;">500-1000</td>
-												<td><input type="radio" name="d9" value="5" '.(($res['d9']=='5')?"checked":"").'></td>
-												<td style="width:80px; text-align:right;">2000+</td>
-												<td><input type="radio" name="d9" value="6" '.(($res['d9']=='6')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td></td>
-												<td></td>
-												<td style="width:80px; text-align:right;">მპგ</td>
-												<td><input type="radio" name="d9" value="7" '.(($res['d9']=='7')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[16][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[17][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D10</td>
-												<td style="font-weight:bold;">ხართ თუ არა დასაქმებული?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px; text-align:right;">დიახ</td>
-												<td><input type="radio" name="d10" value="1" '.(($res['d10']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:50px; text-align:right;">არა</td>
-												<td><input type="radio" name="d10" value="2" '.(($res['d10']=='2')?"checked":"").'></td>
-											</tr>
-											
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[17][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-														
-									<div class="'.(($notes[18][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D11</td>
-												<td style="font-weight:bold;">თუ შეიძლება მითხარით, რა ტიპის ორგანიზაციაში მუშაობთ?</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:150px; text-align:right;">კერძო სექტორი</td>
-												<td><input type="radio" name="d11" value="1" '.(($res['d11']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">თვითდასაქმებული</td>
-												<td><input type="radio" name="d11" value="2" '.(($res['d11']=='2')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:150px; text-align:right;">საჯარო სამსახური</td>
-												<td><input type="radio" name="d11" value="3" '.(($res['d11']=='3')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">მპგ</td>
-												<td><input type="radio" name="d11" value="4" '.(($res['d11']=='4')?"checked":"").'></td>
-											</tr>
-											<tr>
-												<td style="width:150px; text-align:right;">არასამთავრობო/td>
-												<td><input type="radio" name="d11" value="5" '.(($res['d11']=='5')?"checked":"").'></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[18][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-													</div>
-															
-									<div class="'.(($notes[19][id]!="")?"":"dialog_hidden").'">					
-									<table class="dialog-form-table">
-								    		<tr>
-												<td style="width:30px; font-weight:bold;">D12</td>
-												<td style="font-weight:bold;">გყავთ თუ არა ავტომობილი</span></td>
-												<td></td>
-											</tr>
-									</table>
-									<table class="dialog-form-table">
-											<tr>
-												<td style="width:50px; text-align:right;">დიახ</td>
-												<td><input type="radio" name="d12" value="1" '.(($res['d12']=='1')?"checked":"").'></td>
-												<td style="width:150px; text-align:right;">დაიცავით ქვოტა</td>
-											</tr>
-											<tr>
-												<td style="width:50px; text-align:right;">არა</td>
-												<td><input type="radio" name="d12" value="2" '.(($res['d12']=='2')?"checked":"").'></td>
-											</tr>
-											
-									</table>
-									<table class="dialog-form-table" style="margin-top:10px;">
-								    		<tr>
-												<td><textarea  style="width: 680px; height:100px; resize: vertical; background: #EBF9FF;" id="content" class="idle" disabled name="content" cols="300" >' . $notes[19][notes] . '</textarea></td>
-												
-											</tr>
-											<tr>
-												<td style="text-align:right;"></td>
-											</tr>
-									</table>
-									<hr>
-														</div>
-										<button style="float:right; margin-top:10px;" onclick="research(\'r2\')" class="next"> >> </button>
-										<button style="float:right; margin-top:10px;" onclick="research(\'r0\')" class="back"> << </button>
-									</fieldset>			
-									</div>
-														
-									 <div id="research-2" class="dialog_hidden">
-											<fieldset style="width:97%; float:left; overflow-y:scroll; max-height:400px;">
-											<fieldset '.(($notes[21][id]!="")?"":"dialog_hidden").'>
-										    	<legend>რადიო</legend>
-											<table class="dialog-form-table">
-										    		<tr>
-														<td style="font-weight:bold; width:30px;">Q1</td>
-														<td style="font-weight:bold; font-size:12px;">თუ შეიძლება, მე ჩამოგითვლით რადიოსადგურებს და თქვენ მიპასუხეთ, რომელ რადიოს უსმენდით გუშინ, თუნდაც მხოლოდ 5 წუთით? კიდევ, კიდევ.</td>
-													</tr>
-											</table>
-											<table class="dialog-form-table">
-										    	<tr>
-													<td><span>რადიო 1</span></td>
-						  							<td><input type="radio" name="q1" value="1" '.(($res['q1']=='1')?"checked":"").'></td>
-						  							<td style="width:180px; text-align:right;"><span>არ ვუსმენდი</span></td>
-						  							<td><input type="radio" name="q1" value="2" '.(($res['q1']=='2')?"checked":"").'></td>
-						  						</tr>
-												<tr>
-													<td><span>რადიო 2</span></td>
-						  							<td><input type="radio" name="q1" value="3" '.(($res['q1']=='3')?"checked":"").'></td>
-						  						</tr>
-											</table>
-						  					<table class="dialog-form-table">
-										    	
-													<tr>
-														<td><textarea  style="width: 400px; height:60px; resize: vertical;" id="content" class="idle" name="content" cols="300" >' . $res['content'] . '</textarea></td>
-														
-													</tr>
-											</table>
-											</fieldset>
-											<button style="float:right; margin-top:10px;" onclick="research(\'r1\')" class="back"> << </button>
-											
-										</fieldset>
-									 </div>
-									
-							</div>';
-						
-						$data .= '</div>';
-						// სატელეფონო კვლევა დასასრული
-						
-						  $data .= '<fieldset style="width:350px;; float:left;">
-								    	<legend>ზარის დაზუსტება</legend>
-									<table class="dialog-form-table">
-								    		<tr>
-												<td><textarea  style="width: 350px; height:70px; resize: vertical;" id="call_content" class="idle" name="content" cols="300" >' . $res['call_content'] . '</textarea></td>
-											</tr>
-									</table>
-									</fieldset>	
-									<fieldset style="width:300px;; float:left; margin-left:10px; max-height:90px;">
-								    	<legend>სტატუსი</legend>
-									<table class="dialog-form-table" style="height: 80px;">
-											<tr>
-												<td></td>
-											</tr>
-								    		<tr>
-												<td><select style="width: 328px;" id="status" class="idls object">'.Getstatus($res['status']).'</select></td>
-											</tr>
-									</table>
-									</fieldset>
-								<fieldset style="margin-top: 5px;">
-								    	<legend>დავალების ფორმირება</legend>
-							
-								    	<table class="dialog-form-table" >
-											<tr>
-												<td style="width: 280px;"><label for="set_task_department_id">განყოფილება</label></td>
-												<td style="width: 280px;"><label for="set_persons_id">პასუხისმგებელი პირი</label></td>
-												<td style="width: 280px;"><label for="set_priority_id">პრიორიტეტი</label></td>
-											</tr>
-								    		<tr>
-												<td><select style="width: 200px;"  id="set_task_department_id" class="idls object">'.Getdepartment($res['task_department_id']).'</select></td>
-												<td><select style="width: 200px;" id="set_persons_id" class="idls object">'. Getpersons($res['persons_id']).'</select></td>
-												<td><select style="width: 200px;" id="set_priority_id" class="idls object">'.Getpriority($res['priority_id']).'</select></td>
-											</tr>
-											</table>
-											<table class="dialog-form-table" style="width: 720px;">
-											<tr>
-												<td style="width: 150px;"><label>შესრულების პერიოდი</label></td>
-												<td style="width: 150px;"><label></label></td>
-												<td style="width: 150px;"><label>კომენტარი</label></td>
-											</tr>
-											<tr>
-												<td><input style="width: 130px; float:left;" id="set_start_time" class="idle" type="text"><span style="margin-left:5px; ">დან</span></td>
-										  		<td><input style="width: 130px; float:left;" id="set_done_time" class="idle" type="text"><span style="margin-left:5px; ">მდე</span></td>
-												<td>
-													<textarea  style="width: 270px; resize: vertical;" id="set_body" class="idle" name="content" cols="300">' . $res['comment'] . '</textarea>
-												</td>
-											</tr>
-										</table>
-							        </fieldset>	
-							</fieldset>	
-							</div>';
-						
-						
-						$data .='<div style="float: right;  width: 355px;">
-								<fieldset>
-								<legend>აბონენტი</legend>
-								<table style="height: 243px;">						
-									<tr>
-										<td style="width: 180px; color: #3C7FB1;">ტელეფონი 1</td>
-										<td style="width: 180px; color: #3C7FB1;">ტელეფონი 2</td>
-									</tr>
-									<tr>
-										<td>
-											<input type="text" id="phone"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['phone'] . '" />
-										</td>
-										<td>
-											<input type="text" id="phone1"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['phone2'] . '" />
-										</td>
-															
-									</tr>
-									<tr>
-										<td style="width: 180px; color: #3C7FB1;">სახელი</td>
-										<td style="width: 180px; color: #3C7FB1;">ელ-ფოსტა</td>
-									</tr>
-									<tr >
-										<td style="width: 180px;">
-											<input type="text" id="first_name"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['first_name'] . '" />
-										</td>
-										<td style="width: 180px;">
-											<input type="text" id="mail"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['mail'] . '" />
-										</td>			
-									</tr>
-									<tr>
-										<td td style="width: 180px; color: #3C7FB1;">ქალაქი</td>
-										<td td style="width: 180px; color: #3C7FB1;">დაბადების თარიღი</td>
-									</tr>
-									<tr>
-										<td><input type="text" id="city_id"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['city_id'] . '" /></td>	
-										<td td style="width: 180px;">
-											<input type="text" id="b_day"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['b_day'] . '" />		
-										</td>
-									</tr>
-									<tr>
-										<td td style="width: 180px; color: #3C7FB1;">მისამართი</td>
-										<td style="width: 180px; color: #3C7FB1;">პირადი ნომერი</td>
-									</tr>
-									<tr>
-										<td td style="width: 180px;">
-											<input type="text" id="addres"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['addres'] . '" />		
-										</td>
-										<td style="width: 180px;">
-											<input type="text" id="person_n"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['person_n'] . '" />
-										</td>
-									</tr>
-													
-									<tr>
-										<td td style="width: 180px; color: #3C7FB1;">ასაკი</td>
-										<td style="width: 180px; color: #3C7FB1;">სქესი</td>
-									</tr>
-									<tr>
-										<td td style="width: 180px;">
-											<input type="text" id="age"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['age'] . '" />		
-										</td>
-										<td style="width: 180px;">
-											<input type="text" id="sex"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['sex'] . '" />
-										</td>
-									</tr>
-									
-									<tr>
-										<td td style="width: 180px; color: #3C7FB1;">პროფესია</td>
-										<td style="width: 180px; color: #3C7FB1;">ინტერესების სფერო</td>
-									</tr>
-									<tr>
-										<td td style="width: 180px;">
-											<input type="text" id="profession"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['profession'] . '" />		
-										</td>
-										<td style="width: 180px;">
-											<input type="text" id="interes"  class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['interes'] . '" />
-										</td>
-									</tr>
-									
-								</table>
-							</fieldset>';
-							$data .= GetRecordingsSection($res);	
-						$data .=	'</div>
-				    </div>';
-	
-	
-	$data .= '<input type="hidden" id="outgoing_call_id" value="' . $res['id'] . '" />';
-
-	return $data;
-}
-
-function GetRecordingsSection($res)
-{
-    $phone = '---';
-    $phone1 = '---';
-    if($res['phone'] != ''){
-        $phone = $res[phone];
+function get_cat_1($id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = 0");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
     }
-    if($res['phone2'] != '') {
-        $phone1 = $res[phone2];
-    }
-
-	$req = mysql_query("SELECT  `calldate` AS 'time',
-			SUBSTR(`userfield`, 7) as userfield
-			FROM     `cdr`
-			WHERE     (LENGTH(`src`) =3 && (`dst` LIKE '%$phone%' or `dst` LIKE '%$phone1%'))");
-
-	$data .= '
-        <fieldset style="margin-top: 10px; width: 333px; float: right;">
-            <legend>ჩანაწერები</legend>
-
-            <table style="width: 65%; border: solid 1px #85b1de; margin:auto;">
-                <tr style="border-bottom: solid 1px #85b1de; height: 20px;">
-                    <th style="padding-left: 10px;">დრო</th>
-                    <th  style="border: solid 1px #85b1de; padding-left: 10px;">ჩანაწერი</th>
-                </tr>';
-	if (mysql_num_rows($req) == 0){
-		$data .= '<td colspan="2" style="height: 20px; text-align: center;">ჩანაწერები ვერ მოიძებნა</td>';
-	}
-
-	while( $res2 = mysql_fetch_assoc($req)){
-		$link = $res2['userfield'];
-		$data .= '
-                <tr style="border-bottom: solid 1px #85b1de; height: 20px;">
-                    <td style="vertical-align: middle; text-align: center;">' . $res2['time'] . '</td>
-                    <td style="vertical-align: middle; text-align: center;"><button class="download" str="' . $link . '">მოსმენა</button></td>
-                </tr>';
-	}
-
-	$data .= '
-            </table>
-        </fieldset>';
-
-	return $data;
+    
+    return $data;
+    
 }
 
-function ChangeResponsiblePerson($number_p, $responsible_person, $note_p, $sorce_p){
-		$note_checker = '';
-		$note_checker_sub = '';
-		if($note_p != '0' || $sorce_p != '0'){
-		    $ch_note_p = "";
-		    $ch_sorce_p = "";
-		    if($note_p != '0'){
-		    $ch_note_p = "AND phone.note = '$note_p'";
-		    }
-		    if($sorce_p != '0'){
-		    $ch_sorce_p = "AND phone.sorce = '$sorce_p'";
-		    }
-		    
-		$filtr_res = mysql_query("	SELECT 	task_detail.id 
-									FROM 	task_detail
-									JOIN 	phone ON task_detail.phone_base_id = phone.id $ch_note_p $ch_sorce_p");
-									
-			while ($row_r = mysql_fetch_assoc($filtr_res)){
-				$note_checker .= $row_r['id'].',';
-			}
-			$gg = substr($note_checker,0,-1);
-			$note_checker_sub = "and id in($gg)";
-		}
-		//echo $note_checker_sub;
-		mysql_query("UPDATE `task_detail` SET 
-							`responsible_user_id`='$responsible_person',
-							`status`='1'
-					 WHERE 	ISNULL(`responsible_user_id`) $note_checker_sub
-					 LIMIT $number_p");
+function getStatus($type){
+    $req = mysql_query("    SELECT 	`id`,
+                    				`type`,
+                    				`name`
+                            FROM `task_status`
+                            WHERE actived = 1 AND type = $type");
 
-}
-
-function GetPersons(){
-	$data = '';
-	$req = mysql_query("SELECT 		users.id AS `id`,
-									persons.`name` AS `name`
-						FROM 		`persons`
-						JOIN    	users ON users.person_id = persons.id");
-
-	$data .= '<option value="' . 0 . '" selected="selected">' . '' . '</option>';
-
-	while( $res = mysql_fetch_assoc($req)){
-		$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-	}
-	return $data;
-}
-
-function GetResoniblePersonPage(){
-	$data = '
-		<div id="dialog-form">
-			<fieldset>
-				<legend>ძირითადი ინფორმაცია</legend>
-				<table width="100%" class="dialog-form-table" cellpadding="10px" >
-					<tr>
-						<th><label for="responsible_person">პასუხისმგებელი პირი</label></th>
-					</tr>
-					<tr>
-						<th>
-							<select style="width: 230px;" id="responsible_person" class="idls address">'. GetPersons() .'</select>
-						</th>
-					</tr>
-					<tr>
-						<th><label for="raodenoba">რაოდენობა</label></th>
-					</tr>
-					<tr>
-						<th>
-							<input type="text" id="raodenoba" class="idls address" value="" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-						</th>
-					</tr>
-					<tr>
-						<th><label for="shenishvna">შენიშვნა</label></th>
-					</tr>
-					<tr>
-						<th>
-							<select style="width: 230px;" id="shenishvna" class="idls object">'.GetShenishvna().'</select>
-						</th>
-					</tr>
-					<tr>
-						<th><label for="shenishvna">წყარო</label></th>
-					</tr>
-					<tr>
-						<th>
-							<select style="width: 230px;" id="wyaro" class="idls object">'.GetWyaro().'</select>
-						</th>
-					</tr>
-				</table>
-			</fieldset>
-		</div>';
-	return $data;
-
-}
-
-function GetShenishvna()
-{
-	$data = '';
-	$req = mysql_query("SELECT `phone`.`note`
-						FROM 	`task_detail`
-						JOIN 	`phone` ON `task_detail`.`phone_base_id` = `phone`.`id`
-						GROUP BY `phone`.`note` ");
-	
-	$data .= '<option value="0" selected="selected"></option>';
-	while( $res = mysql_fetch_assoc($req)){
-		
-			$data .= '<option value="' . $res['note'] . '">' . $res['note'] . '</option>';
-		
-	}
-	
-	return $data;
-}
-
-function GetWyaro()
-{
-    $data = '';
-    $req = mysql_query("SELECT `phone`.`sorce`
-						FROM 	`task_detail`
-						JOIN 	`phone` ON `task_detail`.`phone_base_id` = `phone`.`id`
-						GROUP BY `phone`.`sorce` ");
-
-    $data .= '<option value="0" selected="selected"></option>';
+    $data .= '';
     while( $res = mysql_fetch_assoc($req)){
 
-        $data .= '<option value="' . $res['sorce'] . '">' . $res['sorce'] . '</option>';
-
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        
     }
 
     return $data;
 }
 
+function gethandbook($id,$done_id){
+    $req = mysql_query("  SELECT `id`,
+                            	 `value`
+                          FROM   `scenario_handbook_detail`
+                          WHERE  `scenario_handbook_id` = $id AND actived = 1");
+
+    $data .= '<option value="0" >----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $done_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['value'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['value'] . '</option>';
+        }
+    }
+
+    return $data;
+
+}
+
+function get_cat_1_1($id,$child_id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = $id");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $child_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+function get_cat_1_1_1($id,$child_id){
+    $req = mysql_query("  SELECT  `id`,
+                                  `name`
+                          FROM `info_category`
+                          WHERE actived = 1 AND `parent_id` = $id");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $child_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+
+function Getincomming($hidden_id,$open_number)
+{
+	$res = mysql_fetch_assoc(mysql_query("SELECT 	`outgoing_call_template_detail`.`id`,
+                                    				`outgoing_call_template`.`project_id`,
+                                    				`outgoing_call_template`.`scenario_id`,
+                                    				`outgoing_call_template`.`upload_date`,
+                                    				`outgoing_call_template_detail`.`phone1`,
+                                    				`outgoing_call_template_detail`.`phone2`,
+                                    				`outgoing_call_template_detail`.`firstname`
+                                    				`outgoing_call_template_detail`.`lastname`,
+                                    				`outgoing_call_template_detail`.`pid`,
+                                                    `outgoing_call_template_detail`.`address1`,
+                                                    `outgoing_call_template_detail`.`address2`,
+                                                    `outgoing_call_template_detail`.`age`,
+                                                    `outgoing_call_template_detail`.`activities`,
+                                                    `outgoing_call_template_detail`.`born_date`,
+                                                    `outgoing_call_template_detail`.`client_name`,
+                                                    `outgoing_call_template_detail`.`id_code`,
+                                                    `outgoing_call_template_detail`.`info1`,
+                                                    `outgoing_call_template_detail`.`info2`,
+                                                    `outgoing_call_template_detail`.`info3`,
+                                                    `outgoing_call_template_detail`.`mail1`,
+                                                    `outgoing_call_template_detail`.`mail2`,
+                                                    `outgoing_call_template_detail`.`note`,
+                                                    `outgoing_call_template_detail`.`sex`,
+                                    				`user_info`.`name`
+                                        FROM 		`outgoing_call_template`
+                                        JOIN 		`outgoing_call_template_detail` ON `outgoing_call_template`.`id` = `outgoing_call_template_detail`.`outgoing_call_template_id`
+                                        LEFT JOIN `users` ON `outgoing_call_template_detail`.`responsible_user_id` = `users`.`id`
+                                        LEFT JOIN `user_info` ON `users`.`id` = `user_info`.`user_id`
+                                        WHERE 	`outgoing_call_template`.`actived` = 1 AND `outgoing_call_template_detail`.`id` = 1"));
+	return $res;
+}
+
+function GetPage($res,$increment,$open_number,$queue)
+{
+    echo $increment;
+    if($increment == '' && $res == ''){
+        $increment = increment(incomming_call);
+    }
+    $rr = mysql_fetch_array(mysql_query("SELECT scenario_id FROM queue WHERE number = '$queue'"));
+	$data  .= '
+	<div id="dialog-form">
+	    <fieldset style="width: 430px;  float: left;">
+	       <legend>ძირითადი ინფორმაცია</legend>
+	       <input id="scenario_id" type="hidden" value="'.$rr[0].'" />
+	       <table class="dialog-form-table">
+	           <tr>
+	               <td>დამფორმირებელი : </td>
+            	   <td></td>
+            	   <td></td>
+	           </tr>
+    	       <tr>
+	               <td style="width: 150px;"><label for="incomming_id">მომართვის №</label></td>
+	               <td style="width: 150px;"><label for="incomming_date">თარიღი</label></td>
+	               <td><label for="incomming_phone">ტელეფონი</td>
+    	       </tr>
+	           <tr>
+	               <td><input style="width: 110px;" id="incomming_id" type="text" value="'.(($res['id']=='')?$increment:$res['id']).'"></td>
+	               <td><input style="width: 125px;" id="incomming_date" type="text" value="'.(($res['call_date']=='')?date("Y-m-d H:i:s"):$res['call_date']).'"></td>
+	               <td><input style="width: 110px;" id="incomming_phone" type="text" value="'.$res['phone'].'"></td>
+    	       </tr>
+	       </table>
+	       <table class="dialog-form-table">
+	           <tr>
+	               <td><label for="incomming_cat_1">კატეგორია 1</label></td>
+	           </tr>
+	           <tr>
+	               <td><select id="incomming_cat_1" style="width: 420px;">'.get_cat_1($res['cat_1']).'</select></td>
+	           </tr>
+	           <tr>
+	               <td><label for="incomming_cat_1_1">კატეგორია 1.1</label></td>
+	           </tr>
+	           <tr>
+	               <td><select id="incomming_cat_1_1" style="width: 420px;">'.get_cat_1_1($res['cat_1'],$res['cat_1_1']).'</select></td>
+	           </tr>
+	           <tr>
+	               <td><label for="incomming_cat_1_1_1">კატეგორია 1.1.1</label></td>
+    	       </tr>
+	           <tr>
+	               <td><select id="incomming_cat_1_1_1" style="width: 420px;">'.get_cat_1_1_1($res['cat_1_1'],$res['cat_1_1_1']).'</select></td>
+    	       </tr>
+	       </table>
+	       <table class="dialog-form-table">
+	           <tr>
+	               <td><label for="incomming_comment">დამატებითი ინფორმაცია</label></td>
+	           </tr>
+	           <tr>
+	               <td><textarea id="incomming_comment" style="resize: vertical;width: 415px;height: 149px;">'.$res['comment'].'</textarea></td>
+	           </tr>
+	       </table>
+	       
+	    </fieldset>
+	    
+	    
+        <div id="side_menu" style="float: left;height: 485px;width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
+	       <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ინფო</div></spam>
+	       <spam class="scenar" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'scenar\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/scenar.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სცენარი</div></spam>
+	       <spam class="task" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'task\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/task.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დავალება</div></spam>
+	       <spam class="sms" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'sms\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/sms.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">SMS</div></spam>
+	       <spam class="mail" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'mail\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/mail.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">E-mail</div></spam>
+	       <spam class="record" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'record\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/record.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ჩანაწერი</div></spam>
+	       <spam class="file" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'file\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/file.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ფაილი</div></spam>
+	    </div>
+	    
+	    <div style="width: 619px;float: left;margin-left: 10px;" id="right_side">
+            <fieldset style="display:none;" id="info">
+                <legend>მომართვის ავტორი</legend>
+	            <span class="hide_said_menu">x</span>
+                <table>
+                    <tr style="height:20px;">
+                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" checked><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
+                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status"><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
+                    </tr>
+                </table>
+	    
+        	    <div id="pers">
+	               <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_person_number">პირადი ნომერი</label></td>
+                               
+                           </tr>
+                           <tr>
+                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
+                                  
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 328px;"><label for="client_lname">სახელი</label></td>
+	                            <td><label for="client_person_fname">გვარი</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 328px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 328px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
+                            </tr>
+	                        <tr>
+                                <td style="width: 328px;"><label for="client_person_addres1">მისამართი 1</label></td>
+        	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['client_person_addres1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['client_person_addres2'].'"></td>
+                            </tr>
+                        </table>                	    
+    	                <table class="margin_top_10">
+        	                <tr>
+        	                    <td><label for="client_person_note">შენიშვნა</label></td>
+        	                </tr>
+        	                <tr>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 577px;">'.$res['client_person_note'].'</textarea></td>
+        	                </tr>
+    	                </table>
+        	    </div>
+	    
+	            <div id="iuri" style="border: 1px solid #ccc;padding: 5px;margin-top: 20px;display:none;">
+        	       <span class="client_main" onclick="show_main(\'client_main\',this)" style="border: 1px solid #ccc;border-bottom: 1px solid #F9F9F9;cursor: pointer;margin-top: -30px;margin-left: -6px;display: block;width: 100px;padding: 5px;text-align: center;">ძირითადი</span>
+	               <span class="client_other" onclick="show_main(\'client_other\',this)" style="cursor: pointer;margin-top: -25px;margin-left: 108px;display: block;width: 125px;padding: 6px;text-align: center;">წარმომადგენელი</span>
+	    
+	               <div id="client_main">
+                        <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_number">საიდენტ. ნომერი</label></td>
+                               <td></td>
+                           </tr>
+                           <tr>
+                               <td><input style="width: 483px;" id="client_number" type="text" value="'.$res['client_number'].'"></td>
+                               <td><button id="client_checker" style="margin-left: 5px;">შემოწმება</button></td>
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td><label for="client_name">დასახელება</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 565px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_phone1" type="text" value="'.$res['client_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_phone2" type="text" value="'.$res['client_phone2'].'"></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 312px;"><label for="client_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_mail1" type="text" value="'.$res['client_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_mail2" type="text" value="'.$res['client_mail2'].'"></td>
+                            </tr>
+                        </table>
+                	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;float: left;">
+                                <legend>იურიდიული</legend>
+                                <table>
+                                <tr>
+                                    <td><label for="client_city1">ქალაქი/რაიონი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><select id="client_city1"></select></td>
+                                </tr>
+	                            <tr>
+                                    <td><label for="client_addres1">მისამართი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><input id="client_addres1" type="text" value="" style="width: 160px;"></td>
+                                </tr>
+	                            <tr>
+                                    <td><label for="client_index1">საფოსტო ინდექი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><input id="client_index1" type="text" value="" style="width: 160px;"></td>
+                                </tr>
+                                </table>
+                	    </fieldset>
+                	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;margin-left: 215px;">
+                                <legend>ფაქტიური</legend>
+                                <table>
+                                <tr>
+                                    <td><label for="client_city2">ქალაქი/რაიონი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><select id="client_city2"></select></td>
+                                </tr>
+	                            <tr>
+                                    <td><label for="client_addres2">მისამართი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><input id="client_addres2" type="text" value="" style="width: 160px;"></td>
+                                </tr>
+	                            <tr>
+                                    <td><label for="client_index2">საფოსტო ინდექი</label></td>
+                                </tr>
+	                            <tr>
+                                    <td><input id="client_index2" type="text" value="" style="width: 160px;"></td>
+                                </tr>
+                                </table>
+                	    </fieldset>
+    	               <table class="margin_top_10">
+        	               <tr>
+        	                   <td><label for="client_note">შენიშვნა</label></td>
+        	               </tr>
+        	               <tr>
+        	                   <td><textarea id="client_note" style="resize: vertical;width: 565px;">'.$res['client_note'].'</textarea></td>
+        	               </tr>
+    	               </table>
+	               </div>
+	    
+	               <div id="client_other" style="display:none;">
+	                   <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_person_number">პირადი ნომერი</label></td>
+                               
+                           </tr>
+                           <tr>
+                               <td><input style="width: 565px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
+                               
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_lname">სახელი</label></td>
+	                            <td><label for="client_person_fname">გვარი</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 312px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
+                            </tr>
+                        </table>                	    
+    	                <table class="margin_top_10">
+        	                <tr>
+        	                    <td><label for="client_person_note">შენიშვნა</label></td>
+        	                </tr>
+        	                <tr>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 565px;">'.$res['client_person_note'].'</textarea></td>
+        	                </tr>
+    	                </table>
+	               </div>
+	    
+        	    </div>
+	    
+            </fieldset>
+    	    
+            <fieldset style="display:none;" id="task">
+                <legend>დავალების ფორმირება</legend>
+	            <span class="hide_said_menu">x</span>
+	            <table>
+	               <tr>
+	                   <td><label for="task_type_id">დავალების ტიპი</label></td>
+	               </tr>
+	               <tr>
+	                   <td colspan=2><select style="width: 595px;" id="task_type_id"></select></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_start_date">პერიოდი</label></td>
+	               </tr>	              
+	               <tr>
+	                   <td style="width: 350px;"><input style="float: left;" id="task_start_date" type="text" value=""><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_departament_id">განყოფილება</label></td>
+	               </tr>
+	               <tr>
+	                   <td colspan=2><select style="width: 595px;" id="task_departament_id"></select></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_recipient_id">ადრესატი</label></td>
+	                   <td><label for="task_controler_id">მაკონტროლებელი</label></td>
+	               </tr>	              
+	               <tr>
+	                   <td><select style="width: 245px;" id="task_recipient_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_controler_id"></select></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_priority_id">პრიორიტეტი</label></td>
+	                   <td><label for="task_status_id">სტატუსი</label></td>
+	               </tr>	              
+	               <tr>
+	                   <td><select style="width: 245px;" id="task_priority_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_description">არწერა</label></td>
+	               </tr>
+	               <tr>
+	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_description"></textarea></td>
+	               </tr>
+	               <tr>
+	                   <td><label for="task_note">არწერა</label></td>
+	               </tr>
+	               <tr>
+	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_note"></textarea></td>
+	               </tr>
+	            </table>
+            </fieldset>
+            
+            <fieldset style="display:none;" id="sms">
+                <legend>SMS</legend>
+	            <span class="hide_said_menu">x</span>	 
+	            <div class="margin_top_10">           
+	            <div id="button_area">
+                    <button id="add_sms">ახალი SMS</button>
+                </div>
+                <table class="display" id="table_sms" >
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 100%;">თარიღი</th>
+                            <th style="width: 100%;">ადრესატი</th>
+                            <th style="width: 100%;">ტექსტი</th>
+                            <th style="width: 100%;">სტატუსი</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+	            </div>
+            </fieldset>
+            
+            <fieldset style="display:none;" id="mail">
+                <legend>E-mail</legend>
+	            <span class="hide_said_menu">x</span>
+	            <div class="margin_top_10">           
+	            <div id="button_area">
+                    <button id="add_mail">ახალი E-mail</button>
+                </div>
+                <table class="display" id="table_mail" >
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 100%;">თარიღი</th>
+                            <th style="width: 100%;">ადრესატი</th>
+                            <th style="width: 100%;">გზავნილი</th>
+                            <th style="width: 100%;">სტატუსი</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+	            </div>
+            </fieldset>
+            
+            <fieldset style="display:none;" id="record">
+                <legend>ჩანაწერები</legend>
+	            <span class="hide_said_menu">x</span>
+	                '.show_record($res).'
+            </fieldset>
+            
+            <fieldset style="display:none;" id="file">
+                <legend>ფაილი</legend>
+	            <span class="hide_said_menu">x</span>
+	                '.show_file($res).'
+            </fieldset>';
+	                    if($rr[0]==''){
+	                        $my_scenario = $res['inc_scenario_id'];
+	                    }else {
+	                        $my_scenario = $rr[0];
+	                    }
+	                        
+	                    $query = mysql_query("SELECT 	`question`.id,
+            				                    `question`.`name`,
+            				                    `question`.note,
+                                                `scenario`.`name`,
+        		                                `scenario_detail`.id AS sc_det_id,
+        		                                `scenario_detail`.`sort`
+                                    FROM        `scenario`
+                                    JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
+                                    JOIN        question ON scenario_detail.quest_id = question.id
+                                    WHERE       scenario.id = $my_scenario AND scenario_detail.actived = 1
+                                    ORDER BY    scenario_detail.sort ASC");
+		
+		$data .= '
+                    <fieldset style="display:none;height: 465px;" id="scenar">
+                        <legend>კითხვები</legend>
+		            <button who="0" id="show_all_scenario" style="margin-bottom: 10px;float: right;">ყველას ჩვენება</button>';
+		
+		
+		if($res[id] == ''){
+		    $inc_id = 0;
+		    $inc_checker = " AND scenario_results.incomming_call_id = 0";
+		}else{
+		    $inc_id = $res[id];
+		    $inc_checker = " AND scenario_results.incomming_call_id = $res[id]";
+		}
+while ($row = mysql_fetch_array($query)) {
+		    
+		    $last_q = mysql_query("  SELECT question_detail.id
+                                     FROM `question_detail`
+                                     JOIN scenario_detail ON scenario_detail.quest_id = question_detail.quest_id
+                                     AND scenario_detail.scenario_id = $my_scenario
+                                     WHERE question_detail.quest_id = $row[0]");
+		    
+		    $data .= '<div class="quest_body '.$row[5].'" id="'.$row[0].'">
+		            <table class="dialog-form-table">
+		    		<tr>
+						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img style="border: none;padding: 0;margin-left: 8px;margin-top: -2px;" src="media/images/icons/kitxva.png" alt="14 ICON" height="14" width="14" title="'.$row[2].'" ></td>
+		                </tr>
+		                    ';
+		    
+            while ($last_a = mysql_fetch_array($last_q)){
+                
+            
+		     
+		    $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+                        							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 565px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+							                        WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td></tr>')
+		                                            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 565px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+		                                            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 565px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                            				        WHEN question_detail.quest_type_id = 7 THEN question_detail.answer
+		                                    END AS `ans`,
+                            				question_detail.quest_type_id,
+		                                    scenario_handbook.`name`,
+		                                    scenario_results.additional_info,
+                            		        question_detail.quest_id,
+                            		        question_detail.id,
+		                                    scenario_destination.destination
+                                    FROM question_detail		                            
+                                    LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
+		                            LEFT JOIN incomming_call ON incomming_call.id = scenario_results.incomming_call_id
+		                            LEFT JOIN scenario_destination ON scenario_destination.answer_id = $last_a[0]
+		                            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id 
+                                    WHERE question_detail.id = $last_a[0]
+		                            ");
+
+		
+		        
+		          $g =0;
+		                        while ($row1 = mysql_fetch_array($query1)) {
+		                            $q_type = $row1[1];	
+                                    if($q_type == 7){
+                                        $data .= '  <tr>
+                                                    <td style="width:707px; text-align:left;">
+                                                    <label style="float:left; padding: 7px 0;width: 565px;" for="">'.$row1[2].'</label>
+                                                    <select class="hand_select" next_quest="'.$row1[6].'" style="float:left;width: 235px;"  id="hand_select|'.$row1[4].'|'.$row1[5].'" >'.gethandbook($row1[0],$row1[3]).'</select>
+                                                    </td>';
+                                    }else{
+                                        $data .= $row1[0];
+                                    }
+                            }}
+                    
+                    $data .= '</table>
+                    <hr><br></div>';
+            
+		}
+		
+		$data .= '<button id="back_quest" back_id="0" style="float:left;">უკან</button><button id="next_quest" style="float:right;" next_id="0">წინ</button></fieldset>
+		</div>
+	       </fieldset>
+	    </div>
+	</div><input type="hidden" value="'.$res[id].'" id="hidden_id">';
+
+	return $data;
+}
+
+function GetSmsSendPage() {
+    $data = '
+        <div id="dialog-form">
+            <fieldset style="width: 299px;">
+					<legend>SMS</legend>
+			    	<table class="dialog-form-table">
+						<tr>
+							<td><label for="d_number">ადრესატი</label></td>
+						</tr>
+			    		<tr>
+							<td>
+								<span id="errmsg" style="color: red; display: none;">მხოლოდ რიცხვი</span>
+								<input type="text" id="sms_phone"  value="">
+							</td>
+							<td>
+								<button id="copy_phone">Copy</button>
+							</td>
+							<td>
+								<button id="sms_shablon">შაბლონი</button>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="content">ტექსტი</label></td>
+						</tr>
+					
+						<tr>
+							
+							<td colspan="6">	
+								<textarea maxlength="150" style="width: 298px; resize: vertical;" id="sms_text" name="call_content" cols="300" rows="4"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input style="width: 50px;" type="text" id="simbol_caunt" value="0/150">
+							</td>
+							<td>
+								
+							</td>
+							
+							<td>
+								<button id="send_sms">გაგზავნა</button>
+							</td>
+						</tr>	
+					</table>
+		        </fieldset>
+        </div>';
+    return $data;
+}
+
+function GetMailSendPage(){
+    $data = '
+            <div id="dialog-form">
+        	    <fieldset style="height: auto;">
+        	    	<table class="dialog-form-table">
+        				
+        				<tr>
+        					<td style="width: 90px; "><label for="d_number">ადრესატი:</label></td>
+        					<td>
+        						<input type="text" style="width: 490px !important;"id="mail_address" value="" />
+        					</td>
+        				</tr>
+        				<tr>
+        					<td style="width: 90px;"><label for="d_number">CC:</label></td>
+        					<td>
+        						<input type="text" style="width: 490px !important;" id="mail_address1" value="" />
+        					</td>
+        				</tr>
+        				<tr>
+        					<td style="width: 90px;"><label for="d_number">Bcc:</label></td>
+        					<td>
+        						<input type="text" style="width: 490px !important;" id="mail_address2" value="" />
+        					</td>
+        				</tr>
+        				<tr>
+        					<td style="width: 90px;"><label for="d_number">სათაური:</label></td>
+        					<td>
+        						<input type="text" style="width: 490px !important;" id="mail_text" value="" />
+        					</td>
+        				</tr>
+        			</table>
+        			<table class="dialog-form-table">
+        				<tr>
+        					<td>	
+        						<textarea id="input" style="width:551px; height:200px"></textarea>
+        					</td>
+        			   </tr>
+        			</table>
+			    </fieldset>
+		    </div>';
+    return $data;
+}
+
+function show_record($res){
+    $record_incomming = mysql_query("SELECT  `datetime`,
+                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
+                                             `file_name`
+                                     FROM    `asterisk_incomming`
+                                     WHERE   `source` LIKE '%$res[phone]%'");
+    while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
+        $str_record_incomming .= '<tr>
+                                    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[datetime].'</td>
+                            	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[duration].'</td>
+                            	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;" onclick="listen(\''.$record_res_incomming[file_name].'\')"><span>მოსმენა</span></td>
+                        	      </tr>';
+    }
+    
+    $record_outgoing = mysql_query("SELECT  `call_datetime`,
+                                            TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
+                                            `file_name`
+                                    FROM    `asterisk_outgoing`
+                                    WHERE   `phone` LIKE '%$res[phone]%'");
+    while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
+        $str_record_outgoing .= '<tr>
+                                    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>
+                            	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[duration].'</td>
+                            	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;" onclick="listen(\''.$record_res_outgoing[file_name].'\')"><span>მოსმენა</span></td>
+                        	      </tr>';
+    }
+    
+    if($str_record_outgoing == ''){
+        $str_record_outgoing = '<tr>
+                                    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;" colspan=3>ჩანაწერი არ მოიძებნა</td>
+                        	      </tr>';
+    }
+    
+    if($str_record_incomming == ''){
+        $str_record_incomming = '<tr>
+                                    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;" colspan=3>ჩანაწერი არ მოიძებნა</td>
+                        	      </tr>';
+    }
+    
+    $data = '  <div style="margin-top: 10px;">
+                    <audio controls style="margin-left: 145px;">
+                      <source src="" type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+               </div>
+               <fieldset style="display:block !important; margin-top: 10px;">
+                    <legend>შემომავალი ზარი</legend>
+    	            <table style="margin: auto;">
+    	               <tr>
+    	                   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">თარიღი</td>
+                    	   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">ხანგძლივობა</td>
+                    	   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">მოსმენა</td>
+                	    </tr>
+    	                '.$str_record_incomming.'
+            	    </table>
+	            </fieldset>
+	            <fieldset style="display:block !important; margin-top: 10px;">
+                    <legend>გამავალი ზარი</legend>
+    	            <table style="margin: auto;">
+    	               <tr>
+    	                   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">თარიღი</td>
+                    	   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">ხანგძლივობა</td>
+                    	   <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">მოსმენა</td>
+                	    </tr>
+    	                '.$str_record_outgoing.'
+            	    </table>
+	            </fieldset>';
+    return $data;
+}
+
+function show_file($res){
+    $file_incomming = mysql_query("  SELECT `name`,
+                                            `rand_name`,
+                                            `file_date`,
+                                            `id`
+                                     FROM   `file`
+                                     WHERE  `incomming_call_id` = $res[id] AND `actived` = 1");
+    while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
+        $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">'.$file_res_incomming[file_date].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">'.$file_res_incomming[name].'</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 160px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
+    }
+    $data = '<div style="margin-top: 15px;">
+                    <div style="width: 100%; border:1px solid #CCC;float: left;">    	            
+    	                   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">თარიღი</div>
+                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">დასახელება</div>
+                    	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 160px;float:left;">ჩამოტვირთვა</div>
+                           <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 20px;float:left;">-</div>
+    	                   <div style="text-align: center;vertical-align: middle;float: left;width: 595px;"><button id="upload_file" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name" id="file_name"></div>
+                           <div id="paste_files">
+                           '.$str_file_incomming.'
+                           </div>
+            	    </div>
+	            </div>';
+    return $data;
+}
+
 function increment($table){
 
-	$result   		= mysql_query("SHOW TABLE STATUS LIKE '$table'");
-	$row   			= mysql_fetch_array($result);
-	$increment   	= $row['Auto_increment'];
-	$next_increment = $increment+1;
-	mysql_query("ALTER TABLE '$table' AUTO_INCREMENT=$next_increment");
+    $result   		= mysql_query("SHOW TABLE STATUS LIKE '$table'");
+    $row   			= mysql_fetch_array($result);
+    $increment   	= $row['Auto_increment'];
+    $next_increment = $increment+1;
+    mysql_query("ALTER TABLE $table AUTO_INCREMENT=$next_increment");
 
-	return $increment;
+    return $increment;
 }
+
 ?>

@@ -36,10 +36,10 @@ switch ($action) {
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
 		 
-		$rResult = mysql_query("SELECT  `scenario_handbook`.`id`,
-		                                `scenario_handbook`.`name`
-		                        FROM    `scenario_handbook`
-							    WHERE 	`scenario_handbook`.`actived`=1");
+		$rResult = mysql_query("SELECT  `phone_base`.`id`,
+		                                `phone_base`.`name`
+		                        FROM    `phone_base`
+							    WHERE 	`phone_base`.`actived`=1");
 
 		$data = array(
 				"aaData"	=> array()
@@ -67,10 +67,10 @@ switch ($action) {
 	    $count	= $_REQUEST['count'];
 	    $hidden	= $_REQUEST['hidden'];
 	    	
-	    $rResult = mysql_query("SELECT  `scenario_handbook_detail`.`id`,
-    	                                `scenario_handbook_detail`.`value`
-    	                        FROM    `scenario_handbook_detail`
-    						    WHERE 	`scenario_handbook_detail`.`actived` = 1 AND scenario_handbook_id = $id");
+	    $rResult = mysql_query("SELECT  `phone_base_detail`.`id`,
+    	                                `phone_base_detail`.`value`
+    	                        FROM    `phone_base_detail`
+    						    WHERE 	`phone_base_detail`.`actived` = 1 AND phone_base_id = $id");
 	
 	    $data = array(
 	        "aaData"	=> array()
@@ -153,7 +153,7 @@ echo json_encode($data);
 function Add($id, $name)
 {
 	$user_id	= $_SESSION['USERID'];
-	mysql_query("INSERT INTO 	 `scenario_handbook`
+	mysql_query("INSERT INTO 	 `phone_base`
 								(`name`,`user_id`)
 					VALUES 		('$name', '$user_id')");
 }
@@ -161,15 +161,15 @@ function Add($id, $name)
 function AddDetail($id, $name)
 {
     $user_id	= $_SESSION['USERID'];
-    mysql_query("INSERT INTO 	 `scenario_handbook_detail`
-                (`value`,`user_id`,`scenario_handbook_id`)
+    mysql_query("INSERT INTO 	 `phone_base_detail`
+                (`value`,`user_id`,`phone_base_id`)
                 VALUES 		('$name', '$user_id','$id')");
 }
 
 function Save($id, $name)
 {
 	$user_id	= $_SESSION['USERID'];
-	mysql_query("	UPDATE `scenario_handbook`
+	mysql_query("	UPDATE `phone_base`
 					SET     `name` = '$name',
 							`user_id` ='$user_id'
 					WHERE	`id` = $id");
@@ -178,7 +178,7 @@ function Save($id, $name)
 function SaveDetail($id, $name)
 {
     $user_id	= $_SESSION['USERID'];
-    mysql_query("	UPDATE `scenario_handbook_detail`
+    mysql_query("	UPDATE `phone_base_detail`
                     SET     `value` = '$name',
                             `user_id` ='$user_id'
                     WHERE	`id` = $id");
@@ -186,14 +186,14 @@ function SaveDetail($id, $name)
 
 function Disable($id)
 {
-	mysql_query("	UPDATE `scenario_handbook`
+	mysql_query("	UPDATE `phone_base`
 					SET    `actived` = 0
 					WHERE  `id` = $id");
 }
 
 function DisableDetail($id)
 {
-    mysql_query("	UPDATE `scenario_handbook_detail`
+    mysql_query("	UPDATE `phone_base_detail`
                     SET    `actived` = 0
                     WHERE  `id` = $id");
 }
@@ -201,7 +201,7 @@ function DisableDetail($id)
 function CheckExist($name)
 {
 	$res = mysql_fetch_assoc(mysql_query("	SELECT `id`
-											FROM   `scenario_handbook`
+											FROM   `phone_base`
 											WHERE  `name` = '$name' && `actived` = 1"));
 	if($res['id'] != ''){
 		return true;
@@ -212,7 +212,7 @@ function CheckExist($name)
 function CheckDetailExist($name)
 {
     $res = mysql_fetch_assoc(mysql_query("	SELECT `id`
-                                            FROM   `scenario_handbook_detail`
+                                            FROM   `phone_base_detail`
                                             WHERE  `name` = '$name' && `actived` = 1"));
     if($res['id'] != ''){
         return true;
@@ -224,7 +224,7 @@ function Get($id)
 {
 	$res = mysql_fetch_assoc(mysql_query("	SELECT  `id`,
 													`name`
-											FROM    `scenario_handbook`
+											FROM    `phone_base`
 											WHERE   `id` = $id" ));
 
 	return $res;
@@ -234,7 +234,7 @@ function GetDetail($id)
 {
     $res = mysql_fetch_assoc(mysql_query("	SELECT  `id`,
                                                     `value`
-                                            FROM    `scenario_handbook_detail`
+                                            FROM    `phone_base_detail`
                                             WHERE   `id` = $id" ));
 
     return $res;
@@ -243,7 +243,7 @@ function GetDetail($id)
 function GetPage($res = '')
 {
     $req = mysql_fetch_array(mysql_query("SELECT  `id`+1 as `id`
-										  FROM    `scenario_handbook`
+										  FROM    `phone_base`
                                           ORDER BY id DESC
 									      LIMIT 1"));
     if($res['id'] == ''){

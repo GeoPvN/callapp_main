@@ -87,6 +87,24 @@ function Saveproject($hidden_id,$project_name, $project_type, $project_add_date)
 
 }
 
+function GetScenario($id){
+    $data = '';
+    $req = mysql_query("SELECT 	`id`,
+                				`name`
+                        FROM `scenario`
+                        WHERE actived = 1");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+    
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        }else{
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
 
 function Get_type($count){
 	$data = '';
@@ -106,12 +124,12 @@ function Get_type($count){
 }
 function object($hidden_id){
 	
-	$res = mysql_fetch_assoc(mysql_query("SELECT  id,
-												  `name`,
-												  type_id,
-												  create_date
+	$res = mysql_fetch_assoc(mysql_query("SELECT  project.id,
+												  project.`name`,
+												  project.type_id,
+												  project.create_date
 											FROM `project`
-											WHERE id='$hidden_id'"));
+											WHERE project.id='$hidden_id'"));
 	return $res;
 }
 
@@ -156,8 +174,8 @@ function GetPage($res,$increment){
 	    
         <div id="side_menu1" style="float: left;height: 273px; width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
 	       <spam class="phone" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'phone\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ნომერი</div></spam>
-	       
-	   
+	       <spam class="import" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'import\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/import.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">იმპორტი</div></spam>
+	       <spam class="actived" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'actived\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/actived.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">აქტივაცია</div></spam>
 	    </div>
 	    
 	    <div style="width: 545px; float: left; margin-left: 10px;" id="right_side_project">
@@ -206,6 +224,80 @@ function GetPage($res,$increment){
 						</tr>
                     </thead>
                 </table>
+	            </div>
+		</fieldset>
+        <fieldset style="display:none;" id="import">
+                <legend>ნომერი</legend>
+	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
+                <div class="margin_top_10">           
+	            <div id="button_area" style="margin-bottom: 40px;">
+                       <div><span style="display:inline-block;margin-bottom: 5px;">შენიშვნა</span>
+                    <input type="text" id="note" value="" style="margin-bottom: 5px;">
+                    </div>
+                    <button id="download_exel">შაბლონის ჩამოტვირთვა</button>
+                    <input id="choose_file1" type="file" name="choose_file1" class="input" style="display: none;">
+    				<button id="choose_button1" style="display:none;">აირჩიეთ ფაილი</button>
+					<button id="add_import">დამატება</button>
+                    <button id="delete_import">წაშლა</button>
+                </div>
+				<table class="display" id="table_import" >
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 70px;">სახელი</th>
+                            <th style="width: 70px;">გვარი</th>
+                            <th style="width: 70px;">პირადი ნომერი</th>
+                            <th style="width: 95px;">ტელეფონი 1</th>
+                            <th style="width: 95px;">ტელეფონი 2</th>
+							<th style="width: 11px;" class="check"></th>
+						</tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+							<th>
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-import" name="check-all" />
+				                    <label style="margin-top: 3px;" for="check-all-import"></label>
+				                </div>
+				            </th>
+						</tr>
+                    </thead>
+                </table>
+	            </div>
+		</fieldset>
+                       
+        <fieldset style="display:none;" id="actived">
+                <legend>ნომერი</legend>
+	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
+                <div class="margin_top_10">           
+	            <div id="button_area" style="margin-bottom: 40px;">
+                       <div><span style="display:inline-block;margin-bottom: 5px;">შენიშვნა</span>
+                    <input type="text" id="note" value="" style="margin-bottom: 5px;">
+                    </div>
+                    <button id="download_exel">შაბლონის ჩამოტვირთვა</button>
+                    <input id="choose_file1" type="file" name="choose_file1" class="input" style="display: none;">
+    				<button id="choose_button1" style="display:none;">აირჩიეთ ფაილი</button>
+					<button id="add_import">დამატება</button>
+                    <button id="delete_import">წაშლა</button>
+                </div>
 	            </div>
 		</fieldset>
     	</div>

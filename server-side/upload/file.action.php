@@ -103,6 +103,57 @@ switch ($action) {
 		$data		= array('page'	=> $str_file_table);
 		
         break;
+    case 'upload_file':
+        require_once '../../includes/excel_reader2.php';
+        $element	= 'choose_file1';
+        $file_name	= $_REQUEST['file_name'];
+        $type		= $_REQUEST['type'];
+        $path		= $_REQUEST['path'];
+        $path		= $path . $file_name . '.' . $type;
+        $filename=$_FILES [$element] ['tmp_name'];
+        
+        $data = new Spreadsheet_Excel_Reader($filename);
+        $r=$data->rowcount($sheet_index=0); $i=0;
+        echo  $r;
+        $c_date		= date('Y-m-d H:i:s');
+       
+        $note = $_REQUEST[note];
+        
+        $scenario_id = $_REQUEST['scenario_id'];
+        mysql_query("INSERT INTO `phone_base`
+                    (`user_id`, `upload_date`, `note`)
+                    VALUES
+                    ( '".$_SESSION['USERID']."', '".$c_date."', '".$note."')");
+        $req = mysql_fetch_array(mysql_query("  SELECT id
+                                                FROM `phone_base`
+                                                WHERE actived = 1
+                                                ORDER BY id DESC
+                                                LIMIT 1"));
+        while (1!=$r){
+            mysql_query("INSERT INTO `phone_base_detail`
+                        (`user_id`, `phone_base_id`, `firstname`, `lastname`, `pid`, `born_date`, `age`, `sex`, `phone1`, `phone2`, `mail1`, `mail2`, `address1`, `address2`, `id_code`, `client_name`, `activities`, `note`, `info1`, `info2`, `info3`)
+                        VALUES
+                        ('".$_SESSION['USERID']."', '$req[0]',
+                             '".mysql_real_escape_string($data->val($r,'A'))."', '".mysql_real_escape_string($data->val($r,'B'))."',
+						 	 '".mysql_real_escape_string($data->val($r,'C'))."', '".mysql_real_escape_string($data->val($r,'D'))."',
+						 	 '".mysql_real_escape_string($data->val($r,'E'))."', '".mysql_real_escape_string($data->val($r,'F'))."',
+						 	 '".mysql_real_escape_string($data->val($r,'G'))."', '".mysql_real_escape_string($data->val($r,'H'))."',
+						 	 '".mysql_real_escape_string($data->val($r,'I'))."', '".mysql_real_escape_string($data->val($r,'J'))."',
+                             '".mysql_real_escape_string($data->val($r,'K'))."', '".mysql_real_escape_string($data->val($r,'L'))."',
+                             '".mysql_real_escape_string($data->val($r,'M'))."', '".mysql_real_escape_string($data->val($r,'N'))."',
+                             '".mysql_real_escape_string($data->val($r,'O'))."', '".mysql_real_escape_string($data->val($r,'P'))."',
+                             '".mysql_real_escape_string($data->val($r,'Q'))."', '".mysql_real_escape_string($data->val($r,'R'))."',
+                             '".mysql_real_escape_string($data->val($r,'S'))."')") or die (err);
+            $r--;
+        }
+        
+        echo "xls File has been successfully Imported";
+        
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        
+        break;
     default:
        $error = 'Action is Null';
 }

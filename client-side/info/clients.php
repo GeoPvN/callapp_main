@@ -7,6 +7,7 @@
     var aJaxURL_object    = "server-side/info/project.action.php";
     var aJaxURL_client    = "server-side/info/sub_clients.action.php";
     var aJaxURL_sub_project    = "server-side/info/sub_project.action.php";
+    var aJaxURL_template    = "server-side/info/template.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tbName1			  = "tabs1";
     var tName             = "table_";
@@ -52,7 +53,7 @@
 				            }
 				        }
 				    };
-		        GetDialog(fName, 801, "auto", buttons, 'left top');
+		        GetDialog(fName, 801, "auto", buttons, 'left+43 top');
 		        GetTabs(tbName1);
 		        
 		  
@@ -86,11 +87,45 @@
 				            }
 				        }
 				    };
-		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left top');
+		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left+43 top');
 		        LoadTable('number',5,'get_list_number',"<'F'lip>");
 		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
-		        $("#add_number, #delete_number").button(); 
+		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import").button(); 
 		        GetDate1('project_add_date');
+
+		        LoadTable('import',6,'get_list_import',"<'F'lip>");
+		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template);
+		        if($('#scenario_id').val() != 0){
+		            $('#choose_button1,#add_import').css('display','inline-block');
+		        }else{
+		        	$('#choose_button1,#add_import').css('display','none');
+		        }
+		        if($('#project_type').val() == 2){
+		        	$('.import').css('display','block');
+		        	$('.actived').css('display','block');
+		        	$('.phone').css('display','none');        	
+		        }else{
+		        	$('.import').css('display','none');
+		        	$('.actived').css('display','none');
+		        	$('.phone').css('display','block');
+		        }
+		        $( "#hide_said_menu_number" ).click();
+		   break;
+		   case "add-edit-form-import":
+		    	var buttons = {
+						"save": {
+				            text: "შენახვა",
+				            id: "save-template"
+				        },
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+		        GetDialog("add-edit-form-import", 450, "auto", buttons, 'left+43 top');
 		   break;
 		   case "add-edit-form-client":
 		    	var buttons = {
@@ -106,7 +141,7 @@
 				            }
 				        }
 				    };
-		        GetDialog("add-edit-form-client", 500, "auto", buttons, 'left top');
+		        GetDialog("add-edit-form-client", 500, "auto", buttons, 'left+43 top');
 		   break;
 		   case "add-edit-form-number":
 		    	var buttons = {
@@ -122,7 +157,7 @@
 				            }
 				        }
 				    };
-		        GetDialog("add-edit-form-number", 370, "auto", buttons, 'left top');
+		        GetDialog("add-edit-form-number", 370, "auto", buttons, 'left+43 top');
 		   break;  
 		}
     }
@@ -165,6 +200,8 @@
     function hide_right_side1(){
     	$("#side_menu1").children('spam').children('div').css('color','#FFF');
         $(".phone").children('img').attr('src','media/images/icons/info.png');
+        $(".import").children('img').attr('src','media/images/icons/import.png');
+        $(".actived").children('img').attr('src','media/images/icons/actived.png');
     }
     
     function show_main(id,my_this){
@@ -208,7 +245,54 @@
             $(this).children('img').attr('src','media/images/icons/select.png');
             $(this).attr('myvar','0');
         }
-    });    
+    });
+    
+    $(document).on("click", "#save-template", function () {
+    	param = new Object();
+
+        //Action
+    	param.act	= "save-import";
+    	param.import_id         = $("#import_id").val();
+	    param.hidden_project_id	= $("#hidden_project_id").val();
+	    param.project_hidden_id = $("#project_hidden_id").val();
+	    param.note              = $("#note").val();
+	    param.import_fname		= $("#import_fname").val();
+	    param.import_lname		= $("#import_lname").val();
+	    param.import_pid		= $("#import_pid").val();
+	    param.import_date		= $("#import_date").val();
+	    param.import_age		= $("#import_age").val();
+	    param.import_sex	    = $("#import_sex").val();
+	    param.import_phone1	    = $("#import_phone1").val();
+	    param.import_phone2		= $("#import_phone2").val();
+	    param.import_mail1		= $("#import_mail1").val();
+	    param.import_mail2		= $("#import_mail2").val();
+	    param.import_address1	= $("#import_address1").val();
+	    param.import_address2	= $("#import_address2").val();
+	    param.import_id_code    = $("#import_id_code").val();
+	    param.import_client_name= $("#import_client_name").val();
+	    param.import_activities = $("#import_activities").val();
+	    param.import_note		= $("#import_note").val();
+	    param.import_info1		= $("#import_info1").val();
+	    param.import_info2		= $("#import_info2").val();
+	    param.import_info3		= $("#import_info3").val();
+	   
+	   
+	    $.ajax({
+	        url: aJaxURL_template,
+		    data: param,
+	        success: function(data) {
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						LoadTable('import',6,'get_list_import',"<'F'lip>");
+						$("#add-edit-form-import").dialog("close");
+					}
+				}
+		    }
+	    });
+		
+    });
     
    function listen(file){
         var url = location.origin + "/records/" + file
@@ -271,8 +355,56 @@
     $(document).on("click", "#choose_button", function () {
 	    $("#choose_file").click();
 	});
+    $(document).on("click", "#choose_button1", function () {
+	    $("#choose_file1").click();
+	});
+    
+    $(document).on("change", "#scenario_id", function () {
+        if($(this).val() != 0){
+            $('#choose_button1,#add_import').css('display','inline-block');
+        }else{
+        	$('#choose_button1,#add_import').css('display','none');
+        }
+    });
+    
+    $(document).on("change", "#choose_file1", function () {
 
-	
+    	var file		= $(this).val();
+	    var name		= uniqid();
+	    var path		= "../../media/uploads/images/client/";
+
+	    var ext = file.split('.').pop().toLowerCase();
+        if($.inArray(ext, ['xls']) == -1) {
+        	alert('This is not an allowed file type.');
+            this.value = '';
+        }else{
+        	img_name = name + "." + ext;
+        	$.ajaxFileUpload({
+        		url: "server-side/upload/file.action.php",
+    			secureuri: false,
+    			fileElementId: "choose_file1",
+    			dataType: 'json',
+    			data:{
+					act: "upload_file",
+					path: path,
+					file_name: name,
+					project_other_id: $('#project_hidden_id').val(),
+					project_id: $('#hidden_project_id').val(),
+					note: $('#note').val(),
+					type: ext
+				},
+				complete: function(data){
+					alert('ფაილი აიტვირთა!');
+					LoadTable('import',6,'get_list_import',"<'F'lip>");
+				},
+
+			});
+
+        }
+
+        
+    });
+    
     $(document).on("change", "#choose_file", function () {
         var file_url  = $(this).val();
         var file_name = this.files[0].name;
@@ -282,8 +414,8 @@
 		
         if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
             alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
-        }else if(file_size > '15728639'){
-            alert("ფაილის ზომა 15MB-ზე მეტია");
+        }else if(file_size > '25728639'){
+            alert("ფაილის ზომა 25MB-ზე მეტია");
         }else{
         	$.ajaxFileUpload({
 		        url: "server-side/upload/file.action.php",
@@ -349,7 +481,7 @@
             }
         });
     }
-
+    
     function SaveToDisk(fileURL, fileName) {
         // for non-IE
         if (!window.ActiveXObject) {
@@ -569,6 +701,23 @@
 		    }
 	    });
 	}
+
+	$(document).on("click", "#download_exel", function () {
+		SaveToDisk('client-side/info/template.xls', 'template.xls');
+    });
+    
+	$(document).on("change", "#project_type", function () {
+        if($(this).val() == 2){
+        	$('.import').css('display','block');
+        	$('.actived').css('display','block');
+        	$('.phone').css('display','none');        	
+        }else{
+        	$('.import').css('display','none');
+        	$('.actived').css('display','none');
+        	$('.phone').css('display','block');
+        }
+        $( "#hide_said_menu_number" ).click();
+	});
 </script>
 <style type="text/css">
 .callapp_tabs{
@@ -595,11 +744,17 @@
 	margin-left: 5px;
 }
 
+#table_project_length,
+#table_number_length,
+#table_import_length,
 #table_client_length{
 	position: inherit;
     width: 0px;
 	float: left;
 }
+#table_project_length label select,
+#table_number_length label select,
+#table_import_length label select,
 #table_client_length label select{
 	width: 60px;
     font-size: 10px;
@@ -607,33 +762,12 @@
     height: 18px;
 }
 
-#table_project_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_project_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
 
-#table_number_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_number_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
 #table_client_paginate{
 	margin-left: 45px;
 }
-#table_number_paginate{
+#table_number_paginate,
+#table_import_paginate{
 	margin-left: -22px;
 }
 .callapp_head{
@@ -809,6 +943,9 @@
 	</div>
 	
 	<div  id="add-edit-form-number" class="form-dialog" title="ნომერი">
+	</div>
+	
+	<div  id="add-edit-form-import" class="form-dialog" title="ნომერი">
 	</div>
 	
 	<div  id="add-edit-form-img" class="form-dialog" title="ფოტო">

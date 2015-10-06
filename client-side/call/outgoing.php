@@ -1,1825 +1,865 @@
 <head>
 <style type="text/css">
-<?php                    		
-if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
-   
  
-}else{
-     echo '.dataTable_buttons{
-            display:none;
-        }';
-}
-?>
 </style>
-	<script type="text/javascript">
-		var aJaxURL		= "server-side/call/outgoing/outgoing_tab0.action.php";		//server side folder url
-		var aJaxURL1	= "server-side/call/outgoing/outgoing_tab1.action.php";		//server side folder url
-		var aJaxURL2	= "server-side/call/outgoing/outgoing_tab2.action.php";		//server side folder url
-		var aJaxURL3	= "server-side/call/outgoing/outgoing_tab3.action.php";		//server side folder url
-		var aJaxURL4	= "server-side/call/outgoing/outgoing_tab4.action.php";		//server side folder url
-		var aJaxURL7	= "server-side/call/outgoing/outgoing_tab7.action.php";		//server side folder url
-		var aJaxURL5	= "server-side/call/outgoing/suboutgoing/outgoing_tab1.action.php";		//server side folder url
-		var aJaxURL6	= "server-side/call/outgoing/suboutgoing/outgoing_tab2.action.php";		//server side folder url
-		var aJaxURL8	= "server-side/call/outgoing/outgoing_tab8.action.php";		//server side folder url
-		var seoyURL	= "server-side/seoy/seoy.action.php";							//server side folder url
-		var upJaxURL		= "server-side/upload/file.action.php";	
-		var tName		= "example0";											//table name
-		var tbName		= "tabs";												//tabs name
-		var fName		= "add-edit-form";										//form name
-		var file_name = '';
-		var rand_file = '';
-		
-		$(document).ready(function () {
-			$("#disable_button").button({
-	            
-		    });
-		    
-			GetTabs(tbName);   
-			
-			GetTable0();
-			
-			SetPrivateEvents("add_responsible_person", "check-all", "add-responsible-person");
-			GetButtons("add_responsible_person","delete_button");
-		});
+<script type="text/javascript">
+    var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
+    var aJaxURL_send_sms  = "includes/sendsms.php";
+    var tName             = "table_";
+    var dialog            = "add-edit-form";
+    var colum_number      = 9;
+    var main_act          = "get_list";
+    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+     
+    $(document).ready(function () {
+    	GetButtons("add_button","delete_button");
+    	LoadTable('index',colum_number,main_act,change_colum_main,'status=1');
+    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+    	$('#operator_id,#tab_id,#task_type').chosen({ search_contains: true });
+    	$('.callapp_filter_body').css('display','none');
+    	GetDate('start_date');
+    	GetDate('end_date');
 
-		$(document).on("tabsactivate", "#tabs", function() {
-        	var tab = GetSelectedTab(tbName);
-        	if (tab == 0) {
-        		GetTable0();
-        	}else if(tab == 1){
-        		GetTable1();
-            }else if(tab == 2){
-            	GetTable2();
-            }else if(tab == 3){
-            	GetTable3();
-            }else if(tab == 4){
-            	GetTable5();
-            }else if(tab == 5){
-            	GetTable4();
-            }
-        });
-
-		function GetTable0() {
-            LoadTable0();
-            //SetEvents("", "", "", "example0", "add-edit-form1", aJaxURL); 			
-        }
-        
-		 function GetTable1() {
-             LoadTable1();
-             $("#add_button_n").button({
-  	            
-  		     });
-             SetEvents("", "", "", "example1", "add-edit-form1", aJaxURL);
-         }
-         
-		 function GetTable2() {
-             LoadTable2();
-             SetEvents("", "", "", "example2", "add-edit-form1", aJaxURL);
-         }
-         
-		 function GetTable3() {
-             LoadTable3();
-             SetEvents("", "", "", "example3", "add-edit-form1", aJaxURL);
-         }
-
-		 function GetTable4() {
-			 LoadTable7();
-             SetEvents("", "", "", "example5", "add-edit-form1", aJaxURL);
-         }
-
-		 function GetTable5() {
-			 LoadTable8();
-             SetEvents("", "", "", "example6", "add-edit-form1", aJaxURL);
-         }
-
-		 function LoadTable0(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			 GetDataTableServer("example0", aJaxURL, "get_list", 8, "", 0, "", 1, "asc");
-		}
-			
-		function LoadTable1(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableServer("example1", aJaxURL1, "get_list", 13, "disable-all", 0, "", 9, "asc");
-		}
-
-		function LoadTable2(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableServer("example2", aJaxURL2, "get_list", 13, "", 0, "", 11, "asc", "");
-		}
-		
-		function LoadTable3(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableServer("example3", aJaxURL3, "get_list", 13, "", 0, "", 11, "asc", "");
-		}
-		
-		function LoadTable4(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableTest("example4", aJaxURL4, "get_list&id="+$("#id").val(), 12, "", 0, "", 1, "asc", "");
-		}
-		function LoadTable5(){		
-			var scenar_name  =	$("#shabloni").val();	
-			var task_id      =	$("#id").val();			
-			GetButtons("add_button_product","delete_button_product");
-			var total=[4];
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableproduct("sub1", aJaxURL5, "get_list&scenar_name="+scenar_name+"&task_id="+task_id, 7, "", 0, "", 1, "asc", total);
-			
-			/* Edit Event */
-		    $("#sub1 tbody").on("dblclick", "tr", function () {
-		        var nTds = $("td", this);
-		        var empty = $(nTds[0]).attr("class");
-
-		        if (empty != "dataTables_empty") {
-		            var rID = $(nTds[0]).text();
-				
-    				var buttons = {
-    				        "save": {
-    				            text: "შენახვა",
-    				            id: "save_chosse_product"
-    				        }, 
-    			        	"cancel": {
-    				            text: "დახურვა",
-    				            id: "cancel-dialog",
-    				            click: function () {
-    				            	$(this).dialog("close");
-    				            }
-    				        }
-    				    };
-    			    GetDialog("add_product_chosse", 800, "auto", buttons);		
-    			    $("#add_product_chosse").html('');    
-    	        	$.ajax({
-    	  	            url: "server-side/call/outgoing/add_chosse_product.php",
-    	  	            type: "POST",
-    	  	            data: "act=get_table&sale_detail_id="+rID,
-    	  	            dataType: "json", 
-    	  	            success: function (data) {    	  	            	
-    						$("#add_product_chosse").html(data.page);
-    						$('#production_name').chosen({ search_contains: true });
-    						$(".add_product_chosse-class").css("position","fixed");
-    						$("#production_name_chosen").css("position","fixed");
-    						$("#production_name_chosen").css("z-index","99999");
-    	  	            }	  	            
-    	  	        });
-		        }
-		    });
-		}
-		function LoadTable6(){		
-
-			
-		}
-		function LoadTable7(dad){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableServer("example5", aJaxURL8, "get_list", 13, dad, 0, "", 12, "asc", "");
-		}
-		function LoadTable8(){			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTableServer("example6", aJaxURL7, "get_list", 12, "", 0, "", 1, "asc", "");
-		}
-
-		$(document).on("click", ".download", function () {
-            var link = $(this).attr("str");
-            link = "http://109.234.117.182:8181/records/" + link;
-
-            var newWin = window.open(link, "JSSite", "width=420,height=230,resizable=yes,scrollbars=yes,status=yes");
-            newWin.focus();
-        });
-
-		$(document).on("click", "#check-all-in", function () {
-		if ($('#check-all-in').is(':checked')) {
-			$( ".check" ).prop( "checked", true );
-    	}else{
-    		$( ".check" ).prop( "checked", false );
-    	}
-		});
-		//SeoYyy
-		$(document.body).click(function (e) {
-        	$("#send_to").autocomplete("close");
-        });
-
-        function LoadDialog(fName){
-            //alert(form);
-			switch(fName){
-				case "add-edit-form":
-					var buttons = {
-						"save": {
-				            text: "შენახვა",
-				            id: "save-dialog"
-					            
-				        }, 
-			        	"cancel": {
-				            text: "დახურვა",
-				            id: "cancel-dialog",
-				            click: function () {
-				            	$(this).dialog("close");
-				            }
-				        } 
-				    };
-					GetDialog("add-edit-form", 1150, "auto", buttons);
-					$(".done").button({
-			            
-				    });
-					$(".next").button({
-			            
-				    });
-					$(".back").button({
-			            
-				    });
-					$("#complete").button({
-					    
-					});
-					LoadTable5();
-					LoadTable6();
-					GetDateTimes("send_time");
-				break;	
-				case "add-edit-form1":
-					var buttons = {
-						"done": {
-				            text: "დასრულება",
-				            id: "done-dialog1"
-				        }, 
-			        	"cancel": {
-				            text: "დახურვა",
-				            id: "cancel-dialog",
-				            click: function () {
-				            	var buttons2 = {
-				        				"save": {
-				        		            text: "კი",
-				        		            id: "done-dialog1",
-				        		            click: function () {
-				        		            }
-				    			        },"cancel": {
-				        		            text: "არა",
-				        		            id: "no-cc",
-				        		            click: function () {
-				        		            	$('#add-edit-form1').dialog("close");
-				        		            	$('#yesnoclose').dialog("close");
-				        		            }
-				    			        }
-				    			        }
-				            	GetDialog("yesnoclose","300","auto",buttons2);
-					            
-				            }
-				        }
-				    };
-					GetDialog("add-edit-form1", 1150, "auto", buttons);
-					$(".download").button({
-			            
-				    });
-					$(".done").button({
-			            
-				    });
-					$(".next").button({
-			            
-				    });
-					$(".back").button({
-			            
-				    });
-					$("#add_button_product").button({
-			            
-				    });
-					$("#add_button_gift").button({
-					    
-					});
-					$("#complete").button({
-					    
-					});
-					LoadTable5();
-					LoadTable6();
-					GetDateTimes("set_start_time");
-					GetDateTimes("set_done_time");
-					GetDateTimes("send_time");
-					/* Check All */
-			        $("#check-all_p").on("click", function () {
-			        	$("#sub1 INPUT[type='checkbox']").prop("checked", $("#check-all_p").is(":checked"));
-			        });
-
-			        $("#check-all_g").on("click", function () {
-			        	$("#sub2 INPUT[type='checkbox']").prop("checked", $("#check-all_g").is(":checked"));
-			        });
-
-			        if($("input[name='result_quest']:checked").val() == 1){
-			            alert(123);
-			            var nodes = document.getElementById("add-edit-form1").getElementsByTagName('*');
-			            for(var i = 0; i < nodes.length; i++)
-			            {
-			                 nodes[i].disabled = true;
-			            }
-			        }
-			        
-				break;	
-				case "add-edit-form2":
-					var buttons = {
-						"done": {
-				            text: "დასრულება",
-				            id: "done-dialog1"
-				        }, 
-				        "save": {
-				            text: "შენახვა",
-				            id: "save-dialog2"
-				        }, 
-			        	"cancel": {
-				            text: "დახურვა",
-				            id: "cancel-dialog",
-				            click: function () {
-				            	$(this).dialog("close");
-				            }
-				        }
-				    };
-					GetDialog("add-edit-form2", 1150, "auto", buttons);
-					$(".done").button({
-			            
-				    });
-					$(".next").button({
-			            
-				    });
-					$(".back").button({
-			            
-				    });
-					$("#add_button_product").button({
-			            
-				    });
-					$("#add_button_gift").button({
-					    
-					});
-					$("#complete").button({
-					    
-					});
-					LoadTable5();
-					LoadTable6();
-					GetDateTimes("send_time");
-					GetDateTimes("set_start_time");
-					GetDateTimes("set_done_time");
-			    break;
-			}
-			LoadTable4()
-			var id = $("#incomming_id").val();
-			var cat_id = $("#category_parent_id").val();
-	
-			if(id != '' && cat_id == 407){
-				$("#additional").removeClass('hidden');
-			}
-	
-			GetDateTimes("planned_end_date");
-			
-			$( ".calls" ).button({
-			      icons: {
-			        primary: " ui-icon-contact"
-			      }
-			});
-			$("#choose_button").button({
-	            
-		    });
-			$("#add_button_pp").button({
-	            
-		    });
-		}
-
-       
-        /* Disable Event */
-        $(document).on("click", "#delete_button_product", function () {
-        	var buttons = {
-					"save": {
-			            text: "კი",
-			            id: "hint_yes",
-		            	click: function () {
-		            		var data = $(".check_p:checked").map(function () { //Get Checked checkbox array
-		                        return this.value;
-		                    }).get();
-
-		                    for (var i = 0; i < data.length; i++) {
-		                        $.ajax({
-		                            url: aJaxURL5,
-		                            type: "POST",
-		                            data: "act=disable&id=" + data[i],
-		                            dataType: "json",
-		                            success: function (data) {
-		                                if (data.error != "") {
-		                                    alert(data.error);
-		                                } else {
-		                                    $("#check-all_p").attr("checked", false);
-		                                }
-		                            }
-		                        });
-		                    }
-		                    LoadTable5();
-			            	$(this).dialog("close");
-			            }
-			        }, 
-		        	"cancel": {
-			            text: "არა",
-			            id: "hint_no",
-			            click: function () {
-			            	$(this).dialog("close");
-			            }
-			        } 
-			    };
-			GetDialog("yesno", 350, "auto", buttons);            
-           
-        });
-        function changemypr(raodenoba){
-        	raod = $("#sub3_qu"+raodenoba).val();
-        	fasi = $("#sub3_rpr"+raodenoba).text();
-        	$("#sub3_pr"+raodenoba).text((raod*fasi).toFixed(2));
-        	$("#all_num"+raodenoba).val(raod);
-        }
-
-        $(document).on("click", "#add_button_product", function () {
-        	
-        	var buttons = {
-			        "save": {
-			            text: "შენახვა",
-			            id: "save_chosse_product"
-			        }, 
-		        	"cancel": {
-			            text: "დახურვა",
-			            id: "cancel-dialog",
-			            click: function () {
-			            	$(this).dialog("close");
-			            }
-			        }
-			    };
-		    GetDialog("add_product_chosse", 800, "550", buttons);
-		    $("#add_product_chosse").html('');
-        	$.ajax({
-  	            url: "server-side/call/outgoing/add_chosse_product.php",
-  	            type: "POST",
-  	            data: "act=get_table",
-  	            dataType: "json", 
-  	            success: function (data) {  	            	
-					$("#add_product_chosse").html(data.page);
-					$('#production_name').chosen({ search_contains: true });
-					$(".add_product_chosse-class").css("position","fixed");
-					$("#production_name_chosen").css("position","fixed");
-					$("#production_name_chosen").css("z-index","9999999");
-					$("#production_name_chosen").css("width","300px");
-					task_id = $("#id").val();
-		        	GetDataTableproduct("sub3", aJaxURL5, "all_products&task_id="+task_id, 7, "", 0, "", 1, "asc", "");
-  	            }
-  	        });
-        	
-        });
-
-        $(document).on("click", "#save_chosse_product", function () {
-        	var product_id 		= $("#production_name").val();
-        	var porod_count		= $("#porod_count").val();
-        	var task_scenar_id  = $("#id").val();
-        	var sale_detail_id  = $("#sale_detail_id").val();
-        	if(sale_detail_id == ''){
-            	if($("#clickme1").val() == '' && $("#clickme2").val() == '' && $("#clickme3").val() == '' && $("#clickme4").val() == '' && $("#clickme5").val() == '' && $("#clickme6").val() == '' && $("#clickme7").val() == ''){
-            	var data = $(".check_all_p:checked").map(function () { //Get Checked checkbox array
-    				 par=$(this).parent();
-    			     td= $(par[0]);
-    			     td1=$(td[0].children[1]).val();
-    			     prooood = this.value;
-    	        
-            	$.ajax({
-      	            url: "server-side/call/outgoing/add_chosse_product.php",
-      	            type: "POST",
-      	            data: "act=add_product&product_id="+prooood+"&porod_count="+td1+"&task_scenar_id="+task_scenar_id+"&sale_detail_id="+sale_detail_id,
-      	            dataType: "json", 
-      	            success: function (data) {
-      	            	$("#add_product_chosse").dialog("close");
-      	            	LoadTable5();
-      	            	if(data.hint != ''){
-      	  	            	alert(data.hint);
-      	            	}
-      	            }
-      	        });
-            	}).get();
-            	}else{
-                	alert('გთხოვთ ფილტრი გაასუფთავოთ!');
-            	}
-        	}else{
-        		$.ajax({
-      	            url: "server-side/call/outgoing/add_chosse_product.php",
-      	            type: "POST",
-      	            data: "act=add_product&product_id="+product_id+"&porod_count="+porod_count+"&task_scenar_id="+task_scenar_id+"&sale_detail_id="+sale_detail_id,
-      	            dataType: "json", 
-      	            success: function (data) {
-      	            	$("#add_product_chosse").dialog("close");
-      	            	LoadTable5();
-      	            	if(data.hint != ''){
-      	  	            	alert(data.hint);
-      	            	}
-      	            }
-        		});
-        	}
-        });
-
-    	
-        $(document).on("click", "#save-printer", function () {
- 
-	      	param = new Object();
-	      	param.act		= "change_responsible_person";
-	  	    param.rp		= $("#responsible_person").val();
-		  	param.number	= $("#raodenoba").val();
-		  	param.note_p	= $("#shenishvna").val();
-		  	param.sorce_p	= $("#wyaro").val();
-	
-	  	    var link	=  GetAjaxData(param);
-	  	      
-	  	        $.ajax({
-	  	            url: aJaxURL,
-	  	            type: "POST",
-	  	            data: link,
-	  	            dataType: "json", 
-	  	            success: function (data) {
-	  	                if (typeof (data.error) != "undefined") {
-	  	                    if (data.error != "") {
-	  	                        alert(data.error);
-	  	                    }else{
-	  	                        $("#add-responsible-person").dialog("close");
-	  	                        LoadTable0();
-	  	                    }
-	  	                }
-	  	            }
-	  	        });
-	  		
-        });
-
-		function LoadDialog1(){
-			var buttons = {
-			        "save": {
-			            text: "შენახვა",
-			            id: "save-printer",
-			            click: function () {
-			            	$(this).dialog("close");			            
-			            }
-			        },
-					"cancel": {
-			            text: "დახურვა",
-			            id: "cancel-dialog",
-			            click: function () {
-			                $(this).dialog("close");
-			            }
-			        }
-			};
-			GetDialog("add-responsible-person", 300, "auto", buttons);
-		}
-		
-		function seller(id){
-			if(id == '0'){
-				$('#seller-0').removeClass('dialog_hidden');
-	            $('#0').addClass('seller_select');
-	            $('#seller-1').addClass('dialog_hidden');
-	            $('#seller-2').addClass('dialog_hidden');
-	            $('#1').removeClass('seller_select');
-	            $('#2').removeClass('seller_select');
-			}else if(id == '1'){
-				$('#seller-1').removeClass('dialog_hidden');
-	            $('#1').addClass('seller_select');
-	            $('#seller-0').addClass('dialog_hidden');
-	            $('#seller-2').addClass('dialog_hidden');
-	            $('#0').removeClass('seller_select');
-	            $('#2').removeClass('seller_select');
-			}else if(id == '2'){
-				$('#seller-2').removeClass('dialog_hidden');
-	            $('#2').addClass('seller_select');
-	            $('#seller-1').addClass('dialog_hidden');
-	            $('#seller-0').addClass('dialog_hidden');
-	            $('#1').removeClass('seller_select');
-	            $('#0').removeClass('seller_select');
-			}
-		}
-
-		function research(id){
-			if(id == 'r0'){
-				$('#research-0').removeClass('dialog_hidden');
-	            $('#r0').addClass('seller_select');
-	            $('#research-1').addClass('dialog_hidden');
-	            $('#research-2').addClass('dialog_hidden');
-	            $('#r1').removeClass('seller_select');
-	            $('#r2').removeClass('seller_select');
-			}else if(id == 'r1'){
-				$('#research-1').removeClass('dialog_hidden');
-	            $('#r1').addClass('seller_select');
-	            $('#research-0').addClass('dialog_hidden');
-	            $('#research-2').addClass('dialog_hidden');
-	            $('#r0').removeClass('seller_select');
-	            $('#r2').removeClass('seller_select');
-			}else if(id == 'r2'){
-				$('#research-2').removeClass('dialog_hidden');
-	            $('#r2').addClass('seller_select');
-	            $('#research-1').addClass('dialog_hidden');
-	            $('#research-0').addClass('dialog_hidden');
-	            $('#r1').removeClass('seller_select');
-	            $('#r0').removeClass('seller_select');
-			}
-		}
-
-		$(document).on("change", "#dadebiti", function () {
-		    LoadTable7($(this).val());
-		});
-		
-	    // Add - Save
-	    $(document).on("click", "#save-dialog", function () {
-
-			param 			= new Object();
-			param.act			= "save_outgoing";
-			
-			param.cur_date				= $("#cur_date").val();
-	    	param.done_start_time		= $("#done_start_time").val();
-	    	param.done_end_time			= $("#done_end_time").val();
-			param.task_type_id			= $("#task_type_id").val();
-			param.template_id			= $("#template_id").val();
-			param.task_department_id	= $("#task_department_id").val();
-			param.persons_id			= $("#persons_id").val();
-			
-	 
-		    $.ajax({
-		        url: aJaxURL,
-			    data: param,
-		        success: function(data) {       
-					if(typeof(data.error) != "undefined"){
-						if(data.error != ""){
-							alert(data.error);
-						}else{
-							LoadTable0();
-							CloseDialog("add-edit-form");
-						}
-					}
-			    }
-		    });
-		});
-
-	    function set_task() {
-
-			param 			= new Object();
-			param.act			= "set_task";
-			
-			param.set_task_department_id	= $("#set_task_department_id").val();
-	    	param.set_persons_id			= $("#set_persons_id").val();
-	    	param.set_priority_id			= $("#set_priority_id").val();
-			param.set_start_time			= $("#set_start_time").val();
-			param.set_done_time				= $("#set_done_time").val();
-			param.set_body					= $("#set_body").val();
-			param.task_type_id_seller		= $("#task_type_id_seller").val();
-			param.set_shabloni				= $("#shabloni").val();
-			param.id						= $("#id").val();
-			
-	 		if(param.set_task_department_id == 0){
-		 		alert('დავალების ფორმირებისთვის ამოირჩიეთ განყოფილება');
-	 		}else{
-		    $.ajax({
-		        url: aJaxURL,
-			    data: param,
-		        success: function(data) {       
-					if(typeof(data.error) != "undefined"){
-						if(data.error != ""){
-							alert(data.error);
-						}else{
-							LoadTable1();
-						}
-					}
-			    }
-		    });
-	 		}
-		}
-
-		function number(count_class){
-		    $("."+count_class).val($("#"+count_class).val())
-		    $("#"+count_class+"total").text(($("#"+count_class).val()*$("#"+count_class+"real").text()).toFixed(2));
-		}
-		
-
-
-	    $(document).on("click", "#sub2 tr td input", function () {
-			if ($(this).closest("tr").find("input:checkbox").is(':checked')) {
-			    var chk = $(this).closest("tr").find("input:checkbox").prop('checked', false);
-			}else{
-				var chk = $(this).closest("tr").find("input:checkbox").prop('checked', true);
-			}
-
-		});
-
-	    $(document).on("click", "#done-dialog1", function () {
-			   
-			param 				= new Object();
- 			param.act			= "done_outgoing";
- 			param.get_prod 		= '';
- 			param.get_gift 		= '';
-		    	
- 			param.id					= $("#id").val();
- 			if($("#task_type_id_seller").val() == 1){
- 			    param.hello_quest			= $("input[name='hello_quest1']:checked").val();
- 			}else{
- 				param.hello_quest			= $("input[name='hello_quest']:checked").val();
- 			}
-	    	param.hello_comment			= $("#hello_comment").val();
-	    	param.hello_comment1		= $("#hello_comment1").val();
-	    	param.info_quest			= $("input[name='info_quest']:checked").val();
-			param.info_comment			= $("#info_comment").val();
-			param.result_quest			= $("input[name='result_quest']:checked").val();
-	    	param.result_comment		= $("#result_comment").val();
-			param.payment_quest			= $("input[name='payment_quest']:checked").val();
-			param.payment_comment		= $("#payment_comment").val();
-			param.send_date				= $("#send_date").val();
-
-			param.preface_name			= $("#preface_name").val();
-			param.preface_quest			= $("input[name='preface_quest']:checked").val();
-			param.d1					= $("input[name='d1']:checked").val();
-			param.d2					= $("input[name='d2']:checked").val();
-			param.d3					= $("input[name='d3']:checked").val();
-			param.d4					= $("input[name='d4']:checked").val();
-			param.d5					= $("input[name='d5']:checked").val();
-			param.d6					= $("input[name='d6']:checked").val();
-			param.d7					= $("input[name='d7']:checked").val();
-			param.d8					= $("input[name='d8']:checked").val();
-			param.d9					= $("input[name='d9']:checked").val();
-			param.d10					= $("input[name='d10']:checked").val();
-			param.d11					= $("input[name='d11']:checked").val();
-			param.d12					= $("input[name='d12']:checked").val();
-			param.q1					= $("input[name='q1']:checked").val();
-			param.b1					= $("#biblus_quest1").val();
-			param.b2					= $("#biblus_quest2").val();
-			param.result_quest1		    = $("input[name='result_quest1']:checked").val();
-			param.result_comment1		= $("#result_comment1").val();
-			
-			
-
-			param.call_content			= $("#call_content").val();
-			param.status				= $("#status").val();
-			
-			// person info
-			param.phone					= $("#phone").val();
-			param.phone1				= $("#phone1").val();
-			param.person_n				= $("#person_n").val();
-			param.first_name			= $("#first_name").val();
-			param.mail					= $("#mail").val();
-			param.city_id				= $("#city_id").val();
-			param.b_day					= $("#b_day").val();
-			param.addres				= $("#addres").val();
-			param.age					= $("#age").val();
-			param.sex					= $("#sex").val();
-			param.profession			= $("#profession").val();
-			param.interes				= $("#interes").val();
-
-			// Task Formireba
-			param.set_task_department_id	= $("#set_task_department_id").val();
-	    	param.set_persons_id			= $("#set_persons_id").val();
-	    	param.set_priority_id			= $("#set_priority_id").val();
-			param.set_start_time			= $("#set_start_time").val();
-			param.set_done_time				= $("#set_done_time").val();
-			param.set_body					= $("#set_body").val();
-			param.task_type_id_seller		= $("#task_type_id_seller").val();
-			param.set_shabloni				= $("#shabloni").val();
-
-			if(param.task_type_id_seller == 1){
-				if ($('input[name=result_quest]').is(':checked')) {
-					if($('#sub1 tbody').text().length != 21 && $('input[name=result_quest]:checked').val() == 1){
-						
-			            my_hint = 1;
-					}else{
-						if($('#sub1 tbody').text().length != 21 && $('input[name=result_quest]:checked').val() != 1){
-							my_hint = 2;
-						}else{
-							if($('#sub1 tbody').text().length == 21 && $('input[name=result_quest]:checked').val() == 1){
-							    my_hint = 3;
-							}else{
-								my_hint = 1;
-							}
-						}
-					}
-				}else{
-					my_hint = 0;
-				}
-			}else{
-				my_hint = 1;
-			}
-			
-			if(my_hint == 1){
- 	    	$.ajax({
- 		        url: aJaxURL1,
- 			    data: param,
- 		        success: function(data) {       
- 					if(typeof(data.error) != "undefined"){
- 						if(data.error != ""){
- 							alert(data.error);
- 						}else{
-							LoadTable1();
-							LoadTable2();
-							LoadTable3();
-							LoadTable0();
- 							CloseDialog("add-edit-form1");
- 							$('#yesnoclose').dialog("close");
- 						}
- 					}
- 		    	}
- 		   });
-	    }else if(my_hint == 2){
-	    	alert('თქვენ მონიშნული გაქვთ პროდუქტები. ან მონიშნეთ შედეგი "დადებითი" ან გააუქმეთ პროდუქტები!');
-	    }else if(my_hint == 3){
-	    	alert('თქვენ არ გაქვთ არჩეული პროდუქტი. ან შედეგი შეცვალეთ ან აირჩიეთ პროდუქტი!');
-	    }else{
-	    	alert('გთხოვთ, მიუთითოთ შედეგი!');
-	    }
-		});
-
-	    $(document).on("click", ".done", function () {
-			   
-	    	param 				= new Object();
- 			param.act			= "done_outgoing";
- 			param.get_prod 		= '';
- 			param.get_gift 		= '';
-		    	
- 			param.id					= $("#id").val();
- 			if($("#task_type_id_seller").val() == 1){
- 			    param.hello_quest			= $("input[name='hello_quest1']:checked").val();
- 			}else{
- 				param.hello_quest			= $("input[name='hello_quest']:checked").val();
- 			}
-	    	param.hello_comment			= $("#hello_comment").val();
-	    	param.info_quest			= $("input[name='info_quest']:checked").val();
-			param.info_comment			= $("#info_comment").val();
-			param.result_quest			= $("input[name='result_quest']:checked").val();
-	    	param.result_comment		= $("#result_comment").val();
-			param.payment_quest			= $("input[name='payment_quest']:checked").val();
-			param.payment_comment		= $("#payment_comment").val();
-			param.send_date				= $("#send_date").val();
-
-			param.preface_name			= $("#preface_name").val();
-			param.preface_quest			= $("input[name='preface_quest']:checked").val();
-			param.d1					= $("input[name='d1']:checked").val();
-			param.d2					= $("input[name='d2']:checked").val();
-			param.d3					= $("input[name='d3']:checked").val();
-			param.d4					= $("input[name='d4']:checked").val();
-			param.d5					= $("input[name='d5']:checked").val();
-			param.d6					= $("input[name='d6']:checked").val();
-			param.d7					= $("input[name='d7']:checked").val();
-			param.d8					= $("input[name='d8']:checked").val();
-			param.d9					= $("input[name='d9']:checked").val();
-			param.d10					= $("input[name='d10']:checked").val();
-			param.d11					= $("input[name='d11']:checked").val();
-			param.d12					= $("input[name='d12']:checked").val();
-			param.q1					= $("input[name='q1']:checked").val();
-			param.b1					= $("#biblus_quest1").val();
-			param.b2					= $("#biblus_quest2").val();
-			param.result_quest1		    = $("input[name='result_quest1']:checked").val();
-			param.result_comment1		= $("#result_comment1").val();
-
-			param.call_content			= $("#call_content").val();
-			param.status				= $("#status").val();
-			
-			// person info
-			param.phone					= $("#phone").val();
-			param.phone1				= $("#phone1").val();
-			param.person_n				= $("#person_n").val();
-			param.first_name			= $("#first_name").val();
-			param.mail					= $("#mail").val();
-			param.city_id				= $("#city_id").val();
-			param.b_day					= $("#b_day").val();
-			param.addres				= $("#addres").val();
-
-			var data = $(".check_pp").map(function () { //Get Checked checkbox array
-				 return this.value;
-	        }).get();
-			for (var i = 0; i < data.length; i++) {
-				if(param.get_prod != ''){
-					param.get_prod+=',';
-					
-				}
-				param.get_prod+=data[i];
-			}
-
-			var data = $(".check_gg").map(function () { //Get Checked checkbox array
-				 return this.value;
-	        }).get();
-			for (var i = 0; i < data.length; i++) {
-				if(param.get_gift != ''){
-					param.get_gift+=',';
-					
-				}
-				param.get_gift+=data[i];
-			}
-	 
- 	    	$.ajax({
- 		        url: aJaxURL1,
- 			    data: param,
- 		        success: function(data) {       
- 					if(typeof(data.error) != "undefined"){
- 						if(data.error != ""){
- 							alert(data.error);
- 						}else{
-							LoadTable1();
- 							CloseDialog("add-edit-form1");
- 						}
- 					}
- 		    	}
- 		   });
-		});
-
-	    $(document).on("click", "#complete", function () {
-			   
-	    	param 				= new Object();
- 			param.act			= "done_outgoing";
- 			param.get_prod 		= '';
- 			param.get_gift 		= '';
-		    	
- 			param.id					= $("#id").val();
- 			if($("#task_type_id_seller").val() == 1){
- 			    param.hello_quest			= $("input[name='hello_quest1']:checked").val();
- 			}else{
- 				param.hello_quest			= $("input[name='hello_quest']:checked").val();
- 			}
-	    	param.hello_comment			= $("#hello_comment").val();
-	    	param.hello_comment1		= $("#hello_comment1").val();
-	    	param.info_quest			= $("input[name='info_quest']:checked").val();
-			param.info_comment			= $("#info_comment").val();
-			param.result_quest			= $("input[name='result_quest']:checked").val();
-	    	param.result_comment		= $("#result_comment").val();
-			param.payment_quest			= $("input[name='payment_quest']:checked").val();
-			param.payment_comment		= $("#payment_comment").val();
-			param.send_date				= $("#send_date").val();
-
-			param.preface_name			= $("#preface_name").val();
-			param.preface_quest			= $("input[name='preface_quest']:checked").val();
-			param.d1					= $("input[name='d1']:checked").val();
-			param.d2					= $("input[name='d2']:checked").val();
-			param.d3					= $("input[name='d3']:checked").val();
-			param.d4					= $("input[name='d4']:checked").val();
-			param.d5					= $("input[name='d5']:checked").val();
-			param.d6					= $("input[name='d6']:checked").val();
-			param.d7					= $("input[name='d7']:checked").val();
-			param.d8					= $("input[name='d8']:checked").val();
-			param.d9					= $("input[name='d9']:checked").val();
-			param.d10					= $("input[name='d10']:checked").val();
-			param.d11					= $("input[name='d11']:checked").val();
-			param.d12					= $("input[name='d12']:checked").val();
-			param.q1					= $("input[name='q1']:checked").val();
-			param.b1					= $("#biblus_quest1").val();
-			param.b2					= $("#biblus_quest2").val();
-			param.result_quest1		    = $("input[name='result_quest1']:checked").val();
-			param.result_comment1		= $("#result_comment1").val();
-
-			param.call_content			= $("#call_content").val();
-			param.status				= $("#status").val();
-			
-			// person info
-			param.phone					= $("#phone").val();
-			param.phone1				= $("#phone1").val();
-			param.person_n				= $("#person_n").val();
-			param.first_name			= $("#first_name").val();
-			param.mail					= $("#mail").val();
-			param.city_id				= $("#city_id").val();
-			param.b_day					= $("#b_day").val();
-			param.addres				= $("#addres").val();
-
-			var data = $(".check_pp").map(function () { //Get Checked checkbox array
-				 return this.value;
-	        }).get();
-			for (var i = 0; i < data.length; i++) {
-				if(param.get_prod != ''){
-					param.get_prod+=',';
-					
-				}
-				param.get_prod+=data[i];
-			}
-
-			var data = $(".check_gg").map(function () { //Get Checked checkbox array
-				 return this.value;
-	        }).get();
-			for (var i = 0; i < data.length; i++) {
-				if(param.get_gift != ''){
-					param.get_gift+=',';
-					
-				}
-				param.get_gift+=data[i];
-			}
-	 
- 	    	$.ajax({
- 		        url: aJaxURL1,
- 			    data: param,
- 		        success: function(data) {       
- 					if(typeof(data.error) != "undefined"){
- 						if(data.error != ""){
- 							alert(data.error);
- 						}else{
-							LoadTable1();
- 							CloseDialog("add-edit-form1");
- 						}
- 					}
- 		    	}
- 		   });
-		});
-
-	    
-	    $(document).on("click", "#save-dialog2", function () {
-			param 				= new Object();
- 			param.act			= "save_outgoing";
-		    	
- 			param.id					= $("#id").val();
-			param.id1					= $("#id1").val();
-	    	param.call_date				= $("#call_date").val();
-	    	param.problem_date			= $("#problem_date").val();
-			param.persons_id			= $("#persons_id").val();
-			param.task_type_id			= $("#task_type_id").val();
-	    	param.priority_id			= $("#priority_id").val();
-			param.planned_end_date		= $("#planned_end_date").val();
-			param.fact_end_date			= $("#fact_end_date").val();
-			param.call_duration			= $("#call_duration").val();
-			param.phone					= $("#phone").val();
-			param.comment				= $("#comment").val();
-			param.problem_comment		= $("#problem_comment").val();
-	 
- 	    	$.ajax({
- 			        url: aJaxURL2,
- 				    data: param,
- 			        success: function(data) {       
- 						if(typeof(data.error) != "undefined"){
- 							if(data.error != ""){
- 								alert(data.error);
- 							}else{
- 								LoadTable2();
- 								CloseDialog("add-edit-form2");
- 							}
-						}
- 				    }
- 			});
- 		});
-
-	 function SetPrivateEvents(add,check,formName){
-		$(document).on("click", "#" + add, function () {    
-	        $.ajax({
-	            url: aJaxURL,
-	            type: "POST",
-	            data: "act=get_responsible_person_add_page",
-	            dataType: "json",
-	            success: function (data) {
-	                if (typeof (data.error) != "undefined") {
-	                    if (data.error != "") {
-	                        alert(data.error);
-	                    }else{
-	                        $("#" + formName).html(data.page);
-	                        if ($.isFunction(window.LoadDialog)){
-	                            //execute it
-	                        	LoadDialog1();
-	                        }
-	                    }
-	                }
-	            }
-	        });
-	    });
-		
-	    $(document).on("click", "#" + check, function () {
-	    	$("#" + tName + " INPUT[type='checkbox']").prop("checked", $("#" + check).is(":checked"));
-	    });	
-	}
-
-	function add_task(formName){
-    	param = new Object();
-    	param.act			= "save_task";
-    	param.id			= $("#id").val();
-	    param.p_phone			= $("#p_phone").val();
-	    param.p_person_n		= $("#p_person_n").val();
-	    param.p_first_name		= $("#p_first_name").val();
-	    param.p_mail			= $("#p_mail").val();
-	    param.p_last_name		= $("#p_last_name").val();
-	    param.p_person_status	= $("#p_person_status").val();
-	    param.p_addres			= $("#p_addres").val();
-	    param.p_b_day			= $("#p_b_day").val();
-	    param.p_city_id			= $("#p_city_id").val();
-	    param.p_family_id		= $("#p_family_id").val();
-	    param.p_profesion		= $("#p_profesion").val();
-	        
-	        $.ajax({
-	            url: aJaxURL,
-	            type: "POST",
-	            data: param,
-	            dataType: "json", 
-	            success: function (data) {
-	                if (typeof (data.error) != "undefined") {
-	                    if (data.error != "") {
-	                        alert(data.error);
-	                    }else{
-	                        $("#add_task").dialog("close");
-	                        LoadTable4();
-	                    }
-	                }
-	            }
-	        });	    		
-	}
-
-
-	$(document).on("change", "#task_type_id_seller",function(){
-		var task = $("#task_type_id_seller").val();
-		if(task==1){
-			$("#research").addClass('dialog_hidden');
-			$("#seller").removeClass('dialog_hidden');
-		}else{
-			$("#seller").addClass('dialog_hidden');
-			$("#research").removeClass('dialog_hidden');
-		}
+    	    $.session.clear();
+    	    
+    	    param 			= new Object();
+    		param.act		= "ststus";
+    		param.type      = 1;
+            $.ajax({
+                url: aJaxURL,
+                data: param,
+                success: function(data) {
+                    $("#tab_id").html(data.page);
+                    $('#operator_id,#tab_id').trigger("chosen:updated");
+                }
+            });
     });
 
-	    $(document).on("change", "#shabloni",function(){
-	    		
-	 	 		param 			= new Object();
-			 	param.act		= "quest";
-			 	param.shabloni   = $("#shabloni").val();
-			 	
-		    	$.ajax({
-			        url: aJaxURL1,
-				    data: param,
-			        success: function(data) {
-						if(typeof(data.error) != 'undefined'){
-							if(data.error != ''){
-								alert(data.error);
-							}else{
-								$("#quest").html(data.page);
-								$(".done").button({
-						            
-							    });
-								$(".next").button({
-						            
-							    });
-								$(".back").button({
-						            
-							    });
-								$("#add_button_product").button({
-						            
-							    });
-								$("#add_button_gift").button({
-								    
-								});
-								$("#complete").button({
-								    
-								});
-								LoadTable5();
-								LoadTable6();
-								GetDateTimes("send_time");
-								var task = $("#task_type_id_seller").val();
-								if(task==1){
-									$("#research").addClass('dialog_hidden');
-									$("#seller").removeClass('dialog_hidden');
-								}else{
-									$("#seller").addClass('dialog_hidden');
-									$("#research").removeClass('dialog_hidden');
-								}
-							}
-						}
-				    }
-			    });
-	    });
+    function LoadTable(tbl,col_num,act,change_colum,custom_param){
+    	GetDataTable(tName+tbl, aJaxURL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
+    	setTimeout(function(){
+	    	$('.ColVis, .dataTable_buttons').css('display','none');
+	    	}, 50);
+    }
+    
+    function LoadDialog(fName){
+    	var buttons = {
+				"save": {
+		            text: "შენახვა",
+		            id: "save-dialog"
+		        },
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+        GetDialog(fName, 575, "auto", buttons, 'left+43 top');
+        LoadTable('sms',5,'get_list',"<'F'lip>");
+        LoadTable('mail',5,'get_list',"<'F'lip>");
+        $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
+        GetDate2("date_input");
+        GetDate1("task_end_date");
+        GetDate1("task_start_date");
+		GetDateTimes1("date_time_input");
+		$('.quest_body').css('display','none');
+		$('.1').css('display','block');
+		$('#next_quest').attr('next_id',$('.1').attr('id'));
+		$('#next_quest, #back_quest').button();
+		$('#back_quest').prop('disabled',true);
+    }
 
-	    $(document).on("change", "#task_type_id_seller",function(){
-    		
- 	 		param 			= new Object();
-		 	param.act		= "shablon";
-		 	param.task_type_id_seller   = $("#task_type_id_seller").val();
-		 	
-	    	$.ajax({
-		        url: aJaxURL1,
-			    data: param,
-		        success: function(data) {
-					if(typeof(data.error) != 'undefined'){
+
+    $(document).on("change", "#incomming_cat_1", function () {
+    	param 			= new Object();
+		param.act		= "cat_2";
+		param.cat_id    = $('#incomming_cat_1').val();
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#incomming_cat_1_1").html(data.page);
+            }
+        });
+    });
+    $(document).on("change", "#incomming_cat_1_1", function () {
+    	param 			= new Object();
+		param.act		= "cat_3";
+		param.cat_id    = $('#incomming_cat_1_1').val();
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#incomming_cat_1_1_1").html(data.page);
+            }
+        });
+    });
+
+    $(document).on("change", "#task_type", function () {
+    	param 			= new Object();
+		param.act		= "ststus";
+		param.type      = $(this).val();
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#tab_id").html(data.page);
+                $('#operator_id,#tab_id').trigger("chosen:updated");
+            }
+        });
+    });
+
+    $(document).on("click", "#fillter", function () {
+        operator    = $('#operator_id').val();
+    	status      = $('#tab_id').val();
+    	start_date  = $('#start_date').val();
+    	end_date    = $('#end_date').val();
+    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator);
+    });
+    
+    $(document).on("click", ".callapp_refresh", function () {
+    	operator    = $('#operator_id').val();
+    	status      = $('#tab_id').val();
+    	start_date  = $('#start_date').val();
+    	end_date    = $('#end_date').val();
+    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator);
+    });
+    
+    $(document).on("click", "#next_quest", function () {
+        var input_radio    = '';
+        var input_checkbox = '';
+        var input          = '';
+        var select         = '';
+        input_radio = $('#' + $(this).attr('next_id') + ' .radio_input:checked').attr('next_quest');
+        input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
+        input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
+        select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
+        
+        if(input_radio == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_radio).css('display','block');
+        	$('#next_quest').attr('next_id',input_radio);
+        	$('#back_quest').prop('disabled',false);
+        }
+        if(input == undefined){
+        	
+        }else{
+            if(input==0){
+            	$('#next_quest').prop('disabled',true);
+            }else{
+        	
+        	$('#'+input).css('display','block');
+        	$('#next_quest').attr('next_id',input);
+            }
+        }
+        if(input_checkbox == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_checkbox).css('display','block');
+        	$('#next_quest').attr('next_id',input_checkbox);
+        }
+        if(select == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+select).css('display','block');
+        	$('#next_quest').attr('next_id',select);
+        }
+    });
+
+    $(document).on("click", "#back_quest", function () {
+    	$('#next_quest').prop('disabled',false);
+    	$('#next_quest').attr('next_id',$(".quest_body:visible").attr("id"));
+    	
+    	var str = $(".quest_body:visible").attr("class");
+    	var res = str.replace("quest_body ", "");
+    	back_id = (res-1);
+    	if(back_id<1){
+    		back_id = 1;
+    		$('#back_quest').prop('disabled',true);
+    	}
+    	$('.quest_body').css('display','none');
+    	$('.'+back_id).css('display','block');
+    });
+
+    $(document).on("click", "#person_active", function () {
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+        GetDialog("add-edit-form-active", 360, "auto", buttons);
+    });
+    
+    function show_right_side(id){
+        $("#right_side fieldset").hide();
+        $("#" + id).show();
+        $(".add-edit-form-class").css("width", "1200");
+        //$('#add-edit-form').dialog({ position: 'left top' });
+        hide_right_side();
+        var str = $("."+id).children('img').attr('src');
+		str = str.substring(0, str.length - 4);
+        $("."+id).children('img').attr('src',str+'_blue.png');
+        $("."+id).children('div').css('color','#2681DC');
+    }
+
+    function hide_right_side(){
+    	$("#side_menu").children('spam').children('div').css('color','#FFF');
+        $(".info").children('img').attr('src','media/images/icons/info.png');
+        $(".scenar").children('img').attr('src','media/images/icons/scenar.png');
+        $(".task").children('img').attr('src','media/images/icons/task.png');
+        $(".sms").children('img').attr('src','media/images/icons/sms.png');
+        $(".mail").children('img').attr('src','media/images/icons/mail.png');
+        $(".record").children('img').attr('src','media/images/icons/record.png');
+        $(".file").children('img').attr('src','media/images/icons/file.png');
+        $("#record fieldset").show();
+    }
+    
+    function show_main(id,my_this){
+    	$("#client_main,#client_other").hide();
+    	$("#" + id).show();
+    	$(".client_main,.client_other").css('border','none');
+    	$(".client_main,.client_other").css('padding','6px');
+    	$(my_this).css('border','1px solid #ccc');
+    	$(my_this).css('border-bottom','1px solid #F9F9F9');
+    	$(my_this).css('padding','5px');
+    }
+
+    function client_status(id){
+    	$("#pers,#iuri").hide();
+    	$("#" + id).show();
+    }
+    
+    $(document).on("click", ".hide_said_menu", function () {
+    	$("#right_side fieldset").hide();    	
+    	$(".add-edit-form-class").css("width", "741");
+        //$('#add-edit-form').dialog({ position: 'top' });
+        hide_right_side();
+    });
+
+    $(document).on("click", "#show_copy_prit_exel", function () {
+        if($(this).attr('myvar') == 0){
+            $('.ColVis,.dataTable_buttons').css('display','block');
+            $(this).css('background','#2681DC');
+            $(this).children('img').attr('src','media/images/icons/select_w.png');
+            $(this).attr('myvar','1');
+        }else{
+        	$('.ColVis,.dataTable_buttons').css('display','none');
+        	$(this).css('background','#FAFAFA');
+            $(this).children('img').attr('src','media/images/icons/select.png');
+            $(this).attr('myvar','0');
+        }
+    });    
+    
+    $(document).on("click", "#add_sms", function () {
+    	param 			= new Object();
+		param.act		= "send_sms";
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#add-edit-form-sms").html(data.page);
+                $("#copy_phone,#sms_shablon,#send_sms").button();
+            }
+        });
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+        GetDialog("add-edit-form-sms", 360, "auto", buttons);
+    });
+    
+    $(document).on("click", "#callapp_show_filter_button", function () {
+        if($('.callapp_filter_body').attr('myvar') == 0){
+        	$('.callapp_filter_body').css('display','block');
+        	$('.callapp_filter_body').attr('myvar',1);
+        }else{
+        	$('.callapp_filter_body').css('display','none');
+        	$('.callapp_filter_body').attr('myvar',0);
+        }        
+    });
+    
+    $(document).on("click", "#add_mail", function () {
+    	param 			= new Object();
+		param.act		= "send_mail";
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#add-edit-form-mail").html(data.page);
+                $("#copy_phone,#sms_shablon,#send_mail").button();
+            }
+        });
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+        GetDialog("add-edit-form-mail", 610, "auto", buttons);
+    });
+
+    function listen(file){
+        var url = location.origin + "/records/" + file
+        $("audio source").attr('src',url)
+    }
+    $(document).on("click", "#upload_file", function () {
+	    $('#file_name').click();
+	});
+    $(document).on("change", "#file_name", function () {
+        var file_url  = $(this).val();
+        var file_name = this.files[0].name;
+        var file_size = this.files[0].size;
+        var file_type = file_url.split('.').pop().toLowerCase();
+        var path	  = "../../media/uploads/file/";
+
+        if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+            alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
+        }else if(file_size > '15728639'){
+            alert("ფაილის ზომა 15MB-ზე მეტია");
+        }else{
+        	$.ajaxFileUpload({
+		        url: "server-side/upload/file.action.php",
+		        secureuri: false,
+     			fileElementId: "file_name",
+     			dataType: 'json',
+			    data: {
+					act: "file_upload",
+					button_id: "file_name",
+					table_name: 'incomming_call',
+					file_name: Math.ceil(Math.random()*99999999999),
+					file_name_original: file_name,
+					file_type: file_type,
+					file_size: file_size,
+					path: path,
+					table_id: $("#incomming_id").val(),
+
+				},
+		        success: function(data) {			        
+			        if(typeof(data.error) != 'undefined'){
 						if(data.error != ''){
 							alert(data.error);
 						}else{
-							$("#shabloni").html(data.page);
-							
-						}
-					}
+							var tbody = '';
+							for(i = 0;i <= data.page.length;i++){
+								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+								$("#paste_files").html(tbody);
+							}							
+						}						
+					}					
 			    }
 		    });
+        }
     });
 
-	    $(document).on("click", "#next_1000_active", function () {
-			var next = $('#mtvleli_active').val();
-			var next_ch = parseInt(next)+1;
-			$('#mtvleli_active').val(next_ch);
-			GetDataTableTest("example0", aJaxURL, "get_list&pager="+next_ch, 9, "", 0, "", 1, "asc");
-		});
-		$(document).on("click", "#back_1000_active", function () {
-			var back = $('#mtvleli_active').val();
-			if(back != 0){
-			var back_ch = parseInt(back)-1;
-			}else{
-				back_ch = 0;
-			}
-			$('#mtvleli_active').val(back_ch);
-			
-			GetDataTableTest("example0", aJaxURL, "get_list&pager="+back_ch, 9, "", 0, "", 1, "asc");
-		});
-
-		$(document).on("click", "#next_1000_first", function () {
-			var next = $('#mtvleli_first').val();
-			var next_ch = parseInt(next)+1;
-			$('#mtvleli_first').val(next_ch);
-			GetDataTableTest("example1", aJaxURL1, "get_list&pager="+next_ch, 12, "", 0, "", 1, "asc");
-		});
-		$(document).on("click", "#back_1000_first", function () {
-			var back = $('#mtvleli_first').val();
-			if(back != 0){
-			var back_ch = parseInt(back)-1;
-			}else{
-				back_ch = 0;
-			}
-			$('#mtvleli_first').val(back_ch);
-			
-			GetDataTableTest("example1", aJaxURL1, "get_list&pager="+back_ch, 12, "", 0, "", 1, "asc");
-		});
-
-		$(document).on("click", "#next_1000_mimd", function () {
-			var next = $('#mtvleli_mimd').val();
-			var next_ch = parseInt(next)+1;
-			$('#mtvleli_mimd').val(next_ch);
-			GetDataTableTest("example2", aJaxURL2, "get_list&pager="+next_ch, 12, "", 0, "", 1, "asc");
-		});
-		$(document).on("click", "#back_1000_mimd", function () {
-			var back = $('#mtvleli_mimd').val();
-			if(back != 0){
-			var back_ch = parseInt(back)-1;
-			}else{
-				back_ch = 0;
-			}
-			$('#mtvleli_mimd').val(back_ch);
-			
-			GetDataTableTest("example2", aJaxURL2, "get_list&pager="+back_ch, 12, "", 0, "", 1, "asc");
-		});
-
-		$(document).on("click", "#next_1000_done", function () {
-			var next = $('#mtvleli_done').val();
-			var next_ch = parseInt(next)+1;
-			$('#mtvleli_done').val(next_ch);
-			GetDataTableTest("example3", aJaxURL3, "get_list&pager="+next_ch, 12, "", 0, "", 1, "asc");
-		});
-		$(document).on("click", "#back_1000_done", function () {
-			var back = $('#mtvleli_done').val();
-			if(back != 0){
-			var back_ch = parseInt(back)-1;
-			}else{
-				back_ch = 0;
-			}
-			$('#mtvleli_done').val(back_ch);
-			
-			GetDataTableTest("example3", aJaxURL3, "get_list&pager="+back_ch, 12, "", 0, "", 1, "asc");
-		});
-
-		$(document).on("click", "#delete_button", function () {
-            var data = $(".check:checked").map(function () { //Get Checked checkbox array
-                return this.value;
-            }).get();
-
-            for (var i = 0; i < data.length; i++) {
-                $.ajax({
-                    url: aJaxURL,
-                    type: "POST",
-                    data: "act=disable&id_delete=" + data[i],
-                    dataType: "json",
-                    success: function (data) {
-                        if (data.error != "") {
-                            alert(data.error);
-                        } else {
-                            $("#check-all-in").attr("checked", false);
-                        }
-                    }
-                });
+    function download_file(file){
+        var download_file	= "media/uploads/file/"+file;
+    	var download_name 	= file;
+    	SaveToDisk(download_file, download_name);
+    }
+    
+    function delete_file(id){
+    	$.ajax({
+            url: "server-side/upload/file.action.php",
+            data: "act=delete_file&file_id="+id+"&table_name=incomming_call",
+            success: function(data) {
+               
+            	var tbody = '';
+            	if(data.page.length == 0){
+            		$("#paste_files").html('');
+            	};
+				for(i = 0;i <= data.page.length;i++){
+					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+					$("#paste_files").html(tbody);
+				}	
             }
-            LoadTable0();
-           
         });
-        
-		$(document).on("click", "#disable-all", function () {
-	    	$("#example1 INPUT[type='checkbox']").prop("checked", $("#disable-all").is(":checked"));
-	    });
+    }
 
-		$(document).on("click", "#disable_button", function () {
-	        var data = $(".disable-all:checked").map(function () {
-	            return this.value;
-	        }).get();
+    function SaveToDisk(fileURL, fileName) {
+        // for non-IE
+        if (!window.ActiveXObject) {
+            var save = document.createElement('a');
+            save.href = fileURL;
+            save.target = '_blank';
+            save.download = fileName || 'unknown';
 
-	        for (var i = 0; i < data.length; i++) {
-	            $.ajax({
-	                url: aJaxURL1,
-	                type: "POST",
-	                data: "act=disable-all&id=" + data[i],
-	                dataType: "json",
-	                success: function (data) {
-	                    if (data.error != "") {
-	                        alert(data.error);
-	                    } else {
-	                        $("#disable-all").attr("checked", false);
-	                        LoadTable1();
-	                    }
-	                }
-	            });
-	        }
-	    });
-    </script>
+            var event = document.createEvent('Event');
+            event.initEvent('click', true, true);
+            save.dispatchEvent(event);
+            (window.URL || window.webkitURL).revokeObjectURL(save.href);
+        }
+	     // for IE
+        else if ( !! window.ActiveXObject && document.execCommand)     {
+            var _window = window.open(fileURL, "_blank");
+            _window.document.close();
+            _window.document.execCommand('SaveAs', true, fileName || fileURL)
+            _window.close();
+        }
+    }
+
+    $(document).on("click", "#send_sms", function (fName) {
+	    param 			= new Object();
+
+	    param.sms_hidde_id		= sms_id;
+    	param.phone			= $("#sms_phone").val();
+    	param.text			= $("#sms_text").val();
+    	param.sms_inc_increm_id	= $("#sms_inc_increm_id").val();
+    	
+    	 $.ajax({
+		        url: aJaxURL_send_sms,
+			    data: param,
+		        success: function(data) {
+                    $("#sms_text").val('');
+                    alert('SMS წარმატებით გაიგზავნა');
+                    LoadTable1_1();
+                    CloseDialog("sms_dialog");
+			    }
+		    });
+ 	    });
+    
+    $(document).on("click", ".open_dialog", function () {
+    	var queoue = $($(this).siblings())[0];
+    	queoue = $(queoue).text();
+        $.ajax({
+            url: aJaxURL,
+            type: "POST",
+            data: "act=get_edit_page&id=&open_number=" + $(this).text() + "&queue=" + queoue,
+            dataType: "json",
+            success: function (data) {
+                if (typeof (data.error) != "undefined") {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                        $("#add-edit-form").html(data.page); 
+                    	LoadDialog('add-edit-form');
+                    }
+                }
+            }
+        });        
+    });
+    
+    $(document).on("click", "#show_all_scenario", function () {
+        if($(this).attr('who') == 0){            
+        $('#scenar').css('overflow-y','scroll');
+        $('.quest_body').css('display','block');
+        $('#next_quest').prop('disabled', true);
+        $(this).attr('who',1);
+        $('#show_all_scenario span').text('დამალვა');
+        }else{
+        	$('#scenar').css('overflow-y','visible');
+            $('.quest_body').css('display','none');
+            $('.1').css('display','block');
+            $('#next_quest').prop('disabled', false);
+            $(this).attr('who',0);
+            $('#show_all_scenario span').text('ყველას ჩვენება');
+        }
+    });
+    
+    $(document).on("click", "#show_flesh_panel", function () {
+        //$('#flesh_panel').css('width','425px');
+        $( "#flesh_panel" ).animate({
+            width: "425px"
+          }, 1000 );
+        $('#show_flesh_panel').attr('src','media/images/icons/arrow_right.png');
+        $('#show_flesh_panel').attr('id','show_flesh_panel_right');
+        $('#flesh_panel_table_mini').css('display','none');
+        $('#flesh_panel_table').css('display','block');
+        $('#flesh_panel').css('z-index','99');
+        $('#show_flesh_panel_right').attr('title','პანელის დაპატარევება');
+    });
+    $(document).on("click", "#show_flesh_panel_right", function () {
+        //$('#flesh_panel').css('width','150px');
+        $( "#flesh_panel" ).animate({
+            width: "150px"
+          }, 300 );
+        $('#show_flesh_panel_right').attr('src','media/images/icons/arrow_left.png');
+        $('#show_flesh_panel_right').attr('id','show_flesh_panel');
+        $('#flesh_panel_table').css('display','none');
+        $('#flesh_panel_table_mini').css('display','block');
+        $('#flesh_panel').css('z-index','99');
+        $('#show_flesh_panel').attr('title','პანელის გადიდება');
+    });
+
+    $(document).on("click", "#save-dialog", function () {
+		   
+		param 				= new Object();
+		param.act			= "save_incomming";
+	    	
+		param.id					= $("#hidden_id").val();
+			
+		// --------------------------------------------------
+		var items          = {};
+    	var checker        = {};
+    	var inp_checker    = {};
+    	var radio_checker  = {};
+    	var date_checker   = {};
+    	var date_date_checker = {};
+    	var select ={};
+    	
+    	$('#add-edit-form .check_input:checked').each(function() {
+	    	
+    		key      = this.name;
+    		value    = this.value;
+    		ansver_val    = $(this).attr('ansver_val');
+    		
+    		checker[key] = checker[key] + "," + value;
+
+    	});
+    	
+    	items.checker = checker;
+    	
+        $('#add-edit-form .inputtext').each(function() {
+	    	
+    		inp_key      = this.id;
+    		inp_value    = this.value;
+    		inp_q_id     = $(this).attr('q_id');
+    		
+    	    if(inp_value != ''){
+    		 inp_checker[inp_key] = inp_checker[inp_key] + "," + inp_value;
+    	    }
+    	});
+    	
+    	items.input   = inp_checker;
+
+        $('#dialog-form .radio_input:checked').each(function() {
+	    	
+    		radio_key      = this.name;
+    		radio_value    = this.value;
+    		ansver_val     = $(this).attr('ansver_val');
+    		
+    		radio_checker[radio_key] = checker[radio_key] + "," + radio_value;
+
+    	});
+    	
+    	items.radio = radio_checker;
+
+        $('#add-edit-form .date_input').each(function() {
+	    	
+        	date_key      = this.id;
+    		date_value    = this.value;
+    	    if(date_value != ''){
+    	    	date_checker[date_key] = date_checker[date_key] + "," + date_value;
+    	    }
+    	});
+    	
+    	items.date   = date_checker;
+
+        $('#add-edit-form .date_time_input').each(function() {
+	    	
+        	date_time_key      = this.id;
+        	date_time_value    = this.value;
+    	    if(date_time_value != ''){
+    	    	date_date_checker[date_time_key] = date_date_checker[date_time_key] + "," + date_time_value;
+    	    }
+    	});
+    	
+    	items.date_time   = date_date_checker;
+
+        $('#add-edit-form .hand_select').each(function() {
+
+	    	//alert($("option:selected",this).val());
+        	select_key      = this.id;
+        	select_value    = $("option:selected",this).val();
+    		
+        	select[select_key] = select[select_key] + "," + select_value;
+
+    	});
+    	
+    	items.select_op   = select;
+
+		//----------------------------------------------------
+		
+		// Incomming Vars
+    	param.incomming_id          = $("#incomming_id").val();
+		param.hidden_id				= $("#hidden_id").val();
+		param.incomming_phone		= $("#incomming_phone").val();
+		param.incomming_date        = $("#incomming_date").val();
+		param.incomming_cat_1		= $("#incomming_cat_1").val();
+		param.incomming_cat_1_1		= $("#incomming_cat_1_1").val();
+		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
+		param.incomming_comment		= $("#incomming_comment").val();
+		param.scenario_id           = $("#scenario_id").val();
+
+		// Incomming Client Vars
+		param.client_status			= $('input[name=client_status]:checked').val();
+		param.client_person_number	= $("#client_person_number").val();
+		param.client_person_lname	= $("#client_person_lname").val();
+		param.client_person_fname	= $("#client_person_fname").val();
+		param.client_person_phone1	= $("#client_person_phone1").val();
+		param.client_person_phone2	= $("#client_person_phone2").val();
+		param.client_person_mail1	= $("#client_person_mail1").val();
+    	param.client_person_mail2	= $("#client_person_mail2").val();
+    	param.client_person_addres1	= $("#client_person_addres1").val();
+		param.client_person_addres2	= $("#client_person_addres2").val();
+		param.client_person_note	= $("#client_person_note").val();
+		
+		param.client_number			= $("#client_number").val();
+		param.client_name	        = $("#client_name").val();
+		param.client_phone1			= $("#client_phone1").val();
+		param.client_phone2			= $("#client_phone2").val();
+		param.client_mail1	        = $("#client_mail1").val();
+		param.client_mail2			= $("#client_mail2").val();
+		param.client_note			= $("#client_note").val();
+		
+		var link = GetAjaxData(param);		
+	    	$.ajax({
+		        url: aJaxURL,
+			    data: link + "&checker=" + JSON.stringify(items.checker) + "&input=" + JSON.stringify(items.input)  + "&radio=" + JSON.stringify(items.radio) + "&date=" + JSON.stringify(items.date) + "&date_time=" + JSON.stringify(items.date_time) + "&select_op=" + JSON.stringify(items.select_op),
+		        success: function(data) {       
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('index',colum_number,main_act,change_colum_main);
+						    CloseDialog("add-edit-form");
+						}
+					}
+		    	}
+		   });
+	});
+</script>
+<style type="text/css">
+.callapp_head{
+	font-family: pvn;
+	font-weight: bold;
+	font-size: 20px;
+	color: #2681DC;
+}
+.callapp_head_hr{
+	border: 1px solid #2681DC;
+}
+.callapp_refresh{
+    padding: 5px;
+    border-radius:3px;
+    color:#FFF;
+    background: #9AAF24;
+    float: right;
+    font-size: 13px;
+    cursor: pointer;
+}
+.callapp_filter_show{
+	margin-bottom: 50px;
+	float: right;
+	width: 100%;
+}
+.callapp_filter_show button{
+    margin-bottom: 10px;
+	border: none;
+    background-color: white;
+	color: #2681DC;
+	font-weight: bold;
+	cursor: pointer;
+}
+.callapp_filter_body{
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+	margin-bottom: 0px;
+}
+.callapp_filter_body span {
+	float: left;
+    margin-right: 10px;
+	height: 22px;
+}
+.callapp_filter_body span label {
+	color: #555;
+    font-weight: bold;
+	margin-left: 20px;
+}
+.callapp_filter_body_span_input {
+	position: relative;
+	top: -13px;
+}
+.callapp_filter_header{
+	color: #2681DC;
+	font-family: pvn;
+	font-weight: bold;
+}
+#table_right_menu{
+    position: relative;
+    float: right;
+    width: 70px;
+    top: 28px;
+	z-index: 50;
+	border: 1px solid #E6E6E6;
+	padding: 4px;
+}
+
+.ColVis, .dataTable_buttons{
+	z-index: 50;
+}
+#table_sms_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_sms_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_sms_paginate{
+	margin: 0;
+}
+#table_mail_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_mail_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_mail_paginate{
+	margin: 0;
+}
+#fillter:HOVER {
+	color: #FFF;
+	background: #2681DC;
+}
+</style>
 </head>
 
 <body>
+<div id="tabs">
+<div class="callapp_head">გამავალი ზარი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
 
-<div id="tabs" style="width: 99%; margin: 0 auto; min-height: 768px; margin-top: 25px;">
-		<ul>
-			<li><a href="#tab-0">აქტივაცია</a></li>
-			<li><a href="#tab-1">პირველადი</a></li>
-			<li><a href="#tab-2">მიმდინარე</a></li>
-			<li><a href="#tab-3">დასრულებული</a></li>
-			<li><a href="#tab-4">გაუქმებული</a></li>
-			<li><a href="#tab-5">არქივი</a></li>
-		</ul>
-		<div id="tab-0">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">აქტივაცია</h2>
-		            	<div id="button_area">
-	        				<button id="add_responsible_person">პ. პირის აქტივაცია</button>	        				
-	        				<?php
-                    		include '../../includes/classes/core.php';
-                    		if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
-                    		  echo '<button id="delete_button">წაშლა</button>';
-                    		}
-                    		?>
-	        				
-	        			</div>
-		                <table class="display" id="example0">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>
-									<th style="width:19%;">პირადი №<br>საიდ. კოდი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">დავალების<br>ტიპი</th>
-									<th style="width:19%;">განყოფილება</th>
-									<th style="width:19%;">ზარის შესრულების<br>თარიღი</th>
-									<th style="width:19%;">შენიშვნა</th>
-									<th class="check">#</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input type="checkbox" name="check-all" id="check-all-in"/>
-									</th>
-									
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-		<div id="tab-1">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">პირველადი</h2>
-		            	<div id="button_area">
-	        				<button id="disable_button">გაუქმება</button>
-	        			</div>
-		                <table class="display" id="example1">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>
-									<th style="width:19%;">მისამართი</th>
-									<th style="width:19%;">დასაწისი</th>
-									<th style="width:19%;">დასასრული</th>
-									<th style="width:19%;">დავალების ტიპი</th>
-									<th style="width:19%;">სცენარი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">პასუხისმგებელი პირი</th>
-									<th style="width:19%;">პრიორიტეტი</th>
-									<th style="width:19%;">შენიშვნა</th>
-									<th class="check">#</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									
-									<th>
-										<input type="checkbox" name="disable-all" id="disable-all"/>
-									</th>
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-		 <div id="tab-2">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">მიმდინარე</h2>
-		            	<div id="button_area">
-		            		
-	        			</div>
-		                <table class="display" id="example2">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>									
-									<th style="width:19%;">მისამართი</th>
-									<th style="width:19%;">შექმნის თარიღი</th>
-									<th style="width:19%;">დარეკვის თარიღი</th>
-									<th style="width:19%;">დასაწისი</th>
-									<th style="width:19%;">დასასრული</th>
-									<th style="width:19%;">დავალების ტიპი</th>
-									<th style="width:19%;">სცენარი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">პასუხისმგებელი პირი</th>
-									<th style="width:19%;">პრიორიტეტი</th>
-									<th style="width:19%;">შენიშვნა</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-		 <div id="tab-3">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">დასრულებული</h2>
-		            	<div id="button_area">
-		            		
-	        			</div>
-		                <table class="display" id="example3">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>									
-									<th style="width:19%;">მისამართი</th>
-									<th style="width:19%;">შექმნის თარიღი</th>
-									<th style="width:19%;">დარეკვის თარიღი</th>
-									<th style="width:19%;">დასაწისი</th>
-									<th style="width:19%;">დასასრული</th>
-									<th style="width:19%;">დავალების ტიპი</th>
-									<th style="width:19%;">სცენარი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">პასუხისმგებელი პირი</th>
-									<th style="width:19%;">პრიორიტეტი</th>
-									<th style="width:19%;">შენიშვნა</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-		 <div id="tab-4">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">გაუქმებული</h2>
-		                <table class="display" id="example6">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>									
-									<th style="width:19%;">მისამართი</th>
-									<th style="width:19%;">შექმნის თარიღი</th>
-									<th style="width:19%;">დასაწისი</th>
-									<th style="width:19%;">დასასრული</th>
-									<th style="width:19%;">დავალების ტიპი</th>
-									<th style="width:19%;">სცენარი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">პასუხისმგებელი პირი</th>
-									<th style="width:19%;">პრიორიტეტი</th>
-									<th style="width:19%;">შენიშვნა</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-		 <div id="tab-5">
-		    <div id="dt_example" class="ex_highlight_row">
-		        <div id="container" style="width: 100%;">        	
-		            <div id="dynamic">
-		            	<h2 align="center">არქივი</h2>
-		            	<div id="button_area">
-	        				<label>დადებითი</label><input type="radio" id="dadebiti" name="dadebiti" value="1">
-	        				<label>უარყოფითი</label><input type="radio" id="dadebiti" name="dadebiti" value="2">
-	        				<label>მოიფიქრებს</label><input type="radio" id="dadebiti" name="dadebiti" value="3">
-	        			</div>
-		                <table class="display" id="example5">
-		                    <thead>
-								<tr id="datatable_header">
-		                            <th>ID</th>
-									<th style="width:8%;">№</th>									
-									<th style="width:19%;">მისამართი</th>
-									<th style="width:19%;">შექმნის თარიღი</th>
-									<th style="width:19%;">დარეკვის თარიღი</th>
-									<th style="width:19%;">დასაწისი</th>
-									<th style="width:19%;">დასასრული</th>
-									<th style="width:19%;">დავალების ტიპი</th>
-									<th style="width:19%;">სცენარი</th>
-									<th style="width:19%;">დასახელება</th>
-									<th style="width:19%;">პასუხისმგებელი პირი</th>
-									<th style="width:19%;">ზარის დაზუსტება</th>
-									<th style="width:19%;">შენიშვნა</th>
-								</tr>
-							</thead>
-							<thead>
-								<tr class="search_header">
-									<th class="colum_hidden">
-                            			<input type="text" name="search_id" value="" class="search_init" style="width: 10px"/>
-                            		</th>
-									<th>
-										<input style="width:30px;" type="text" name="search_overhead" value="" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:85px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_partner" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_op_date" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-									<th>
-										<input style="width:100px;" type="text" name="search_sum_cost" value="ფილტრი" class="search_init" />
-									</th>
-								</tr>
-							</thead>
-		                </table>
-		            </div>
-		            <div class="spacer">
-		            </div>
-		        </div>
-		    </div>
-		 </div>
-</div>
-<!-- jQuery Dialog -->
-<div id="add-edit-form" class="form-dialog" title="დავალების ფორმირება">
-<!-- aJax -->
-</div>
-
-<!-- jQuery Dialog -->
-<div id="add-edit-form1" class="form-dialog" title="გამავალი ზარი">
-<!-- aJax -->
-</div>
-
-<!-- jQuery Dialog -->
-<div id="add-edit-form2" class="form-dialog" title="გამავალი ზარი">
-<!-- aJax -->
-</div>
-
-<div id="add-responsible-person" class="form-dialog" title="პასუხისმგებელი პირი">
-<!-- aJax -->
-</div>
-<div id="add_task" class="form-dialog" title="დავალების დამატება">
-<!-- aJax -->
-</div>
-<div id="add_product" class="form-dialog" title="დავალების დამატება">
-<!-- aJax -->
-</div>
-<div id="add_product_chosse" class="form-dialog" title="პროდუქტის დამატება">
-<!-- aJax -->
-</div>
-<div id="add_gift_chosse" class="form-dialog" title="საჩუქრის დამატება">
-<!-- aJax -->
-</div>
-<div id="yesno" class="form-dialog" title="მინიშნება">
-<div id="dialog-form">
-<fieldset>
-დარწმუნებული ხართ რომ გსურთ პროდუქტის გაუქმება?
-<input type="hidden" value="" id="p">
-<input type="hidden" value="" id="pp">
-</fieldset>
-</div>
-</div>
-<div id='yesnoclose' class="form-dialog">
-    <div id="dialog-form">
-        <fieldset>
-                    გსურთ თუ არა ცვლილებების შენახვა?
-        </fieldset>
+<div class="callapp_filter_show">
+<button id="callapp_show_filter_button">ფილტრი v</button>
+    <div class="callapp_filter_body" myvar="0">
+    <div style="float: left; width: 100%;">
+        <span>
+        <label for="start_date" style="margin-left: 110px;">-დან</label>
+        <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 100px;">
+        </span>
+        <span>
+        <label for="end_date" style="margin-left: 110px;">-მდე</label>
+        <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 100px;">
+        </span>
+        <span>
+        <select id="task_type" style="width: 130px;">
+        <option value="1">გამავალი</option>
+        <option value="2">დავალება</option>
+        </select>
+        </span>
+        <span>
+        <select id="tab_id" style="width: 240px;">
+        </select>
+        </span>
+        <span>
+        <select id="operator_id" style="width: 240px;">
+        <option value="0">ყველა ოპერატორი</option>
+        <option>დათო პაპალაშვილი</option>
+        </select>
+        </span>
+        <span>
+        <button id="fillter" style="padding: 2px 4px 4px 4px; border: 1px solid; margin: 0;">გაფილტვრა</button>
+        </span>
+        <span>
+        <button id="person_active" style="margin-top: 10px;padding: 2px 4px 4px 4px;border: 1px solid;">პირის აქტივაცია</button>
+        </span>
     </div>
 </div>
-</body>
+<table id="table_right_menu">
+<tr>
+<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+</td>
+<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
+</td>
+<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
+</td>
+</tr>
+</table>
 
+<table class="display" id="table_index">
+    <thead>
+        <tr id="datatable_header">
+            <th>ID</th>
+            <th style="width: 20px;">№</th>
+            <th style="width: 100%;">თარიღი</th>
+            <th style="width: 100%;">ტელეფონი 1</th>
+            <th style="width: 100%;">ტელეფონი 2</th>
+            <th style="width: 100%;">სახელი გვარი</th>
+            <th style="width: 100%;">პირადი ნომერი</th>
+            <th style="width: 100%;">პასუხისმგებელი პირი</th>
+            <th class="check" style="width: 20px;"></th>
+        </tr>
+    </thead>
+    <thead>
+        <tr class="search_header">
+            <th class="colum_hidden">
+        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>    
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>                         
+            <th>
+                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_phone" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+            	<div class="callapp_checkbox">
+                    <input type="checkbox" id="check-all" name="check-all" />
+                    <label for="check-all"></label>
+                </div>
+            </th>
+        </tr>
+    </thead>
+</table>
+</div>
+
+<!-- jQuery Dialog -->
+<div  id="add-edit-form" class="form-dialog" title="შემომავალი ზარი">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-sms" class="form-dialog" title="ახალი SMS">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-mail" class="form-dialog" title="ახალი E-mail">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-active" class="form-dialog" title="პირის აქტივაცია">
+</div>
+
+</body>
