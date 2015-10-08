@@ -12,7 +12,7 @@
     var dialog            = "add-edit-form";
     var colum_number      = 6;
     var main_act          = "get_list";
-    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl><'gg't>";
     
    
     $(document).ready(function () {
@@ -158,7 +158,7 @@
 				            }
 				        }
 				    };
-		        GetDialog("add-edit-form-client", 500, "auto", buttons, 'left+43 top');
+		        GetDialog("add-edit-form-client", 350, "auto", buttons, 'left+43 top');
 		   break;
 		   case "add-edit-form-number":
 		    	var buttons = {
@@ -936,7 +936,7 @@
 				</tr>
 			</table>
 		
-			<table class="display" id="table_index" style="width: 1112px !important;">
+			<table class="display" id="table_index" style="width: 100%;">
 			    <thead>
 			        <tr id="datatable_header">
 			            <th>ID</th>
@@ -981,10 +981,10 @@
 	</div>
 
 	<!-- jQuery Dialog -->
-	<div  id="add-edit-form" class="form-dialog" title="კლიენტი-მანიმენი">
+	<div  id="add-edit-form" class="form-dialog" title="კლიენტი">
 	</div>
 	
-	<div  id="add-edit-form-client" class="form-dialog" title="კლიენტი">
+	<div  id="add-edit-form-client" class="form-dialog" title="საკონტაქტო პირი">
 	</div>
 	
 	<div  id="add-edit-form-project" class="form-dialog" title="პროექტი">

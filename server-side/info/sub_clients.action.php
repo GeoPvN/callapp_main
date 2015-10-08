@@ -114,7 +114,7 @@ function GetPage($res,$increment)
 	$data  .= '
 	
 	<div id="dialog-form">
-	    <fieldset style="width: 450px;  float: left;">
+	    <fieldset>
 	       <legend>ძირითადი ინფორმაცია</legend>
 			<table class="dialog-form-table">
 	           <tr>
