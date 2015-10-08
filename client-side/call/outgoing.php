@@ -4,17 +4,37 @@
 </style>
 <script type="text/javascript">
     var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
+    var aJusURL_Actived   = "server-side/call/outgoing/outgoing_actived.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 9;
+    var colum_number      = 8;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
      
     $(document).ready(function () {
+    	param 			= new Object();
+		param.act		= "ststus";
+		param.type      = 1;
+        $.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $("#tab_id").html(data.page);
+                $("#operator_id").html(data.user);
+                $('#operator_id,#tab_id').trigger("chosen:updated");
+            }
+        }).done(function() {
     	GetButtons("add_button","delete_button");
-    	LoadTable('index',colum_number,main_act,change_colum_main,'status=1');
-    	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+    	if($("#tab_id").val() == 1){
+        	$('#table_index').css('display','none');
+     	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
+     	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+    	}else{
+    		$('#table_actived').css('display','none');
+    		LoadTable('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
+        	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+    	}
     	$('#operator_id,#tab_id,#task_type').chosen({ search_contains: true });
     	$('.callapp_filter_body').css('display','none');
     	GetDate('start_date');
@@ -22,27 +42,18 @@
 
     	    $.session.clear();
     	    
-    	    param 			= new Object();
-    		param.act		= "ststus";
-    		param.type      = 1;
-            $.ajax({
-                url: aJaxURL,
-                data: param,
-                success: function(data) {
-                    $("#tab_id").html(data.page);
-                    $('#operator_id,#tab_id').trigger("chosen:updated");
-                }
-            });
+        });
     });
 
-    function LoadTable(tbl,col_num,act,change_colum,custom_param){
-    	GetDataTable(tName+tbl, aJaxURL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
+    function LoadTable(tbl,col_num,act,change_colum,custom_param,URL){
+    	GetDataTable(tName+tbl, URL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
 	    	}, 50);
     }
     
     function LoadDialog(fName){
+if(fName=='add-edit-form'){
     	var buttons = {
 				"save": {
 		            text: "შენახვა",
@@ -56,9 +67,9 @@
 		            }
 		        }
 		    };
-        GetDialog(fName, 575, "auto", buttons, 'left+43 top');
-        LoadTable('sms',5,'get_list',"<'F'lip>");
-        LoadTable('mail',5,'get_list',"<'F'lip>");
+        GetDialog(fName, 585, "auto", buttons, 'left+43 top');
+        LoadTable('sms',5,'get_list',"<'F'lip>",'',aJaxURL);
+        LoadTable('mail',5,'get_list',"<'F'lip>",'',aJaxURL);
         $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
         GetDate2("date_input");
         GetDate1("task_end_date");
@@ -69,6 +80,33 @@
 		$('#next_quest').attr('next_id',$('.1').attr('id'));
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
+}
+if(fName=='add-edit-form-actived'){
+	var buttons = {
+			"save": {
+				 text: "აქტივაცია",
+		         id: "actived-btn"
+	        },
+        	"cancel": {
+	            text: "დახურვა",
+	            id: "cancel-dialog",
+	            click: function () {
+	            	$(this).dialog("close");
+	            }
+	        }
+	    };
+    GetDialog('add-edit-form-actived', 225, "auto", buttons, 'left+43 top');
+    
+    $.ajax({
+        url: aJusURL_Actived,
+        data: "act=get_user",
+        success: function(data) {
+            $("#user_id").html(data.user);
+        }
+    });
+    LoadTable('actived_in',7,main_act,"<'F'lip>",'id='+$('#hidden_id').val(),aJusURL_Actived);
+    SetEvents("", "", "check-all-actived", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+}
     }
 
 
@@ -116,7 +154,17 @@
     	status      = $('#tab_id').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
-    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator);
+    	if($("#tab_id").val() == 1){
+        	$('#table_index,#table_index_wrapper').css('display','none');
+        	$('#table_actived,#table_actived_wrapper').css('display','block');
+     	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
+     	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+    	}else{
+    		$('#table_index,#table_index_wrapper').css('display','block');
+    		$('#table_actived,#table_actived_wrapper').css('display','none');
+    		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+    	}
     });
     
     $(document).on("click", ".callapp_refresh", function () {
@@ -124,7 +172,7 @@
     	status      = $('#tab_id').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
-    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator);
+    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
     });
     
     $(document).on("click", "#next_quest", function () {
@@ -186,24 +234,51 @@
     	$('.quest_body').css('display','none');
     	$('.'+back_id).css('display','block');
     });
+    
+    $(document).on("click", "#actived-btn", function () {
 
-    $(document).on("click", "#person_active", function () {
-    	var buttons = {
-	        	"cancel": {
-		            text: "დახურვა",
-		            id: "cancel-dialog",
-		            click: function () {
-		            	$(this).dialog("close");
-		            }
-		        }
-		    };
-        GetDialog("add-edit-form-active", 360, "auto", buttons);
+
+    	if($('#chose_actived_form').val()==1){
+        
+        	param 			     = new Object();
+    		param.act		     = "save_actived";
+    		param.actived_number = $("#actived_number").val();
+    		param.user_id		 = $("#user_id").val();
+    		
+            $.ajax({
+                url: aJusURL_Actived,
+                data: param,
+                success: function(data) {
+                	LoadTable('actived',7,main_act,"<'F'lip>",'',aJusURL_Actived);
+                	LoadTable('index',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                }
+            });
+
+    	}else{
+        	var ids = '';
+    		$("#table_actived_in .check:checked").map(function () {
+    			ids += this.value+',';
+            }).get();
+            
+    		param 			= new Object();
+    		param.act		= "save_actived_select";
+    		param.user_id	= $("#user_id").val();
+    		param.id        = ids.slice(0,-1);
+            $.ajax({
+                url: aJusURL_Actived,
+                data: param,
+                success: function(data) {
+                	LoadTable('actived',7,main_act,"<'F'lip>",'',aJusURL_Actived);
+                	LoadTable('index',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                }
+            });
+    	}
     });
     
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1200");
+        $(".add-edit-form-class").css("width", "1210");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
@@ -241,7 +316,7 @@
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();    	
-    	$(".add-edit-form-class").css("width", "741");
+    	$(".add-edit-form-class").css("width", "581");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
@@ -435,7 +510,6 @@
 		        success: function(data) {
                     $("#sms_text").val('');
                     alert('SMS წარმატებით გაიგზავნა');
-                    LoadTable1_1();
                     CloseDialog("sms_dialog");
 			    }
 		    });
@@ -477,31 +551,6 @@
             $(this).attr('who',0);
             $('#show_all_scenario span').text('ყველას ჩვენება');
         }
-    });
-    
-    $(document).on("click", "#show_flesh_panel", function () {
-        //$('#flesh_panel').css('width','425px');
-        $( "#flesh_panel" ).animate({
-            width: "425px"
-          }, 1000 );
-        $('#show_flesh_panel').attr('src','media/images/icons/arrow_right.png');
-        $('#show_flesh_panel').attr('id','show_flesh_panel_right');
-        $('#flesh_panel_table_mini').css('display','none');
-        $('#flesh_panel_table').css('display','block');
-        $('#flesh_panel').css('z-index','99');
-        $('#show_flesh_panel_right').attr('title','პანელის დაპატარევება');
-    });
-    $(document).on("click", "#show_flesh_panel_right", function () {
-        //$('#flesh_panel').css('width','150px');
-        $( "#flesh_panel" ).animate({
-            width: "150px"
-          }, 300 );
-        $('#show_flesh_panel_right').attr('src','media/images/icons/arrow_left.png');
-        $('#show_flesh_panel_right').attr('id','show_flesh_panel');
-        $('#flesh_panel_table').css('display','none');
-        $('#flesh_panel_table_mini').css('display','block');
-        $('#flesh_panel').css('z-index','99');
-        $('#show_flesh_panel').attr('title','პანელის გადიდება');
     });
 
     $(document).on("click", "#save-dialog", function () {
@@ -634,13 +683,26 @@
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('index',colum_number,main_act,change_colum_main);
+							LoadTable('index',colum_number,main_act,change_colum_main,'',aJaxURL);
 						    CloseDialog("add-edit-form");
 						}
 					}
 		    	}
 		   });
 	});
+
+    
+    $(document).on("change", "#chose_actived_form", function () {
+        if($(this).val()==1){
+        	$('#select_number').css('display','none');
+        	$('#rando_number').css('display','block');
+        	$('.add-edit-form-actived-class').css('width','225px');
+        }else{
+        	$('#select_number').css('display','block');
+        	$('#rando_number').css('display','none');
+        	$('.add-edit-form-actived-class').css('width','750px');
+        }
+    });
 </script>
 <style type="text/css">
 .callapp_head{
@@ -712,34 +774,28 @@
 .ColVis, .dataTable_buttons{
 	z-index: 50;
 }
-#table_sms_length{
+#table_sms_length,
+#table_mail_length,
+#table_actived_in_length
+{
 	position: inherit;
     width: 0px;
 	float: left;
 }
-#table_sms_length label select{
+#table_sms_length label select,
+#table_mail_length label select,
+#table_actived_in_length label select{
 	width: 60px;
     font-size: 10px;
     padding: 0;
     height: 18px;
 }
-#table_sms_paginate{
+#table_sms_paginate,
+#table_mail_paginate,
+#table_actived_in_paginate{
 	margin: 0;
 }
-#table_mail_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_mail_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
-#table_mail_paginate{
-	margin: 0;
-}
+
 #fillter:HOVER {
 	color: #FFF;
 	background: #2681DC;
@@ -775,16 +831,12 @@
         </span>
         <span>
         <select id="operator_id" style="width: 240px;">
-        <option value="0">ყველა ოპერატორი</option>
-        <option>დათო პაპალაშვილი</option>
         </select>
         </span>
         <span>
         <button id="fillter" style="padding: 2px 4px 4px 4px; border: 1px solid; margin: 0;">გაფილტვრა</button>
         </span>
-        <span>
-        <button id="person_active" style="margin-top: 10px;padding: 2px 4px 4px 4px;border: 1px solid;">პირის აქტივაცია</button>
-        </span>
+        
     </div>
 </div>
 <table id="table_right_menu">
@@ -847,6 +899,39 @@
         </tr>
     </thead>
 </table>
+<table class="display" id="table_actived">
+    <thead>
+        <tr id="datatable_header">
+            <th>ID</th>
+            <th style="width: 20px;">№</th>
+            <th style="width: 100%;">შექმნის თარიღი</th>
+            <th style="width: 100%;">პროექტის სახელი</th>
+            <th class="check" style="width: 20px;"></th>
+        </tr>
+    </thead>
+    <thead>
+        <tr class="search_header">
+            <th class="colum_hidden">
+        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>    
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+            	<div class="callapp_checkbox">
+                    <input type="checkbox" id="check-all" name="check-all" />
+                    <label for="check-all"></label>
+                </div>
+            </th>
+        </tr>
+    </thead>
+</table>
 </div>
 
 <!-- jQuery Dialog -->
@@ -859,7 +944,7 @@
 <div  id="add-edit-form-mail" class="form-dialog" title="ახალი E-mail">
 </div>
 <!-- jQuery Dialog -->
-<div  id="add-edit-form-active" class="form-dialog" title="პირის აქტივაცია">
+<div  id="add-edit-form-actived" class="form-dialog" title="პირის აქტივაცია">
 </div>
 
 </body>

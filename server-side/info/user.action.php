@@ -406,7 +406,7 @@ function GetPage($res = '')
 				<tr>
 					<td style="width: 170px;"><label for="comment">შენიშვნა: </label></td>
 					<td valign="top">
-						<textarea id="comment" class="idle large" cols="40" rows="4" style="width: 226px !important;">' . $res['comment'] . '</textarea>
+						<textarea id="comment" class="idle"  style="width: 226px !important;resize: vertical;">' . $res['comment'] . '</textarea>
 					</td>
 				</tr>
 			</table>

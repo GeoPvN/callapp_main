@@ -288,16 +288,52 @@ function GetPage($res,$increment){
                 <legend>ნომერი</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
                 <div class="margin_top_10">           
-	            <div id="button_area" style="margin-bottom: 40px;">
-                       <div><span style="display:inline-block;margin-bottom: 5px;">შენიშვნა</span>
-                    <input type="text" id="note" value="" style="margin-bottom: 5px;">
-                    </div>
-                    <button id="download_exel">შაბლონის ჩამოტვირთვა</button>
-                    <input id="choose_file1" type="file" name="choose_file1" class="input" style="display: none;">
-    				<button id="choose_button1" style="display:none;">აირჩიეთ ფაილი</button>
-					<button id="add_import">დამატება</button>
-                    <button id="delete_import">წაშლა</button>
+	            <div id="button_area">
+                    <button id="add_import_actived">აქტივაცია</button>
+                    <button id="delete_import_actived">წაშლა</button>
                 </div>
+                </div>
+				<table class="display" id="table_import_actived" >
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 70px;">სახელი</th>
+                            <th style="width: 70px;">გვარი</th>
+                            <th style="width: 70px;">პირადი ნომერი</th>
+                            <th style="width: 95px;">ტელეფონი 1</th>
+                            <th style="width: 95px;">ტელეფონი 2</th>
+							<th style="width: 11px;" class="check"></th>
+						</tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+							<th>
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-import-actived" name="check-all" />
+				                    <label style="margin-top: 3px;" for="check-all-import-actived"></label>
+				                </div>
+				            </th>
+						</tr>
+                    </thead>
+                </table>
 	            </div>
 		</fieldset>
     	</div>

@@ -53,5 +53,14 @@ class sql_db {
 
 	$db = new sql_db ( "192.168.11.10", "root", "Gl-1114", "callapp_main" );
 
+	
+	function GetUserGroup($user_id){
+	    $req = mysql_fetch_array(
+	           mysql_query("SELECT `group_id`
+                            FROM   `users`
+                            WHERE  `id` = $user_id")
+	           );
+	    return $req[0];
+	}
 
 ?>

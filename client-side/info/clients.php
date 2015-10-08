@@ -8,6 +8,7 @@
     var aJaxURL_client    = "server-side/info/sub_clients.action.php";
     var aJaxURL_sub_project    = "server-side/info/sub_project.action.php";
     var aJaxURL_template    = "server-side/info/template.action.php";
+    var aJaxURL_template_actived    = "server-side/info/template_actived.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tbName1			  = "tabs1";
     var tName             = "table_";
@@ -90,11 +91,14 @@
 		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left+43 top');
 		        LoadTable('number',5,'get_list_number',"<'F'lip>");
 		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
-		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import").button(); 
+		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import, #delete_import_actived, #add_import_actived").button(); 
 		        GetDate1('project_add_date');
 
 		        LoadTable('import',6,'get_list_import',"<'F'lip>");
 		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template);
+
+		        LoadTable('import_actived',6,'get_list_import_actived',"<'F'lip>");
+		        SetEvents("add_import_actived", "delete_import_actived", "check-all-import-actived", tName+'import_actived', "add-edit-form-import-actived", aJaxURL_template_actived);
 		        if($('#scenario_id').val() != 0){
 		            $('#choose_button1,#add_import').css('display','inline-block');
 		        }else{
@@ -126,6 +130,22 @@
 				        }
 				    };
 		        GetDialog("add-edit-form-import", 450, "auto", buttons, 'left+43 top');
+		   break;
+		   case "add-edit-form-import-actived":
+		    	var buttons = {
+						"save": {
+				            text: "შენახვა",
+				            id: "save-template-actived"
+				        },
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+		        GetDialog("add-edit-form-import-actived", 450, "auto", buttons, 'left+43 top');
 		   break;
 		   case "add-edit-form-client":
 		    	var buttons = {
@@ -287,6 +307,34 @@
 					}else{
 						LoadTable('import',6,'get_list_import',"<'F'lip>");
 						$("#add-edit-form-import").dialog("close");
+					}
+				}
+		    }
+	    });
+		
+    });
+
+    $(document).on("click", "#save-template-actived", function () {
+    	param = new Object();
+
+        //Action
+    	param.act	            = "save-import-actived";
+	    param.hidden_project_id	= $("#hidden_project_id").val();
+	    param.project_hidden_id = $("#project_hidden_id").val();
+	    param.actived_number    = $("#actived_number").val();
+	    param.scenario_id       = $("#scenario_id").val();
+	   
+	   
+	    $.ajax({
+	        url: aJaxURL_template_actived,
+		    data: param,
+	        success: function(data) {
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						LoadTable('import_actived',6,'get_list_import_actived',"<'F'lip>");
+						$("#add-edit-form-import-actived").dialog("close");
 					}
 				}
 		    }
@@ -747,6 +795,7 @@
 #table_project_length,
 #table_number_length,
 #table_import_length,
+#table_import_actived_length,
 #table_client_length{
 	position: inherit;
     width: 0px;
@@ -755,6 +804,7 @@
 #table_project_length label select,
 #table_number_length label select,
 #table_import_length label select,
+#table_import_actived_length label select,
 #table_client_length label select{
 	width: 60px;
     font-size: 10px;
@@ -767,7 +817,8 @@
 	margin-left: 45px;
 }
 #table_number_paginate,
-#table_import_paginate{
+#table_import_paginate,
+#table_import_actived_paginate{
 	margin-left: -22px;
 }
 .callapp_head{
@@ -945,7 +996,10 @@
 	<div  id="add-edit-form-number" class="form-dialog" title="ნომერი">
 	</div>
 	
-	<div  id="add-edit-form-import" class="form-dialog" title="ნომერი">
+	<div  id="add-edit-form-import" class="form-dialog" title="იმპორტი">
+	</div>
+	
+	<div  id="add-edit-form-import-actived" class="form-dialog" title="აქტივაცია">
 	</div>
 	
 	<div  id="add-edit-form-img" class="form-dialog" title="ფოტო">

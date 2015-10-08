@@ -24,7 +24,7 @@ switch ($action) {
                         				if(type = 1,'გამავალი','დავალება') AS `type`,
                         				`name`
                                 FROM    `task_status`
-                                WHERE   `actived` = 1");
+                                WHERE   `actived` = 1 AND id != 1");
 
 		$data = array(
 				"aaData"	=> array()

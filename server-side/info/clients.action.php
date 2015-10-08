@@ -121,6 +121,42 @@ switch ($action) {
         }
     
         break;
+    case 'get_list_import_actived':
+        $count = 		$_REQUEST['count'];
+        $hidden = 		$_REQUEST['hidden'];
+        $rResult = mysql_query("SELECT 	outgoing_campaign_detail.`id`,
+                        				phone_base_detail.`firstname`,
+                        				phone_base_detail.`lastname`,
+                        				phone_base_detail.`pid`,
+                        				phone_base_detail.`phone1`,
+                        				phone_base_detail.`phone2`
+                                FROM `outgoing_campaign`
+                                JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+                                JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+                                WHERE project_id = $_REQUEST[project_id] AND outgoing_campaign_detail.actived = 1");
+         
+        $data = array(
+            "aaData"	=> array()
+        );
+    
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                if($i == ($count - 1)){
+                    $row[] = '<div class="callapp_checkbox">
+                          <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                          <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                      </div>';
+                }
+            }
+            $data['aaData'][] = $row;
+        }
+    
+        break;
     case 'get_list_person':
     	$count = 		$_REQUEST['count'];
     	$hidden = 		$_REQUEST['hidden'];
