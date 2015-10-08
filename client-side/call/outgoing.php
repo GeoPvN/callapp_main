@@ -705,15 +705,6 @@ if(fName=='add-edit-form-actived'){
     });
 </script>
 <style type="text/css">
-.callapp_head{
-	font-family: pvn;
-	font-weight: bold;
-	font-size: 20px;
-	color: #2681DC;
-}
-.callapp_head_hr{
-	border: 1px solid #2681DC;
-}
 .callapp_refresh{
     padding: 5px;
     border-radius:3px;

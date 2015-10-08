@@ -548,7 +548,9 @@ function GetPage($res,$increment){
 			</tr>
 			
 			</table>
-	    	<div class="margin_top_10">           
+	                   <fieldset>
+	                   <legend>საკონტაქტო პირები</legend>
+	    	<div class="">           
 	            <div id="button_area">
                     <button id="add_client">დამატება</button>
 					<button id="delete_client">წაშლა</button>
@@ -595,6 +597,7 @@ function GetPage($res,$increment){
                     </thead>
                 </table>
 	            </div>
+	             </fieldset>       
          </fieldset>
 	    
 	    

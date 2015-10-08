@@ -1,26 +1,11 @@
 <html>
 <head>
-	<style type="text/css">
-<?php                    		
-if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
-   
- 
-}else{
-     echo '.dataTable_buttons{
-            display:none;
-        }';
-}
-?>
-	.hidden{
-		display : none;
-	}
-	</style>
 	<script type="text/javascript">
 		var aJaxURL	= "server-side/info/group.action.php";		//server side folder url
 		var tName	= "example";											//table name
 		var fName	= "add-edit-form";										//form name
 		var img_name		= "0.jpg";
-		var change_colum_main = "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>";
+		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 
 		$(document).ready(function () {
 			LoadTable();
@@ -34,6 +19,9 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 		function LoadTable(){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
 			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "asc", "", change_colum_main);
+			setTimeout(function(){
+		    	$('.ColVis, .dataTable_buttons').css('display','none');
+		    }, 10);
 		}
 
 		function LoadDialog(){
@@ -90,45 +78,67 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 
 
 		});
+		
+		$(document).on("click", "#show_copy_prit_exel", function () {
+	        if($(this).attr('myvar') == 0){
+	            $('.ColVis,.dataTable_buttons').css('display','block');
+	            $(this).css('background','#2681DC');
+	            $(this).children('img').attr('src','media/images/icons/select_w.png');
+	            $(this).attr('myvar','1');
+	        }else{
+	        	$('.ColVis,.dataTable_buttons').css('display','none');
+	        	$(this).css('background','#FAFAFA');
+	            $(this).children('img').attr('src','media/images/icons/select.png');
+	            $(this).attr('myvar','0');
+	        }
+	    });
 
     </script>
 </head>
 
 <body>
-    <div id="dt_example" class="ex_highlight_row">
-        <div id="container">
-            <div id="dynamic">
-                <h2 align="center">ჯგუფები</h2>
-	        	<div id="button_area">
-	        		<button id="add_button">დამატება</button><button id="delete_button" style="visibility: hidden;">წაშლა</button>
-	        	</div>
-                <table class="display" id="example">
-                    <thead>
-                        <tr id="datatable_header">
-                            <th>ID</th>
-                            <th style="width: 100%">ჯგუფის სახელი</th>
-                            <th class="check">#</th>
-                        </tr>
-                    </thead>
-                    <thead>
-                        <tr class="search_header">
-                            <th class="colum_hidden">
-                            	<input type="text" name="search_id" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_address" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                            	<input type="checkbox" name="check-all" id="check-all">
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="spacer">
-            </div>
-        </div>
+<div id="tabs" style="width: 90%">
+<div class="callapp_head">ჯგუფები<hr class="callapp_head_hr"></div>
+    
+    <div style="margin-top: 15px;">
+        <button id="add_button">დამატება</button>
+        <button id="delete_button">წაშლა</button>
     </div>
+    
+<div class="callapp_filter_show">
+<table id="table_right_menu">
+<tr>
+<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+</td>
+<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
+</td>
+<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
+</td>
+</tr>
+</table>
+<table class="display" id="example">
+    <thead>
+        <tr id="datatable_header">
+            <th>ID</th>
+            <th style="width: 100%">ჯგუფის სახელი</th>
+                <th class="check">#</th>
+            </tr>
+        </thead>
+        <thead>
+            <tr class="search_header">
+                <th class="colum_hidden">
+                	<input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_address" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                	<input type="checkbox" name="check-all" id="check-all">
+                </th>
+            </tr>
+        </thead>
+    </table>
+</div>
 
     <!-- jQuery Dialog -->
     <div id="add-edit-form" class="form-dialog" title="თანამშრომლები">

@@ -1,20 +1,5 @@
 <html>
 <head>
-	<style type="text/css">
-<?php                    		
-if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
-   
- 
-}else{
-     echo '.dataTable_buttons{
-            display:none;
-        }';
-}
-?>
-	.hidden{
-		display : none;
-	}
-	</style>
 	<script type="text/javascript">
 		var aJaxURL	= "server-side/info/user.action.php";		//server side folder url
 		var upJaxURL= "server-side/upload/file.action.php";				//server side folder url
@@ -267,46 +252,6 @@ if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
 	    });
 
     </script>
-<style type="text/css">
-.callapp_head{
-	font-family: pvn;
-	font-weight: bold;
-	font-size: 20px;
-	color: #2681DC;
-}
-.callapp_head_hr{
-	border: 1px solid #2681DC;
-}
-#table_right_menu{
-    position: relative;
-    float: right;
-    width: 70px;
-    top: 28px;
-	z-index: 99;
-	border: 1px solid #E6E6E6;
-	padding: 4px;
-}
-.ColVis, .dataTable_buttons{
-	z-index: 100;
-} 
-#table_ext_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_ext_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
-#table_ext_info{
-	width: 32%;
-}
-#table_ext_paginate{
-	margin-left: 0px;
-}
-</style>
 </head>
 
 <body>

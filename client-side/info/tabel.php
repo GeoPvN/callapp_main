@@ -1,20 +1,6 @@
-<?php 
-$user_id = $_SESSION['USERID'];
-?>
+
 <html>
 <head>
-<style type="text/css">
-<?php                    		
-if($_SESSION['USERID'] == 3 || $_SESSION['USERID'] == 1 ){
-   
- 
-}else{
-     echo '.dataTable_buttons{
-            display:none;
-        }';
-}
-?>
-</style>
 		<link href="media/css/main/header.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/mainpage.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/tooltip.css" rel="stylesheet" type="text/css" />

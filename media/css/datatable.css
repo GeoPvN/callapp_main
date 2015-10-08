@@ -227,3 +227,25 @@ input{
 .callapp_checkbox input[type=checkbox]:checked + label:after {
 	opacity: 1;
 }
+
+.callapp_head{
+	font-family: pvn;
+	font-weight: bold;
+	font-size: 20px;
+	color: #2681DC;
+}
+.callapp_head_hr{
+	border: 1px solid #2681DC;
+}
+#table_right_menu{
+    position: relative;
+    float: right;
+    width: 70px;
+    top: 28px;
+	z-index: 99;
+	border: 1px solid #E6E6E6;
+	padding: 4px;
+}
+.ColVis, .dataTable_buttons{
+	z-index: 100;
+}

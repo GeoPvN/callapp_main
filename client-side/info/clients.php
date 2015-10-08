@@ -1,7 +1,4 @@
 <head>
-<style type="text/css">
-
-</style>
 <script type="text/javascript">
     var aJaxURL           = "server-side/info/clients.action.php";
     var aJaxURL_object    = "server-side/info/project.action.php";
@@ -54,7 +51,7 @@
 				            }
 				        }
 				    };
-		        GetDialog(fName, 801, "auto", buttons, 'left+43 top');
+		        GetDialog(fName, 823, "auto", buttons, 'left+43 top');
 		        GetTabs(tbName1);
 		        
 		  
@@ -64,7 +61,7 @@
 			        if(tab==1){
 				       
 			        	$("#right_side fieldset").hide();
-			        	$(".add-edit-form-class").css("width", "801");
+			        	$(".add-edit-form-class").css("width", "823");
 			            hide_right_side();
 				    }
 		        });
@@ -241,7 +238,7 @@
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();
-    	$(".add-edit-form-class").css("width", "801");
+    	$(".add-edit-form-class").css("width", "823");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
