@@ -51,7 +51,7 @@
 				            }
 				        }
 				    };
-		        GetDialog(fName, 823, "auto", buttons, 'left+43 top');
+		        GetDialog(fName, 777, "auto", buttons, 'left+43 top');
 		        GetTabs(tbName1);
 		        
 		  
@@ -61,7 +61,7 @@
 			        if(tab==1){
 				       
 			        	$("#right_side fieldset").hide();
-			        	$(".add-edit-form-class").css("width", "823");
+			        	$(".add-edit-form-class").css("width", "777");
 			            hide_right_side();
 				    }
 		        });
@@ -182,7 +182,7 @@
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1265");
+        $(".add-edit-form-class").css("width", "1235");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -238,7 +238,7 @@
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();
-    	$(".add-edit-form-class").css("width", "823");
+    	$(".add-edit-form-class").css("width", "777");
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
@@ -936,7 +936,7 @@
 				</tr>
 			</table>
 		
-			<table class="display" id="table_index">
+			<table class="display" id="table_index" style="width: 1112px !important;">
 			    <thead>
 			        <tr id="datatable_header">
 			            <th>ID</th>
@@ -968,7 +968,7 @@
 			            <th>
 			                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
 			            </th>
-			            <th>
+			            <th style="border-right: 1px solid #E6E6E6 !important;">
 			            	<div class="callapp_checkbox">
 			                    <input type="checkbox" id="check-all" name="check-all" />
 			                    <label for="check-all" style="margin-top: 3px;"></label>

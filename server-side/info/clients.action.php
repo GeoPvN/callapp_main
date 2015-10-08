@@ -484,7 +484,8 @@ function GetPage($res,$increment){
 		</ul>
 	<div id="tab-0">
 	<div id="dialog-form">
-	    <fieldset style="width: 609px;  float: left;">
+	    <div style="width: 609px;  float: left;">
+	    <fieldset>
 	       <legend>ძირითადი ინფორმაცია</legend>
 			<table>
 			<tr>
@@ -548,20 +549,21 @@ function GetPage($res,$increment){
 			</tr>
 			
 			</table>
+	                   </fieldset>
 	                   <fieldset>
 	                   <legend>საკონტაქტო პირები</legend>
-	    	<div class="">           
+	    	<div class="" style="width:587px;">           
 	            <div id="button_area">
                     <button id="add_client">დამატება</button>
 					<button id="delete_client">წაშლა</button>
                 </div>
-				<table class="display" id="table_client">
+				<table class="display" id="table_client" style="width:587px !important;">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 100px;">სახელი</th>
-                            <th style="width: 100px;">გვარი</th>
-                            <th style="width: 100px;">თანამდებობა</th>
+                            <th style="width: 91px;">სახელი</th>
+                            <th style="width: 92px;">გვარი</th>
+                            <th style="width: 92px;">თანამდებობა</th>
                             <th style="width: 90px;">მობილური</th>
 							<th style="width: 90px;">ტელეფონი</th>
 							<th style="width: 11px;" class="check"></th>
@@ -597,8 +599,9 @@ function GetPage($res,$increment){
                     </thead>
                 </table>
 	            </div>
-	             </fieldset>       
+	                  
          </fieldset>
+	                   </div>
 	    
 	    
         <div id="side_menu" style="float: left;height: 495px;width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
@@ -696,7 +699,7 @@ function GetPage($res,$increment){
                             <th style="width: 150px;">დასახელება</th>
                             <th style="width: 90px;">ტიპი</th>
                             <th style="width: 110px;">შექმნის თარიღი</th>
-                            <th style="width: 246px;">ნომრები</th>
+                            <th style="width: 234px;">ნომრები</th>
 							<th style="width: 11px;" class="check"></th>
                         </tr>
                     </thead>

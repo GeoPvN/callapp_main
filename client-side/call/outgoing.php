@@ -156,11 +156,11 @@ if(fName=='add-edit-form-actived'){
     	end_date    = $('#end_date').val();
     	if($("#tab_id").val() == 1){
         	$('#table_index,#table_index_wrapper').css('display','none');
-        	$('#table_actived,#table_actived_wrapper').css('display','block');
+        	$('#table_actived,#table_actived_wrapper').css('display','table');
      	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
      	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
     	}else{
-    		$('#table_index,#table_index_wrapper').css('display','block');
+    		$('#table_index,#table_index_wrapper').css('display','table');
     		$('#table_actived,#table_actived_wrapper').css('display','none');
     		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
@@ -841,7 +841,7 @@ if(fName=='add-edit-form-actived'){
 </tr>
 </table>
 
-<table class="display" id="table_index">
+<table class="display" id="table_index" style="width: 1059px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
@@ -881,7 +881,7 @@ if(fName=='add-edit-form-actived'){
             <th>
                 <input type="text" name="search_phone" value="ფილტრი" class="search_init" />
             </th>
-            <th>
+            <th style="border-right: 1px solid #E6E6E6 !important;">
             	<div class="callapp_checkbox">
                     <input type="checkbox" id="check-all" name="check-all" />
                     <label for="check-all"></label>
@@ -890,7 +890,7 @@ if(fName=='add-edit-form-actived'){
         </tr>
     </thead>
 </table>
-<table class="display" id="table_actived">
+<table class="display" id="table_actived" style="width: 1055px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
@@ -914,7 +914,7 @@ if(fName=='add-edit-form-actived'){
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>
-            <th>
+            <th style="border-right: 1px solid #E6E6E6 !important;">
             	<div class="callapp_checkbox">
                     <input type="checkbox" id="check-all" name="check-all" />
                     <label for="check-all"></label>
