@@ -22,9 +22,6 @@
     	margin-left: 85px !important;
     	width: 90%;
     }
-    #ctl00_ContentPlaceHolder1_tile_Declarations_NEW{
-    	z-index: -1;
-    }
     /* Define the body style */
 
 #menuwrapper ul, #menuwrapper ul li{

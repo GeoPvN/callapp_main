@@ -22,14 +22,11 @@ $result = mysql_query("
     	<link href="media/css/main/mainpage.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/tooltip.css" rel="stylesheet" type="text/css" />
     	<script type="text/javascript">
-
-        function gela(){
-            //$("#page-container").html();
-            $( "#page-container" ).load( "client-side/call/tasks.php" );
-        }
     	</script>
 </head>
 <body onselectstart='return false;'>
+<div id="tabs" style="width: 90%">
+<div class="callapp_head">მთავარი<hr class="callapp_head_hr"></div>
     <div id="ContentHolder">
         <?php 
         $user_id	= $_SESSION['USERID'];
@@ -60,7 +57,7 @@ $result = mysql_query("
             $my_task_hide = '';
                 if($row[0] < 999 && $row[0] != 8){
                     $my_task_hide = '
-     <div id="ctl00_ContentPlaceHolder1_tile_Declarations_NEW" class="tile_small" style="background: none repeat scroll 0 0 #1E94DE; position: relative; display: none1; padding: 0 !important; top: 5px;">
+     <div id="ctl00_ContentPlaceHolder1_tile_Declarations_NEW" class="tile_small" style="background: none repeat scroll 0 0 #1E94DE; position: relative; padding: 0 !important; top: 5px;">
         <p style="display: block!important;margin:8px 0 10px;">ჩემი დავალება</p>
 
             '.$new_task.'
@@ -428,6 +425,5 @@ $result = mysql_query("
         </table>
     </div>
         </div>
-        <div onclick="gela()">sdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</div>
 </body>
 </html>
