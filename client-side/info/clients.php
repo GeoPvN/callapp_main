@@ -88,7 +88,7 @@
 		        GetDialog("add-edit-form-project", 401, "auto", buttons, 'left+43 top');
 		        LoadTable('number',5,'get_list_number',"<'F'lip>");
 		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
-		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import, #delete_import_actived, #add_import_actived").button(); 
+		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import, #delete_import_actived, #add_import_actived, #open_choseFile").button(); 
 		        GetDate1('project_add_date');
 
 		        LoadTable('import',6,'get_list_import',"<'F'lip>");
@@ -235,6 +235,20 @@
     	$("#pers,#iuri").hide();
     	$("#" + id).show();
     }
+
+    $(document).on("click", "#open_choseFile", function () {
+    	var buttons = {
+						
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+		        GetDialog("add-edit-form-choseFile", 227, "auto", buttons, 'left+43 top');
+    });
     
     $(document).on("click", ".hide_said_menu", function () {
     	$("#right_side fieldset").hide();
@@ -258,7 +272,7 @@
             $(this).attr('myvar','1');
         }else{
         	$('.ColVis,.dataTable_buttons,#table_right_menu_content').css('display','none');
-        	$(this).css('background','#FFF');
+        	$(this).css('background','#E6F2F8');
             $(this).children('img').attr('src','media/images/icons/select.png');
             $(this).attr('myvar','0');
         }
@@ -384,7 +398,7 @@
 							for(i = 0;i <= data.page.length;i++){
 								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 112px;float:left;height: 25px;\">" + data.page[i].file_date + "</div>";
 								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;\">" + data.page[i].name + "</div>";
-								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+								tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "', '"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
 								
 								tbody += "<div style=\"width: 45px;\" id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">წაშლა</div>";
 								
@@ -499,9 +513,9 @@
         });
 	});
     
-    function download_file(file){
+    function download_file(file,fname){
         var download_file	= "media/uploads/file/"+file;
-    	var download_name 	= file;
+    	var download_name 	= fname;
     	SaveToDisk(download_file, download_name);
     }
     
@@ -518,7 +532,7 @@
 				for(i = 0;i <= data.page.length;i++){
 					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 112px;float:left;height: 25px;\">" + data.page[i].file_date + "</div>";
 					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;\">" + data.page[i].name + "</div>";
-					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+					tbody += "<div style=\"border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
 					tbody += "<div style=\"width: 45px;\" id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">წაშლა</div>";
 					
 					$("#paste_files").html(tbody);
@@ -765,24 +779,7 @@
 	});
 </script>
 <style type="text/css">
-.callapp_tabs{
-	margin-top: 5px;
-	margin-bottom: 5px;
-	float: right;
-	width: 100%;
-	height: 43px;
-}
-.callapp_tabs span{
-	color: #FFF;
-    border-radius: 5px;
-    padding: 5px;
-	float: right;
-	margin: 0 3px 0 3px;
-	background: #2681DC;
-	font-weight: bold;
-	font-size: 11px;
-    margin-bottom: 2px;
-}
+
 
 .callapp_tabs span close{
 	cursor: pointer;
@@ -818,97 +815,7 @@
 #table_import_actived_paginate{
 	margin-left: -22px;
 }
-.callapp_head{
-	font-family: pvn;
-	font-weight: bold;
-	font-size: 20px;
-	color: #2681DC;
-}
-.callapp_head_hr{
-	border: 1px solid #2681DC;
-}
-.callapp_refresh{
-    padding: 5px;
-    border-radius:3px;
-    color:#FFF;
-    background: #9AAF24;
-    float: right;
-    font-size: 13px;
-    cursor: pointer;
-}
-.callapp_filter_show{
-	margin-bottom: 50px;
-	float: right;
-	width: 100%;
-}
-.callapp_filter_show button{
-    margin-bottom: 10px;
-	border: none;
-    background-color: white;
-	color: #2681DC;
-	font-weight: bold;
-	cursor: pointer;
-}
-.callapp_filter_body{
-	width: 100%;
-	height: 60px;
-	padding: 5px;
-	margin-bottom: 0px;
-}
-.callapp_filter_body span {
-	float: left;
-    margin-right: 10px;
-	height: 22px;
-}
-.callapp_filter_body span label {
-	color: #555;
-    font-weight: bold;
-	margin-left: 20px;
-}
-.callapp_filter_body_span_input {
-	position: relative;
-	top: -17px;
-}
-.callapp_filter_header{
-	color: #2681DC;
-	font-family: pvn;
-	font-weight: bold;
-}
 
-#table_right_menu{
-    position: relative;
-    float: right;
-    width: 70px;
-    top: 28px;
-	z-index: 99;
-	border: 1px solid #E6E6E6;
-	padding: 4px;
-}
-#table_right_menu_content{
-	display: none;
-	height: 200px;
-	width: 130px;
-	position: absolute;
-	background: #FFF;
-	top: 163px;
-	left: 900px;
-	border: 1px solid #E6E6E6;
-	border-left: none;
-	border-radius: 0px 5px 5px 0px;
-	z-index: 1;
-}
-.ColVis, .dataTable_buttons{
-	z-index: 2;
-}
-#flesh_panel{
-	height: 630px;
-	width: 395px;
-	background: #FFF;
-    position: absolute;
-    top: 0;
-    left: 925px;
-	padding: 15px;
-}
 </style>
 </head>
 
@@ -924,13 +831,13 @@
 		  
 			<table style="margin-top: 10px;" id="table_right_menu">
 				<tr>
-					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+					<td>
 						<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
 					</td>
-					<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+					<td>
 						<img alt="log" src="media/images/icons/log.png" height="14" width="14">
 					</td>
-					<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+					<td id="show_copy_prit_exel" myvar="0">
 						<img alt="link" src="media/images/icons/select.png" height="14" width="14">
 					</td>
 				</tr>
@@ -1000,6 +907,19 @@
 	</div>
 	
 	<div  id="add-edit-form-img" class="form-dialog" title="ფოტო">
+	</div>
+	
+	<div  id="add-edit-form-choseFile" class="form-dialog" title="ფაილის არჩევა">
+    	<div id="dialog-form">
+    	    <fieldset style="width: 175px;">
+    	       <legend>ძირითადი ინფორმაცია</legend>
+            	<div><span style="display:inline-block;margin-bottom: 5px;">შენიშვნა</span>
+                <input type="text" id="note" value="" style="margin-bottom: 5px;">
+                </div>
+                <input id="choose_file1" type="file" name="choose_file1" class="input" style="display: none;">
+                <button id="choose_button1" >აირჩიეთ ფაილი</button>
+            </fieldset>
+        </div>
 	</div>
 
 </body>

@@ -50,6 +50,7 @@
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
 	    	}, 50);
+    	$('.display').css('width','100%');
     }
     
     function LoadDialog(fName){
@@ -95,7 +96,7 @@ if(fName=='add-edit-form-actived'){
 	            }
 	        }
 	    };
-    GetDialog('add-edit-form-actived', 225, "auto", buttons, 'left+43 top');
+    GetDialog('add-edit-form-actived', 750, "auto", buttons, 'left+43 top');
     
     $.ajax({
         url: aJusURL_Actived,
@@ -173,6 +174,11 @@ if(fName=='add-edit-form-actived'){
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
     	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+    	if(status == 1){
+    	    $('#table_actived_wrapper').css('display','none');
+    	}else{
+    		$('#table_index_wrapper').css('display','none');
+    	}
     });
     
     $(document).on("click", "#next_quest", function () {
@@ -270,15 +276,17 @@ if(fName=='add-edit-form-actived'){
                 success: function(data) {
                 	LoadTable('actived',7,main_act,"<'F'lip>",'',aJusURL_Actived);
                 	LoadTable('index',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                	$('#table_actived_wrapper').css('display','none');
                 }
             });
     	}
+    	$('#add-edit-form-actived').dialog('close');
     });
     
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1210");
+        $(".add-edit-form-class").css("width", "1200");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
@@ -329,7 +337,7 @@ if(fName=='add-edit-form-actived'){
             $(this).attr('myvar','1');
         }else{
         	$('.ColVis,.dataTable_buttons').css('display','none');
-        	$(this).css('background','#FAFAFA');
+        	$(this).css('background','#E6F2F8');
             $(this).children('img').attr('src','media/images/icons/select.png');
             $(this).attr('myvar','0');
         }
@@ -691,16 +699,11 @@ if(fName=='add-edit-form-actived'){
 		   });
 	});
 
-    
     $(document).on("change", "#chose_actived_form", function () {
-        if($(this).val()==1){
-        	$('#select_number').css('display','none');
-        	$('#rando_number').css('display','block');
-        	$('.add-edit-form-actived-class').css('width','225px');
+        if($(this).val()==2){
+            $('#raodenoba').css('display','none');
         }else{
-        	$('#select_number').css('display','block');
-        	$('#rando_number').css('display','none');
-        	$('.add-edit-form-actived-class').css('width','750px');
+     	    $('#raodenoba').css('display','block');
         }
     });
 </script>
@@ -803,25 +806,25 @@ if(fName=='add-edit-form-actived'){
     <div class="callapp_filter_body" myvar="0">
     <div style="float: left; width: 100%;">
         <span>
-        <label for="start_date" style="margin-left: 110px;">-დან</label>
-        <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 100px;">
+        <label for="start_date" style="margin-left: 90px;">-დან</label>
+        <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 80px;">
         </span>
         <span>
-        <label for="end_date" style="margin-left: 110px;">-მდე</label>
-        <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 100px;">
+        <label for="end_date" style="margin-left: 90px;">-მდე</label>
+        <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 80px;">
         </span>
         <span>
-        <select id="task_type" style="width: 130px;">
+        <select id="task_type" style="width: 120px;">
         <option value="1">გამავალი</option>
         <option value="2">დავალება</option>
         </select>
         </span>
         <span>
-        <select id="tab_id" style="width: 240px;">
+        <select id="tab_id" style="width: 220px;">
         </select>
         </span>
         <span>
-        <select id="operator_id" style="width: 240px;">
+        <select id="operator_id" style="width: 220px;">
         </select>
         </span>
         <span>
@@ -841,18 +844,18 @@ if(fName=='add-edit-form-actived'){
 </tr>
 </table>
 
-<table class="display" id="table_index" style="width: 1059px !important;">
+<table class="display" id="table_index">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;">№</th>
+            <th style="width: 20px;" id="first_th">№</th>
             <th style="width: 100%;">თარიღი</th>
             <th style="width: 100%;">ტელეფონი 1</th>
             <th style="width: 100%;">ტელეფონი 2</th>
             <th style="width: 100%;">სახელი გვარი</th>
             <th style="width: 100%;">პირადი ნომერი</th>
             <th style="width: 100%;">პასუხისმგებელი პირი</th>
-            <th class="check" style="width: 20px;"></th>
+            <th class="check" style="width: 20px;" id="last_th">#</th>
         </tr>
     </thead>
     <thead>
@@ -890,14 +893,14 @@ if(fName=='add-edit-form-actived'){
         </tr>
     </thead>
 </table>
-<table class="display" id="table_actived" style="width: 1055px !important;">
+<table class="display" id="table_actived" >
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;">№</th>
-            <th style="width: 100%;">შექმნის თარიღი</th>
-            <th style="width: 100%;">პროექტის სახელი</th>
-            <th class="check" style="width: 20px;"></th>
+            <th style="width: 20px;" id="first_th">№</th>
+            <th style="width: 50% !important;;">შექმნის თარიღი</th>
+            <th style="width: 100% !important;" id="jhijnik">პროექტის სახელი</th>
+            <th class="check" style="width: 20px;" id="last_th">#</th>
         </tr>
     </thead>
     <thead>

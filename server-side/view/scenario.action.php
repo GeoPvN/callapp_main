@@ -8,9 +8,9 @@ $user_id	       = $_SESSION['USERID'];
 $quest_id          = $_REQUEST['id'];
 $quest_detail_id   = $_REQUEST['quest_detail_id'];
 $add_id            = $_REQUEST['add_id'];
-$name              = $_REQUEST['name'];
-$note              = $_REQUEST['note'];
-$answer            = $_REQUEST['answer'];
+$name              = mysql_real_escape_string($_REQUEST['name']);
+$note              = mysql_real_escape_string($_REQUEST['note']);
+$answer            = mysql_real_escape_string($_REQUEST['answer']);
 $quest_type_id     = $_REQUEST['quest_type_id'];
 $quest_id1         = $_REQUEST['quest_id1'];
 

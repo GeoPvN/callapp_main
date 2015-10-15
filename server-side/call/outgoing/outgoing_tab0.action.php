@@ -87,7 +87,7 @@ switch ($action) {
                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
 	  	                        LEFT JOIN users ON outgoing_campaign_detail.responsible_person_id = users.id
                                 LEFT JOIN user_info ON users.id = user_info.user_id
-                                WHERE outgoing_campaign_detail.actived = 1 AND outgoing_campaign.project_id = 1 AND outgoing_campaign_detail.`status` = $status $operator_fillter");
+                                WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter");
 		}else{
 		    $rResult = mysql_query("SELECT 	project.`id`,
                                 		    project.`id`,
@@ -219,32 +219,7 @@ switch ($action) {
 		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
         
-		mysql_query("UPDATE `personal_info` SET
-                		    `user_id`='$user_id',
-                		    `client_person_number`='$client_person_number',
-                		    `client_person_lname`='$client_person_lname',
-                		    `client_person_fname`='$client_person_fname',
-                		    `client_person_phone1`='$client_person_phone1',
-                		    `client_person_phone2`='$client_person_phone2',
-                		    `client_person_mail1`='$client_person_mail1',
-                		    `client_person_mail2`='$client_person_mail2',
-                		    `client_person_note`='$client_person_note',
-                		    `client_person_addres1`='$client_person_addres1',
-                		    `client_person_addres2`='$client_person_addres2',
-                		    `client_number`='$client_number',
-                		    `client_name`='$client_name',
-                		    `client_phone1`='$client_phone1',
-                		    `client_phone2`='$client_phone2',
-                		    `client_mail1`='$client_mail1',
-                		    `client_mail2`='$client_mail2',
-                		    `client_city1`=NULL,
-                		    `client_city2`=NULL,
-                		    `client_addres1`=NULL,
-                		    `client_addres2`=NULL,
-                		    `client_index1`=NULL,
-                		    `client_index2`=NULL,
-                		    `client_note`='$client_note'
-        		    WHERE   `incomming_call_id`='$hidden_id'");
+		
         break;
 	default:
 		$error = 'Action is Null';
@@ -548,216 +523,61 @@ while ($row = mysql_fetch_array($query)) {
             <fieldset style="display:none;" id="info">
                 <legend>მომართვის ავტორი</legend>
 	            <span class="hide_said_menu">x</span>
-                <table>
-                    <tr style="height:20px;">
-                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" checked><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
-                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status"><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
-                    </tr>
-                </table>
+                
 	    
         	    <div id="pers">
 	               <table class="margin_top_10">
                            <tr>
-                               <td><label for="client_person_number">პირადი ნომერი</label></td>
-                               
+                               <td '.(($res['pid'] == '')?'style="display:none;"':'').'><label for="client_person_number">პირადი ნომერი</label></td>
+                               <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><label for="client_number">საიდენტ. ნომერი</label></td>
                            </tr>
                            <tr>
-                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
-                                  
+                               <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
+                               <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
                            </tr>
-                        </table>
-                        <table class="margin_top_10">
                             <tr>
-                                <td style="width: 328px;"><label for="client_lname">სახელი</label></td>
-	                            <td><label for="client_person_fname">გვარი</label></td>
+                                <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><label for="client_lname">სახელი</label></td>
+	                            <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><label for="client_person_fname">გვარი</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
-	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
+                                <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
+	                            <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
                             </tr>
-                        </table>
-                        <table class="margin_top_10">
+                        
                             <tr>
-                                <td style="width: 328px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
-        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+                                <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><label for="client_person_phone1">ტელეფონი 1</label></td>
+        	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><label for="client_person_phone2">ტელეფონი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
+                                <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
+        	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
                             </tr>
     	                    <tr>
-                                <td style="width: 328px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
-        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+                                <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
+                                <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
+        	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
                             </tr>
 	                        <tr>
-                                <td style="width: 328px;"><label for="client_person_addres1">მისამართი 1</label></td>
-        	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
+                                <td '.(($res['address1'] == '')?'style="display:none;"':'').'><label for="client_person_addres1">მისამართი 1</label></td>
+        	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><label for="client_person_addres2">მისამართი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
+                                <td '.(($res['address1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
+        	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
                             </tr>
-                        </table>                	    
-    	                <table class="margin_top_10">
+                        
         	                <tr>
-        	                    <td><label for="client_person_note">შენიშვნა</label></td>
+        	                    <td '.(($res['note'] == '')?'style="display:none;"':'').'><label for="client_person_note">შენიშვნა</label></td>
+        	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><label for="client_name">კლიენტის დასახელება</label></td>
         	                </tr>
         	                <tr>
-        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 577px;">'.$res['note'].'</textarea></td>
-        	                </tr>
-    	                </table>
-        	    </div>
-	    
-	            <div id="iuri" style="border: 1px solid #ccc;padding: 5px;margin-top: 20px;display:none;">
-        	       <span class="client_main" onclick="show_main(\'client_main\',this)" style="border: 1px solid #ccc;border-bottom: 1px solid #F9F9F9;cursor: pointer;margin-top: -30px;margin-left: -6px;display: block;width: 100px;padding: 5px;text-align: center;">ძირითადი</span>
-	               <span class="client_other" onclick="show_main(\'client_other\',this)" style="cursor: pointer;margin-top: -25px;margin-left: 108px;display: block;width: 125px;padding: 6px;text-align: center;">წარმომადგენელი</span>
-	    
-	               <div id="client_main">
-                        <table class="margin_top_10">
-                           <tr>
-                               <td><label for="client_number">საიდენტ. ნომერი</label></td>
-                               <td></td>
-                           </tr>
-                           <tr>
-                               <td><input style="width: 483px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
-                               <td><button id="client_checker" style="margin-left: 5px;">შემოწმება</button></td>
-                           </tr>
-                        </table>
-                        <table class="margin_top_10">
-                            <tr>
-                                <td><label for="client_name">დასახელება</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 565px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
-                            </tr>
-                        </table>
-                        <table class="margin_top_10">
-                            <tr>
-                                <td style="width: 312px;"><label for="client_phone1">ტელეფონი 1</label></td>
-        	                    <td><label for="client_phone2">ტელეფონი 2</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 250px;" id="client_phone1" type="text" value="'.$res['phone1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_phone2" type="text" value="'.$res['phone2'].'"></td>
-                            </tr>
-    	                    <tr>
-                                <td style="width: 312px;"><label for="client_mail1">ელ-ფოსტა 1</label></td>
-        	                    <td><label for="client_mail2">ელ-ფოსტა 2</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 250px;" id="client_mail1" type="text" value="'.$res['mail1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_mail2" type="text" value="'.$res['mail2'].'"></td>
-                            </tr>
-                        </table>
-                	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;float: left;">
-                                <legend>იურიდიული</legend>
-                                <table>
-                                <tr>
-                                    <td><label for="client_city1">ქალაქი/რაიონი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><select id="client_city1"></select></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_addres1">მისამართი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_addres1" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_index1">საფოსტო ინდექი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_index1" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-                                </table>
-                	    </fieldset>
-                	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;margin-left: 215px;">
-                                <legend>ფაქტიური</legend>
-                                <table>
-                                <tr>
-                                    <td><label for="client_city2">ქალაქი/რაიონი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><select id="client_city2"></select></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_addres2">მისამართი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_addres2" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_index2">საფოსტო ინდექი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_index2" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-                                </table>
-                	    </fieldset>
-    	               <table class="margin_top_10">
-        	               <tr>
-        	                   <td><label for="client_note">შენიშვნა</label></td>
-        	               </tr>
-        	               <tr>
-        	                   <td><textarea id="client_note" style="resize: vertical;width: 565px;">'.$res['note'].'</textarea></td>
-        	               </tr>
-    	               </table>
-	               </div>
-	    
-	               <div id="client_other" style="display:none;">
-	                   <table class="margin_top_10">
-                           <tr>
-                               <td><label for="client_person_number">პირადი ნომერი</label></td>
-                               
-                           </tr>
-                           <tr>
-                               <td><input style="width: 565px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
-                               
-                           </tr>
-                        </table>
-                        <table class="margin_top_10">
-                            <tr>
-                                <td style="width: 312px;"><label for="client_lname">სახელი</label></td>
-	                            <td><label for="client_person_fname">გვარი</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
-	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
-                            </tr>
-                        </table>
-                        <table class="margin_top_10">
-                            <tr>
-                                <td style="width: 312px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
-        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
-                            </tr>
-    	                    <tr>
-                                <td style="width: 312px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
-        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
-                            </tr>
-    	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
-                            </tr>
-                        </table>                	    
-    	                <table class="margin_top_10">
-        	                <tr>
-        	                    <td><label for="client_person_note">შენიშვნა</label></td>
-        	                </tr>
-        	                <tr>
-        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 565px;">'.$res['note'].'</textarea></td>
+        	                    <td '.(($res['note'] == '')?'style="display:none;"':'').'><textarea id="client_person_note" style="resize: vertical;width: 250px;">'.$res['note'].'</textarea></td>
+        	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
         	                </tr>
     	                </table>
-	               </div>
-	    
         	    </div>
 	    
             </fieldset>

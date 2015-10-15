@@ -66,9 +66,9 @@ function GetJs(){
 	<script type="text/javascript" src="js/jNotify.jquery.min.js"></script>
 	    <script type="text/javascript" src="js/tinymce.min.js"></script>
 	    <script type="text/javascript" src="js/chosen.jquery.min.js"></script>
-	    <script type="text/javascript" src="js/dataTables.colReorder.js"></script>
+	    <!-- <script type="text/javascript" src="js/dataTables.colReorder.js"></script> -->
 	    <script type="text/javascript" src="js/dataTables.colVis.js"></script>	    
-	    <script type="text/javascript" src="js/dataTables.colResize.js"></script> 
+	    <!-- <script type="text/javascript" src="js/dataTables.colResize.js"></script>  -->
 	    <script type="text/javascript" src="js/jquery.session.js"></script> 
 	    
 	    

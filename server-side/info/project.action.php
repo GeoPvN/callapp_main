@@ -227,16 +227,13 @@ function GetPage($res,$increment){
 	            </div>
 		</fieldset>
         <fieldset style="display:none;" id="import">
-                <legend>ნომერი</legend>
+                <legend>იმპორტი</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
                 <div class="margin_top_10">           
-	            <div id="button_area" style="margin-bottom: 40px;">
-                       <div><span style="display:inline-block;margin-bottom: 5px;">შენიშვნა</span>
-                    <input type="text" id="note" value="" style="margin-bottom: 5px;">
-                    </div>
+	            <div id="button_area">
+                       
                     <button id="download_exel">შაბლონის ჩამოტვირთვა</button>
-                    <input id="choose_file1" type="file" name="choose_file1" class="input" style="display: none;">
-    				<button id="choose_button1" style="display:none;">აირჩიეთ ფაილი</button>
+                    <button id="open_choseFile">ბაზის ატვირთვა</button>
 					<button id="add_import">დამატება</button>
                     <button id="delete_import">წაშლა</button>
                 </div>
@@ -285,7 +282,7 @@ function GetPage($res,$increment){
 		</fieldset>
                        
         <fieldset style="display:none;" id="actived">
-                <legend>ნომერი</legend>
+                <legend>აქტივაცია</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
                 <div class="margin_top_10">           
 	            <div id="button_area">

@@ -11,8 +11,8 @@ $data                       = '';
 // Incomming Call Dialog Strings
 $hidden_id      = $_REQUEST['id'];
 
-$project_number = $_REQUEST['project_number'];
-$project_queue  = $_REQUEST['project_queue'];
+$project_number = mysql_real_escape_string($_REQUEST['project_number']);
+$project_queue  = mysql_real_escape_string($_REQUEST['project_queue']);
 
 
 
@@ -39,9 +39,6 @@ switch ($action) {
 	case 'save-number':
 		$hidden_id		   = $_REQUEST['number_hidden_id'];
 		$hidden_project_id = $_REQUEST['hidden_project_id'];
-		
-		$project_number = $_REQUEST['project_number'];
-		$project_queue  = $_REQUEST['project_queue'];
 		 
 		if($hidden_id==''){
 			Addproject_number($hidden_project_id, $project_number, $project_queue);

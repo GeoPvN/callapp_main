@@ -67,6 +67,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
         "iDisplayLength": dLength[0][0],
         "aLengthMenu": dLength,                                                                         //Custom Select Options
         "sAjaxSource": aJaxURL,
+        "autoWidth": false,
         "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
         	if(!empty(total)){
 	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -100,7 +101,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
                 data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
                 success: function (data) {
                     fnCallback(data);
-                    onhovercolor('#2681DC');
+                    onhovercolor('#A3D0E4');
                     $('#'+tname+' tbody td').each(function(index){
                 		$this = $(this);
                 		var titleVal = $this.text();
@@ -185,9 +186,9 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 function onhovercolor(color){
 	var next_color = '';
 	$( ".display tbody tr" )
-	.mouseenter(function() {		
-		if($(this).css('backgroundColor') == 'rgb(249, 249, 249)'){
-			next_color = '#F9F9F9';
+	.mouseenter(function() {	
+		if($(this).css('backgroundColor') == 'rgb(230, 242, 248)'){
+			next_color = 'rgb(230, 242, 248)';
 		}else{
 			next_color = '#FFF';
 		}		
@@ -546,12 +547,12 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
         {
         	
         }else{
-        	if(!$("INPUT[name='check_"+rID+"']").is(":checked")){
-        		$(".check").prop("checked", false);
+        	if(!$("#" + tname + "  INPUT[name='check_"+rID+"']").is(":checked")){
+        		$("#" + tname + "  .check").prop("checked", false);
         	}
         }
         
-        $("INPUT[name='check_"+rID+"']").prop("checked", !$("INPUT[name='check_"+rID+"']").is(":checked"));
+        $("#" + tname + "  INPUT[name='check_"+rID+"']").prop("checked", !$("#" + tname + "  INPUT[name='check_"+rID+"']").is(":checked"));
         
     });
 
@@ -805,7 +806,8 @@ function GetSelectedTab(tbname) {
 */
 function GetDate(iname) {
     $("#" + iname).datepicker({
-        numberOfMonths: 1
+    	changeMonth: true,
+        changeYear: true
     });
 
     var date = $("#" + iname).val();
@@ -817,7 +819,9 @@ function GetDate(iname) {
 
 function GetDate1(iname) {
     $("#" + iname).datepicker({
-    	dateFormat: "yy-mm-dd"
+    	dateFormat: "yy-mm-dd",
+    	changeMonth: true,
+    	changeYear: true
     });
 
     var date = $("#" + iname).val();

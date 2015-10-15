@@ -10,26 +10,26 @@ $data                       = '';
 
 // Incomming Call Dialog Strings
 $id                 = $_REQUEST['id'];
-$note               = $_REQUEST['note'];
-$import_fname		= $_REQUEST['import_fname'];
-$import_lname		= $_REQUEST['import_lname'];
-$import_pid		    = $_REQUEST['import_pid'];
-$import_date		= $_REQUEST['import_date'];
-$import_age		    = $_REQUEST['import_age'];
-$import_sex	        = $_REQUEST['import_sex'];
-$import_phone1	    = $_REQUEST['import_phone1'];
-$import_phone2		= $_REQUEST['import_phone2'];
-$import_mail1		= $_REQUEST['import_mail1'];
-$import_mail2		= $_REQUEST['import_mail2'];
-$import_address1	= $_REQUEST['import_address1'];
-$import_address2	= $_REQUEST['import_address1'];
-$id_code            = $_REQUEST['import_id_code'];
-$client_name        = $_REQUEST['import_client_name'];
-$activities         = $_REQUEST['import_activities'];
-$import_note		= $_REQUEST['import_note'];
-$import_info1		= $_REQUEST['import_info1'];
-$import_info2		= $_REQUEST['import_info2'];
-$import_info3		= $_REQUEST['import_info3'];
+$note               = mysql_real_escape_string($_REQUEST['note']);
+$import_fname		= mysql_real_escape_string($_REQUEST['import_fname']);
+$import_lname		= mysql_real_escape_string($_REQUEST['import_lname']);
+$import_pid		    = mysql_real_escape_string($_REQUEST['import_pid']);
+$import_date		= mysql_real_escape_string($_REQUEST['import_date']);
+$import_age		    = mysql_real_escape_string($_REQUEST['import_age']);
+$import_sex	        = mysql_real_escape_string($_REQUEST['import_sex']);
+$import_phone1	    = mysql_real_escape_string($_REQUEST['import_phone1']);
+$import_phone2		= mysql_real_escape_string($_REQUEST['import_phone2']);
+$import_mail1		= mysql_real_escape_string($_REQUEST['import_mail1']);
+$import_mail2		= mysql_real_escape_string($_REQUEST['import_mail2']);
+$import_address1	= mysql_real_escape_string($_REQUEST['import_address1']);
+$import_address2	= mysql_real_escape_string($_REQUEST['import_address1']);
+$id_code            = mysql_real_escape_string($_REQUEST['import_id_code']);
+$client_name        = mysql_real_escape_string($_REQUEST['import_client_name']);
+$activities         = mysql_real_escape_string($_REQUEST['import_activities']);
+$import_note		= mysql_real_escape_string($_REQUEST['import_note']);
+$import_info1		= mysql_real_escape_string($_REQUEST['import_info1']);
+$import_info2		= mysql_real_escape_string($_REQUEST['import_info2']);
+$import_info3		= mysql_real_escape_string($_REQUEST['import_info3']);
 
 switch ($action) {
 	case 'get_add_page':

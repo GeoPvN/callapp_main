@@ -31,7 +31,7 @@
 
 			var group_id = $("#group_id").val();
 
-			GetDataTable("pages", aJaxURL, "get_pages_list&group_id=" + group_id, 2, "", 0, "", 1, "asc", "", change_colum_main);
+			GetDataTable("pages", aJaxURL, "get_pages_list&group_id=" + group_id, 2, "", 0, "", 1, "asc", "", "<'F'lip>");
 
 		}
 
@@ -87,7 +87,7 @@
 	            $(this).attr('myvar','1');
 	        }else{
 	        	$('.ColVis,.dataTable_buttons').css('display','none');
-	        	$(this).css('background','#FAFAFA');
+	        	$(this).css('background','#E6F2F8');
 	            $(this).children('img').attr('src','media/images/icons/select.png');
 	            $(this).attr('myvar','0');
 	        }
@@ -108,11 +108,11 @@
 <div class="callapp_filter_show">
 <table id="table_right_menu">
 <tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+<td><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
+<td><img alt="log" src="media/images/icons/log.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
+<td id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
 </td>
 </tr>
 </table>

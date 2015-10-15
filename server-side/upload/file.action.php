@@ -131,7 +131,7 @@ switch ($action) {
                                                 LIMIT 1"));
         while (1!=$r){
             mysql_query("INSERT INTO `phone_base_detail`
-                        (`user_id`, `phone_base_id`, `firstname`, `lastname`, `pid`, `born_date`, `age`, `sex`, `phone1`, `phone2`, `mail1`, `mail2`, `address1`, `address2`, `id_code`, `client_name`, `activities`, `note`, `info1`, `info2`, `info3`)
+                        (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `activities`, `firstname`, `lastname`, `pid`, `born_date`, `sex`,  `mail1`, `mail2`, `address1`, `address2`, `info1`, `info2`, `info3`, `note`)
                         VALUES
                         ('".$_SESSION['USERID']."', '$req[0]',
                              '".mysql_real_escape_string($data->val($r,'A'))."', '".mysql_real_escape_string($data->val($r,'B'))."',
@@ -142,8 +142,7 @@ switch ($action) {
                              '".mysql_real_escape_string($data->val($r,'K'))."', '".mysql_real_escape_string($data->val($r,'L'))."',
                              '".mysql_real_escape_string($data->val($r,'M'))."', '".mysql_real_escape_string($data->val($r,'N'))."',
                              '".mysql_real_escape_string($data->val($r,'O'))."', '".mysql_real_escape_string($data->val($r,'P'))."',
-                             '".mysql_real_escape_string($data->val($r,'Q'))."', '".mysql_real_escape_string($data->val($r,'R'))."',
-                             '".mysql_real_escape_string($data->val($r,'S'))."')") or die (err);
+                             '".mysql_real_escape_string($data->val($r,'Q'))."', '".mysql_real_escape_string($data->val($r,'R'))."')") or die (err);
             $r--;
         }
         

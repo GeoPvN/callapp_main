@@ -11,25 +11,25 @@ $data                       = '';
 // Incomming Call Dialog Strings
 //კლიენტი//
 $hidden_id       = $_REQUEST['id'];
-$identity_code   = $_REQUEST['identity_code'];
-$client_name     = $_REQUEST['client_name'];
-$jurid_address   = $_REQUEST['jurid_address'];
-$fact_address    = $_REQUEST['fact_address'];
+$identity_code   = mysql_real_escape_string($_REQUEST['identity_code']);
+$client_name     = mysql_real_escape_string($_REQUEST['client_name']);
+$jurid_address   = mysql_real_escape_string($_REQUEST['jurid_address']);
+$fact_address    = mysql_real_escape_string($_REQUEST['fact_address']);
 
 //კონტრაქტი//
-$contract_number       	= $_REQUEST['contract_number'];
-$add_date   			= $_REQUEST['add_date'];
-$contract_start_date    = $_REQUEST['contract_start_date'];
-$contract_end_date   	= $_REQUEST['contract_end_date'];
-$contract_price    		= $_REQUEST['contract_price'];
-$angarish_period       	= $_REQUEST['angarish_period'];
-$angarish_period1   	= $_REQUEST['angarish_period1'];
+$contract_number       	= mysql_real_escape_string($_REQUEST['contract_number']);
+$add_date   			= mysql_real_escape_string($_REQUEST['add_date']);
+$contract_start_date    = mysql_real_escape_string($_REQUEST['contract_start_date']);
+$contract_end_date   	= mysql_real_escape_string($_REQUEST['contract_end_date']);
+$contract_price    		= mysql_real_escape_string($_REQUEST['contract_price']);
+$angarish_period       	= mysql_real_escape_string($_REQUEST['angarish_period']);
+$angarish_period1   	= mysql_real_escape_string($_REQUEST['angarish_period1']);
 
 
 //კლიენტი//
-$invois    			= $_REQUEST['invois'];
-$migeba_chabareba   = $_REQUEST['migeba_chabareba'];
-$angarishfaqtura    = $_REQUEST['angarishfaqtura'];
+$invois    			= mysql_real_escape_string($_REQUEST['invois']);
+$migeba_chabareba   = mysql_real_escape_string($_REQUEST['migeba_chabareba']);
+$angarishfaqtura    = mysql_real_escape_string($_REQUEST['angarishfaqtura']);
 
 
 switch ($action) {
@@ -112,8 +112,8 @@ switch ($action) {
                 $row[] = $aRow[$i];
                 if($i == ($count - 1)){
                     $row[] = '<div class="callapp_checkbox">
-                              <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                              <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              <input type="checkbox" id="callapp_import_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                              <label style="margin-top: 2px;" for="callapp_import_checkbox_'.$aRow[$hidden].'"></label>
                           </div>';
                 }
             }
@@ -148,8 +148,8 @@ switch ($action) {
                 $row[] = $aRow[$i];
                 if($i == ($count - 1)){
                     $row[] = '<div class="callapp_checkbox">
-                          <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                          <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                          <input type="checkbox" id="callapp_actived_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                          <label style="margin-top: 2px;" for="callapp_actived_checkbox_'.$aRow[$hidden].'"></label>
                       </div>';
                 }
             }
@@ -183,8 +183,8 @@ switch ($action) {
     			$row[] = $aRow[$i];
     			if($i == ($count - 1)){
     				$row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                                  <input type="checkbox" id="callapp_person_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label style="margin-top: 2px;" for="callapp_person_checkbox_'.$aRow[$hidden].'"></label>
                               </div>';
     			}
     		}
@@ -222,8 +222,8 @@ switch ($action) {
     				$row[] = $aRow[$i];
     				if($i == ($count - 1)){
     					$row[] = '<div class="callapp_checkbox">
-	                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-	                                  <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+	                                  <input type="checkbox" id="callapp_project_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+	                                  <label style="margin-top: 2px;" for="callapp_project_checkbox_'.$aRow[$hidden].'"></label>
 	                              </div>';
     				}
     			}
@@ -258,8 +258,8 @@ switch ($action) {
     					$row[] = $aRow[$i];
     					if($i == ($count - 1)){
     						$row[] = '<div class="callapp_checkbox">
-		                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-		                                  <label style="margin-top: 2px;" for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+		                                  <input type="checkbox" id="callapp_number_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+		                                  <label style="margin-top: 2px;" for="callapp_number_checkbox_'.$aRow[$hidden].'"></label>
 		                              </div>';
     					}
     				}
@@ -557,7 +557,7 @@ function GetPage($res,$increment){
                     <button id="add_client">დამატება</button>
 					<button id="delete_client">წაშლა</button>
                 </div>
-				<table class="display" id="table_client" style="width:587px !important;">
+				<table class="display" id="table_client">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
@@ -692,7 +692,7 @@ function GetPage($res,$increment){
                     <button id="add_project">დამატება</button>
 					<button id="delete_project">წაშლა</button>
                 </div>
-				<table class="display" id="table_project" ">
+				<table class="display" id="table_project">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
@@ -750,7 +750,7 @@ function show_file($res){
 	while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
 		$str_file_contract .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 112px;float:left;height: 25px;">'.$file_res_incomming[file_date].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 110px;float:left;height: 25px;">'.$file_res_incomming[name].'</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 110px;float:left;height: 25px;" onclick="download_file(\''.$file_res_incomming[rand_name].'\',\''.$file_res_incomming[name].'\')">ჩამოტვირთვა</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 45px;float:left;height: 25px;" onclick="delete_file(\''.$file_res_incomming[id].'\')">წაშლა</div>';
 	}
 	$data = '<div style="margin-top: 45px;">

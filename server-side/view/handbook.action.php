@@ -5,8 +5,8 @@ $error	= '';
 $data	= '';
  
 $id		     = $_REQUEST['id'];
-$name        = $_REQUEST['name'];
-$value       = $_REQUEST['value'];
+$name        = mysql_real_escape_string($_REQUEST['name']);
+$value       = mysql_real_escape_string($_REQUEST['value']);
 $id_detail   = $_REQUEST['id_detail'];
 $id_original = $_REQUEST['id_original'];
 $new_str     = $_REQUEST['new_str'];

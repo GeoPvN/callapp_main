@@ -14,11 +14,11 @@ $hidden_id                = $_REQUEST['hidden_id'];
 $id                       = $_REQUEST['id'];
 $global_id		          = $_REQUEST['global_id'];
 $id_in_up                 = $_REQUEST['id_in_up'];
-$queue_name               = $_REQUEST['queue_name'];
-$queue_number             = $_REQUEST['queue_number'];
-$in_num_name              = $_REQUEST['in_num_name'];
-$in_num_num               = $_REQUEST['in_num_num'];
-$queue_scenar             = $_REQUEST['queue_scenar'];
+$queue_name               = mysql_real_escape_string($_REQUEST['queue_name']);
+$queue_number             = mysql_real_escape_string($_REQUEST['queue_number']);
+$in_num_name              = mysql_real_escape_string($_REQUEST['in_num_name']);
+$in_num_num               = mysql_real_escape_string($_REQUEST['in_num_num']);
+$queue_scenar             = mysql_real_escape_string($_REQUEST['queue_scenar']);
  
 
 switch ($action) {

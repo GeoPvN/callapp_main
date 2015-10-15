@@ -336,7 +336,7 @@
             $(this).attr('myvar','1');
         }else{
         	$('.ColVis,.dataTable_buttons').css('display','none');
-        	$(this).css('background','#FAFAFA');
+        	$(this).css('background','#E6F2F8');
             $(this).children('img').attr('src','media/images/icons/select.png');
             $(this).attr('myvar','0');
         }
@@ -829,15 +829,6 @@
 	font-family: pvn;
 	font-weight: bold;
 }
-#table_right_menu{
-    position: relative;
-    float: right;
-    width: 70px;
-    top: 28px;
-	z-index: 50;
-	border: 1px solid #E6E6E6;
-	padding: 4px;
-}
 
 .ColVis, .dataTable_buttons{
 	z-index: 50;
@@ -848,8 +839,9 @@
     position: absolute;
     top: 0;
     padding: 15px;
-    right: 8px;
+    right: 2px;
 	z-index: 49;
+	background: #FFF;
 }
 #table_sms_length{
 	position: inherit;
@@ -971,11 +963,11 @@
 </div>
 <table id="table_right_menu">
 <tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+<td><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
+<td><img alt="log" src="media/images/icons/log.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
+<td id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
 </td>
 </tr>
 </table>
@@ -985,13 +977,13 @@
         <tr id="datatable_header">
             <th>ID</th>
             <th style="width: 20px;">№</th>
-            <th style="width: 100%;">თარიღი</th>
-            <th style="width: 100%;">ტელეფონი</th>
-            <th style="width: 100%;">სახელი</th>
-            <th style="width: 100%;">კატეგორია 1</th>
-            <th style="width: 100%;">კატეგორია 1_1</th>            
-            <th style="width: 100%;">კატეგორია 1_1_1</th>
-            <th style="width: 100%;">კომენტარი</th>
+            <th style="width: 50px;">თარიღი</th>
+            <th style="width: 13%;">ტელეფონი</th>
+            <th style="width: 20%;">სახელი</th>
+            <th style="width: 25%;">კატეგორია 1</th>
+            <th style="width: 25%;">კატეგორია 1_1</th>            
+            <th style="width: 25%;">კატეგორია 1_1_1</th>
+            <th style="width: 50%;">კომენტარი</th>
         </tr>
     </thead>
     <thead>
@@ -1033,6 +1025,7 @@
 }
 #flesh_panel_table{
 	display: none;
+	
 }
 #flesh_panel_table td, #flesh_panel_table_mini td {
 	height: 25px;	
@@ -1051,12 +1044,6 @@
 }
 .td_center{
     text-align: center !important;
-}
-.ui-widget-header{
-	box-shadow: 0px 0px 7px #888888;
-}
-.display{
-	box-shadow: 0px -2px 10px #888888;
 }
 </style>
 <div id="flesh_panel">

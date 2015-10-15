@@ -117,17 +117,24 @@ function getpage(){
     $data = '<div id="dialog-form">
                 <fieldset>
                    <legend>ძირითადი ინფორმაცია</legend>
+        <div style="float:left;margin-left: 5px;">
+                   <label for="actived_number" style="margin-top: 5px;">ფორმირების ტიპი</label>
                    <select id="chose_actived_form" style="width: 173px;">
-                   <option value="1">რანდომი</option>
+                   <option value="1">რაოდენობრივი</option>
                    <option value="2">კონკრეტული</option>
                    </select>
+        </div>
+        <div style="float:left;margin-left: 5px;">
                    <label for="actived_number" style="margin-top: 5px;">ოპერატორი</label>
                    <select id="user_id" style="width: 173px;"></select>
-                   <div id="rando_number" style="margin-top: 5px;">
-            	   <label for="actived_number">რაოდენობა</label>
+                   
+        </div>
+        <div style="float:left;margin-left: 5px;" id="raodenoba">
+            	   <label for="actived_number" style="margin-top: 5px;">რაოდენობა</label>
                    <input type="number" id="actived_number" min="1" />
-                   </div>
-                   <div id="select_number" style="display: none; margin-top: 5px;">
+        </div>
+                   
+                   <div id="select_number" style="margin-top: 55px;">
                    <table class="display" id="table_actived_in">
                         <thead>
                             <tr id="datatable_header">
@@ -138,7 +145,7 @@ function getpage(){
                                 <th style="width: 100%;">ტელეფონი 2</th>
                                 <th style="width: 100%;">სახელი გვარი</th>
                                 <th style="width: 100%;">პირადი ნომერი</th>
-                                <th class="check" style="width: 20px;"></th>
+                                <th class="check" style="width: 20px;">#</th>
                             </tr>
                         </thead>
                         <thead>

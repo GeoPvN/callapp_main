@@ -11,12 +11,12 @@ $data                       = '';
 // Incomming Call Dialog Strings
 
 $hidden_id        = $_REQUEST['id'];
-$person_name      = $_REQUEST['person_name'];
-$person_surname   = $_REQUEST['person_surname'];
-$person_posityon  = $_REQUEST['person_posityon'];
-$person_mobile    = $_REQUEST['person_mobile'];
-$person_phone     = $_REQUEST['person_phone'];
-$person_comment   = $_REQUEST['person_comment'];
+$person_name      = mysql_real_escape_string($_REQUEST['person_name']);
+$person_surname   = mysql_real_escape_string($_REQUEST['person_surname']);
+$person_posityon  = mysql_real_escape_string($_REQUEST['person_posityon']);
+$person_mobile    = mysql_real_escape_string($_REQUEST['person_mobile']);
+$person_phone     = mysql_real_escape_string($_REQUEST['person_phone']);
+$person_comment   = mysql_real_escape_string($_REQUEST['person_comment']);
 
 
 
@@ -118,7 +118,7 @@ function GetPage($res,$increment)
 	       <legend>ძირითადი ინფორმაცია</legend>
 			<table class="dialog-form-table">
 	           <tr>
-	               <td colspan="2"><label for="incomming_cat_1_1_1">დასახელება</label></td>
+	               <td colspan="2"><label for="incomming_cat_1_1_1">სახელი</label></td>
     	       </tr>
 	           <tr>
 	               <td colspan="2"><input type="text" id="person_name" style="resize: vertical;width: 300px;" value="'.$res[name].'"></td>

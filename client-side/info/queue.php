@@ -140,30 +140,16 @@
             $(this).attr('myvar','1');
         }else{
         	$('.ColVis,.dataTable_buttons').css('display','none');
-        	$(this).css('background','#FAFAFA');
+        	$(this).css('background','#E6F2F8');
             $(this).children('img').attr('src','media/images/icons/select.png');
             $(this).attr('myvar','0');
         }
     });
 </script>
 <style type="text/css">
-.callapp_head{
-	font-family: pvn;
-	font-weight: bold;
-	font-size: 20px;
-	color: #2681DC;
-}
-.callapp_head_hr{
-	border: 1px solid #2681DC;
-}
+
 #table_right_menu{
-    position: relative;
-    float: right;
-    width: 70px;
     top: 28px;
-	z-index: 99;
-	border: 1px solid #E6E6E6;
-	padding: 4px;
 }
 .ColVis, .dataTable_buttons{
 	z-index: 100;
@@ -200,11 +186,11 @@
 <div class="callapp_filter_show">    
 <table id="table_right_menu">
 <tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+<td><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
+<td><img alt="log" src="media/images/icons/log.png" height="14" width="14">
 </td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
+<td id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
 </td>
 </tr>
 </table>

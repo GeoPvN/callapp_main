@@ -107,12 +107,8 @@
 	height: 25px;
 }
 
-.dataTables_length select{
-	border: 1px solid #E6E6E6 !important;
-}
-
 .display input{
-	border: 1px solid #E6E6E6 !important;
+	border: 1px solid #A3D0E4;
 }
 
 #dialog-form .check
