@@ -286,7 +286,7 @@ if(fName=='add-edit-form-actived'){
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1200");
+        $(".add-edit-form-class").css("width", "1210");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
