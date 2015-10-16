@@ -173,8 +173,8 @@ function getpage(){
                                 </th>
                                 <th>
                                 	<div class="callapp_checkbox">
-                                        <input type="checkbox" id="check-all-actived" name="check-all" />
-                                        <label for="check-all-actived"></label>
+                                        <input type="checkbox" id="check-all-actived_in" name="check-all" />
+                                        <label for="check-all-actived_in"></label>
                                     </div>
                                 </th>
                             </tr>

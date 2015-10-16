@@ -11,6 +11,7 @@ $open_number                = $_REQUEST['open_number'];
 $queue                      = $_REQUEST['queue'];
 $scenario_id                = $_REQUEST['scenario_id'];
 $status                     = $_REQUEST['status'];
+$outgoing_status            = $_REQUEST['outgoing_status'];
  
 // Incomming Call Dialog Strings
 $hidden_id                  = $_REQUEST['id'];
@@ -242,10 +243,10 @@ switch ($action) {
 		}
         
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
-                				`status`='$status',
+                				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
                 				`call_comment`='$call_comment'
-                     WHERE 	    `id`='1'");
+                     WHERE 	    `id`='$hidden_id'");
         break;
 	default:
 		$error = 'Action is Null';
@@ -261,7 +262,24 @@ echo json_encode($data);
 * ******************************
 */
 
+function getStatusOut($id){
 
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `task_status`
+                            WHERE   `actived` = 1 AND `type` = 1 AND id != 1");
+
+    $data .= '';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+
+    return $data;
+}
 
 function getStatus($type,$user_id){
     if((GetUserGroup($user_id) == 1 || GetUserGroup($user_id) == 2) && $type == 1){
@@ -335,6 +353,8 @@ function Getincomming($hidden_id)
 {
 	$res = mysql_fetch_assoc(mysql_query("SELECT 	`outgoing_campaign_detail`.`id`,
 	                                                `outgoing_campaign_detail`.`update_date`,
+	                                                `outgoing_campaign_detail`.`status`,
+	                                                `outgoing_campaign_detail`.`call_comment`,
                                                     `outgoing_campaign`.`project_id`,
                                                     `outgoing_campaign`.`scenario_id`,
                                                     `outgoing_campaign`.`create_date`,
@@ -383,8 +403,8 @@ function GetPage($res)
 	       <input id="scenario_id" type="hidden" value="'.$res[scenario_id].'" />
 	       <table class="dialog-form-table">
 	           <tr>
-	               <td>დამფორმირებელი : '.$res['main_username'].'</td>
-            	   <td></td>
+	               <td>დამფორმირებელი :</td>
+            	   <td>'.$res['main_username'].'</td>
             	   <td></td>
 	           </tr>
     	       <tr>
@@ -408,7 +428,13 @@ function GetPage($res)
 	               <td><input style="width: 185px;" id="scenario" type="text" value="'.$res['scenario_name'].'" disabled></td>
 	           </tr>
 	       </table> 
-	       <table class="dialog-form-table">	           
+	       <table class="dialog-form-table">
+	           <tr>
+	               <td style="width: 150px;"><label for="outgoing_status">სტატუსი</label></td>
+    	       </tr>
+	           <tr>
+	               <td><select id="outgoing_status" style="width: 100%;">'.getStatusOut($res['status']).'</select></td>
+	           </tr>	           
     	       <tr>
 	               <td style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
     	       </tr>
@@ -601,7 +627,7 @@ function GetPage($res)
 	               </tr>	              
 	               <tr>
 	                   <td style="width: 350px;"><input style="float: left;" id="task_start_date" type="text" value=""><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
-	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-მდე</label></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
@@ -626,13 +652,13 @@ function GetPage($res)
 	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
 	               </tr>
 	               <tr>
-	                   <td><label for="task_description">არწერა</label></td>
+	                   <td><label for="task_description">აღწერა</label></td>
 	               </tr>
 	               <tr>
 	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_description"></textarea></td>
 	               </tr>
 	               <tr>
-	                   <td><label for="task_note">არწერა</label></td>
+	                   <td><label for="task_note">შენიშვნა</label></td>
 	               </tr>
 	               <tr>
 	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_note"></textarea></td>

@@ -109,7 +109,7 @@ if(fName=='add-edit-form-actived'){
         }
     });
     LoadTable('actived_in',7,main_act,"<'F'lip>",'id='+$('#hidden_id').val(),aJusURL_Actived);
-    SetEvents("", "", "check-all-actived", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+    SetEvents("", "", "check-all-actived_in", tName+'actived_in', 'add-edit-form-actived', aJusURL_Actived);
 }
     }
 
@@ -910,6 +910,7 @@ if(fName=='add-edit-form-actived'){
 		param.incomming_date        = $("#incomming_date").val();
 		param.incomming_date_up		= $("#incomming_date_up").val();
 		param.call_comment		    = $("#call_comment").val();
+		param.outgoing_status       = $("#outgoing_status").val();
 
 		// Incomming Client Vars
 		param.client_status			= $('input[name=client_status]:checked').val();
@@ -941,7 +942,7 @@ if(fName=='add-edit-form-actived'){
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('index',colum_number,main_act,change_colum_main,'',aJaxURL);
+							LoadTable('index',colum_number,main_act,change_colum_main,'task_type='+$('#task_type').val()+'&status='+$('#tab_id').val(),aJaxURL);
 						    CloseDialog("add-edit-form");
 						}
 					}
