@@ -1085,6 +1085,7 @@ if(fName=='add-edit-form-actived'){
         
     </div>
 </div>
+<div class="clear"></div>
 <table id="table_right_menu">
 <tr>
 <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
