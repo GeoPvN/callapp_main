@@ -5,6 +5,8 @@
 <script type="text/javascript">
     var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
     var aJusURL_Actived   = "server-side/call/outgoing/outgoing_actived.action.php";
+    var aJaxURL_getmail	  = "includes/phpmailer/gmail.php";
+    var aJusURL_mail      = "server-side/call/Email_sender.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
@@ -15,7 +17,7 @@
     $(document).ready(function () {
     	param 			= new Object();
 		param.act		= "ststus";
-		param.type      = 1;
+		param.type_id      = 1;
         $.ajax({
             url: aJaxURL,
             data: param,
@@ -70,7 +72,7 @@ if(fName=='add-edit-form'){
 		    };
         GetDialog(fName, 585, "auto", buttons, 'left+43 top');
         LoadTable('sms',5,'get_list',"<'F'lip>",'',aJaxURL);
-        LoadTable('mail',5,'get_list',"<'F'lip>",'',aJaxURL);
+        LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
         $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
         GetDate2("date_input");
         GetDate1("task_end_date");
@@ -81,6 +83,7 @@ if(fName=='add-edit-form'){
 		$('#next_quest').attr('next_id',$('.1').attr('id'));
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
+		
 }
 if(fName=='add-edit-form-actived'){
 	var buttons = {
@@ -139,13 +142,29 @@ if(fName=='add-edit-form-actived'){
     $(document).on("change", "#task_type", function () {
     	param 			= new Object();
 		param.act		= "ststus";
-		param.type      = $(this).val();
+		param.type_id      = $(this).val();
         $.ajax({
             url: aJaxURL,
             data: param,
             success: function(data) {
                 $("#tab_id").html(data.page);
                 $('#operator_id,#tab_id').trigger("chosen:updated");
+
+                operator    = $('#operator_id').val();
+            	status      = $('#tab_id').val();
+            	start_date  = $('#start_date').val();
+            	end_date    = $('#end_date').val();
+            	if($("#tab_id").val() == 1){
+                	$('#table_index,#table_index_wrapper').css('display','none');
+                	$('#table_actived,#table_actived_wrapper').css('display','table');
+             	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
+             	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+            	}else{
+            		$('#table_index,#table_index_wrapper').css('display','table');
+            		$('#table_actived,#table_actived_wrapper').css('display','none');
+            		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+                	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+            	}
             }
         });
     });
@@ -167,7 +186,26 @@ if(fName=='add-edit-form-actived'){
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
     	}
     });
-    
+
+    $(document).on("change", "#tab_id", function () {
+        operator    = $('#operator_id').val();
+    	status      = $('#tab_id').val();
+    	start_date  = $('#start_date').val();
+    	end_date    = $('#end_date').val();
+    	$('#operator_id,#tab_id').trigger("chosen:updated");
+    	if($("#tab_id").val() == 1){
+        	$('#table_index,#table_index_wrapper').css('display','none');
+        	$('#table_actived,#table_actived_wrapper').css('display','table');
+     	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
+     	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+    	}else{
+    		$('#table_index,#table_index_wrapper').css('display','table');
+    		$('#table_actived,#table_actived_wrapper').css('display','none');
+    		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+    	}
+    });
+
     $(document).on("click", ".callapp_refresh", function () {
     	operator    = $('#operator_id').val();
     	status      = $('#tab_id').val();
@@ -286,7 +324,7 @@ if(fName=='add-edit-form-actived'){
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1210");
+        $(".add-edit-form-class").css("width", "1200");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
@@ -375,16 +413,75 @@ if(fName=='add-edit-form-actived'){
         	$('.callapp_filter_body').attr('myvar',0);
         }        
     });
+
+    $(document).on("dblclick", "#table_mail tbody tr", function () {
+    	var nTds = $("td", this);
+        var empty = $(nTds[0]).attr("class");
+
+        
+            var rID = $(nTds[0]).text();
+            
+            $.ajax({
+                url: aJusURL_mail,
+                type: "POST",
+                data: "act=send_mail&mail_id=" + rID + "&",
+                dataType: "json",
+                success: function (data) {
+                    if (typeof (data.error) != "undefined") {
+                        if (data.error != "") {
+                            alert(data.error);
+                        } else {
+                            
+                            if ($.isFunction(window.LoadDialog)) {
+                                //execute it
+                            	var buttons = {
+                        	        	"cancel": {
+                        		            text: "დახურვა",
+                        		            id: "cancel-dialog",
+                        		            click: function () {
+                        		            	$(this).dialog("close");
+                        		            }
+                        		        }
+                        		    };
+                                GetDialog("add-edit-form-mail", 640, "auto", buttons, 'center top');
+                               
+                                $("#add-edit-form-mail").html(data.page);
+                                $("#email_shablob,#choose_button_mail,#send_email").button();
+                                setTimeout(function(){ 
+                        			new TINY.editor.edit('editor',{
+                        				id:'input',
+                        				width:"580px",
+                        				height:"200px",
+                        				cssclass:'te',
+                        				controlclass:'tecontrol',
+                        				dividerclass:'tedivider',
+                        				controls:['bold','italic','underline','strikethrough','|','subscript','superscript','|',
+                        				'orderedlist','unorderedlist','|','outdent','indent','|','leftalign',
+                        				'centeralign','rightalign','blockjustify','|','unformat','|','undo','redo','n',
+                        				'font','size','|','image','hr','link','unlink','|','print'],
+                        				footer:true,
+                        				fonts:['Verdana','Arial','Georgia','Trebuchet MS'],
+                        				xhtml:true,
+                        				bodyid:'editor',
+                        				footerclass:'tefooter',
+                        				resize:{cssclass:'resize'}
+                        			}); }, 100);
+                            }
+                        }
+                    }
+                }
+            });
+        
+    });
     
-    $(document).on("click", "#add_mail", function () {
+    $(document).on("click", "#email_shablob", function () {
     	param 			= new Object();
-		param.act		= "send_mail";
+		param.act		= "send_mail_shablon";
         $.ajax({
-            url: aJaxURL,
+            url: aJusURL_mail,
             data: param,
             success: function(data) {
-                $("#add-edit-form-mail").html(data.page);
-                $("#copy_phone,#sms_shablon,#send_mail").button();
+                $("#add-edit-form-mail-shablon").html(data.page);                
             }
         });
     	var buttons = {
@@ -396,13 +493,149 @@ if(fName=='add-edit-form-actived'){
 		            }
 		        }
 		    };
-        GetDialog("add-edit-form-mail", 610, "auto", buttons);
+        GetDialog("add-edit-form-mail-shablon", 415, "auto", buttons,'center top');
+	});
+    
+    $(document).on("click", "#add_mail", function () {
+    	param 			= new Object();
+		param.act		= "send_mail";
+		param.out_id	= $('#incomming_id').val();
+        $.ajax({
+            url: aJusURL_mail,
+            data: param,
+            success: function(data) {
+                $("#add-edit-form-mail").html(data.page);
+                $("#email_shablob,#choose_button_mail,#send_email").button();
+                
+            }
+        });
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+        GetDialog("add-edit-form-mail", 640, "auto", buttons, 'center top');
+        setTimeout(function(){ 
+			new TINY.editor.edit('editor',{
+				id:'input',
+				width:"580px",
+				height:"200px",
+				cssclass:'te',
+				controlclass:'tecontrol',
+				dividerclass:'tedivider',
+				controls:['bold','italic','underline','strikethrough','|','subscript','superscript','|',
+				'orderedlist','unorderedlist','|','outdent','indent','|','leftalign',
+				'centeralign','rightalign','blockjustify','|','unformat','|','undo','redo','n',
+				'font','size','|','image','hr','link','unlink','|','print'],
+				footer:true,
+				fonts:['Verdana','Arial','Georgia','Trebuchet MS'],
+				xhtml:true,
+				bodyid:'editor',
+				footerclass:'tefooter',
+				resize:{cssclass:'resize'}
+			}); }, 100);
     });
 
+    function pase_body(id,head){
+        $('#mail_text').val(head);
+    	$("iframe").contents().find("body").html($('#'+id).html());
+    	$('#add-edit-form-mail-shablon').dialog('close');
+    }
+
+    $(document).on("click", "#send_email", function () {
+		  	param 			= new Object();
+
+		  	param.source_id         = $("#source_id").val();
+	    	param.address		    = $("#mail_address").val();
+	    	param.cc_address		= $("#mail_address1").val();
+	    	param.bcc_address		= $("#mail_address2").val();
+	    	
+	    	param.subject			= $("#mail_text").val();
+	    	param.send_mail_id	    = $("#send_email_hidde").val();
+			param.incomming_call_id	= $("#sms_inc_increm_id").val();
+			param.body				= $("iframe").contents().find("body").html();
+			
+	    	$.ajax({
+			        url: aJaxURL_getmail,
+				    data: param,
+				   
+			        success: function(data) {
+						if(data.status=='true'){
+							alert('შეტყობინება წარმატებით გაიგზავნა!');
+							$("#mail_text").val('');
+							$("iframe").contents().find("body").html('');
+							$("#file_div_mail").html('');
+							CloseDialog("add-edit-form-mail");
+							LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
+						}else{
+							alert('შეტყობინება არ გაიგზავნა!');
+						}
+					}
+			    });
+			});
+    
     function listen(file){
         var url = location.origin + "/records/" + file
         $("audio source").attr('src',url)
     }
+    
+    $(document).on("click", "#choose_button_mail", function () {
+	    $("#choose_mail_file").click();
+	});
+
+    $(document).on("change", "#choose_mail_file", function () {
+        var file_url  = $(this).val();
+        var file_name = this.files[0].name;
+        var file_size = this.files[0].size;
+        var file_type = file_url.split('.').pop().toLowerCase();
+        var path	  = "../../media/uploads/file/";
+
+        if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+            alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
+        }else if(file_size > '15728639'){
+            alert("ფაილის ზომა 15MB-ზე მეტია");
+        }else{
+        	$.ajaxFileUpload({
+		        url: "server-side/upload/file.action.php",
+		        secureuri: false,
+     			fileElementId: "choose_mail_file",
+     			dataType: 'json',
+			    data: {
+					act: "file_upload",
+					button_id: "choose_mail_file",
+					table_name: 'outgoing',
+					file_name: Math.ceil(Math.random()*99999999999),
+					file_name_original: file_name,
+					file_type: file_type,
+					file_size: file_size,
+					path: path,
+					table_id: $("#incomming_id").val(),
+
+				},
+		        success: function(data) {			        
+			        if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							var tbody = '';
+							for(i = 0;i <= data.page.length;i++){
+								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+								tbody += "<div id=\"for_div\" onclick=\"delete_file1('" + data.page[i].id + "')\">-</div>";
+								$("#paste_files1").html(tbody);								
+							}							
+						}						
+					}					
+			    }
+		    });
+        }
+    });
+    
     $(document).on("click", "#upload_file", function () {
 	    $('#file_name').click();
 	});
@@ -444,7 +677,7 @@ if(fName=='add-edit-form-actived'){
 							for(i = 0;i <= data.page.length;i++){
 								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
 								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
-								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
 								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
 								$("#paste_files").html(tbody);
 							}							
@@ -455,10 +688,31 @@ if(fName=='add-edit-form-actived'){
         }
     });
 
-    function download_file(file){
+    function download_file(file,original_name){
         var download_file	= "media/uploads/file/"+file;
-    	var download_name 	= file;
+    	var download_name 	= original_name;
     	SaveToDisk(download_file, download_name);
+    }
+
+    function delete_file1(id){
+    	$.ajax({
+            url: "server-side/upload/file.action.php",
+            data: "act=delete_file&file_id="+id+"&table_name=outgoing",
+            success: function(data) {
+               
+            	var tbody = '';
+            	if(data.page.length == 0){
+            		$("#paste_files1").html('');
+            	};
+				for(i = 0;i <= data.page.length;i++){
+					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+					$("#paste_files1").html(tbody);
+				}	
+            }
+        });
     }
     
     function delete_file(id){
@@ -474,7 +728,7 @@ if(fName=='add-edit-form-actived'){
 				for(i = 0;i <= data.page.length;i++){
 					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
 					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
-					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "')\">ჩამოტვირთვა</div>";
+					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
 					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
 					$("#paste_files").html(tbody);
 				}	
@@ -653,13 +907,9 @@ if(fName=='add-edit-form-actived'){
 		// Incomming Vars
     	param.incomming_id          = $("#incomming_id").val();
 		param.hidden_id				= $("#hidden_id").val();
-		param.incomming_phone		= $("#incomming_phone").val();
 		param.incomming_date        = $("#incomming_date").val();
-		param.incomming_cat_1		= $("#incomming_cat_1").val();
-		param.incomming_cat_1_1		= $("#incomming_cat_1_1").val();
-		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
-		param.incomming_comment		= $("#incomming_comment").val();
-		param.scenario_id           = $("#scenario_id").val();
+		param.incomming_date_up		= $("#incomming_date_up").val();
+		param.call_comment		    = $("#call_comment").val();
 
 		// Incomming Client Vars
 		param.client_status			= $('input[name=client_status]:checked').val();
@@ -802,27 +1052,29 @@ if(fName=='add-edit-form-actived'){
 <div class="callapp_head">გამავალი ზარი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
 
 <div class="callapp_filter_show">
-<button id="callapp_show_filter_button">ფილტრი v</button>
+<span>
+<select id="task_type" style="width: 120px;">
+<option value="1">გამავალი</option>
+<option value="2">დავალება</option>
+</select>
+</span>
+<span>
+<select id="tab_id" style="width: 220px;">
+</select>
+</span>
+
+<button id="callapp_show_filter_button" style="float: right;">ფილტრი v</button>
     <div class="callapp_filter_body" myvar="0">
-    <div style="float: left; width: 100%;">
+    <div style="float: right; width: 60%;">
         <span>
-        <label for="start_date" style="margin-left: 90px;">-დან</label>
+        <label for="start_date" style="margin-left: 90px;top: 4px;position: relative;">-დან</label>
         <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 80px;">
         </span>
         <span>
-        <label for="end_date" style="margin-left: 90px;">-მდე</label>
+        <label for="end_date" style="margin-left: 90px;top: 4px;position: relative;">-მდე</label>
         <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 80px;">
         </span>
-        <span>
-        <select id="task_type" style="width: 120px;">
-        <option value="1">გამავალი</option>
-        <option value="2">დავალება</option>
-        </select>
-        </span>
-        <span>
-        <select id="tab_id" style="width: 220px;">
-        </select>
-        </span>
+        
         <span>
         <select id="operator_id" style="width: 220px;">
         </select>
@@ -929,13 +1181,16 @@ if(fName=='add-edit-form-actived'){
 </div>
 
 <!-- jQuery Dialog -->
-<div  id="add-edit-form" class="form-dialog" title="შემომავალი ზარი">
+<div  id="add-edit-form" class="form-dialog" title="გამავალი ზარი">
 </div>
 <!-- jQuery Dialog -->
 <div  id="add-edit-form-sms" class="form-dialog" title="ახალი SMS">
 </div>
 <!-- jQuery Dialog -->
 <div  id="add-edit-form-mail" class="form-dialog" title="ახალი E-mail">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-mail-shablon" class="form-dialog" title="E-mail შაბლონი">
 </div>
 <!-- jQuery Dialog -->
 <div  id="add-edit-form-actived" class="form-dialog" title="პირის აქტივაცია">

@@ -64,7 +64,20 @@ switch ($action) {
 			while ($file_res_table = mysql_fetch_assoc($file_tbale)) {
 			    $str_file_table[] = array('file_date' => $file_res_table[file_date],'name' => $file_res_table[name],'rand_name' => $file_res_table[rand_name],'id' => $file_res_table[id]);
 			}
-
+            
+			if($table_name=='outgoing'){
+			    $rr = mysql_fetch_array(mysql_query("   SELECT `id`
+                                        			    FROM   `file`
+                                        			    WHERE  `".$table_name."_id` = $table_id AND `actived` = 1
+			                                            ORDER BY id DESC
+			                                            LIMIT 1"));
+			    $rrr = mysql_fetch_array(mysql_query("SELECT id AS id FROM `sent_mail` WHERE actived = 1 ORDER BY id DESC LIMIT 1"));
+			    mysql_query("INSERT INTO `send_mail_detail`
+        			        (`user_id`, `sent_mail_id`, `file_id`)
+        			        VALUES
+        			        ('$user', '$rrr[0]', '$rr[0]');");
+			}
+			
 			$data		= array('page'	=> $str_file_table);
 			
 			// for security reason, we force to remove all uploaded file

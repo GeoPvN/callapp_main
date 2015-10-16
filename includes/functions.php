@@ -24,6 +24,7 @@ function GetCss(){
 	<link rel="stylesheet" href="media/css/TableTools_JUI.css" type="text/css" />
 	<link rel="stylesheet" href="media/css/jquery-ui-timepicker-addon.css" type="text/css" />
 	<link rel="stylesheet" href="media/css/jNotify.jquery.css" type="text/css" />
+	    <link rel="stylesheet" href="media/css/tinyeditor.css" type="text/css" />
 	
 	<!-- jQuery UI -->
 	<link rel="stylesheet" href="media/themes/jQuery-UI/smoothness/jquery-ui.min.css" type="text/css" />
@@ -69,7 +70,8 @@ function GetJs(){
 	    <!-- <script type="text/javascript" src="js/dataTables.colReorder.js"></script> -->
 	    <script type="text/javascript" src="js/dataTables.colVis.js"></script>	    
 	    <!-- <script type="text/javascript" src="js/dataTables.colResize.js"></script>  -->
-	    <script type="text/javascript" src="js/jquery.session.js"></script> 
+	    <script type="text/javascript" src="js/jquery.session.js"></script>
+	    <script type="text/javascript" src="js/tinyeditor.js"></script>
 	    
 	    
 	';
