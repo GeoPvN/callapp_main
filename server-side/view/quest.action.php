@@ -64,7 +64,7 @@ switch ($action) {
 	    mysql_query("SET @i = 0;");
 	    $rResult = mysql_query("SELECT 	`question_detail`.`id`,
 	                                    @i := @i+1 AS `order_id`,
-                        				IF(answer REGEXP '[0-9]',scenario_handbook.`name`,question_detail.answer) AS `answer`,
+                        				IF(LENGTH(answer) < 4 AND answer REGEXP '[0-9]',scenario_handbook.`name`,question_detail.answer) AS `answer`,
                         				`question_type`.`name` AS `quest_type`
                                 FROM 	`question_detail`
                                 JOIN	`question_type` ON question_detail.quest_type_id = question_type.id
