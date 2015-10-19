@@ -106,6 +106,7 @@ if(fName=='add-edit-form-actived'){
         data: "act=get_user",
         success: function(data) {
             $("#user_id").html(data.user);
+            $('#chose_actived_form,#user_id').chosen({ search_contains: true });
         }
     });
     LoadTable('actived_in',7,main_act,"<'F'lip>",'id='+$('#hidden_id').val(),aJusURL_Actived);
@@ -293,8 +294,8 @@ if(fName=='add-edit-form-actived'){
                 url: aJusURL_Actived,
                 data: param,
                 success: function(data) {
-                	LoadTable('actived',7,main_act,"<'F'lip>",'',aJusURL_Actived);
-                	LoadTable('index',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                	LoadTable('actived',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                	$('#table_index_wrapper').css('display','none');
                 }
             });
 
@@ -312,9 +313,8 @@ if(fName=='add-edit-form-actived'){
                 url: aJusURL_Actived,
                 data: param,
                 success: function(data) {
-                	LoadTable('actived',7,main_act,"<'F'lip>",'',aJusURL_Actived);
-                	LoadTable('index',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
-                	$('#table_actived_wrapper').css('display','none');
+                	LoadTable('actived',colum_number,main_act,change_colum_main,'status=1',aJaxURL);
+                	$('#table_index_wrapper').css('display','none');
                 }
             });
     	}

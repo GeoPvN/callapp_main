@@ -27,7 +27,7 @@
 		function LoadDialog(){
 
 			/* Dialog Form Selector Name, Buttons Array */
-			GetDialog(fName, 479, "auto", "");
+			GetDialog(fName, 575, "auto", "");
 
 			var group_id = $("#group_id").val();
 
@@ -94,6 +94,25 @@
 	    });
 
     </script>
+    <style type="text/css">
+#pages_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#pages_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#pages_info{
+	width: 32%;
+}
+#pages_paginate{
+	margin-left: 0px;
+}
+    </style>
 </head>
 
 <body>

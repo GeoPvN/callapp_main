@@ -16,7 +16,7 @@
 		$(document).ready(function () {
 			LoadTable('index',3,'get_list',change_colum_main,'',lenght);
 			MyEvent(   aJaxURL,  'add_button', 'delete_button', 'check-all', '', 'save-dialog', 'cancel-dialog',      735,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'index',   3,        'get_list', change_colum_main,      '',        'hidden_id='+$('#hidden_id').val(),1,'','');
-	        		
+			
 		});
 
         
@@ -31,7 +31,8 @@
 		function GetTable() {
 			LoadTable('quest',4,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'fipl>",      lenght,        'id='+$("#quest_id").val(),'','dialog_check=1&add_id='+$("#quest_id").val(),'dialog_check=1&quest_detail_id='+$("#quest_id").val());
-        }
+
+	    }
 		
 	    // Add - Save
 	    $(document).on("click", "#save-dialog", function () {

@@ -4,6 +4,9 @@
 .colum_hidden{
 	display: none;
 }
+#add-edit-form{
+	overflow: visible;
+}
 </style>
 	<script type="text/javascript">
 		var aJaxURL	= "server-side/view/scenario.action.php";	//server side folder url
@@ -26,6 +29,7 @@
 			$('#tab_content_2').css('display','none');
 			$('#tab1').css('background','#FFF');
 			//$("#name, #cat, #le_cat").prop('disabled', true);
+			$('#cat,#le_cat').chosen({ search_contains: true });
         }
         
 		 function GetTable1() {
@@ -40,6 +44,7 @@
 								$("#xaiden").html(data.page);
 								$("#add-edit-form #tab_content_2").html($("#xaiden #tab_content_2").html());
 								$("#xaiden").html('');
+								$('.scenarquest').chosen({ search_contains: true });
 							}
 						}
 				    }
@@ -165,7 +170,7 @@
 			}	    					
 		});	    
 
-	    $(document).on("click", "#cat", function () {
+	    $(document).on("change", "#cat", function () {
 	    	$.ajax({
 		        url: aJaxURL,
 			    data: "act=get_scen_cat&cat_id="+$("#cat").val(),
@@ -175,6 +180,7 @@
 							alert(data.error);
 						}else{
 						    $("#le_cat").html(data.cat);
+						    $('#le_cat').trigger("chosen:updated");
 						}
 					}
 			    }

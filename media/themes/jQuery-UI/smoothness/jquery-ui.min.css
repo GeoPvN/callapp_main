@@ -577,7 +577,6 @@ button.ui-button::-moz-focus-inner {
 	border: 0;
 	padding: .5em 1em;
 	background: none;
-	overflow: auto;
 	zoom: 1
 }
 

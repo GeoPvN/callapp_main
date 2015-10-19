@@ -215,7 +215,7 @@ table.display tbody td {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 250px;
+	max-width: 100px;
 }
 
 table.display tbody td {

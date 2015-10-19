@@ -96,7 +96,7 @@ switch ($action) {
                         				phone_base_detail.`phone1`,
                         				phone_base_detail.`phone2`
                                 FROM 	`phone_base`
-                                LEFT JOIN phone_base_detail ON phone_base_detail.phone_base_id = phone_base.id AND phone_base_detail.`actived` = 1
+                                JOIN phone_base_detail ON phone_base_detail.phone_base_id = phone_base.id AND phone_base_detail.`actived` = 1
                                 WHERE   phone_base.`actived` = 1");
          
         $data = array(

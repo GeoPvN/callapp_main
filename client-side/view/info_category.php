@@ -23,6 +23,8 @@
 		
 		function LoadDialog(fName){
 			GetDialog(fName, 500, "auto", '', 'center top');
+			$('#parent_id,#client_id').chosen({ search_contains: true });
+			$('#add-edit-form, .add-edit-form-class').css('overflow','visible');
 		}
 		
 	    // Add - Save
@@ -32,7 +34,8 @@
 		    param.act		="save_category";
 	    	param.id		= $("#cat_id").val();
 	    	param.cat		= $("#category").val();
-	    	param.par_id	= $("#parent_id").val();
+	    	param.parent_id	= $("#parent_id").val();
+	    	param.client_id = $('#client_id').val();
 			
 			if(param.cat == ""){
 				alert("შეავსეთ პროდუქტის კატეგორია!");
@@ -45,8 +48,8 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable();
-				        		CloseDialog(fName);
+								LoadTable('index',colum_number,main_act,change_colum_main);
+				        		CloseDialog(dialog);
 							}
 						}
 				    }

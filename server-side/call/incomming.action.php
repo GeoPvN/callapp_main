@@ -681,7 +681,7 @@ function GetPage($res,$increment,$open_number,$queue)
 	               </tr>	              
 	               <tr>
 	                   <td style="width: 350px;"><input style="float: left;" id="task_start_date" type="text" value=""><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
-	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	                   <td><input style="float: left;" id="task_end_date" type="text" value=""><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-მდე</label></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
@@ -706,13 +706,13 @@ function GetPage($res,$increment,$open_number,$queue)
 	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
 	               </tr>
 	               <tr>
-	                   <td><label for="task_description">არწერა</label></td>
+	                   <td><label for="task_description">აღწერა</label></td>
 	               </tr>
 	               <tr>
 	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_description"></textarea></td>
 	               </tr>
 	               <tr>
-	                   <td><label for="task_note">არწერა</label></td>
+	                   <td><label for="task_note">შენიშვნა</label></td>
 	               </tr>
 	               <tr>
 	                   <td colspan=2><textarea style="resize: vertical;width: 589px;" id="task_note"></textarea></td>
@@ -853,7 +853,7 @@ while ($row = mysql_fetch_array($query)) {
 		    $data .= '<div class="quest_body '.$row[5].'" id="'.$row[0].'">
 		            <table class="dialog-form-table">
 		    		<tr>
-						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img style="border: none;padding: 0;margin-left: 8px;margin-top: -2px;" src="media/images/icons/kitxva.png" alt="14 ICON" height="14" width="14" title="'.$row[2].'" ></td>
+						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img style="border: none;padding: 0;margin-left: 8px;margin-top: -7px; cursor: help;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24" title="'.$row[2].'" ></td>
 		                </tr>
 		                    ';
 		    

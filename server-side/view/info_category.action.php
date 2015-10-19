@@ -58,7 +58,7 @@ switch ($action) {
         break;
     case 'save_category':
 		$cat_id 		= $_REQUEST['id'];
-		$par_id 		= $_REQUEST['par_id'];
+		$par_id 		= $_REQUEST['parent_id'];
 		
     	$cat_name		= htmlspecialchars($_REQUEST['cat'], ENT_QUOTES);
 		
@@ -95,9 +95,9 @@ echo json_encode($data);
 function AddCategory($cat_name, $par_id)
 {
 	mysql_query("INSERT INTO `info_category`
-					(`name`, `parent_id`) 
+					(`name`, `parent_id`, `client_id`) 
 				 VALUES
-					('$cat_name', $par_id)");
+					('$cat_name', $par_id, '$_REQUEST[client_id]')");
 }
 
 function SaveCategory($cat_id, $cat_name, $par_id)
@@ -106,7 +106,8 @@ function SaveCategory($cat_id, $cat_name, $par_id)
 	    			`info_category`
 				 SET
 				    `name` = '$cat_name',
-				    `parent_id`	= $par_id
+				    `parent_id`	= $par_id,
+	                `client_id` = '$_REQUEST[client_id]'
 				 WHERE
 					`id` = $cat_id");
 }
@@ -196,15 +197,15 @@ function GetPage($res = '')
 					</td>
 				</tr>
 				<tr>
-					<td style="width: 170px;"><label for="category">კატეგორია</label></td>
+					<td style="width: 170px;"><label for="parent_id">კატეგორია</label></td>
 					<td>
-						<select id="parent_id" class="idls large">' . Get_Category($res['client_id'])  . '</select>
+						<select id="parent_id" class="idls large">' . Get_Category($res['parent_id'])  . '</select>
 					</td>
 				</tr>
 				<tr>
-					<td style="width: 170px;"><label for="category">კატეგორია</label></td>
+					<td style="width: 170px;"><label for="client_id">კლიენტი</label></td>
 					<td>
-						<select id="parent_id" class="idls large">' . Get_Client($res['parent_id'])  . '</select>
+						<select id="client_id" class="idls large">' . Get_Client($res['client_id'])  . '</select>
 					</td>
 				</tr>
 			</table>

@@ -62,6 +62,7 @@
 					$("#is_user").val();
 				}
 			});
+			$('#position').chosen({ search_contains: true });
 		}
 
 	    // Add - Save

@@ -353,7 +353,9 @@ function GetPage($res = '')
 			    }
 			
 			if($_REQUEST['dialog_check'] == 1){
-			    $data .=  ' <table class="dialog-form-table">  
+			    $data .=  ' <script>
+			        $("#quest_type_id").chosen({ search_contains: true });
+			         $("#add-edit-form-answer, .add-edit-form-answer-class").css("overflow","visible");</script><table class="dialog-form-table">  
 			                    <tr>
                 					<td style="width: 170px;"><label for="quest_type_id">ტიპი</label></td>
                 					<td>

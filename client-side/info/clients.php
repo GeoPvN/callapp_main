@@ -70,6 +70,7 @@
 		        SetEvents("add_project", "delete_project", "check-all-project", tName+'project', "add-edit-form-project", aJaxURL_object);
 		        SetEvents("add_client", "delete_client", "check-all-client", tName+'client', "add-edit-form-client", aJaxURL_client);
 		        $("#choose_button, #upload_file, #client_check, #add_client, #delete_client, #add_project, #delete_project, #choose_buttondisabled").button(); 
+		        
 	       break;
 		   case "add-edit-form-project":
 		    	var buttons = {
@@ -92,7 +93,7 @@
 		        GetDate1('project_add_date');
 
 		        LoadTable('import',6,'get_list_import',"<'F'lip>");
-		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template);
+		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template,'',tName+'import',colum_number,'get_list_import',change_colum_main);
 
 		        LoadTable('import_actived',6,'get_list_import_actived',"<'F'lip>");
 		        SetEvents("add_import_actived", "delete_import_actived", "check-all-import-actived", tName+'import_actived', "add-edit-form-import-actived", aJaxURL_template_actived);
@@ -235,7 +236,12 @@
     	$("#pers,#iuri").hide();
     	$("#" + id).show();
     }
-
+    $(document).on("keyup", "#import_pid", function () {
+    	if($(this).val().length >11){
+    	    alert('პირადი ნომერი არ უნდა იყოს 11 ციფრზე მეტი!');
+    	}
+    });
+    
     $(document).on("click", "#open_choseFile", function () {
     	var buttons = {
 						
