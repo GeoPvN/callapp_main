@@ -22,6 +22,7 @@
         
 		function LoadTable(tbl,col_num,act,change_colum,other_act,lenght){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
+			
 			GetDataTable(tName+tbl, aJaxURL, act, col_num, other_act, 0, '', 0, "asc", '', change_colum);
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');    	    	
@@ -29,8 +30,14 @@
 		}
 
 		function GetTable() {
+			var questId = ''
+				if($("#quest_id").val() == ''){
+					questId = $("#delete_id").val();
+				}else{
+					questId = $("#quest_id").val();
+				}
 			LoadTable('quest',4,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
-			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'fipl>",      lenght,        'id='+$("#quest_id").val(),'','dialog_check=1&add_id='+$("#quest_id").val(),'dialog_check=1&quest_detail_id='+$("#quest_id").val());
+			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable_detail', 'get_edit_page',  'quest',   4,        'get_list_detail', "<'F'lip>",      '',        'id='+questId,'','dialog_check=1&add_id='+$("#quest_id").val(),'dialog_check=1&quest_detail_id='+$("#quest_id").val());
 
 	    }
 		

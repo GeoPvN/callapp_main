@@ -603,7 +603,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
 function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID, closeButtonID, DialogHeight, DialogPosition, DialogOpenAct, DeleteAct, EditDialogAct, TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam,InDialogTable,CustomAddAct,CustomEditAct){
 	GetButtons(addButton,deleteButton);
 	
-	$(document).on("click", "#" + addButton, function () {
+	$("#" + addButton).click(function() {
     	var buttons = {
 				"save": {
 		            text: "შენახვა",
@@ -629,8 +629,8 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
             }
         });
     });
-
-    $(document).on("click", "#" + deleteButton, function () {
+	
+	$("#" + deleteButton).click(function() {
     	var data = $(".check:checked").map(function () {
             return this.value;
         }).get();
@@ -646,7 +646,8 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
 	                    if (data.error != "") {
 	                        alert(data.error);
 	                    } else {
-	                    	LoadTable(TableID, ColumNum, TableAct, TableFunction, TablePageNum, TableOtherParam);	                        
+	                    	//alert(TableOtherParam)
+	                        LoadTable(TableID, ColumNum, TableAct, TableFunction, TableOtherParam);
 	                    }
                 }
             });

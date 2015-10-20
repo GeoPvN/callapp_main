@@ -110,13 +110,13 @@ switch ($action) {
 		
 		break;
 	case 'disable':
-	    if($quest_detail_id != ''){
-		    disable_det($quest_detail_id);
-	    }else{
-	        disable($quest_id);
-	    }
+	    disable($quest_id);
 
 		break;
+	case 'disable_detail':
+	    disable_det($quest_id);
+	
+	    break;
 	case 'get_product_info':
 		    $name 			= $_REQUEST[name];
 		    $res 			= GetProductInfo($name);
@@ -397,10 +397,12 @@ function GetPage($res = '')
                 				</tr>
                 			</table>';
 			}
+			$quest_id_inc = mysql_fetch_row(mysql_query("SELECT id+1 FROM question ORDER BY id DESC LIMIT 1"));
 			$data .=  '<!-- ID -->
 			<input type="hidden" id="quest_id" value="' . $res['quest_id'] . '" />
 			<input type="hidden" id="quest_detail_id" value="' . $res['quest_detail_id'] . '" />
 			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
+			<input type="hidden" id="delete_id" value="' . $quest_id_inc[0] . '" />
         </fieldset>
     </div>
     ';
