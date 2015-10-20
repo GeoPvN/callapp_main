@@ -563,7 +563,7 @@ function GetPage($res = '')
 			<input type="hidden" id="quest_id" value="' . $res['scenario_id'] . '" />
 			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['id'].'" />
 			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
-			<input type="hidden" id="dest_checker" value="0" />
+			<input type="hidden" id="dest_checker" value="0" /> <script>$("#cat,#le_cat,#quest_id1").chosen({ search_contains: true });$("#add-edit-form-answer,.add-edit-form-answer-class").css("overflow","visible")</script>
         </fieldset>
     </div>
     ';

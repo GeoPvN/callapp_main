@@ -819,8 +819,6 @@ if(fName=='add-edit-form-actived'){
 		   
 		param 				= new Object();
 		param.act			= "save_incomming";
-	    	
-		param.id					= $("#hidden_id").val();
 			
 		// --------------------------------------------------
 		var items          = {};
@@ -906,7 +904,6 @@ if(fName=='add-edit-form-actived'){
 		
 		// Incomming Vars
     	param.incomming_id          = $("#incomming_id").val();
-		param.hidden_id				= $("#hidden_id").val();
 		param.incomming_date        = $("#incomming_date").val();
 		param.incomming_date_up		= $("#incomming_date_up").val();
 		param.call_comment		    = $("#call_comment").val();

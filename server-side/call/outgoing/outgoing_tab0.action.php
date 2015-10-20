@@ -170,7 +170,7 @@ switch ($action) {
         $date_time   = json_decode($_REQUEST[date_time]);
         $select_op   = json_decode($_REQUEST[select_op]);
 
-        $inc_id = $hidden_id;
+        $inc_id = $incomming_id;
         
         
         mysql_query("DELETE FROM scenario_results
@@ -246,7 +246,7 @@ switch ($action) {
                 				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
                 				`call_comment`='$call_comment'
-                     WHERE 	    `id`='$hidden_id'");
+                     WHERE 	    `id`='$incomming_id'");
         break;
 	default:
 		$error = 'Action is Null';

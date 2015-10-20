@@ -365,7 +365,7 @@ function GetPage($res = '')
                                 <tr id="show_answer">
                 					<td style="width: 170px;"><label for="answer" id="qlabel">პასუხი</label></td>
                 					<td>
-                						<input type="text" id="answer" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['answer'] . '" />
+                						<textarea id="answer" style="width: 97.5%; height:40px; resize: vertical;">' . $res['answer'] . '</textarea>
                 					</td>
                 				</tr>
                 				<tr style="display:none;" id="show_handbook">
