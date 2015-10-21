@@ -36,6 +36,7 @@
 				}else{
 					questId = $("#quest_id").val();
 				}
+			alert(questId)
 			LoadTable('quest',4,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable_detail', 'get_edit_page',  'quest',   4,        'get_list_detail', "<'F'lip>",      '',        'id='+questId,'','dialog_check=1&add_id='+$("#quest_id").val(),'dialog_check=1&quest_detail_id='+$("#quest_id").val());
 

@@ -24,6 +24,7 @@
 		});
  
 		function GetTable() {
+			alert($("#quest_id").val());
 			LoadTable('quest',3,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'fipl>",      lenght,        $("#quest_id").val(),'','add_id='+$("#quest_id").val(),'quest_detail_id='+$("#quest_id").val());
 			$('#tab_content_2').css('display','none');
