@@ -155,6 +155,7 @@ table.display {
 	border-collapse: collapse;
 	table-layout: fixed;
 	border: 1px solid #E6E6E6;
+	margin-bottom: 50px;
 }
 
 table.display #datatable_header th {

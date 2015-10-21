@@ -181,7 +181,7 @@ function save_answer($user_id, $answer, $quest_type_id, $quest_id, $hidden_produ
     }else{
         $name_checker = "`answer` = '$answer'";
     }
-    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM question_detail WHERE $name_checker AND `quest_id` = '$quest_id'"));
+    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM question_detail WHERE $name_checker AND `quest_id` = '$quest_id' AND actived = 1"));
     if($name_cheker == 0){
     mysql_query("INSERT INTO `question_detail`
                 (`user_id`,`answer`,`quest_id`,`quest_type_id`)
