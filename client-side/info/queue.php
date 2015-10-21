@@ -177,7 +177,14 @@
 <body>
 <div id="tabs" style="width: 90%">
 <div class="callapp_head">რიგი<hr class="callapp_head_hr"></div>
-    
+<div style="margin-bottom: 5px;">
+<div id="instruqcia">ინსტრუქცია</div>
+<table id="stepby">
+<tr>
+<td  onclick="location.href='index.php?pg=18';" >კითხვა/პასუხი >></td><td onclick="location.href='index.php?pg=17';" >სცენარის კატეგორია >></td><td onclick="location.href='index.php?pg=16';">სცენარი >></td><td style="color: #FFF;background: #2681DC;" onclick="location.href='index.php?pg=15';">რიგი >></td><td onclick="location.href='index.php?pg=14';">კლიენტები</td>
+</tr>
+</table>
+</div>
     <div style="margin-top: 15px;">
         <button id="add_button">დამატება</button>
         <button id="delete_button">წაშლა</button>

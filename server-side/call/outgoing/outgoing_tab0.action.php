@@ -558,8 +558,8 @@ function GetPage($res)
 	    $data .= '<div style="margin-top: 15px;" class="quest_body '.$row[5].'" id="'.$row[0].'">
 		            <table class="dialog-form-table">
 		    		<tr>
-						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img style="border: none;padding: 0;margin-left: 8px;margin-top: -7px;cursor: help;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24" title="'.$row[2].'" ></td>
-		                </tr>
+						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img onclick="imnote(\''.$row[5].'\')" style="border: none;padding: 0;margin-left: 8px;margin-top: -7px;cursor: pointer;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24"></td>
+		                </tr><tr style="display:none;" id="imnote_'. $row[5] .'" ><td>'.$row[2].'</td></tr>
 		                    ';
 	
 	    while ($last_a = mysql_fetch_array($last_q)){

@@ -249,3 +249,27 @@ input{
 .ColVis, .dataTable_buttons{
 	z-index: 100;
 }
+#stepby{
+	margin: auto;
+}
+#stepby td{
+    padding: 6px 12px;border: 1px solid #2681DC;
+	cursor: pointer;
+	font-family: pvn !important;
+	font-size: 12px;
+	font-weight: bold;
+	color: #2681DC
+}
+#stepby td:HOVER{    
+	color: #FFF;
+	background: #2681DC;
+}
+#instruqcia{
+	margin: auto;
+	width: 50px;
+	margin-bottom: 5px;
+	color: #2681DC;
+	font-family: pvn !important;
+	font-size: 13px;
+	font-weight: bold;
+}

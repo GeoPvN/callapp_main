@@ -954,6 +954,13 @@ if(fName=='add-edit-form-actived'){
      	    $('#raodenoba').css('display','block');
         }
     });
+    function imnote(id){
+        if($("#imnote_"+id).css('display')=='none'){
+            $("#imnote_"+id).css('display','table-cell');
+        }else{
+        	$("#imnote_"+id).css('display','none');
+        }
+    }
 </script>
 <style type="text/css">
 .callapp_refresh{
