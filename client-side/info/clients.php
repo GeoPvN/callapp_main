@@ -461,6 +461,7 @@
 				complete: function(data){
 					alert('ფაილი აიტვირთა!');
 					LoadTable('import',6,'get_list_import',"<'F'lip>");
+					$('add-edit-form-choseFile').dialog('close');
 				},
 
 			});
