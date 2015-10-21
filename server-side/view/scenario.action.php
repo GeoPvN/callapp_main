@@ -483,10 +483,10 @@ function GetPage($res = '')
                 			    			
                 			    		
                 			    
-                			    		$data .= '<textarea style="width: 704px; height:100px; resize: none; background: #EBF9FF;" class="idle">'. addslashes($row[2]) .'</textarea>
+                			    		$data .= '<textarea style="width: 704px; height:100px; resize: none; background: #EBF9FF;" class="idle">'. $row[2] .'</textarea>
                 			    		<table class="dialog-form-table">
                 			    		<tr>
-                			    		<td style="font-weight:bold;">'.$i++.'. '. addslashes($row[1]) .'</td>
+                			    		<td style="font-weight:bold;">'.$i++.'. '. $row[1] .'</td>
                 			    		</tr>
                 			    		
                 			    		';
@@ -494,7 +494,7 @@ function GetPage($res = '')
                 			    		$q_type = $row1[1];
                 			    		$dest = $row1[5];
                 			    		if($row1[1] == 3){
-                			    		$tr .= addslashes($row1[0]);
+                			    		$tr .= $row1[0];
                 			    		$data1 = ' <style>
                 			    
                 			    		#prod{
@@ -525,7 +525,7 @@ function GetPage($res = '')
                 			    		'.$tr.'
                                                   </table>';
                                               }else{                                                                                                   
-                                                  $data .= addslashes($row1[0]);
+                                                  $data .= $row1[0];
                                                   $data .= '
                 			    		                       <td style="float:left; width: 350px;"><select style="width: 231px;" id="scenarquest|'.$row1[3].'|'.$row1[4].'" class="idls object scenarquest">'. GetAlScenQuest($res[scenario_id],$dest).'</select></td>
                 			    		                   </tr>'; 
