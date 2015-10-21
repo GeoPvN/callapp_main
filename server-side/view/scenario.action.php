@@ -358,6 +358,11 @@ function GetList($quest_id,$quest_detail_id)
 function GetPage($res = '')
 {	
     $data = '
+        <!-- ID -->
+			<input type="hidden" id="quest_id" value="' . $res['scenario_id'] . '" />
+			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['id'].'" />
+			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
+			<input type="hidden" id="dest_checker" value="0" /> <script>$("#cat,#le_cat,#quest_id1").chosen({ search_contains: true });$("#add-edit-form-answer,.add-edit-form-answer-class").css("overflow","visible")</script>
 	<div id="dialog-form">
 	    <fieldset>
 	    	<legend>ძირითადი ინფორმაცია</legend>
@@ -559,11 +564,7 @@ function GetPage($res = '')
                 			</table>
                 			<script>$("#name, #cat, #le_cat").prop("disabled", true);</script>';
 			}
-			$data .=  '<!-- ID -->
-			<input type="hidden" id="quest_id" value="' . $res['scenario_id'] . '" />
-			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['id'].'" />
-			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
-			<input type="hidden" id="dest_checker" value="0" /> <script>$("#cat,#le_cat,#quest_id1").chosen({ search_contains: true });$("#add-edit-form-answer,.add-edit-form-answer-class").css("overflow","visible")</script>
+			$data .=  '
         </fieldset>
     </div>
     ';
