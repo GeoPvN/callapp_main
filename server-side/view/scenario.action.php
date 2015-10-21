@@ -464,18 +464,14 @@ function GetPage($res = '')
             		    if($answer_id==''){
             		        $answer_id = 0;
             		    }
-                			    		$query1 = mysql_query(" SELECT 	CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(question_detail.id in($answer_id) ,' checked',''), ' class=\"check_input\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question.id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td>')
-                                                    							WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"inputtext\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
-                                                    							WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input',IF(question_detail.id in($answer_id),' checked',''), ' class=\"radio_input\" style=\"float:left;\" type=\"radio\" name=\"radio', question.id, '\" value=\"', question_detail.id, '\"><label style=\"float:left; padding: 7px;\">', question_detail.answer, '</label></td>')
-                                                    							WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
-                                                    							WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><input value=\"\" class=\"date_time_input\"style=\"float:left;\" type=\"text\" id=\"input|', question.id, '|', question_detail.id, '\" /> <label style=\"float:left; padding: 7px;\" for=\"input|', question.id, '|', question_detail.id, '\">',question_detail.answer,'</label></td>')
-                                                                                WHEN question_detail.quest_type_id = 7 THEN CONCAT('<tr><td style=\"width:707px; text-align:left;\"><select class=\"hand_select\"style=\"float:left;\"  id=\"hand_select|', question.id, '|', question_detail.id, '\" ><option>',scenario_handbook.name,'</option></select> <label style=\"float:left; padding: 7px;\" for=\"hand_select|', question.id, '|', question_detail.id, '\"></label></td>')        				    
-                                            			    		    END AS `ans`,
+                			    		$query1 = mysql_query(" SELECT 	question.id as q_id,
                                                                 		question_detail.quest_type_id,
                 			    		                                IF(question_detail.id in($answer_id) ,question_detail.id,'') AS `checked_quest`,
                 			    		                                scenario_detail.id as sc_id,
                 			    		                                question_detail.id as as_id,
-                			    		                                scenario_destination.destination as dest
+                			    		                                scenario_destination.destination as dest,
+                			    		                                question_detail.answer,
+                			    		                                scenario_handbook.name as seleqti
                                                                 FROM `question_detail`
                                                                 JOIN  question ON question_detail.quest_id = question.id
                                                                 LEFT JOIN scenario_detail ON question.id = scenario_detail.quest_id
@@ -498,49 +494,28 @@ function GetPage($res = '')
                 			    		while ($row1 = mysql_fetch_array($query1)) {
                 			    		$q_type = $row1[1];
                 			    		$dest = $row1[5];
-                			    		if($row1[1] == 3){
-                			    		$tr .= $row1[0];
-                			    		$data1 = ' <style>
-                			    
-                			    		#prod{
-                			    		border:2px solid #85B1DE; width:100%;
-                			    		}
-                			    		#prod #prodtr{
-                			    		background:#F2F2F2;
-                			    }
-                			    #prod th{
-                			    width:0%; padding:5px; border:1px solid #85B1DE;
-                                                      }
-                			        #prod td{
-                			        border:1px solid #85B1DE; padding:2px;
-                                                      }
-                                                      #prod tr{
-                			                                                  background: #FEFEFE
-                			    		}
-                			    
-                			    		</style>
-                			    		<table id="prod">
-                			    		<tr id="prodtr">
-                			    		<th>დასახელება</th>
-                			    		    <th>ფასი</th>
-                			    		<th>აღწერა</th>
-                			    		    <th>კომენტარი</th>
-                			    		<th>#</th>
-                			    		</tr>
-                			    		'.$tr.'
-                                                  </table>';
-                                              }else{                                                                                                   
-                                                  $data .= $row1[0];
-                                                  $data .= '
-                			    		                       <td style="float:left; width: 350px;"><select style="width: 231px;" id="scenarquest|'.$row1[3].'|'.$row1[4].'" class="idls object scenarquest">'. GetAlScenQuest($res[scenario_id],$dest).'</select></td>
-                			    		                   </tr>'; 
-                                              }
+                			    		if($row1[1] == 1){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><input  class="check_input" style="float:left;" type="checkbox" name="checkbox' .$row1[0]. '" value="'.$row1[4].'"><label style="float:left; padding: 7px;">'.mysql_real_escape_string($row1[6]).'</label></td>';
+                                        }elseif($row1[1] == 2){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><input value="" class="inputtext" style="float:left;" type="text" id="input' .$row1[0]. '|'.$row1[4].'" /> <label style=\"float:left; padding: 7px;\" for=\"input|'.$row1[0].'|'.$row1[4].'\">'.mysql_real_escape_string($row1[6]).'</label></td>';
+                                        }elseif($row1[1] == 4){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><input class="radio_input" style="float:left;" type="radio" name="radio'.$row1[0].'" value="'.$row1[4].'"><label style=\"float:left; padding: 7px;\">'.$row1[6].'</label></td>';
+                                        }elseif($row1[1] == 5){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><input value="" class="date_input" style="float:left;" type="text" id="input|'.$row1[0].'|'.$row1[4].'" /> <label style="float:left; padding: 7px;" for="input|'.$row1[0].'|'.$row1[4].'">'.mysql_real_escape_string($row1[6]).'</label></td>';
+                                        }elseif($row1[1] == 6){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><input value="" class="date_time_input" style="float:left;" type="text" id="input|'.$row1[0].'|'.$row1[4].'" /> <label style="float:left; padding: 7px;" for="input|'.$row1[0].'|'.$row1[4].'">'.mysql_real_escape_string($row1[6]).'</label></td>';
+                                        }elseif($row1[1] == 7){
+                			    		     $data .=  '<tr><td style="width:707px; text-align:left;"><select class="hand_select" style="float:left;"  id="hand_select|'.$row1[0].'|'.$row1[4].'" ><option>'.$row1[7].'</option></select> <label style="float:left; padding: 7px;" for="hand_select|'.$row1[0].'|'.$row1[4].'"></label></td>';
+                                        }
+                                              //$data .= $row1[0];
+                                              $data .= '
+            			    		                       <td style="float:left; width: 350px;"><select style="width: 231px;" id="scenarquest|'.$row1[3].'|'.$row1[4].'" class="idls object scenarquest">'. GetAlScenQuest($res[scenario_id],$dest).'</select></td>
+            			    		                   </tr>'; 
+                                          
                 			    
                                         }
                                         
-                                if($q_type == 3){
-                                    $data .= $data1;
-                                }
+                                
                                 $data .= '</table>
                                 <hr><br>';
             		}
