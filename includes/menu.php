@@ -203,7 +203,7 @@
       		    		    sub_menu += '<li class="click_me" page_id="'+data.nav[i].sub[sub_i].id+'" style="border-bottom: 1px solid #3C8EE0;"><a style="font-weight: bold; font-size: 13px;" href="'+ data.nav[i].sub[sub_i].url +'">' + data.nav[i].sub[sub_i].title + '</a><span class="span_'+data.nav[i].sub[sub_i].id+'" style="display: block;font-family: BPG arial;padding-top: 7px;width: 10px;float: right;padding-right: 10px;">+</span></li>';
         		    		  deep_sub_i = 0;
         		    		  $( data.nav[i].sub[sub_i].sub ).each(function( index ) {
-        		    			  sub_menu += '<li class="hide_my_ass sub_'+data.nav[i].sub[sub_i].id+'"  style="border-bottom: 1px solid #3C8EE0;"><img style="margin-top: 4px;" src="media/images/icons/'+data.nav[i].icon+'" alt="16 ICON" height="16" width="16"><a  style="font-weight: normal !important; padding-left: 6px; width: 85% !important; font-family: bpg;" href="index.php?pg='+ data.nav[i].sub[sub_i].sub[deep_sub_i].page_id +'">' + data.nav[i].sub[sub_i].sub[deep_sub_i].title + '</a></li>';
+        		    			  sub_menu += '<li class="hide_my_ass sub_'+data.nav[i].sub[sub_i].id+'"  style="border-bottom: 1px solid #3C8EE0;"><img style="margin-top: 4px;" src="media/images/icons/'+data.nav[i].sub[sub_i].sub[deep_sub_i].sub_icon+'" alt="16 ICON" height="16" width="16"><a  style="font-weight: normal !important; padding-left: 6px; width: 85% !important; font-family: bpg;" href="index.php?pg='+ data.nav[i].sub[sub_i].sub[deep_sub_i].page_id +'">' + data.nav[i].sub[sub_i].sub[deep_sub_i].title + '</a></li>';
         		    			  deep_sub_i++;
         		    		  });
       		    		}else{

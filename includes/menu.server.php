@@ -12,7 +12,8 @@ $sql = mysql_query("SELECT 	`menu_detail`.`id`,
 							`menu_detail`.`title`,
 							`menu_detail`.`page_id`,
 							`menu_detail`.`url`,
-							`menu_detail`.`icon`
+							`menu_detail`.`icon`,
+                            `menu_detail`.`sub_icon`
 					FROM 	`users`
                     LEFT JOIN `group` ON `users`.`group_id` = `group`.id
 					LEFT JOIN `group_permission` ON `group`.id = `group_permission`.`group_id`
@@ -33,7 +34,8 @@ while ($row = mysql_fetch_assoc($sql)) {
 									`menu_detail`.`title`,
 									`menu_detail`.`page_id`,
 									`menu_detail`.`url`,
-									`menu_detail`.`icon`
+									`menu_detail`.`icon`,
+                                    `menu_detail`.`sub_icon`
 							FROM 	`users`
 	                        LEFT JOIN `group` ON `users`.`group_id` = `group`.id
 							LEFT JOIN `group_permission` ON `group`.id = `group_permission`.`group_id`
@@ -53,7 +55,8 @@ while ($row = mysql_fetch_assoc($sql)) {
 										`menu_detail`.`title`,
 										`menu_detail`.`page_id`,
 										`menu_detail`.`url`,
-										`menu_detail`.`icon`
+										`menu_detail`.`icon`,
+                                        `menu_detail`.`sub_icon`
 								FROM 	`users` LEFT JOIN `group` ON `users`.`group_id` = `group`.id
 								LEFT JOIN `group_permission` ON `group`.id = `group_permission`.`group_id`
 								LEFT JOIN menu_detail ON `group_permission`.`page_id` = `menu_detail`.`page_id`

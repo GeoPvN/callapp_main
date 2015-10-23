@@ -90,10 +90,12 @@ switch ($action) {
                         				phone_base_detail.`phone2`,
                         				CONCAT(phone_base_detail.`firstname`,' ',phone_base_detail.`lastname`),
                         				phone_base_detail.`pid`,
+	  	                                scenario.`name`,
 	  	                                user_info.`name`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+	  	                        JOIN scenario ON outgoing_campaign.scenario_id = scenario.id
 	  	                        LEFT JOIN users ON outgoing_campaign_detail.responsible_person_id = users.id
                                 LEFT JOIN user_info ON users.id = user_info.user_id
                                 WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter");

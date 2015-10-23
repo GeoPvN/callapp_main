@@ -91,7 +91,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 	            var nCells = nRow.getElementsByTagName('th');
 	            for ( var k = 0 ; k < total.length ; k++ )
 	            {
-	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + ' <br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + '<br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
 	            }
         	}
 		},
