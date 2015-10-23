@@ -41,6 +41,17 @@ $client_mail1               = $_REQUEST['client_mail1'];
 $client_mail2               = $_REQUEST['client_mail2'];
 $client_note                = $_REQUEST['client_note'];
 
+$task_type_id			= $_REQUEST['task_type_id'];
+$task_start_date		= $_REQUEST['task_start_date'];
+$task_end_date			= $_REQUEST['task_end_date'];
+$task_departament_id	= $_REQUEST['task_departament_id'];
+$task_recipient_id		= $_REQUEST['task_recipient_id'];
+$task_priority_id		= $_REQUEST['task_priority_id'];
+$task_controler_id		= $_REQUEST['task_controler_id'];
+$task_status_id		    = $_REQUEST['task_status_id'];
+$task_description		= $_REQUEST['task_description'];
+$task_note			    = $_REQUEST['task_note'];
+
 $type_id = $_REQUEST['type_id'];
 
 switch ($action) {
@@ -247,6 +258,14 @@ switch ($action) {
                 				`update_date`='$incomming_date_up',
                 				`call_comment`='$call_comment'
                      WHERE 	    `id`='$incomming_id'");
+		
+		if($task_type_id > 0){
+		    mysql_query("INSERT INTO `task`
+            		    (`user_id`, `outgoing_id`, `task_recipient_id`, `task_controler_id`, `task_date`, `task_start_date`, `task_end_date`, `task_departament_id`, `task_type_id`, `task_priority_id`, `task_description`, `task_note`, `task_status_id`)
+            		    VALUES
+            		    ('$user_id', '$incomming_id', '$task_recipient_id', '$task_controler_id', NOW(), '$task_start_date', '$task_end_date', '$task_departament_id', '$task_type_id', '$task_priority_id', '$task_description', '$task_note', '$task_status_id');");
+		}
+		
         break;
 	default:
 		$error = 'Action is Null';
@@ -276,6 +295,66 @@ function getStatusOut($id){
         } else {
             $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
         }
+    }
+
+    return $data;
+}
+
+function getStatusTask(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `task_status`
+                            WHERE   `actived` = 1 AND `type` = 2");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetPriority(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `priority`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetDepartament(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `department`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetTaskType(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `task_type`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
     }
 
     return $data;
@@ -327,6 +406,21 @@ function getUser($user_id){
         
     }
     
+    return $data;
+}
+
+function getUsers(){
+    $req = mysql_query("SELECT 	    `users`.`id`,
+                                    `user_info`.`name`
+                        FROM 		`users`
+                        JOIN 		`user_info` ON `users`.`id` = `user_info`.`user_id`
+                        WHERE		`users`.`actived` = 1");
+    
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
     return $data;
 }
 
@@ -634,7 +728,7 @@ function GetPage($res)
 	                   <td><label for="task_type_id">დავალების ტიპი</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 595px;" id="task_type_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_type_id">'.GetTaskType().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_start_date">პერიოდი</label></td>
@@ -647,23 +741,23 @@ function GetPage($res)
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 595px;" id="task_departament_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_departament_id">'.GetDepartament().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_recipient_id">ადრესატი</label></td>
 	                   <td><label for="task_controler_id">მაკონტროლებელი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 245px;" id="task_recipient_id"></select></td>
-	                   <td><select style="width: 245px;" id="task_controler_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_recipient_id">'.getUsers().'</select></td>
+	                   <td><select style="width: 245px;" id="task_controler_id">'.getUsers().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_priority_id">პრიორიტეტი</label></td>
 	                   <td><label for="task_status_id">სტატუსი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 245px;" id="task_priority_id"></select></td>
-	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_priority_id">'.GetPriority().'</select></td>
+	                   <td><select style="width: 245px;" id="task_status_id">'.getStatusTask().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_description">აღწერა</label></td>

@@ -845,7 +845,9 @@ function GetDate2(iname) {
 */
 function GetDateTimes(iname) {
     $("#" + iname).datetimepicker({
-    	dateFormat: "yy-mm-dd"
+    	dateFormat: "yy-mm-dd",
+    		changeMonth: true,
+        	changeYear: true
     });
 }
 
