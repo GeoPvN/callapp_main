@@ -667,6 +667,7 @@ if(fName=='add-edit-form-task'){
         var url = location.origin + "/records/" + file;
         $("audio source").attr('src',url);
         $("audio").load();
+        $("audio").play();
     }
     
     $(document).on("click", "#choose_button_mail", function () {
