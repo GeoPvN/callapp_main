@@ -330,7 +330,7 @@ span.style1{
 #table_right_menu td{
 	cursor: pointer;
 	padding: 4px;
-	border-right: 1px solid #A3D0E4;
+	border: 1px solid #A3D0E4;
 }
 
 #table_right_menu td:FIRST-CHILD{

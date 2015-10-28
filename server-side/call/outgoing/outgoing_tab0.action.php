@@ -971,7 +971,7 @@ function show_record($res){
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                              `file_name`
                                      FROM    `asterisk_incomming`
-                                     WHERE   `source` LIKE '%$res[phone]%'");
+                                     WHERE   `source` LIKE '%$res[phone1]%' or `source` LIKE '%$res[phone2]%'");
     while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
         $str_record_incomming .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[datetime].'</td>
@@ -984,7 +984,7 @@ function show_record($res){
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                             `file_name`
                                     FROM    `asterisk_outgoing`
-                                    WHERE   `phone` LIKE '%$res[phone]%'");
+                                    WHERE   `phone` LIKE '%$res[phone1]%' or `phone` LIKE '%$res[phone2]%'");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
         $str_record_outgoing .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>
