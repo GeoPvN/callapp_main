@@ -664,8 +664,9 @@ if(fName=='add-edit-form-task'){
 			});
     
     function listen(file){
-        var url = location.origin + "/records/" + file
-        $("audio source").attr('src',url)
+        var url = location.origin + "/records/" + file;
+        $("audio source").attr('src',url);
+        $("audio").load();
     }
     
     $(document).on("click", "#choose_button_mail", function () {
