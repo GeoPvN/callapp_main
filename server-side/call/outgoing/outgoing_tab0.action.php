@@ -969,7 +969,7 @@ function GetMailSendPage(){
 function show_record($res){
     $record_incomming = mysql_query("SELECT  `datetime`,
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
-                                             `file_name`
+                                             CONCAT(DATE_FORMAT(asterisk_incomming.call_datetime, '%Y/%m/%d/'),`file_name`)
                                      FROM    `asterisk_incomming`
                                      WHERE   `source` LIKE '%$res[phone1]%' or `source` LIKE '%$res[phone2]%'");
     while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
@@ -982,7 +982,7 @@ function show_record($res){
     
     $record_outgoing = mysql_query("SELECT  `call_datetime`,
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
-                                            `file_name`
+                                            CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`)
                                     FROM    `asterisk_outgoing`
                                     WHERE   `phone` LIKE '%$res[phone1]%' or `phone` LIKE '%$res[phone2]%'");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
