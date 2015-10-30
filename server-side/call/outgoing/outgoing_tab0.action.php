@@ -967,11 +967,19 @@ function GetMailSendPage(){
 }
 
 function show_record($res){
+    $ph1 = '';
+    $ph2 = '';
+    if(strlen($res[phone1]) > 4){
+        $ph1 = "`source` LIKE '%$res[phone1]%'";
+    }
+    if(strlen($res[phone2]) > 4){
+        $ph2 = " or `source` LIKE '%$res[phone2]%'";
+    }
     $record_incomming = mysql_query("SELECT  `datetime`,
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                              CONCAT(DATE_FORMAT(asterisk_incomming.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                      FROM    `asterisk_incomming`
-                                     WHERE   `source` LIKE '%$res[phone1]%' or `source` LIKE '%$res[phone2]%'");
+                                     WHERE   $ph1 $ph2");
     while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
         $str_record_incomming .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[datetime].'</td>
@@ -1042,12 +1050,12 @@ function show_file($res){
                                             `file_date`,
                                             `id`
                                      FROM   `file`
-                                     WHERE  `incomming_call_id` = $res[id] AND `actived` = 1");
+                                     WHERE  `outgoing_id` = $res[id] AND `actived` = 1");
     while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
         $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">'.$file_res_incomming[file_date].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">'.$file_res_incomming[name].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 160px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\',\'outgoing\')">-</div>';
     }
     $data = '<div style="margin-top: 15px;">
                     <div style="width: 100%; border:1px solid #CCC;float: left;">    	            

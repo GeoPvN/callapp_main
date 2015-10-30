@@ -22,7 +22,7 @@ switch ($action) {
                             				dst_queue,
                             				dst_extension,
                             				SEC_TO_TIME(duration),
-                            				IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+                            				CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
         	                        FROM 	`asterisk_incomming`
                                     WHERE disconnect_cause != 'ABANDON' 
                                     AND 	DATE(`call_datetime`) = '$dialog_date'
@@ -139,10 +139,10 @@ switch ($action) {
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 180px;">თარიღი</th>
-                            <th style="width: 110px;">წყარო</th>
-                            <th style="width: 100px;">ადრესატი</th>
-                            <th style="width: 80px;">დრო</th>
+                            <th style="width: 100%;">თარიღი</th>
+                            <th style="width: 100%;">წყარო</th>
+                            <th style="width: 100%;">ადრესატი</th>
+                            <th style="width: 100%;">დრო</th>
                         </tr>
                     </thead>
                     <thead>
@@ -179,7 +179,7 @@ switch ($action) {
                                         dst_queue,
                                         dst_extension,
                                         SEC_TO_TIME(duration),
-                                        IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+                                        CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
                                 FROM 	`asterisk_incomming`
                                 WHERE   disconnect_cause != 'ABANDON'
                                 AND 	DATE(`call_datetime`) >= '$start_date'
@@ -300,10 +300,10 @@ switch ($action) {
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 180px;">თარიღი</th>
-                        <th style="width: 110px;">წყარო</th>
-                        <th style="width: 100px;">ადრესატი</th>
-                        <th style="width: 80px;">დრო</th>
+                        <th style="width: 100%;">თარიღი</th>
+                        <th style="width: 100%;">წყარო</th>
+                        <th style="width: 100%;">ადრესატი</th>
+                        <th style="width: 100%;">დრო</th>
                     </tr>
                 </thead>
                 <thead>
@@ -340,7 +340,7 @@ switch ($action) {
             dst_queue,
             dst_extension,
             SEC_TO_TIME(duration),
-            IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+            CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
             FROM 	`asterisk_incomming`
             WHERE   disconnect_cause != 'ABANDON'
             AND 	DATE(`call_datetime`) >= '$start_date'
@@ -477,10 +477,10 @@ switch ($action) {
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 180px;">თარიღი</th>
-                        <th style="width: 110px;">წყარო</th>
-                        <th style="width: 100px;">ადრესატი</th>
-                        <th style="width: 80px;">დრო</th>
+                        <th style="width: 100%;">თარიღი</th>
+                        <th style="width: 100%;">წყარო</th>
+                        <th style="width: 100%;">ადრესატი</th>
+                        <th style="width: 100%;">დრო</th>
                     </tr>
                 </thead>
                 <thead>
@@ -516,7 +516,7 @@ switch ($action) {
                                         dst_queue,
                                         dst_extension,
                                         SEC_TO_TIME(duration),
-                                        IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+                                        CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
                                 FROM 	`asterisk_incomming`
                                 WHERE   disconnect_cause != 'ABANDON'
                                 AND 	DATE(`call_datetime`) >= '$start_date'

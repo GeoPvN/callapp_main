@@ -7,7 +7,7 @@ $agent = $_REQUEST['agent'];
 $queuet = $_REQUEST['queuet'];
 
 $result = mysql_query("SELECT   COUNT(*) AS `count`,
-                    			'ნაპასუხბი' AS `cause`
+                    			'ნაპასუხები' AS `cause`
                         FROM 	`asterisk_incomming`
                         WHERE	disconnect_cause != 'ABANDON' 
                         AND DATE(call_datetime) >= '$start'
@@ -27,7 +27,7 @@ $result = mysql_query("SELECT   COUNT(*) AS `count`,
 $row = array();
 $rows = array();
 while($r = mysql_fetch_array($result)) {
-	$row[0] = $r[1];
+	$row[0] = $r[1].': '.$r[0];
 	$row[1] = (float)$r[0];
 	array_push($rows,$row);
 }

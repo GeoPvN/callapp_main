@@ -22,7 +22,10 @@
 		#call_distribution_per_hour  td:nth-child( 2 ),
 		#call_distribution_per_hour  td:nth-child( 4 ),
 		#call_distribution_per_day_of_week  td:nth-child( 2 ),
-		#call_distribution_per_day_of_week  td:nth-child( 4 ) {
+		#call_distribution_per_day_of_week  td:nth-child( 4 ),
+		#technik_info table td:nth-child( 6 ),
+		#technik_info table td:nth-child( 3 ),
+		#technik_info table td:nth-child( 4 ){
 		    cursor: pointer;
             text-decoration: underline;
         }
@@ -197,7 +200,7 @@
 			            margin: [ 50, 50, 100, 80]
 			        },
 			        title: {
-			            text: 'კავშირის გაწყვეტის მიზეზეი',
+			            text: 'კავშირის გაწყვეტის მიზეზი',
 			            x: -20 
 			        },
 			        subtitle: {
@@ -1376,26 +1379,61 @@
 			}
         });
 
-		$(document).on("click", "#answear_dialog", function () {
+		$(document).on("click", "#technik_info table td:nth-child( 3 )", function () {
 			LoadDialog();
 		});
 		
-		$(document).on("click", "#unanswear_dialog", function () {
+		$(document).on("click", "#technik_info table td:nth-child( 4 )", function () {
 			LoadDialog1();
 		});
 
-		$(document).on("click", "#undone_dialog", function () {
+		$(document).on("click", "#technik_info table td:nth-child( 6 )", function () {
 			LoadDialog2();
 		});
 		
 		var record;
  		function play(record){
-			
- 			link = 'http://10.0.18.18:8080/records/' + record;
+ 			var link = location.origin + "/records/" + record;
  			GetDialog_audio("audio_dialog", "auto", "auto","" );
  			$(".ui-dialog-buttonpane").html(" ");
  			$( ".ui-dialog-buttonpane" ).removeClass( "ui-widget-content ui-helper-clearfix ui-dialog-buttonpane" );
  			$("#audio_dialog").html('<audio controls autoplay style="width:500px; min-height: 33px;"><source src="'+link+'" type="audio/wav"> Your browser does not support the audio element.</audio>');
+ 		}
+ 		function GetDialog_audio(fname, width, height, buttons,distroy) {
+ 		    var defoult = {
+ 		        "save": {
+ 		            text: "შენახვა",
+ 		            id: "save-dialog",
+ 		            click: function () {
+ 		            }
+ 		        },
+ 		        "cancel": {
+ 		            text: "დახურვა",
+ 		            id: "cancel-dialog",
+ 		            click: function () {
+ 		                $(this).dialog("close");
+ 		            }
+ 		        }
+ 		    };
+ 		    var ok_defoult = "save-dialog";
+
+ 		    if (!empty(buttons)) {
+ 		        defoult = buttons;
+ 		    }
+ 		    
+ 		    $("#" + fname).dialog({
+ 		    	position: ['center',20],
+ 		        resizable: false,
+ 		        width: width,
+ 		        height: height,
+ 		        modal: false,
+ 		        stack: false,
+ 		        dialogClass: fname + "-class",
+ 		        buttons: defoult,
+ 		        close : function(event, ui) {
+ 		        	if(distroy!="no")$("#"+fname).html("");
+ 		         }
+ 		    });
  		}
 		function LoadDialog(){
 			parame 				= new Object();
@@ -1880,7 +1918,7 @@
                   <th>% ზარის დრო</th>
                   <th>საშ. ზარის ხანგძლივობა</th>
                   <th>ლოდინის დრო</th>
-                  <th>საშ. ლოდისნის ხანგძლივობა</th>
+                  <th>საშ. ლოდინის ხანგძლივობა</th>
             </tr>
             </thead>
             <tbody>
@@ -1950,7 +1988,7 @@
         <div width="99%">
             <div style="width: 49%;float: left;margin-right: 20px;">
             <div class="clear"></div>
-    		<div><span style="float: left;">კავშირის გაწყვეტის მიზეზეი</span><button style="float: right;" id="disconnection_cause_but">Excel</button></div>
+    		<div><span style="float: left;">კავშირის გაწყვეტის მიზეზი</span><button style="float: right;" id="disconnection_cause_but">Excel</button></div>
     		<div class="clear"></div>
     		    <div id="disconnection_cause">
                 <table>

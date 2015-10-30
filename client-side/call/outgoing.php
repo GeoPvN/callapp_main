@@ -77,8 +77,8 @@ if(fName=='add-edit-form'){
         LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
         $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
         GetDate2("date_input");
-        GetDate1("task_end_date");
-        GetDate1("task_start_date");
+        GetDateTimes("task_end_date");
+        GetDateTimes("task_start_date");
 		GetDateTimes1("date_time_input");
 		$('.quest_body').css('display','none');
 		$('.1').css('display','block');
@@ -129,37 +129,11 @@ if(fName=='add-edit-form-task'){
 	        }
 	    };
     GetDialog('add-edit-form-task', 580, "auto", buttons, 'left+43 top');  
-    GetDateTimes("task_end_date");
-    GetDateTimes("task_start_date");
+    GetDateTimes("task_end_date1");
+    GetDateTimes("task_start_date1");
     $('#task_type_id,#task_departament_id,#task_recipient_id,#task_controler_id,#task_priority_id,#task_status_id').chosen({ search_contains: true });
 }
     }
-
-
-    $(document).on("change", "#incomming_cat_1", function () {
-    	param 			= new Object();
-		param.act		= "cat_2";
-		param.cat_id    = $('#incomming_cat_1').val();
-        $.ajax({
-            url: aJaxURL,
-            data: param,
-            success: function(data) {
-                $("#incomming_cat_1_1").html(data.page);
-            }
-        });
-    });
-    $(document).on("change", "#incomming_cat_1_1", function () {
-    	param 			= new Object();
-		param.act		= "cat_3";
-		param.cat_id    = $('#incomming_cat_1_1').val();
-        $.ajax({
-            url: aJaxURL,
-            data: param,
-            success: function(data) {
-                $("#incomming_cat_1_1_1").html(data.page);
-            }
-        });
-    });
 
     $(document).on("change", "#task_type", function () {
     	param 			= new Object();
@@ -180,9 +154,9 @@ if(fName=='add-edit-form-task'){
                 	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
                 	$("#table_task").css('display','table');
                 	$('#add_button_task,#delete_button_task').css('display','block');
-            		LoadTable('task',14,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+            		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
                	    SetEvents("add_button_task", "delete_button_task", "check-all-task", tName+'task', 'add-edit-form-task', aJusURL_Task);
-              	
+                  	 
             	}else{
             		$('#add_button_task,#delete_button_task').css('display','none');
             		$("#table_task,#table_task_wrapper").css('display','none');
@@ -196,6 +170,7 @@ if(fName=='add-edit-form-task'){
                 		$('#table_actived,#table_actived_wrapper').css('display','none');
                 		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
                     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+                    	
                 	}
             	}
             }
@@ -207,21 +182,30 @@ if(fName=='add-edit-form-task'){
     	status      = $('#tab_id').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
-    	if($("#tab_id").val() == 1){
-        	$('#table_index,#table_index_wrapper').css('display','none');
-        	$('#table_actived,#table_actived_wrapper').css('display','table');
-     	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
-     	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+    	if($("#task_type").val() == 2){
+        	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
+        	$("#table_task").css('display','table');
+        	$('#add_button_task,#delete_button_task').css('display','block');
+    		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+       	    SetEvents("add_button_task", "delete_button_task", "check-all-task", tName+'task', 'add-edit-form-task', aJusURL_Task);
+      	
     	}else{
-    		$('#table_index,#table_index_wrapper').css('display','table');
-    		$('#table_actived,#table_actived_wrapper').css('display','none');
-    		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
-        	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+        	if($("#tab_id").val() == 1){
+            	$('#table_index,#table_index_wrapper').css('display','none');
+            	$('#table_actived,#table_actived_wrapper').css('display','table');
+         	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
+         	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
+        	}else{
+        		$('#table_index,#table_index_wrapper').css('display','table');
+        		$('#table_actived,#table_actived_wrapper').css('display','none');
+        		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+            	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+        	}
     	}
     });
     
     $(document).on("click", "#delete_button_task", function () {
-    	LoadTable('task',14,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+    	LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
     	setTimeout("$('#table_index_wrapper').css('display','none');", 20);
     });
     
@@ -235,7 +219,7 @@ if(fName=='add-edit-form-task'){
         	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
         	$("#table_task").css('display','table');
         	$('#add_button_task,#delete_button_task').css('display','block');
-    		LoadTable('task',14,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+    		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
        	    SetEvents("add_button_task", "delete_button_task", "check-all-task", tName+'task', 'add-edit-form-task', aJusURL_Task);
       	
     	}else{
@@ -260,35 +244,41 @@ if(fName=='add-edit-form-task'){
     	status      = $('#tab_id').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
-    	LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
-    	if(status == 1){
-    	    $('#table_actived_wrapper').css('display','none');
-    	}else{
-    		$('#table_index_wrapper').css('display','none');
-    	}
+    	if($('#task_type').val() == 1){
+    		if(status => 1){
+    			LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        	    $('#table_actived_wrapper').css('display','none');
+        	}else{
+        		$('#table_index_wrapper').css('display','none');
+        	}
+        }else{
+        	LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+        	$('#table_actived_wrapper').css('display','none');
+        	$('#table_index_wrapper').css('display','none');
+        }
     });
     
     $(document).on("click", "#task-btn", function () {
     	param 			     = new Object();
 		param.act		     = "save_task";
-		param.id                    = $("#id").val();
-		param.task_type_id			= $("#task_type_id").val();
-		param.task_start_date		= $("#task_start_date").val();
-		param.task_end_date			= $("#task_end_date").val();
-		param.task_departament_id	= $("#task_departament_id").val();
-		param.task_recipient_id		= $("#task_recipient_id").val();
-		param.task_priority_id		= $("#task_priority_id").val();
-		param.task_controler_id		= $("#task_controler_id").val();
-		param.task_status_id		= $("#task_status_id").val();
-		param.task_description		= $("#task_description").val();
-		param.task_note			    = $("#task_note").val();
-		param.task_answer           = $("#task_answer").val();
+		param.id                    = $("#add-edit-form-task #id").val();
+		param.task_type_id			= $("#add-edit-form-task #task_type_id").val();
+		param.task_start_date		= $("#add-edit-form-task #task_start_date1").val();
+		param.task_end_date			= $("#add-edit-form-task #task_end_date1").val();
+		param.task_departament_id	= $("#add-edit-form-task #task_departament_id").val();
+		param.task_recipient_id		= $("#add-edit-form-task #task_recipient_id").val();
+		param.task_priority_id		= $("#add-edit-form-task #task_priority_id").val();
+		param.task_controler_id		= $("#add-edit-form-task #task_controler_id").val();
+		param.task_status_id		= $("#add-edit-form-task #task_status_id").val();
+		param.task_description		= $("#add-edit-form-task #task_description").val();
+		param.task_note			    = $("#add-edit-form-task #task_note").val();
+		param.task_answer           = $("#add-edit-form-task #task_answer").val();
 		
         $.ajax({
             url: aJusURL_Task,
             data: param,
             success: function(data) {
-            	LoadTable('task',14,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
+            	LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
             	$('#add-edit-form-task').dialog('close');
             }
         });
@@ -406,28 +396,20 @@ if(fName=='add-edit-form-task'){
     
     function show_right_side(id){
         $("#right_side fieldset").hide();
-        $("#" + id).show();
+        $(".add-edit-form-class #" + id).show();
+        $(".add-edit-form-task-class #" + id).show();
         $(".add-edit-form-class").css("width", "1200");
         $(".add-edit-form-task-class").css("width", "1200");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
-        $("."+id).children('img').attr('src',str+'_blue.png');
-        $("."+id).children('div').css('color','#2681DC');
+        $(".add-edit-form-class ."+id).children('img').attr('src',str+'_blue.png');
+        $(".add-edit-form-class ."+id).children('div').css('color','#2681DC');
+        $(".add-edit-form-task-class ."+id).children('img').attr('src',str+'_blue.png');
+        $(".add-edit-form-task-class ."+id).children('div').css('color','#2681DC');
     }
 
-    function hide_right_side(){
-    	$("#side_menu").children('spam').children('div').css('color','#FFF');
-        $(".info").children('img').attr('src','media/images/icons/info.png');
-        $(".scenar").children('img').attr('src','media/images/icons/scenar.png');
-        $(".task").children('img').attr('src','media/images/icons/task.png');
-        $(".sms").children('img').attr('src','media/images/icons/sms.png');
-        $(".mail").children('img').attr('src','media/images/icons/mail.png');
-        $(".record").children('img').attr('src','media/images/icons/record.png');
-        $(".file").children('img').attr('src','media/images/icons/file.png');
-        $("#record fieldset").show();
-    }
     
     function show_main(id,my_this){
     	$("#client_main,#client_other").hide();
@@ -451,6 +433,19 @@ if(fName=='add-edit-form-task'){
         //$('#add-edit-form').dialog({ position: 'top' });
         hide_right_side();
     });
+
+    function hide_right_side(){
+    	$("#add-edit-form #side_menu").children('spam').children('div').css('color','#FFF');
+    	$("#add-edit-form-task #side_menu").children('spam').children('div').css('color','#FFF');
+        $(".info").children('img').attr('src','media/images/icons/info.png');
+        $(".scenar").children('img').attr('src','media/images/icons/scenar.png');
+        $(".task").children('img').attr('src','media/images/icons/task.png');
+        $(".sms").children('img').attr('src','media/images/icons/sms.png');
+        $(".mail").children('img').attr('src','media/images/icons/mail.png');
+        $(".record").children('img').attr('src','media/images/icons/record.png');
+        $(".file").children('img').attr('src','media/images/icons/file.png');
+        $("#record fieldset").show();
+    }
 
     $(document).on("click", "#show_copy_prit_exel", function () {
         if($(this).attr('myvar') == 0){
@@ -745,13 +740,13 @@ if(fName=='add-edit-form-task'){
 			    data: {
 					act: "file_upload",
 					button_id: "file_name",
-					table_name: 'incomming_call',
+					table_name: 'outgoing',
 					file_name: Math.ceil(Math.random()*99999999999),
 					file_name_original: file_name,
 					file_type: file_type,
 					file_size: file_size,
 					path: path,
-					table_id: $("#incomming_id").val(),
+					table_id: $("#hidden_id").val(),
 
 				},
 		        success: function(data) {			        
@@ -764,8 +759,60 @@ if(fName=='add-edit-form-task'){
 								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
 								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
 								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
-								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
-								$("#paste_files").html(tbody);
+								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "', 'outgoing')\">-</div>";
+								$("#add-edit-form #paste_files").html(tbody);
+							}							
+						}						
+					}					
+			    }
+		    });
+        }
+    });
+
+    $(document).on("click", "#upload_file1", function () {
+	    $('#file_name1').click();
+	});
+    $(document).on("change", "#file_name1", function () {
+        var file_url  = $(this).val();
+        var file_name = this.files[0].name;
+        var file_size = this.files[0].size;
+        var file_type = file_url.split('.').pop().toLowerCase();
+        var path	  = "../../media/uploads/file/";
+
+        if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+            alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
+        }else if(file_size > '15728639'){
+            alert("ფაილის ზომა 15MB-ზე მეტია");
+        }else{
+        	$.ajaxFileUpload({
+		        url: "server-side/upload/file.action.php",
+		        secureuri: false,
+     			fileElementId: "file_name1",
+     			dataType: 'json',
+			    data: {
+					act: "file_upload",
+					button_id: "file_name1",
+					table_name: 'task',
+					file_name: Math.ceil(Math.random()*99999999999),
+					file_name_original: file_name,
+					file_type: file_type,
+					file_size: file_size,
+					path: path,
+					table_id: $("#id").val(),
+
+				},
+		        success: function(data) {			        
+			        if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							var tbody = '';
+							for(i = 0;i <= data.page.length;i++){
+								tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+								tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+								tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+								tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "', 'task')\">-</div>";
+								$("#add-edit-form-task #paste_files").html(tbody);
 							}							
 						}						
 					}					
@@ -795,29 +842,32 @@ if(fName=='add-edit-form-task'){
 					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
 					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
 					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
-					$("#paste_files1").html(tbody);
+					$("#add-edit-form #paste_files1").html(tbody);
 				}	
             }
         });
     }
     
-    function delete_file(id){
+    function delete_file(id,tbl){
     	$.ajax({
             url: "server-side/upload/file.action.php",
-            data: "act=delete_file&file_id="+id+"&table_name=incomming_call",
+            data: "act=delete_file&file_id="+id+"&table_name="+tbl,
             success: function(data) {
                
             	var tbody = '';
             	if(data.page.length == 0){
-            		$("#paste_files").html('');
-            	};
-				for(i = 0;i <= data.page.length;i++){
-					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
-					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
-					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
-					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
-					$("#paste_files").html(tbody);
-				}	
+            		$("#add-edit-form #paste_files").html('');
+            		$("#add-edit-form-task #paste_files").html('');
+            	}else{
+    				for(i = 0;i <= data.page.length;i++){
+    					tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+    					tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+    					tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+    					tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "','"+tbl+"')\">-</div>";
+    					$("#add-edit-form-task #paste_files").html(tbody);
+    					$("#add-edit-form #paste_files").html(tbody);
+    				}
+            	}
             }
         });
     }
@@ -989,43 +1039,43 @@ if(fName=='add-edit-form-task'){
 		//----------------------------------------------------
 		
 		// Incomming Vars
-    	param.incomming_id          = $("#incomming_id").val();
-		param.incomming_date        = $("#incomming_date").val();
-		param.incomming_date_up		= $("#incomming_date_up").val();
-		param.call_comment		    = $("#call_comment").val();
-		param.outgoing_status       = $("#outgoing_status").val();
+    	param.incomming_id          = $("#add-edit-form #incomming_id").val();
+		param.incomming_date        = $("#add-edit-form #incomming_date").val();
+		param.incomming_date_up		= $("#add-edit-form #incomming_date_up").val();
+		param.call_comment		    = $("#add-edit-form #call_comment").val();
+		param.outgoing_status       = $("#add-edit-form #outgoing_status").val();
 
 		// Incomming Client Vars
-		param.client_status			= $('input[name=client_status]:checked').val();
-		param.client_person_number	= $("#client_person_number").val();
-		param.client_person_lname	= $("#client_person_lname").val();
-		param.client_person_fname	= $("#client_person_fname").val();
-		param.client_person_phone1	= $("#client_person_phone1").val();
-		param.client_person_phone2	= $("#client_person_phone2").val();
-		param.client_person_mail1	= $("#client_person_mail1").val();
-    	param.client_person_mail2	= $("#client_person_mail2").val();
-    	param.client_person_addres1	= $("#client_person_addres1").val();
-		param.client_person_addres2	= $("#client_person_addres2").val();
-		param.client_person_note	= $("#client_person_note").val();
+		param.client_status			= $('#add-edit-form input[name=client_status]:checked').val();
+		param.client_person_number	= $("#add-edit-form #client_person_number").val();
+		param.client_person_lname	= $("#add-edit-form #client_person_lname").val();
+		param.client_person_fname	= $("#add-edit-form #client_person_fname").val();
+		param.client_person_phone1	= $("#add-edit-form #client_person_phone1").val();
+		param.client_person_phone2	= $("#add-edit-form #client_person_phone2").val();
+		param.client_person_mail1	= $("#add-edit-form #client_person_mail1").val();
+    	param.client_person_mail2	= $("#add-edit-form #client_person_mail2").val();
+    	param.client_person_addres1	= $("#add-edit-form #client_person_addres1").val();
+		param.client_person_addres2	= $("#add-edit-form #client_person_addres2").val();
+		param.client_person_note	= $("#add-edit-form #client_person_note").val();
 		
-		param.client_number			= $("#client_number").val();
-		param.client_name	        = $("#client_name").val();
-		param.client_phone1			= $("#client_phone1").val();
-		param.client_phone2			= $("#client_phone2").val();
-		param.client_mail1	        = $("#client_mail1").val();
-		param.client_mail2			= $("#client_mail2").val();
-		param.client_note			= $("#client_note").val();
+		param.client_number			= $("#add-edit-form #client_number").val();
+		param.client_name	        = $("#add-edit-form #client_name").val();
+		param.client_phone1			= $("#add-edit-form #client_phone1").val();
+		param.client_phone2			= $("#add-edit-form #client_phone2").val();
+		param.client_mail1	        = $("#add-edit-form #client_mail1").val();
+		param.client_mail2			= $("#add-edit-form #client_mail2").val();
+		param.client_note			= $("#add-edit-form #client_note").val();
 
-		param.task_type_id			= $("#task_type_id").val();
-		param.task_start_date		= $("#task_start_date").val();
-		param.task_end_date			= $("#task_end_date").val();
-		param.task_departament_id	= $("#task_departament_id").val();
-		param.task_recipient_id		= $("#task_recipient_id").val();
-		param.task_priority_id		= $("#task_priority_id").val();
-		param.task_controler_id		= $("#task_controler_id").val();
-		param.task_status_id		= $("#task_status_id").val();
-		param.task_description		= $("#task_description").val();
-		param.task_note			    = $("#task_note").val();
+		param.task_type_id			= $("#add-edit-form #task_type_id").val();
+		param.task_start_date		= $("#add-edit-form #task_start_date").val();
+		param.task_end_date			= $("#add-edit-form #task_end_date").val();
+		param.task_departament_id	= $("#add-edit-form #task_departament_id").val();
+		param.task_recipient_id		= $("#add-edit-form #task_recipient_id").val();
+		param.task_priority_id		= $("#add-edit-form #task_priority_id").val();
+		param.task_controler_id		= $("#add-edit-form #task_controler_id").val();
+		param.task_status_id		= $("#add-edit-form #task_status_id").val();
+		param.task_description		= $("#add-edit-form #task_description").val();
+		param.task_note			    = $("#add-edit-form #task_note").val();
 		
 		var link = GetAjaxData(param);		
 	    	$.ajax({
@@ -1292,7 +1342,6 @@ if(fName=='add-edit-form-task'){
         <tr id="datatable_header">
             <th>ID</th>
             <th style="width: 20px;">№</th>
-            <th style="width: 50%;">შექმნის თარიღი</th>
             <th style="width: 50%;">დასაწყისი</th>
             <th style="width: 50%;">დასასრული</th>
             <th style="width: 50%;">დავალების ტიპი</th>
@@ -1301,7 +1350,6 @@ if(fName=='add-edit-form-task'){
             <th style="width: 50%;">მაკონტროლებელი</th>
             <th style="width: 50%;">დამფორმირებელი</th>
             <th style="width: 50%;">პრიორიტეტი</th>
-            <th style="width: 50%;">სტატუსი</th>
             <th style="width: 50%;">აღწერა</th>
             <th style="width: 50%;">შენიშვნა</th>
             <th class="check" style="width: 20px;">#</th>
@@ -1313,17 +1361,11 @@ if(fName=='add-edit-form-task'){
         	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
             </th>
             <th>
-            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>    
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-            </th>
-            <th>
-            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-            </th>
+            </th>            
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>    

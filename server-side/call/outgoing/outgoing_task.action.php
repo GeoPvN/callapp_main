@@ -45,7 +45,6 @@ switch ($action) {
 
 	  	$rResult = mysql_query("SELECT 	`task`.`id`,
                         				`task`.`id`,
-                        				`task_date`,
                         				`task_start_date`,
                         				`task_end_date`,
                         				`task_type`.`name`,
@@ -54,7 +53,6 @@ switch ($action) {
                         				`controler_ps`.`name`,
                         				`former_ps`.`name`,
                         				`priority`.`name`,
-                        				`task_status`.`name`,
                         				`task_description`,
                         				`task_note`
                                 FROM 	`task`
@@ -67,7 +65,6 @@ switch ($action) {
                                 JOIN	`users` AS former ON task.task_controler_id = former.id
                                 JOIN	`user_info` AS former_ps ON former.id = former_ps.user_id
                                 JOIN	`priority` ON priority.id = task.task_priority_id
-                                JOIN	`task_status` ON task.task_status_id = task_status.id
                                 WHERE 	`task`.`actived` = 1 AND task_status_id = $task_status_id");
 		
 		$data = array(
@@ -287,8 +284,8 @@ function GetPage($res)
 	                   <td><label for="task_start_date">პერიოდი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td style="width: 220px;"><input style="float: left;" id="task_start_date" type="text" value="'.$res['task_start_date'].'" '.(($res[id]=='')?"":"disabled").'><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
-	                   <td><input style="float: left;" id="task_end_date" type="text" value="'.$res['task_end_date'].'" '.(($res[id]=='')?"":"disabled").'><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-მდე</label></td>
+	                   <td style="width: 220px;"><input style="float: left;" id="task_start_date1" type="text" value="'.$res['task_start_date'].'" '.(($res[id]=='')?"":"disabled").'><label for="task_start_date" style="float: left;margin-top: 7px;margin-left: 2px;">-დან</label></td>
+	                   <td><input style="float: left;" id="task_end_date1" type="text" value="'.$res['task_end_date'].'" '.(($res[id]=='')?"":"disabled").'><label for="task_end_date" style="float: left;margin-top: 7px;margin-left: 2px;">-მდე</label></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
@@ -497,12 +494,12 @@ function show_file($res){
                                             `file_date`,
                                             `id`
                                      FROM   `file`
-                                     WHERE  `incomming_call_id` = $res[id] AND `actived` = 1");
+                                     WHERE  `task_id` = $res[id] AND `actived` = 1");
     while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
         $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">'.$file_res_incomming[file_date].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">'.$file_res_incomming[name].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 160px;float:left;" onclick="download_file(\''.$file_res_incomming[rand_name].'\')">ჩამოტვირთვა</div>
-                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\')">-</div>';
+                            	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;width: 20px;float:left;" onclick="delete_file(\''.$file_res_incomming[id].'\',\'task\')">-</div>';
     }
     $data = '<div style="margin-top: 15px;>
                     <div style="width: 100%; border:1px solid #CCC;float: left;">    	            
@@ -510,7 +507,7 @@ function show_file($res){
                     	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">დასახელება</div>
                     	   <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 160px;float:left;">ჩამოტვირთვა</div>
                            <div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 20px;float:left;">-</div>
-    	                   <div style="text-align: center;vertical-align: middle;float: left;width: 595px;"><button id="upload_file" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name" id="file_name"></div>
+    	                   <div style="text-align: center;vertical-align: middle;float: left;width: 595px;"><button id="upload_file1" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name1" id="file_name1"></div>
                            <div id="paste_files">
                            '.$str_file_incomming.'
                            </div>

@@ -8,7 +8,7 @@ $queue	= $_REQUEST['queuet'];
 $start_time = $_REQUEST['start_time'];
 $end_time 	= $_REQUEST['end_time'];
 $day = (strtotime($end_time)) -  (strtotime($start_time));
-$day_format = ($day / (60*60*24)) + 1;
+$day_format = round(($day / (60*60*24)) + 1);
 
 
 // ----------------------------------
@@ -25,7 +25,7 @@ $data		= array('page' => array(
                     				dst_queue,
                     				dst_extension,
                     				SEC_TO_TIME(duration),
-                    				IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+                    				CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
 	                        FROM 	`asterisk_incomming`
                             WHERE disconnect_cause != 'ABANDON' 
                             AND 	DATE(`call_datetime`) >= '$start_time'
@@ -71,7 +71,7 @@ $data		= array('page' => array(
                     				dst_queue,
                     				dst_extension,
                     				SEC_TO_TIME(duration),
-                    				IF(DATE(call_datetime) < '2015-04-01',CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/'), file_name, '\">ჩამოტვირთვა</a>'),CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://10.0.18.18:8080/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>')) AS `file`
+                    				CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
                             FROM `asterisk_incomming`
                             JOIN users ON asterisk_incomming.user_id = users.id
                             WHERE 
