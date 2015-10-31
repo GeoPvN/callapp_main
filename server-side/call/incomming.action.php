@@ -20,6 +20,7 @@ $incomming_cat_1            = $_REQUEST['incomming_cat_1'];
 $incomming_cat_1_1          = $_REQUEST['incomming_cat_1_1'];
 $incomming_cat_1_1_1        = $_REQUEST['incomming_cat_1_1_1'];
 $incomming_comment          = $_REQUEST['incomming_comment'];
+$inc_status_id              = $_REQUEST['inc_status_id'];
 
 
 $client_status              = $_REQUEST['client_status'];
@@ -67,7 +68,7 @@ switch ($action) {
                         				incomming_call.id,
                         				incomming_call.date,
                         				incomming_call.phone,
-                        				IF(personal_info.client_person_fname!='',personal_info.client_person_fname,personal_info.client_name) AS `name`,
+                        				IF(personal_info.client_person_lname!='',CONCAT(personal_info.client_person_lname,' ',personal_info.client_person_fname),personal_info.client_name) AS `name`,
                         				cat_1.`name` AS `cat_1`,
                         				cat_1_1.`name` AS `cat_1_1`,
                         				cat_1_1_1.`name` AS `cat_1_1_1`,
@@ -116,9 +117,9 @@ switch ($action) {
         break;
     case 'save_incomming':
         if($hidden_id == ''){
-            incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id,$client_addres1,$client_addres2);
+            incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id,$client_addres1,$client_addres2,$inc_status_id);
         }else{
-            incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$client_addres1,$client_addres2);
+            incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$client_addres1,$client_addres2,$inc_status_id);
         }
         $checker     = json_decode($_REQUEST[checker]);
         $input       = json_decode($_REQUEST[input]);
@@ -217,11 +218,11 @@ echo json_encode($data);
 * ******************************
 */
 
-function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id,$client_addres1,$client_addres2){
+function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$scenario_id,$client_addres1,$client_addres2,$inc_status_id){
     mysql_query("INSERT INTO    `incomming_call` 
-                 (`id`,`user_id`,`date`,`phone`,`cat_1`,`cat_1_1`,`cat_1_1_1`,`comment`,`scenario_id`)
+                 (`id`,`user_id`,`date`,`phone`,`cat_1`,`cat_1_1`,`cat_1_1_1`,`comment`,`scenario_id`,`inc_status_id`)
                  VALUES
-                 ('$incomming_id','$user_id','$incomming_date','$incomming_phone','$incomming_cat_1','$incomming_cat_1_1','$incomming_cat_1_1_1','$incomming_comment','$scenario_id')");
+                 ('$incomming_id','$user_id','$incomming_date','$incomming_phone','$incomming_cat_1','$incomming_cat_1_1','$incomming_cat_1_1_1','$incomming_comment','$scenario_id','$inc_status_id')");
     
     mysql_query("INSERT INTO `personal_info` 
                  (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`)
@@ -229,16 +230,25 @@ function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phon
                  ('$user_id', '$incomming_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '$client_addres1', '$client_addres2', '', '', '$client_note');");
 }
 
-function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$client_addres1,$client_addres2){
+function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$client_addres1,$client_addres2,$inc_status_id){
     mysql_query("UPDATE `incomming_call` SET 
                         `user_id`='$user_id',
                         `phone`='$incomming_phone',
                         `cat_1`='$incomming_cat_1',
                         `cat_1_1`='$incomming_cat_1_1',
                         `cat_1_1_1`='$incomming_cat_1_1_1',
-                        `comment`='$incomming_comment'
+                        `comment`='$incomming_comment',
+                        `inc_status_id`='$inc_status_id'
                  WHERE  `id`='$hidden_id'");
     
+    $req = mysql_num_rows(mysql_query("SELECT id FROM personal_info WHERE `incomming_call_id`='$hidden_id'"));
+    
+    if($req == 0){
+        mysql_query("INSERT INTO `personal_info`
+            (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`)
+            VALUES
+            ('$user_id', '$hidden_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '$client_addres1', '$client_addres2', '', '', '$client_note');");
+    }else{
     mysql_query("UPDATE `personal_info` SET
                         `user_id`='$user_id',
                         `client_person_number`='$client_person_number',
@@ -265,6 +275,7 @@ function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,
                         `client_index2`=NULL,
                         `client_note`='$client_note'
                 WHERE   `incomming_call_id`='$hidden_id'");
+    }
 }
 
 function get_cat_1($id){
@@ -340,6 +351,24 @@ function get_cat_1_1_1($id,$child_id){
     return $data;
 }
 
+function get_IncStatus($inc_status_id){
+    $req = mysql_query("    SELECT  `id`,
+                                    `name`
+                            FROM    `inc_status`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $inc_status_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+
+    return $data;
+}
+
 function Getincomming($hidden_id,$open_number)
 {
     if($hidden_id == ''){
@@ -356,6 +385,7 @@ function Getincomming($hidden_id,$open_number)
                                     				incomming_call.cat_1_1,
                                     				incomming_call.cat_1_1_1,
                                     				incomming_call.`comment`,
+	                                                incomming_call.inc_status_id,
                                     				personal_info.`client_person_number`,
                                     				personal_info.`client_person_lname`,
                                     				personal_info.`client_person_fname`,
@@ -408,9 +438,9 @@ function GetPage($res,$increment,$open_number,$queue)
 	               <td><label for="incomming_phone">ტელეფონი</td>
     	       </tr>
 	           <tr>
-	               <td><input style="width: 110px;" id="incomming_id" type="text" value="'.(($res['id']=='')?$increment:$res['id']).'"></td>
-	               <td><input style="width: 125px;" id="incomming_date" type="text" value="'.(($res['call_date']=='')?date("Y-m-d H:i:s"):$res['call_date']).'"></td>
-	               <td><input style="width: 110px;" id="incomming_phone" type="text" value="'.$res['phone'].'"></td>
+	               <td><input disabled style="width: 110px;" id="incomming_id" type="text" value="'.(($res['id']=='')?$increment:$res['id']).'"></td>
+	               <td><input disabled style="width: 125px;" id="incomming_date" type="text" value="'.(($res['call_date']=='')?date("Y-m-d H:i:s"):$res['call_date']).'"></td>
+	               <td><input disabled style="width: 110px;" id="incomming_phone" type="text" value="'.$res['phone'].'"></td>
     	       </tr>
 	       </table>
 	       <table class="dialog-form-table">
@@ -435,10 +465,16 @@ function GetPage($res,$increment,$open_number,$queue)
 	       </table>
 	       <table class="dialog-form-table">
 	           <tr>
+	               <td><label for="inc_status_id">სტატუსი</label></td>
+	           </tr>
+	           <tr>
+	               <td><select id="inc_status_id" style="width: 415px;">'.get_IncStatus($res['inc_status_id']).'</select></td>
+	           </tr>
+	           <tr>
 	               <td><label for="incomming_comment">დამატებითი ინფორმაცია</label></td>
 	           </tr>
 	           <tr>
-	               <td><textarea id="incomming_comment" style="resize: vertical;width: 415px;height: 149px;">'.$res['comment'].'</textarea></td>
+	               <td><textarea id="incomming_comment" style="resize: vertical;width: 415px;height: 50px;">'.$res['comment'].'</textarea></td>
 	           </tr>
 	       </table>
 	       
@@ -473,7 +509,7 @@ function GetPage($res,$increment,$open_number,$queue)
                                
                            </tr>
                            <tr>
-                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
+                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'" maxlength="11" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
                                   
                            </tr>
                         </table>
@@ -493,8 +529,8 @@ function GetPage($res,$increment,$open_number,$queue)
         	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
                             </tr>
     	                    <tr>
-                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
-        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
                             </tr>
     	                    <tr>
                                 <td style="width: 328px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>

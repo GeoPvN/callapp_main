@@ -257,13 +257,13 @@ function GetPage($res)
                     <button id="add_button_ext">დამატება</button>
                     <button id="delete_button_ext">წაშლა</button>
                 </div>
-	            <table class="display" id="table_ext">
+	            <table class="display" id="table_ext" style="width:100%;">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
                             <th style="width: 280px;">დასახელება</th>
                             <th style="width: 200px;">ნომერი</th>
-                            <th class="check" style="width: 8px;"></th>
+                            <th class="check" style="width: 25px;">&zwnj;</th>
                         </tr>
                     </thead>                    
 	                <thead>

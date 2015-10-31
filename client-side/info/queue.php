@@ -240,14 +240,6 @@
     </thead>
 </table>
 </div>
-<style>
-.ui-widget-header{
-	box-shadow: 0px 0px 7px #888888;
-}
-.display{
-	box-shadow: 0px -2px 10px #888888;
-}
-</style>
 
 
 <!-- jQuery Dialog -->

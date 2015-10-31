@@ -685,6 +685,7 @@
 		param.incomming_cat_1_1_1	= $("#incomming_cat_1_1_1").val();
 		param.incomming_comment		= $("#incomming_comment").val();
 		param.scenario_id           = $("#scenario_id").val();
+		param.inc_status_id         = $("#inc_status_id").val();
 
 		// Incomming Client Vars
 		param.client_status			= $('input[name=client_status]:checked').val();
@@ -901,10 +902,9 @@
         <span style="margin-top: 15px;">
         <select id="tab_id" style="width: 285px;">
         <option value="0">ყველა ზარი</option>
-        <option>ზარები დღეს</option>
-        <option>გადაცემულია გასარკვევად</option>
-        <option>გარკვევის პროცესშია</option>
-        <option>დასრულებულია</option>
+        <option value="1">გადაცემულია გასარკვევად</option>
+        <option value="2">გარკვევის პროცესშია</option>
+        <option value="3">დასრულებულია</option>
         </select>
         </span>
     </div>
