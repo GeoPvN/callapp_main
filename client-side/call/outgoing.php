@@ -296,7 +296,7 @@ if(fName=='add-edit-form-task'){
         select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
         //alert(input_radio);
         if(input_radio == undefined){
-            
+        	alert(input_radio);
         }else{
         	$('.quest_body').css('display','none');
         	$('#'+input_radio).css('display','block');
@@ -336,21 +336,55 @@ if(fName=='add-edit-form-task'){
 
     $(document).on("click", "#back_quest", function () {
     	$('#next_quest').prop('disabled',false);
-    	$('#next_quest').attr('next_id',$(".quest_body:visible").attr("id"));
+    	var input_radio    = '';
+        var input_checkbox = '';
+        var input          = '';
+        var select         = '';
+    	input_radio = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .radio_input:checked').attr('next_quest');
+        input_checkbox = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .check_input:checked').attr('next_quest');
+        input = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' input[type="text"]').attr('next_quest');
+        select = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .hand_select').attr('next_quest');
+        if(input_radio == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_radio).css('display','block');
+        	$('#next_quest').attr('next_id',input_radio);
+        	$('#back_quest').prop('disabled',false);
+        	if(input_radio == 0){
+        		$('.last_quest').css('display','block');
+        		$('#next_quest').prop('disabled',true);
+        	}
+        }
+        if(input == undefined){
+        	
+        }else{
+            if(input==0){
+            	$('#next_quest').prop('disabled',true);
+            }else{
+            $('.quest_body').css('display','none');
+        	$('#'+input).css('display','block');
+        	$('#next_quest').attr('next_id',input);
+            }
+        }
+        if(input_checkbox == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+input_checkbox).css('display','block');
+        	$('#next_quest').attr('next_id',input_checkbox);
+        }
+        if(select == undefined){
+            
+        }else{
+        	$('.quest_body').css('display','none');
+        	$('#'+select).css('display','block');
+        	$('#next_quest').attr('next_id',select);
+        }
     	
-    	var str = $(".quest_body:visible").attr("class");
-    	if(str == undefined){
-    		var res = parseInt($(this).attr('back_id')) + 1;
-    	}else{
-    		var res = str.replace("quest_body ", "");
-    	}
-    	back_id = (res-1);
-    	if(back_id<1){
-    		back_id = 1;
-    		$('#back_quest').prop('disabled',true);
-    	}
     	$('.quest_body,.last_quest').css('display','none');
-    	$('#'+back_id).css('display','block');
+    	$('#'+$(this).attr('back_id')).css('display','block');
+    	$('#next_quest').attr('next_id',$(this).attr("back_id"));
     });
     
     $(document).on("click", "#actived-btn", function () {
