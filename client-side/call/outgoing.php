@@ -381,7 +381,7 @@ if(fName=='add-edit-form-task'){
         	$('#'+select).css('display','block');
         	$('#next_quest').attr('next_id',select);
         }
-    	alert($(this).attr('back_id'))
+    	//alert($(this).attr('back_id'))
     	$('.quest_body,.last_quest').css('display','none');
     	$('#'+$(this).attr('back_id')).css('display','block');
     	$('#next_quest').attr('next_id',$(this).attr("back_id"));
