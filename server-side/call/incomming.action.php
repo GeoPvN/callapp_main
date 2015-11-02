@@ -77,7 +77,7 @@ switch ($action) {
                                 LEFT JOIN	info_category AS cat_1 ON incomming_call.cat_1 = cat_1.id
                                 LEFT JOIN	info_category AS cat_1_1 ON incomming_call.cat_1_1 = cat_1_1.id
                                 LEFT JOIN	info_category AS cat_1_1_1 ON incomming_call.cat_1_1_1 = cat_1_1_1.id
-                                LEFT JOIN personal_info ON incomming_call.id = personal_info.incomming_call_id");
+                                LEFT JOIN   personal_info ON incomming_call.id = personal_info.incomming_call_id");
 	  
 		$data = array(
 				"aaData"	=> array()
@@ -405,9 +405,11 @@ function Getincomming($hidden_id,$open_number)
 	                                                personal_info.`client_addres1`,
 	                                                personal_info.`client_addres2`,
 	                                                incomming_call.scenario_id AS `inc_scenario_id`,
-                                    				personal_info.`client_note`
+                                    				personal_info.`client_note`,
+	                                                asterisk_incomming.dst_queue
                                         FROM 	   incomming_call
                                         LEFT JOIN  personal_info ON incomming_call.id = personal_info.incomming_call_id
+	                                    LEFT JOIN  asterisk_incomming ON asterisk_incomming.id = incomming_call.asterisk_incomming_id
                                         WHERE      $filter
                                 	    ORDER BY incomming_call.id DESC
                                         LIMIT 1"));
@@ -420,7 +422,12 @@ function GetPage($res,$increment,$open_number,$queue)
     if($increment == '' && $res == ''){
         $increment = increment(incomming_call);
     }
-    $rr = mysql_fetch_array(mysql_query("SELECT scenario_id FROM queue WHERE number = '$queue'"));
+    if($queue==''){
+        $ch_queue = $res['dst_queue'];
+    }else{
+        $ch_queue = $queue;
+    }
+    $rr = mysql_fetch_array(mysql_query("SELECT scenario_id FROM queue WHERE number = '$ch_queue'"));
 	$data  .= '
 	<div id="dialog-form">
 	    <fieldset style="width: 430px;  float: left;">
