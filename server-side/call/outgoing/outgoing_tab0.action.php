@@ -620,16 +620,16 @@ function GetPage($res)
 	 
 	 
 	$query = mysql_query("SELECT 	`question`.id,
-	    `question`.`name`,
-	    `question`.note,
-	    `scenario`.`name`,
-	    `scenario_detail`.id AS sc_det_id,
-	    `scenario_detail`.`sort`
-	    FROM        `scenario`
-	    JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
-	    JOIN        question ON scenario_detail.quest_id = question.id
-	    WHERE       scenario.id = $my_scenario AND scenario_detail.actived = 1
-	    ORDER BY    scenario_detail.sort ASC");
+                            	    `question`.`name`,
+                            	    `question`.note,
+                            	    `scenario`.`name`,
+                            	    `scenario_detail`.id AS sc_det_id,
+                            	    `scenario_detail`.`sort`
+                    	    FROM    `scenario`
+                    	    JOIN    scenario_detail ON scenario.id = scenario_detail.scenario_id
+                    	    JOIN    question ON scenario_detail.quest_id = question.id
+                    	    WHERE   scenario.id = $my_scenario AND scenario_detail.actived = 1
+                    	    ORDER BY scenario_detail.sort ASC");
 	
 	$data .= '
 	
@@ -645,11 +645,11 @@ function GetPage($res)
 	}
 	while ($row = mysql_fetch_array($query)) {
 	
-	    $last_q = mysql_query("  SELECT question_detail.id
-	        FROM `question_detail`
-	        JOIN scenario_detail ON scenario_detail.quest_id = question_detail.quest_id
-	        AND scenario_detail.scenario_id = $my_scenario
-	        WHERE question_detail.quest_id = $row[0]");
+	    $last_q = mysql_query(" SELECT question_detail.id
+                    	        FROM `question_detail`
+                    	        JOIN scenario_detail ON scenario_detail.quest_id = question_detail.quest_id
+                    	        AND scenario_detail.scenario_id = $my_scenario
+                    	        WHERE question_detail.quest_id = $row[0]");
 	
 	    $data .= '<div style="margin-top: 15px;" class="quest_body '.$row[5].'" id="'.$row[0].'">
 		            <table class="dialog-form-table">
@@ -663,25 +663,26 @@ function GetPage($res)
 	
 	         
 	        $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" id=\"checkbox', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"checkbox', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
-	            WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
-	            WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" id=\"radio', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"radio', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
-	            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
-	            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
-	            WHEN question_detail.quest_type_id = 7 THEN question_detail.answer
-	            END AS `ans`,
-	            question_detail.quest_type_id,
-	            scenario_handbook.`name`,
-	            scenario_results.additional_info,
-	            question_detail.quest_id,
-	            question_detail.id,
-	            scenario_destination.destination
-	            FROM question_detail
-	            LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
-	            LEFT JOIN outgoing_campaign_detail ON outgoing_campaign_detail.id = scenario_results.outgoing_campaign_detail_id
-	            LEFT JOIN scenario_destination ON scenario_destination.answer_id = $last_a[0]
-	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
-	            WHERE question_detail.id = $last_a[0]
-	            ");
+                                    	            WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                    	            WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" id=\"radio', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"radio', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
+                                    	            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                    	            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.outgoing_campaign_detail_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                    	            WHEN question_detail.quest_type_id = 7 THEN question_detail.answer
+                            	            END AS `ans`,
+                            	            question_detail.quest_type_id,
+                            	            scenario_handbook.`name`,
+                            	            scenario_results.additional_info,
+                            	            question_detail.quest_id,
+                            	            question_detail.id,
+                            	            scenario_destination.destination
+                    	            FROM question_detail
+                    	            LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
+                    	            LEFT JOIN outgoing_campaign_detail ON outgoing_campaign_detail.id = scenario_results.outgoing_campaign_detail_id
+                    	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario
+                            	    LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
+                    	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
+                    	            WHERE question_detail.id = $last_a[0]
+                    	            ");
 	
 	
 	

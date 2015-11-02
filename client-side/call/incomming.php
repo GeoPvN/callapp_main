@@ -90,6 +90,7 @@
     });
 
     $(document).on("click", "#next_quest", function () {
+    	$('#back_quest').attr('back_id',$(".quest_body:visible").attr("id"));
         var input_radio    = '';
         var input_checkbox = '';
         var input          = '';
@@ -98,7 +99,7 @@
         input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
         input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
         select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
-        
+        //alert(input_radio);
         if(input_radio == undefined){
             
         }else{
@@ -106,6 +107,10 @@
         	$('#'+input_radio).css('display','block');
         	$('#next_quest').attr('next_id',input_radio);
         	$('#back_quest').prop('disabled',false);
+        	if(input_radio == 0){
+        		$('.last_quest').css('display','block');
+        		$('#next_quest').prop('disabled',true);
+        	}
         }
         if(input == undefined){
         	
@@ -113,7 +118,7 @@
             if(input==0){
             	$('#next_quest').prop('disabled',true);
             }else{
-        	
+            $('.quest_body').css('display','none');
         	$('#'+input).css('display','block');
         	$('#next_quest').attr('next_id',input);
             }
@@ -139,15 +144,19 @@
     	$('#next_quest').attr('next_id',$(".quest_body:visible").attr("id"));
     	
     	var str = $(".quest_body:visible").attr("class");
-    	var res = str.replace("quest_body ", "");
+    	if(str == undefined){
+    		var res = parseInt($(this).attr('back_id')) + 1;
+    	}else{
+    		var res = str.replace("quest_body ", "");
+    	}
     	back_id = (res-1);
     	if(back_id<1){
     		back_id = 1;
     		$('#back_quest').prop('disabled',true);
     	}
-    	$('.quest_body').css('display','none');
+    	$('.quest_body,.last_quest').css('display','none');
     	$('.'+back_id).css('display','block');
-    })
+    });
 
     $(document).on("change", "#operator_id", function () {
         if($(this).val() != 0){
