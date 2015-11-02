@@ -1042,19 +1042,15 @@ function GetMailSendPage(){
 
 function show_record($res){
     $ph1 = '';
-    $ph2 = '';
-    if(strlen($res[phone1]) > 4){
-        $ph1 = "`source` LIKE '%$res[phone1]%'";
-    }
-    if(strlen($res[phone2]) > 4){
-        $ph2 = " or `source` LIKE '%$res[phone2]%'";
+    if(strlen($res[phone]) > 4){
+        $ph1 = "`source` LIKE '%$res[phone]%'";
     }
     
 $record_incomming = mysql_query("SELECT  `datetime`,
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                              CONCAT(DATE_FORMAT(asterisk_incomming.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                      FROM    `asterisk_incomming`
-                                     WHERE   $ph1 $ph2");
+                                     WHERE   $ph1");
     while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
         $str_record_incomming .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[datetime].'</td>
@@ -1067,7 +1063,7 @@ $record_incomming = mysql_query("SELECT  `datetime`,
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                             CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                     FROM    `asterisk_outgoing`
-                                    WHERE   `phone` LIKE '%$res[phone1]%' or `phone` LIKE '%$res[phone2]%'");
+                                    WHERE   $ph1");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
         $str_record_outgoing .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>
