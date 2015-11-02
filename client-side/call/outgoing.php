@@ -294,7 +294,7 @@ if(fName=='add-edit-form-task'){
         input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
         input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
         select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
-        //alert(input_radio);
+        
         if(input_radio == undefined){
         	
         }else{
@@ -381,7 +381,7 @@ if(fName=='add-edit-form-task'){
         	$('#'+select).css('display','block');
         	$('#next_quest').attr('next_id',select);
         }
-    	//alert($(this).attr('back_id'))
+    	
     	$('.quest_body,.last_quest').css('display','none');
     	$('#'+$(this).attr('back_id')).css('display','block');
     	$('#next_quest').attr('next_id',$(this).attr("back_id"));
