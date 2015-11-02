@@ -969,7 +969,7 @@ function GetMailSendPage(){
 
 function show_record($res){
     $ph1 = "`source` LIKE '%test%'";
-    $ph2 = "`source` LIKE '%test%'";
+    $ph2 = "or `source` LIKE '%test%'";
     if(strlen($res[phone1]) > 4){
         $ph1 = "`source` LIKE '%$res[phone1]%'";
     }
@@ -987,6 +987,15 @@ function show_record($res){
                             	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[duration].'</td>
                             	    <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;cursor: pointer;" onclick="listen(\''.$record_res_incomming[file_name].'\')"><span>მოსმენა</span></td>
                         	      </tr>';
+    }
+    
+    $ph1 = "`phone` LIKE '%test%'";
+    $ph2 = "or `phone` LIKE '%test%'";
+    if(strlen($res[phone1]) > 4){
+        $ph1 = "`phone` LIKE '%$res[phone1]%'";
+    }
+    if(strlen($res[phone2]) > 4){
+        $ph2 = " or `phone` LIKE '%$res[phone2]%'";
     }
     
     $record_outgoing = mysql_query("SELECT  `call_datetime`,
