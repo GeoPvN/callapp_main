@@ -296,7 +296,7 @@ if(fName=='add-edit-form-task'){
         select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
         //alert(input_radio);
         if(input_radio == undefined){
-        	alert(input_radio);
+        	
         }else{
         	$('.quest_body').css('display','none');
         	$('#'+input_radio).css('display','block');
