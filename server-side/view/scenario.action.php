@@ -137,13 +137,13 @@ switch ($action) {
 		
 		break;
 	case 'disable':
-	    if($quest_detail_id != ''){
-		    disable_det($quest_detail_id);
-	    }else{
 	        disable($quest_id);
-	    }
 
 		break;
+	case 'disable_cd':
+	        disable_det($quest_id);
+	
+	    break;
 	case 'get_scen_cat':
 	    $data['cat'] = GetLeCat($_REQUEST['cat_id'],'');
 		
