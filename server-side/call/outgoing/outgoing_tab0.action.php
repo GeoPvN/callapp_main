@@ -993,7 +993,7 @@ function show_record($res){
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                             CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                     FROM    `asterisk_outgoing`
-                                    WHERE   $ph1 $ph2 AND disconnect_cause != 'ABANDON'");
+                                    WHERE   $ph1 $ph2");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
         $str_record_outgoing .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>
