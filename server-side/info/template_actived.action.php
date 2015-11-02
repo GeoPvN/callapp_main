@@ -62,7 +62,8 @@ function AddImport($last_id, $scenario_id){
 	$camping_id = mysql_fetch_array(mysql_query("SELECT id FROM outgoing_campaign ORDER BY id DESC LIMIT 1"));
 	
 	$res = mysql_query("  SELECT id FROM phone_base_detail
-                          
+                          WHERE (id % 1) = floor(rand() * 1)
+                          ORDER BY rand()
                           LIMIT $_REQUEST[actived_number]");
 	
 	while ($req = mysql_fetch_array($res)){
