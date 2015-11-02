@@ -350,7 +350,7 @@ if(fName=='add-edit-form-task'){
     		$('#back_quest').prop('disabled',true);
     	}
     	$('.quest_body,.last_quest').css('display','none');
-    	$('.'+back_id).css('display','block');
+    	$('#'+back_id).css('display','block');
     });
     
     $(document).on("click", "#actived-btn", function () {
