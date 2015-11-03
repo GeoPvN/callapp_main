@@ -29,7 +29,7 @@
 			
 			GetDialog(fName, 600, "auto", "","top top");
 			LoadTable('detail',colum_number,'get_list_detail',"<'F'lip>",'id='+id);
-			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-detail', 'save-detail', 'cancel-dialog',      480,       'top top',  'get_add_page_detail', 'disable_detail', 'get_edit_page_detail',  'detail',   2,        'get_list_detail', "<'F'lip>",      'id_detail='+id,        '','','id_original='+id,'id_original='+id);
+			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-detail', 'save-detail', 'cancel-dialog',      480,       'top top',  'get_add_page_detail', 'disable_detail', 'get_edit_page_detail',  'detail',   2,        'get_list_detail', "<'F'lip>",    '',  'id='+id,        '','id_original='+id,'id_original='+id);
 			
 		}
 		

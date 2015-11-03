@@ -320,10 +320,10 @@ function GetPage($res = '')
                     			    <thead>
                         			    <tr id="datatable_header">
                             			    <th>ID</th>
-    			                            <th style="width: 10px;"></th>
+    			                            <th style="width: 30px;">№</th>
                             			    <th style="width: 100%;">დასახელება</th>
                             			    <th style="width: 100%;">ტიპი</th>
-                            			    <th class="check"></th>
+                            			    <th class="check">&nbsp;</th>
                         			    </tr>
                     			    </thead>
                     			    <thead>

@@ -650,7 +650,6 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
 	                    	if(TablePageNum == '0'){
 	                    		LoadTable(TableID, ColumNum, TableAct, TableFunction, '', TableOtherParam);
 	                    	}else{
-	                    		
 	                    		LoadTable(TableID, ColumNum, TableAct, TableFunction, TableOtherParam);
 	                    	}
 	                    }

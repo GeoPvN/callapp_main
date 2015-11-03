@@ -406,13 +406,16 @@ function GetPage($res = '')
                             			    <th style="display:none;">ID</th>
     			                            <th style="width: 60px;">#</th>
                             			    <th style="width: 100%;">დასახელება</th>
-                            			    <th class="check"></th>
+                            			    <th class="check">&nbsp;</th>
                         			    </tr>
                     			    </thead>
                     			    <thead>
                         			    <tr class="search_header">
-                            			    <th class="colum_hidden" style="display:none;"></th>		    
+                            			    <th class="colum_hidden" style="display:none;">
+                        			             <input style="width: 100%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        			        </th>		    
                             			    <th>
+    			                                 <input style="width: 100%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
                             			    </th>
     			                            <th>
                             			         <input style="width: 100%;" type="text" name="search_category" value="ფილტრი" class="search_init" />

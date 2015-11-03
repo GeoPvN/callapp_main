@@ -219,7 +219,9 @@
     </thead>
     <thead>
         <tr class="search_header">
-            <th class="colum_hidden"></th>
+            <th class="colum_hidden">
+                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
             <th>
                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
             </th>
