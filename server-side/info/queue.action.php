@@ -108,8 +108,8 @@ switch ($action) {
                 $row[] = $aRow[$i];
                 if($i == ($count - 1)){
                     $row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                                  <input type="checkbox" id="callapp_checkbox_ext_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_ext_'.$aRow[$hidden].'"></label>
                               </div>';
                 }
             }
@@ -261,9 +261,9 @@ function GetPage($res)
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 280px;">დასახელება</th>
-                            <th style="width: 200px;">ნომერი</th>
-                            <th class="check" style="width: 25px;">&zwnj;</th>
+                            <th style="width: 100%;">დასახელება</th>
+                            <th style="width: 100%;">ნომერი</th>
+                            <th class="check" style="width: 25px;">&nbsp;</th>
                         </tr>
                     </thead>                    
 	                <thead>

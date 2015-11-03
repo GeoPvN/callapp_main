@@ -285,7 +285,7 @@
             <th style="width: 100%;">დასახელება</th>
             <th style="width: 100%;">კატეგორია</th>
             <th style="width: 100%;">ქვე-კატეგორია</th>
-            <th class="check" style="width: 20px;"></th>
+            <th class="check" style="width: 20px;">&nbsp;</th>
         </tr>
     </thead>
     <thead>

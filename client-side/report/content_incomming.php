@@ -165,12 +165,46 @@ $(document).on("click", ".download", function () {
 });
 function LoadDialog(fname){
 
-	GetDialog(fname, "1060px", "auto");
+	GetDialog(fname, "575", "auto",'','left+43 top');
 	$('#add-edit-form, .idle').attr('disabled', true);
 	$('.ui-dialog-buttonset').hide();
+	$("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
 
 
 };
+function show_right_side(id){
+    $("#right_side fieldset").hide();
+    $("#" + id).show();
+    $(".add-edit-form-class").css("width", "1200");
+    //$('#add-edit-form').dialog({ position: 'left top' });
+    hide_right_side();
+    var str = $("."+id).children('img').attr('src');
+	str = str.substring(0, str.length - 4);
+    $("."+id).children('img').attr('src',str+'_blue.png');
+    $("."+id).children('div').css('color','#2681DC');
+}
+
+function hide_right_side(){
+	$("#side_menu").children('spam').children('div').css('color','#FFF');
+    $(".info").children('img').attr('src','media/images/icons/info.png');
+    $(".scenar").children('img').attr('src','media/images/icons/scenar.png');
+    $(".task").children('img').attr('src','media/images/icons/task.png');
+    $(".sms").children('img').attr('src','media/images/icons/sms.png');
+    $(".mail").children('img').attr('src','media/images/icons/mail.png');
+    $(".record").children('img').attr('src','media/images/icons/record.png');
+    $(".file").children('img').attr('src','media/images/icons/file.png');
+    $("#record fieldset").show();
+}
+
+function show_main(id,my_this){
+	$("#client_main,#client_other").hide();
+	$("#" + id).show();
+	$(".client_main,.client_other").css('border','none');
+	$(".client_main,.client_other").css('padding','6px');
+	$(my_this).css('border','1px solid #ccc');
+	$(my_this).css('border-bottom','1px solid #F1F1F1');
+	$(my_this).css('padding','5px');
+}
 $(document).on("click", "#show_copy_prit_exel", function () {
     
     if($(this).attr('myvar') == 0){

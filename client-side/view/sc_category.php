@@ -11,7 +11,7 @@
 						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");			
-			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL);
+			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,3,'get_list',change_colum_main);
 		});
          
 		function LoadTable(tbl,col_num,act,change_colum){
@@ -130,7 +130,7 @@
             <th>ID</th>
             <th style="width: 50%;">ინფორმაციის ქვე კატეგორია</th>
             <th style="width: 50%;">ინფორმაციის კატეგორია</th>
-            <th class="check" style="width: 20px;">#</th>
+            <th class="check" style="width: 20px;">&nbsp;</th>
         </tr>
     </thead>
     <thead>

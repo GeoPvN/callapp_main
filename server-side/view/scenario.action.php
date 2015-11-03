@@ -190,7 +190,7 @@ function update($quest_id, $name, $cat, $le_cat)
 function save_answer($user_id, $quest_id1, $add_id)
 {
     global $error;
-    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM scenario_detail WHERE `quest_id` = '$quest_id1' AND `scenario_id` = '$add_id'"));
+    $name_cheker = mysql_num_rows(mysql_query("SELECT id FROM scenario_detail WHERE actived = 1 AND `quest_id` = '$quest_id1' AND `scenario_id` = '$add_id'"));
     if($name_cheker == 0){
     
     $sort = mysql_fetch_array(mysql_query(" SELECT  `sort`

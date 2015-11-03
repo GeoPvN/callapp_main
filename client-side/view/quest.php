@@ -20,7 +20,7 @@
 		});
 
         
-		function LoadTable(tbl,col_num,act,change_colum,other_act,lenght){
+		function LoadTable(tbl,col_num,act,change_colum,other_act){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
 			
 			GetDataTable(tName+tbl, aJaxURL, act, col_num, other_act, 0, '', 0, "asc", '', change_colum);
@@ -214,7 +214,7 @@
             <th>ID</th>
             <th style="width: 100%;">დასახელება</th>
             <th style="width: 100%;">მინიშნება</th>
-            <th class="check" style="width: 20px;"></th>
+            <th class="check" style="width: 20px;">&nbsp;</th>
         </tr>
     </thead>
     <thead>

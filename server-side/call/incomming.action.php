@@ -45,6 +45,17 @@ $client_note                = $_REQUEST['client_note'];
 $client_addres1             = $_REQUEST['client_addres1'];
 $client_addres2             = $_REQUEST['client_addres2'];
 
+$task_type_id			= $_REQUEST['task_type_id'];
+$task_start_date		= $_REQUEST['task_start_date'];
+$task_end_date			= $_REQUEST['task_end_date'];
+$task_departament_id	= $_REQUEST['task_departament_id'];
+$task_recipient_id		= $_REQUEST['task_recipient_id'];
+$task_priority_id		= $_REQUEST['task_priority_id'];
+$task_controler_id		= $_REQUEST['task_controler_id'];
+$task_status_id		    = $_REQUEST['task_status_id'];
+$task_description		= $_REQUEST['task_description'];
+$task_note			    = $_REQUEST['task_note'];
+
 switch ($action) {
 	case 'get_add_page':
 		$page		= GetPage('',increment(incomming_call));
@@ -201,6 +212,13 @@ switch ($action) {
 		        (`user_id`, `incomming_call_id`, `scenario_id`, `question_id`, `question_detail_id`, `additional_info`)
 		        VALUES
 		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
+		}
+		
+		if($task_type_id > 0){
+		    mysql_query(" INSERT INTO `task`
+		                  (`user_id`, `incomming_call_id`, `task_recipient_id`, `task_controler_id`, `task_date`, `task_start_date`, `task_end_date`, `task_departament_id`, `task_type_id`, `task_priority_id`, `task_description`, `task_note`, `task_status_id`)
+		                  VALUES
+		                  ('$user_id', '$inc_id', '$task_recipient_id', '$task_controler_id', NOW(), '$task_start_date', '$task_end_date', '$task_departament_id', '$task_type_id', '$task_priority_id', '$task_description', '$task_note', '$task_status_id');");
 		}
             
         break;
@@ -416,6 +434,81 @@ function Getincomming($hidden_id,$open_number)
 	return $res;
 }
 
+function getStatusTask(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `task_status`
+                            WHERE   `actived` = 1 AND `type` = 2");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetPriority(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `priority`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetDepartament(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `department`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function GetTaskType(){
+
+    $req = mysql_query("    SELECT 	`id`,
+                                    `name`
+                            FROM    `task_type`
+                            WHERE   `actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
+function getUsers(){
+    $req = mysql_query("SELECT 	    `users`.`id`,
+                                    `user_info`.`name`
+                        FROM 		`users`
+                        JOIN 		`user_info` ON `users`.`id` = `user_info`.`user_id`
+                        WHERE		`users`.`actived` = 1");
+
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+
+    return $data;
+}
+
 function GetPage($res,$increment,$open_number,$queue)
 {
     echo $increment;
@@ -567,8 +660,8 @@ function GetPage($res,$increment,$open_number,$queue)
         	    </div>
 	    
 	            <div id="iuri" style="border: 1px solid #ccc;padding: 5px;margin-top: 20px;display:none;">
-        	       <span class="client_main" onclick="show_main(\'client_main\',this)" style="border: 1px solid #ccc;border-bottom: 1px solid #F9F9F9;cursor: pointer;margin-top: -30px;margin-left: -6px;display: block;width: 100px;padding: 5px;text-align: center;">ძირითადი</span>
-	               <span class="client_other" onclick="show_main(\'client_other\',this)" style="cursor: pointer;margin-top: -25px;margin-left: 108px;display: block;width: 125px;padding: 6px;text-align: center;">წარმომადგენელი</span>
+        	       <span class="client_main" onclick="show_main(\'client_main\',this)" style="border: 1px solid #ccc;border-bottom: 1px solid #F1F1F1;cursor: pointer;margin-top: -32px;margin-left: -6px;display: block;width: 100px;padding: 5px;text-align: center;">ძირითადი</span>
+	               <span class="client_other" onclick="show_main(\'client_other\',this)" style="cursor: pointer;margin-top: -27px;margin-left: 108px;display: block;width: 125px;padding: 6px;text-align: center;">წარმომადგენელი</span>
 	    
 	               <div id="client_main">
                         <table class="margin_top_10">
@@ -717,7 +810,7 @@ function GetPage($res,$increment,$open_number,$queue)
 	                   <td><label for="task_type_id">დავალების ტიპი</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 595px;" id="task_type_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_type_id">'.GetTaskType().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_start_date">პერიოდი</label></td>
@@ -730,23 +823,23 @@ function GetPage($res,$increment,$open_number,$queue)
 	                   <td><label for="task_departament_id">განყოფილება</label></td>
 	               </tr>
 	               <tr>
-	                   <td colspan=2><select style="width: 595px;" id="task_departament_id"></select></td>
+	                   <td colspan=2><select style="width: 595px;" id="task_departament_id">'.GetDepartament().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_recipient_id">ადრესატი</label></td>
 	                   <td><label for="task_controler_id">მაკონტროლებელი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 245px;" id="task_recipient_id"></select></td>
-	                   <td><select style="width: 245px;" id="task_controler_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_recipient_id">'.getUsers().'</select></td>
+	                   <td><select style="width: 245px;" id="task_controler_id">'.getUsers().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_priority_id">პრიორიტეტი</label></td>
 	                   <td><label for="task_status_id">სტატუსი</label></td>
 	               </tr>	              
 	               <tr>
-	                   <td><select style="width: 245px;" id="task_priority_id"></select></td>
-	                   <td><select style="width: 245px;" id="task_status_id"></select></td>
+	                   <td><select style="width: 245px;" id="task_priority_id">'.GetPriority().'</select></td>
+	                   <td><select style="width: 245px;" id="task_status_id">'.getStatusTask().'</select></td>
 	               </tr>
 	               <tr>
 	                   <td><label for="task_description">აღწერა</label></td>
@@ -861,16 +954,16 @@ function GetPage($res,$increment,$open_number,$queue)
 	                    }
 	                        
 	                    $query = mysql_query("SELECT 	`question`.id,
-            				                    `question`.`name`,
-            				                    `question`.note,
-                                                `scenario`.`name`,
-        		                                `scenario_detail`.id AS sc_det_id,
-        		                                `scenario_detail`.`sort`
-                                    FROM        `scenario`
-                                    JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
-                                    JOIN        question ON scenario_detail.quest_id = question.id
-                                    WHERE       scenario.id = $my_scenario AND scenario_detail.actived = 1
-                                    ORDER BY    scenario_detail.sort ASC");
+                    				                    `question`.`name`,
+                    				                    `question`.note,
+                                                        `scenario`.`name`,
+                		                                `scenario_detail`.id AS sc_det_id,
+                		                                `scenario_detail`.`sort`
+                                            FROM        `scenario`
+                                            JOIN        scenario_detail ON scenario.id = scenario_detail.scenario_id
+                                            JOIN        question ON scenario_detail.quest_id = question.id
+                                            WHERE       scenario.id = $my_scenario AND scenario_detail.actived = 1
+                                            ORDER BY    scenario_detail.sort ASC");
 		
 		$data .= '
                     <fieldset style="display:none;height: 465px;" id="scenar">
@@ -879,8 +972,8 @@ function GetPage($res,$increment,$open_number,$queue)
 		
 		
 		if($res[id] == ''){
-		    $inc_id = 0;
-		    $inc_checker = " AND scenario_results.incomming_call_id = 0";
+		    $inc_id = 'tutuci';
+		    $inc_checker = " AND scenario_results.incomming_call_id = '9999999'";
 		}else{
 		    $inc_id = $res[id];
 		    $inc_checker = " AND scenario_results.incomming_call_id = $res[id]";
@@ -905,11 +998,12 @@ function GetPage($res,$increment,$open_number,$queue)
         	
         	
         	         
-        	        $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" id=\"checkbox', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"checkbox', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
-                                            	            WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
-                                            	            WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" id=\"radio', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"radio', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
-                                            	            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
-                                            	            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = $inc_id && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+        	        $query1 = mysql_query(
+        	            " SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = '$inc_id' && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" id=\"checkbox', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"checkbox', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
+                                            	            WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = '$inc_id' && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                            	            WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" ',IF(scenario_results.incomming_call_id = '$inc_id' && question_detail.id = scenario_results.question_detail_id,'checked','') ,' class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" id=\"radio', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"radio', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
+                                            	            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = '$inc_id' && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                            	            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"',IF(scenario_results.incomming_call_id = '$inc_id' && question_detail.id = scenario_results.question_detail_id,scenario_results.additional_info,''),'\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
                                             	            WHEN question_detail.quest_type_id = 7 THEN question_detail.answer
                                     	            END AS `ans`,
                                     	            question_detail.quest_type_id,
@@ -921,7 +1015,7 @@ function GetPage($res,$increment,$open_number,$queue)
                             	            FROM question_detail
                             	            LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
                             	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario
-                            	            LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
+                            	            JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
                             	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
                             	            WHERE question_detail.id = $last_a[0] AND question_detail.quest_id = $last_a[1]
                             	            ");
@@ -1080,11 +1174,20 @@ $record_incomming = mysql_query("SELECT  `datetime`,
                         	      </tr>';
     }
     
+    $ph1 = "`phone` LIKE '%test%'";
+    $ph2 = "or `phone` LIKE '%test%'";
+    if(strlen($res[phone1]) > 4){
+        $ph1 = "`phone` LIKE '%$res[phone1]%'";
+    }
+    if(strlen($res[phone2]) > 4){
+        $ph2 = " or `phone` LIKE '%$res[phone2]%'";
+    }
+    
     $record_outgoing = mysql_query("SELECT  `call_datetime`,
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
                                             CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                     FROM    `asterisk_outgoing`
-                                    WHERE   $ph1 AND disconnect_cause != 'ABANDON'");
+                                    WHERE   $ph1 $ph2");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
         $str_record_outgoing .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>

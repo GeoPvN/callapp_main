@@ -103,8 +103,8 @@ switch ($action) {
                             				incomming_call.id,
                             				incomming_call.date,
                             				incomming_call.phone,
-                            				IF(personal_info.client_person_fname!='',personal_info.client_person_fname,personal_info.client_name) AS `name`,
-                            				cat_1.`name` AS `cat_1`,
+                            				IF(personal_info.client_person_lname!='',CONCAT(personal_info.client_person_lname,' ',personal_info.client_person_fname),personal_info.client_name) AS `name`,
+                        				    cat_1.`name` AS `cat_1`,
                             				cat_1_1.`name` AS `cat_1_1`,
                             				cat_1_1_1.`name` AS `cat_1_1_1`,
                             				`comment`

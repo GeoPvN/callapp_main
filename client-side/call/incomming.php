@@ -321,7 +321,7 @@
     	$(".client_main,.client_other").css('border','none');
     	$(".client_main,.client_other").css('padding','6px');
     	$(my_this).css('border','1px solid #ccc');
-    	$(my_this).css('border-bottom','1px solid #F9F9F9');
+    	$(my_this).css('border-bottom','1px solid #F1F1F1');
     	$(my_this).css('padding','5px');
     }
 
@@ -719,6 +719,17 @@
 		param.client_note			= $("#client_note").val();
 		param.client_addres1        = $("#client_addres1").val();
 		param.client_addres2        = $("#client_addres2").val();
+
+		param.task_type_id			= $("#task_type_id").val();
+		param.task_start_date		= $("#task_start_date").val();
+		param.task_end_date			= $("#task_end_date").val();
+		param.task_departament_id	= $("#task_departament_id").val();
+		param.task_recipient_id		= $("#task_recipient_id").val();
+		param.task_priority_id		= $("#task_priority_id").val();
+		param.task_controler_id		= $("#task_controler_id").val();
+		param.task_status_id		= $("#task_status_id").val();
+		param.task_description		= $("#task_description").val();
+		param.task_note			    = $("#task_note").val();
 		
 		var link = GetAjaxData(param);		
 	    	$.ajax({

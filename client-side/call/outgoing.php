@@ -818,6 +818,12 @@ if(fName=='add-edit-form-task'){
         }else if(file_size > '15728639'){
             alert("ფაილის ზომა 15MB-ზე მეტია");
         }else{
+            var id = '';
+            if($("#id").val() == ''){
+                id = $("#id_inc").val();
+            }else{
+                id = $("#id").val();
+            }
         	$.ajaxFileUpload({
 		        url: "server-side/upload/file.action.php",
 		        secureuri: false,
@@ -832,7 +838,7 @@ if(fName=='add-edit-form-task'){
 					file_type: file_type,
 					file_size: file_size,
 					path: path,
-					table_id: $("#id").val(),
+					table_id: id,
 
 				},
 		        success: function(data) {			        
@@ -1295,7 +1301,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">პირადი ნომერი</th>
             <th style="width: 100%;">სცენარი</th>
             <th style="width: 100%;">პასუხისმგებელი პირი</th>
-            <th class="check" style="width: 20px;" id="last_th">#</th>
+            <th class="check" style="width: 20px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
     <thead>
@@ -1343,7 +1349,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 20px;" id="first_th">№</th>
             <th style="width: 50% !important;;">შექმნის თარიღი</th>
             <th style="width: 100% !important;" id="jhijnik">პროექტის სახელი</th>
-            <th class="check" style="width: 20px;" id="last_th">#</th>
+            <th class="check" style="width: 20px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
     <thead>
@@ -1386,7 +1392,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 50%;">პრიორიტეტი</th>
             <th style="width: 50%;">აღწერა</th>
             <th style="width: 50%;">შენიშვნა</th>
-            <th class="check" style="width: 20px;">#</th>
+            <th class="check" style="width: 20px;">&nbsp;</th>
         </tr>
     </thead>
     <thead>

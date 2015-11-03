@@ -62,7 +62,7 @@ switch ($action) {
                                 JOIN	`user_info` AS recipient_ps ON recipient.id = recipient_ps.user_id
                                 JOIN	`users` AS controler ON task.task_controler_id = controler.id
                                 JOIN	`user_info` AS controler_ps ON controler.id = controler_ps.user_id
-                                JOIN	`users` AS former ON task.task_controler_id = former.id
+                                JOIN	`users` AS former ON task.user_id = former.id
                                 JOIN	`user_info` AS former_ps ON former.id = former_ps.user_id
                                 JOIN	`priority` ON priority.id = task.task_priority_id
                                 WHERE 	`task`.`actived` = 1 AND task_status_id = $task_status_id");
@@ -413,17 +413,31 @@ function GetPage($res)
 	       </fieldset>
 	    </div>
 	</div><input type="hidden" value="'.$res[id].'" id="id">';
+	$inc = mysql_fetch_array(mysql_query("  SELECT  `id`+1 AS id
+                                            FROM    `task`
+                                            ORDER BY `id` DESC
+                                            LIMIT 1"));
+	
+	$data .= '<input type="hidden" value="'.$inc[0].'" id="id_inc">';
 
 	return $data;
 }
 
 
 function show_record($res){
+    $ph1 = "`source` LIKE '%test%'";
+    $ph2 = "or `source` LIKE '%test%'";
+    if(strlen($res[phone1]) > 4){
+        $ph1 = "`source` LIKE '%$res[phone1]%'";
+    }
+    if(strlen($res[phone2]) > 4){
+        $ph2 = " or `source` LIKE '%$res[phone2]%'";
+    }
     $record_incomming = mysql_query("SELECT  `datetime`,
                                              TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
-                                             `file_name`
+                                             CONCAT(DATE_FORMAT(asterisk_incomming.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                      FROM    `asterisk_incomming`
-                                     WHERE   `source` LIKE '%$res[phone]%'");
+                                     WHERE   $ph1 $ph2 AND disconnect_cause != 'ABANDON'");
     while ($record_res_incomming = mysql_fetch_assoc($record_incomming)) {
         $str_record_incomming .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_incomming[datetime].'</td>
@@ -432,11 +446,20 @@ function show_record($res){
                         	      </tr>';
     }
     
+    $ph1 = "`phone` LIKE '%test%'";
+    $ph2 = "or `phone` LIKE '%test%'";
+    if(strlen($res[phone1]) > 4){
+        $ph1 = "`phone` LIKE '%$res[phone1]%'";
+    }
+    if(strlen($res[phone2]) > 4){
+        $ph2 = " or `phone` LIKE '%$res[phone2]%'";
+    }
+    
     $record_outgoing = mysql_query("SELECT  `call_datetime`,
                                             TIME_FORMAT(SEC_TO_TIME(duration),'%i:%s') AS `duration`,
-                                            `file_name`
+                                            CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`) AS file_name
                                     FROM    `asterisk_outgoing`
-                                    WHERE   `phone` LIKE '%$res[phone]%'");
+                                    WHERE   $ph1 $ph2");
     while ($record_res_outgoing = mysql_fetch_assoc($record_outgoing)) {
         $str_record_outgoing .= '<tr>
                                     <td style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;">'.$record_res_outgoing[call_datetime].'</td>
@@ -458,7 +481,7 @@ function show_record($res){
     }
     
     $data = '  <div style="margin-top: 10px;">
-                    <audio controls style="margin-left: 135px;">
+                    <audio controls autoplay style="margin-left: 145px;">
                       <source src="" type="audio/wav">
                       Your browser does not support the audio element.
                     </audio>

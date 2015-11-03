@@ -646,8 +646,13 @@ function MyEvent(aJaxURL, addButton, deleteButton, Check, dialogID, saveButtonID
 	                    if (data.error != "") {
 	                        alert(data.error);
 	                    } else {
-	                    	//alert(TableOtherParam)
-	                        LoadTable(TableID, ColumNum, TableAct, TableFunction, TableOtherParam);
+	                    	//alert(TablePageNum)
+	                    	if(TablePageNum == '0'){
+	                    		LoadTable(TableID, ColumNum, TableAct, TableFunction, '', TableOtherParam);
+	                    	}else{
+	                    		
+	                    		LoadTable(TableID, ColumNum, TableAct, TableFunction, TableOtherParam);
+	                    	}
 	                    }
                 }
             });

@@ -861,12 +861,12 @@
 			    <thead>
 			        <tr id="datatable_header">
 			            <th>ID</th>
-			            <th style="width: 30%;">№</th>
+			            <th style="width: 35px;">№</th>
 			            <th style="width: 100%;">დასახელება</th>
 			            <th style="width: 100%;">საიდენტიფიკაციო კოდი</th>
 			          	<th style="width: 100%;">იურიდიული მისამართი</th>                            
 			            <th style="width: 100%;">ფაქტიური მისამართი</th>
-			            <th style="width: 11px; margin-top: 3px;" class="check"></th>
+			            <th style="width: 30px; margin-top: 3px;" class="check">&nbsp;</th>
 			        </tr>
 			    </thead>
 			    <thead>
