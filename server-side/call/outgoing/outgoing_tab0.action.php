@@ -681,7 +681,7 @@ function GetPage($res)
                     	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario
                             	    LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
                     	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
-                    	            WHERE question_detail.id = $last_a[0]
+                    	            WHERE question_detail.id = $last_a[0] AND scenario_detail.actived = 1
                     	            ");
 	
 	
