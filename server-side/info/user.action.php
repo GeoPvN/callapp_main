@@ -96,6 +96,11 @@ switch ($action) {
 		DeleteImage($pers_id);
 
 		break;
+	case 'view_img':
+	    $page		= GetIMG($_REQUEST[id]);
+	    $data		= array('page'	=> $page);
+	     
+	    break;
 	case 'clear':
 		$file_list = $_REQUEST['file'];
 		ClearProduct();
@@ -120,6 +125,23 @@ echo json_encode($data);
  *	Workers Functions
  * ******************************
  */
+ 
+function GetIMG($id){
+    $res = mysql_fetch_array(mysql_query("SELECT rand_name FROM `file` WHERE id = $id"));
+    if (empty($res[0])) {
+        $image = '0.jpg';
+    }else{
+        $image = $res[0];
+    }
+    $data = '<div id="dialog-form">
+	           <fieldset>
+                <img style="margin: auto;display: block;" width="350" height="350"  src="media/uploads/file/'.$image.'">
+               </fieldset>
+             </div>
+            ';
+
+    return $data;
+}
 function CheckUser($user){
 	$res = mysql_query("SELECT `username`
 						FROM   `users`
@@ -304,7 +326,7 @@ function GetWorker($per_id)
                                     				`user_info`.`tin` as `tin`,
                                     				`user_info`.`position_id` as `position`,
                                     				`user_info`.`address` as `address`,
-                                    				`user_info`.`image` as `image`,
+                                    				`file`.`rand_name` as `image`,
                                     				`users`.`username` as `username`,
                                     				`users`.`password` as `user_password`,
                                     				`users`.`group_id` as `group_id`,
@@ -314,6 +336,7 @@ function GetWorker($per_id)
                                     				`user_info`.`comment` as `comment`
                                             FROM	`user_info`
                                             LEFT JOIN	`users` ON `users`.`id` = `user_info`.`user_id`
+                                            LEFT JOIN	`file` ON `users`.`id` = `file`.`users_id`
                                             WHERE	`user_info`.`user_id` = '$per_id'"));
 	return $res;
 }
@@ -351,9 +374,12 @@ function GetGroupPermission( $group_id ){
 
 function GetPage($res = '')
 {
-	$image = $res['image'];
+    
+    $image = $res['image'];
 	if(empty($image)){
 		$image = '0.jpg';
+	}else{
+	    $disable_img = 'disabled';
 	}
 	$data = '
 	<div id="dialog-form">
@@ -433,31 +459,36 @@ function GetPage($res = '')
 			</div>
         </fieldset>
  	    <fieldset>
-	    	<legend>ტანამშრომლის სურათი</legend>
+	    	<legend>თანამშრომლის სურათი</legend>
 
 	    	<table class="dialog-form-table" width="100%">
 	    		<tr>
-					<td id="img_colum" colspan="2">
-						<img id="upload_img" src="media/uploads/images/worker/' . $image . '">
+					<td id="img_colum">
+						<img style="margin-left: 5px;" width="105" height="105" id="upload_img" src="media/uploads/file/'.$image.'" />
 					</td>
 				</tr>
-				<tr><!-- Upload Image -->
-					<td id="act">
+				<tr>
+					<td style="padding-left: 30px;">
 						<span>
-							<a href="#" id="view_image" class="complate">View</a> | <a href="#" id="delete_image" class="delete">Delete</a>
+							<a href="#" onclick="view_image('.$res[image_id].')" class="complate">View</a> | <a href="#" id="delete_image" image_id="'.$res[image_id].'" class="delete">Delete</a>
 						</span>
 					</td>
-					<td>
-						<div class="file-uploader">
+				</tr>
+				</tr>
+					<td style="padding-left: 5px;">
+						<div style="margin-top:10px; width: 127px; margin-left: -5px;" class="file-uploader">
 							<input id="choose_file" type="file" name="choose_file" class="input" style="display: none;">
-							<button id="choose_button" class="center">აირჩიეთ ფაილი</button>
+							<button id="choose_button'.$disable_img.'" class="center" >აირჩიეთ ფაილი</button>
 						</div>
 					</td>
 				</tr>
 			</table>
         </fieldset>
 		<input type="hidden" id="pers_id" value="' . $res['id'] . '" />
-		<input type="hidden" id="is_user" value="' . false . '" />
+		<input type="hidden" id="is_user" value="'; 
+		$incUs = mysql_fetch_array(mysql_query("SELECT id+1 AS `id` FROM users ORDER BY id DESC LIMIT 1"));
+		$data .= $incUs[0];
+		$data .= '" />
     </div>
     ';
 	return $data;

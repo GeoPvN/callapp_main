@@ -90,7 +90,7 @@
 		        LoadTable('number',5,'get_list_number',"<'F'lip>");
 		        SetEvents("add_number", "delete_number", "check-all-number", tName+'number', "add-edit-form-number", aJaxURL_sub_project);
 		        $("#add_number, #delete_number, #download_exel, #choose_button, #delete_import, #choose_button1, #add_import, #delete_import_actived, #add_import_actived, #open_choseFile").button(); 
-		        GetDate1('project_add_date');
+		        GetDateTimes('project_add_date');
 
 		        LoadTable('import',6,'get_list_import',"<'F'lip>");
 		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template,'',tName+'import',colum_number,'get_list_import',change_colum_main);

@@ -235,34 +235,56 @@ function GetTask($task_id)
                                     				task.`task_status_id`,
                                     				task.`task_description`,
                                     				task.`task_note`,
-	                                                task.`task_answer`,
-	                                                task.ch_st_date,
-	                                                `outgoing_campaign_detail`.`id` AS `out_id`,
-	                                                `outgoing_campaign_detail`.`update_date`,
-	                                                `outgoing_campaign_detail`.`status`,
-	                                                `outgoing_campaign_detail`.`call_comment`,
-                                                    `phone_base_detail`.`phone1`,
-                                                    `phone_base_detail`.`phone2`,
-                                                    `phone_base_detail`.`firstname`,
-                                                    `phone_base_detail`.`lastname`,
-                                                    `phone_base_detail`.`pid`,
-                                                    `phone_base_detail`.`address1`,
-                                                    `phone_base_detail`.`address2`,
-                                                    `phone_base_detail`.`age`,
-                                                    `phone_base_detail`.`activities`,
-                                                    `phone_base_detail`.`born_date`,
-                                                    `phone_base_detail`.`client_name`,
-                                                    `phone_base_detail`.`id_code`,
-                                                    `phone_base_detail`.`info1`,
-                                                    `phone_base_detail`.`info2`,
-                                                    `phone_base_detail`.`info3`,
-                                                    `phone_base_detail`.`mail1`,
-                                                    `phone_base_detail`.`mail2`,
-                                                    `phone_base_detail`.`note`,
-                                                    `phone_base_detail`.`sex`
+                                    				task.`task_answer`,
+                                    				task.ch_st_date,
+                                    				`outgoing_campaign_detail`.`id` AS `out_id`,
+                                    				`outgoing_campaign_detail`.`update_date`,
+                                    				`outgoing_campaign_detail`.`status`,
+                                    				`outgoing_campaign_detail`.`call_comment`,
+                                    				`phone_base_detail`.`phone1`,
+                                    				`phone_base_detail`.`phone2`,
+                                    				`phone_base_detail`.`firstname`,
+                                    				`phone_base_detail`.`lastname`,
+                                    				`phone_base_detail`.`pid`,
+                                    				`phone_base_detail`.`address1`,
+                                    				`phone_base_detail`.`address2`,
+                                    				`phone_base_detail`.`age`,
+                                    				`phone_base_detail`.`activities`,
+                                    				`phone_base_detail`.`born_date`,
+                                    				`phone_base_detail`.`client_name`,
+                                    				`phone_base_detail`.`id_code`,
+                                    				`phone_base_detail`.`info1`,
+                                    				`phone_base_detail`.`info2`,
+                                    				`phone_base_detail`.`info3`,
+                                    				`phone_base_detail`.`mail1`,
+                                    				`phone_base_detail`.`mail2`,
+                                    				`phone_base_detail`.`note`,
+                                    				`phone_base_detail`.`sex`,
+	                                                `task`.`incomming_call_id`,
+                                    				personal_info.`client_person_number`,
+                                    				personal_info.`client_person_lname`,
+                                    				personal_info.`client_person_fname`,
+                                    				personal_info.`client_person_phone1`,
+                                    				personal_info.`client_person_phone2`,
+                                    				personal_info.`client_person_mail1`,
+                                    				personal_info.`client_person_mail2`,
+                                    				personal_info.`client_person_note`,
+                                    				personal_info.`client_person_addres1`,
+                                    				personal_info.`client_person_addres2`,
+                                    				personal_info.`client_number`,
+                                    				personal_info.`client_name` AS client_name1,
+                                    				personal_info.`client_phone1`,
+                                    				personal_info.`client_phone2`,
+                                    				personal_info.`client_mail1`,
+                                    				personal_info.`client_mail2`,
+                                    				personal_info.`client_addres1`,
+                                    				personal_info.`client_addres2`,
+                                    				personal_info.`client_note`
                                         FROM 		`task`                                                                       
-	                                    LEFT JOIN 	`outgoing_campaign_detail` ON `task`.`outgoing_id` = `outgoing_campaign_detail`.`id`
+                                        LEFT JOIN 	`outgoing_campaign_detail` ON `task`.`outgoing_id` = `outgoing_campaign_detail`.`id`
                                         LEFT JOIN 	`phone_base_detail` ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+                                        LEFT JOIN 	`incomming_call` ON `task`.`incomming_call_id` = `incomming_call`.`id`
+                                        LEFT JOIN	`personal_info` ON personal_info.incomming_call_id = incomming_call.id
                                         WHERE 	    `task`.`actived` = 1 AND task.id = $task_id"));
 	return $res;
 }
@@ -339,10 +361,12 @@ function GetPage($res)
 	    <div style="width: 615px;float: left;margin-left: 10px;" id="right_side">
             <fieldset style="display:none;" id="info">
                 <legend>მომართვის ავტორი</legend>
-	            <span class="hide_said_menu">x</span>
+	            <span class="hide_said_menu">x</span>';
                 
+	    if($res['incomming_call_id'] == ''){
+	        
 	    
-        	    <div id="pers">
+        	    $data .='<div id="pers">
 	               <table class="margin_top_10">
                            <tr>
                                <td '.(($res['pid'] == '')?'style="display:none;"':'').'><label for="client_person_number">პირადი ნომერი</label></td>
@@ -395,9 +419,191 @@ function GetPage($res)
         	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
         	                </tr>
     	                </table>
+        	    </div>';
+	    }else{
+	        $data .= '<table>
+                    <tr style="height:20px;">
+                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" checked><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
+                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status"><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
+                    </tr>
+                </table>
+	    
+        	    <div id="pers">
+	               <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_person_number">პირადი ნომერი</label></td>
+                               
+                           </tr>
+                           <tr>
+                               <td><input style="width: 580px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'" maxlength="11" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
+                                  
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 328px;"><label for="client_lname">სახელი</label></td>
+	                            <td><label for="client_person_fname">გვარი</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 328px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'" onkeypress=\'return event.charCode >= 48 && event.charCode <= 57\'></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 328px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
+                            </tr>
+	                        <tr>
+                                <td style="width: 328px;"><label for="client_person_addres1">მისამართი 1</label></td>
+        	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['client_person_addres1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['client_person_addres2'].'"></td>
+                            </tr>
+                        </table>                	    
+    	                <table class="margin_top_10">
+        	                <tr>
+        	                    <td><label for="client_person_note">შენიშვნა</label></td>
+        	                </tr>
+        	                <tr>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 577px;">'.$res['client_person_note'].'</textarea></td>
+        	                </tr>
+    	                </table>
         	    </div>
 	    
-            </fieldset>
+	            <div id="iuri" style="border: 1px solid #ccc;padding: 5px;margin-top: 20px;display:none;">
+        	       <span class="client_main" onclick="show_main(\'client_main\',this)" style="border: 1px solid #ccc;border-bottom: 1px solid #F1F1F1;cursor: pointer;margin-top: -32px;margin-left: -6px;display: block;width: 100px;padding: 5px;text-align: center;">ძირითადი</span>
+	               <span class="client_other" onclick="show_main(\'client_other\',this)" style="cursor: pointer;margin-top: -27px;margin-left: 108px;display: block;width: 125px;padding: 6px;text-align: center;">წარმომადგენელი</span>
+	    
+	               <div id="client_main">
+                        <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_number">საიდენტ. ნომერი</label></td>
+                               <td></td>
+                           </tr>
+                           <tr>
+                               <td><input style="width: 483px;" id="client_number" type="text" value="'.$res['client_number'].'"></td>
+                               <td><button id="client_checker" style="margin-left: 5px;">შემოწმება</button></td>
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td><label for="client_name">დასახელება</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 565px;" id="client_name" type="text" value="'.$res['client_name1'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_phone1" type="text" value="'.$res['client_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_phone2" type="text" value="'.$res['client_phone2'].'"></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 312px;"><label for="client_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_mail1" type="text" value="'.$res['client_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_mail2" type="text" value="'.$res['client_mail2'].'"></td>
+                            </tr>
+        	                <tr>
+                                <td style="width: 312px;"><label for="client_addres1">მისამართი 1</label></td>
+        	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_addres1" type="text" value="'.$res['client_addres1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_addres2" type="text" value="'.$res['client_addres2'].'"></td>
+                            </tr>
+                        </table>
+    	               <table class="margin_top_10">
+        	               <tr>
+        	                   <td><label for="client_note">შენიშვნა</label></td>
+        	               </tr>
+        	               <tr>
+        	                   <td><textarea id="client_note" style="resize: vertical;width: 565px;">'.$res['client_note'].'</textarea></td>
+        	               </tr>
+    	               </table>
+	               </div>
+	    
+	               <div id="client_other" style="display:none;">
+	                   <table class="margin_top_10">
+                           <tr>
+                               <td><label for="client_person_number">პირადი ნომერი</label></td>
+                               
+                           </tr>
+                           <tr>
+                               <td><input style="width: 565px;" id="client_person_number" type="text" value="'.$res['client_person_number'].'"></td>
+                               
+                           </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_lname">სახელი</label></td>
+	                            <td><label for="client_person_fname">გვარი</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['client_person_lname'].'"></td>
+	                            <td><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['client_person_fname'].'"></td>
+                            </tr>
+                        </table>
+                        <table class="margin_top_10">
+                            <tr>
+                                <td style="width: 312px;"><label for="client_person_phone1">ტელეფონი 1</label></td>
+        	                    <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['client_person_phone1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['client_person_phone2'].'"></td>
+                            </tr>
+    	                    <tr>
+                                <td style="width: 312px;"><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+        	                    <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['client_person_mail1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['client_person_mail2'].'"></td>
+                            </tr>
+        	                <tr>
+                                <td style="width: 312px;"><label for="client_person_addres1">მისამართი 1</label></td>
+        	                    <td><label for="client_person_addres2">მისამართი 2</label></td>
+                            </tr>
+    	                    <tr>
+                                <td><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['client_person_addres1'].'"></td>
+        	                    <td><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['client_person_addres2'].'"></td>
+                            </tr>
+                        </table>                	    
+    	                <table class="margin_top_10">
+        	                <tr>
+        	                    <td><label for="client_person_note">შენიშვნა</label></td>
+        	                </tr>
+        	                <tr>
+        	                    <td><textarea id="client_person_note" style="resize: vertical;width: 565px;">'.$res['client_person_note'].'</textarea></td>
+        	                </tr>
+    	                </table>
+	               </div>
+	    
+        	    </div>';
+	    }
+            $data .='</fieldset>
             
             <fieldset style="display:none;" id="record">
                 <legend>ჩანაწერები</legend>
@@ -512,12 +718,27 @@ function show_record($res){
 }
 
 function show_file($res){
-    $file_incomming = mysql_query("  SELECT `name`,
-                                            `rand_name`,
-                                            `file_date`,
-                                            `id`
-                                     FROM   `file`
-                                     WHERE  `task_id` = $res[id] AND `actived` = 1");
+
+    $file_incomming = mysql_query(" SELECT `name`,
+                                			`rand_name`,
+                                			`file_date`,
+                                			`id`
+                                    FROM   `file`
+                                    WHERE  `task_id` = '$res[id]' AND `actived` = 1
+                                    UNION ALL
+                                    SELECT `name`,
+                                    	   `rand_name`,
+                                    	   `file_date`,
+                                    	   `id`
+                                    FROM   `file`
+                                    WHERE  `outgoing_id` = '$res[out_id]' AND `actived` = 1
+                                    UNION ALL
+                                    SELECT `name`,
+                                    	   `rand_name`,
+                                    	   `file_date`,
+                                    	   `id`
+                                    FROM   `file`
+                                    WHERE  `incomming_call_id` = '$res[incomming_call_id]' AND `actived` = 1");
     while ($file_res_incomming = mysql_fetch_assoc($file_incomming)) {
         $str_file_incomming .= '<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 180px;float:left;">'.$file_res_incomming[file_date].'</div>
                             	<div style="border: 1px solid #CCC;padding: 5px;text-align: center;vertical-align: middle;width: 189px;float:left;">'.$file_res_incomming[name].'</div>

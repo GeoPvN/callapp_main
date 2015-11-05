@@ -330,6 +330,25 @@ function GetAlScenQuest($scenarquest,$dest)
     return $data;
 }
 
+function gethandbook($id,$done_id){
+    $req = mysql_query("  SELECT `id`,
+        `value`
+        FROM   `scenario_handbook_detail`
+        WHERE  `scenario_handbook_id` = $id AND actived = 1");
+
+    $data .= '<option value="0" >----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $done_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['value'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['value'] . '</option>';
+        }
+    }
+
+    return $data;
+
+}
+
 function GetList($quest_id,$quest_detail_id)
 {
     if($quest_id != ''){
@@ -393,6 +412,7 @@ function GetPage($res = '')
                             	<div id="callapp_tab">
                             		<span id="tab1">დიალოგური ფანჯარა</span>
                             		<span id="tab2">კითხვების რიგითობა</span>
+    			                    <span id="tab3">შემოწმება</span>
                             	</div>
                             	<div id="tab_content_1">
     			        
@@ -526,7 +546,102 @@ function GetPage($res = '')
             		$data .= '</fieldset>
             		</div>';
     			    
-                        	$data .= '</div>    			            
+                        	$data .= '</div>
+                        	    <div id="tab_content_3">';
+                        	$query = mysql_query("SELECT 	`question`.id,
+                                                    	    `question`.`name`,
+                                                    	    `question`.note,
+                                                    	    `scenario`.`name`,
+                                                    	    `scenario_detail`.id AS sc_det_id,
+                                                    	    `scenario_detail`.`sort`
+                                        	    FROM    `scenario`
+                                        	    JOIN    scenario_detail ON scenario.id = scenario_detail.scenario_id
+                                        	    JOIN    question ON scenario_detail.quest_id = question.id
+                                        	    WHERE   scenario.id = $res[scenario_id] AND scenario_detail.actived = 1
+                                        	    ORDER BY scenario_detail.sort ASC");
+                        	
+                        	$data .= '<button who="0" id="show_all_scenario" style="margin-bottom: 10px;float: right; margin-top: 15px;">ყველას ჩვენება</button>';
+                    
+                        	while ($row = mysql_fetch_array($query)) {
+                        	
+                        	    $last_q = mysql_query(" SELECT question_detail.id,question_detail.quest_id
+                                            	        FROM `question_detail`
+                                            	        JOIN scenario_detail ON scenario_detail.quest_id = question_detail.quest_id
+                                            	        AND scenario_detail.scenario_id = $res[scenario_id]
+                                            	        WHERE question_detail.quest_id = $row[0]");
+                        	
+                        	    $data .= '<div style="margin-top: 15px;" class="quest_body '.$row[5].'" id="'.$row[0].'">
+		            <table class="dialog-form-table">
+		    		<tr>
+						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img onclick="imnote(\''.$row[5].'\')" style="border: none;padding: 0;margin-left: 8px;margin-top: -7px;cursor: pointer;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24"></td>
+		                </tr><tr style="display:none;" id="imnote_'. $row[5] .'" ><td>'.$row[2].'</td></tr>
+		                    ';
+                        	
+                        	    while ($last_a = mysql_fetch_array($last_q)){
+                        	
+                        	
+                        	
+                        	        $query1 = mysql_query(" SELECT CASE 	WHEN question_detail.quest_type_id = 1 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\"  class=\"check_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"checkbox\" name=\"checkbox', question_detail.quest_id, '\" id=\"checkbox', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"checkbox', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
+                                                            	            WHEN question_detail.quest_type_id = 2 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"\" class=\"inputtext\"style=\"float:left;\"  type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                                            	            WHEN question_detail.quest_type_id = 4 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><input next_quest=\"',scenario_destination.destination,'\" class=\"radio_input\" ansver_val=\"',question_detail.answer,'\" style=\"float:left;\" type=\"radio\" name=\"radio', question_detail.quest_id, '\" id=\"radio', question_detail.id, '\" value=\"', question_detail.id, '\"><label for=\"radio', question_detail.id, '\" style=\"float:left; padding: 7px;white-space: pre-line;\">', question_detail.answer, '</label></td></tr>')
+                                                            	            WHEN question_detail.quest_type_id = 5 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"\" class=\"date_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                                            	            WHEN question_detail.quest_type_id = 6 THEN CONCAT('<tr><td style=\"width:428px; text-align:left;\"><label style=\"float:left; padding: 7px 0;width: 428px;\" for=\"input|', question_detail.quest_id, '|', question_detail.id, '\">',question_detail.answer,'</label><input next_quest=\"',scenario_destination.destination,'\" value=\"\" class=\"date_time_input\"  style=\"float:left;\" type=\"text\" id=\"input|', question_detail.quest_id, '|', question_detail.id, '\" q_id=\"',question_detail.id,'\" /> </td></tr>')
+                                                            	            WHEN question_detail.quest_type_id = 7 THEN question_detail.answer
+                                            	                    END AS `ans`,
+                                                    	            question_detail.quest_type_id,
+                                                    	            scenario_handbook.`name`,
+                                                    	            question_detail.quest_id,
+                                                    	            question_detail.id,
+                                                    	            scenario_destination.destination
+                                            	            FROM question_detail
+                                            	            JOIN scenario_detail ON scenario_detail.scenario_id = $res[scenario_id]
+                                            	            LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
+                                            	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
+                                            	            WHERE question_detail.id = $last_a[0] AND question_detail.quest_id = $last_a[1] AND scenario_detail.actived = 1
+                                            	            ");
+                        	
+                        	
+                        	
+                        	        $g =0;
+                        	        while ($row1 = mysql_fetch_array($query1)) {
+                        	            $q_type = $row1[1];
+                        	            if($q_type == 7){
+                        	                $data .= '  <tr>
+                                                    <td style="width:428px; text-align:left;">
+                                                    <label style="float:left; padding: 7px 0;width: 428px;" for="">'.$row1[2].'</label>
+                                                    <select class="hand_select" next_quest="'.$row1[6].'" style="float:left;width: 235px;"  id="hand_select|'.$row1[4].'|'.$row1[5].'" >'.gethandbook($row1[0],'').'</select>
+                                                    </td>';
+                        	            }else{
+                        	                $data .= $row1[0];
+                        	            }
+                        	        }}
+                        	
+                        	        $data .= '</table>
+                    <hr><br></div>';
+                        	
+                        	}
+                        	
+                        	$data .= '
+	  
+	    <div style="margin-top: 15px; display: none;" class="last_quest">
+        	<table class="dialog-form-table">
+        		<tr>
+        			<td style="font-weight:bold;">
+        				არ დაგავიწყდეთ სტატუსის შეცვლა და შენახვის ღილაკზე დაკლიკება!
+        			</td>
+        		</tr>
+        	</table>
+        	<hr>
+        	<br>
+        </div>
+	  
+	    <button id="back_quest" back_id="0" style="float:left;">უკან</button><button id="next_quest" style="float:right;" next_id="0">წინ</button>
+                        	
+    			                
+    			                 </div>
+                        	    
+                        	    
+                        	        			            
                             </div>
     			        ';
 			    }

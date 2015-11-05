@@ -565,8 +565,8 @@ function GetPage($res,$increment){
                             <th style="width: 92px;">გვარი</th>
                             <th style="width: 92px;">თანამდებობა</th>
                             <th style="width: 90px;">მობილური</th>
-							<th style="width: 90px;">ტელეფონი</th>
-							<th style="width: 11px;" class="check"></th>
+							<th style="width: 90px;">ელ ფოსტა</th>
+							<th style="width: 11px;" class="check">&nbsp;</th>
                         </tr>
                     </thead>
                     <thead>

@@ -26,9 +26,12 @@
 		function GetTable() {
 			LoadTable('quest',3,'get_list_detail',"<'F'lip>",'id='+$("#quest_id").val(),lenght);			
 			MyEvent(   aJaxURL,  'add_button_detail', 'delete_button_detail', 'check-all-de', '-answer', 'save-answer', 'cancel-dialog',      480,       'center top',  'get_add_page', 'disable_cd', 'get_edit_page',  'quest',   3,        'get_list_detail', "<'F'lip>",      lenght,        "id="+$("#quest_id").val(),'','add_id='+$("#quest_id").val(),'quest_detail_id='+$("#quest_id").val());
-			$('#tab_content_2').css('display','none');
+			$('#tab_content_2,#tab_content_3').css('display','none');
 			$('#tab1').css('background','#FFF');
-			
+			$('#next_quest, #back_quest,#show_all_scenario').button();
+			$('.quest_body').css('display','none');
+			$('.1').css('display','block');
+			$('#next_quest').attr('next_id',$('.1').attr('id'));
         }
         
 		 function GetTable1() {
@@ -47,7 +50,7 @@
 							}
 						}
 				    }
-			    });
+			 });
 	    }
          
 
@@ -126,15 +129,26 @@
 	    $(document).on("click", "#tab1", function () {
 		    $('#tab_content_1').css('display','block');
 		    $('#tab_content_2').css('display','none');
+		    $('#tab_content_3').css('display','none');
 		    $(this).css('background','#FFF');
-		    $('#tab2').css('background','#F9F9F9');
+		    $('#tab2,#tab3').css('background','#F9F9F9');
 	    });
 
 	    $(document).on("click", "#tab2", function () {
+	    	$('#tab_content_3').css('display','none');
 		    $('#tab_content_2').css('display','block');
 		    $('#tab_content_1').css('display','none');
 		    $(this).css('background','#FFF');
-		    $('#tab1').css('background','#F9F9F9');
+		    $('#tab1,#tab3').css('background','#F9F9F9');
+		    GetTable1();
+	    });
+
+	    $(document).on("click", "#tab3", function () {
+	    	$('#tab_content_3').css('display','block');
+		    $('#tab_content_2').css('display','none');
+		    $('#tab_content_1').css('display','none');
+		    $(this).css('background','#FFF');
+		    $('#tab1,#tab2').css('background','#F9F9F9');
 		    GetTable1();
 	    });
 	    
@@ -198,7 +212,128 @@
 	            $(this).children('img').attr('src','media/images/icons/select.png');
 	            $(this).attr('myvar','0');
 	        }
-	    });  
+	    });
+	    
+	    $(document).on("click", "#next_quest", function () {
+	    	$('#back_quest').attr('back_id',$(".quest_body:visible").attr("id"));
+	        var input_radio    = '';
+	        var input_checkbox = '';
+	        var input          = '';
+	        var select         = '';
+	        input_radio = $('#' + $(this).attr('next_id') + ' .radio_input:checked').attr('next_quest');
+	        input_checkbox = $('#' + $(this).attr('next_id') + ' .check_input:checked').attr('next_quest');
+	        input = $('#' + $(this).attr('next_id') + ' input[type="text"]').attr('next_quest');
+	        select = $('#' + $(this).attr('next_id') + ' .hand_select').attr('next_quest');
+	        
+	        if(input_radio == undefined){
+	        	
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+input_radio).css('display','block');
+	        	$('#next_quest').attr('next_id',input_radio);
+	        	$('#back_quest').prop('disabled',false);
+	        	if(input_radio == 0){
+	        		$('.last_quest').css('display','block');
+	        		$('#next_quest').prop('disabled',true);
+	        	}
+	        }
+	        if(input == undefined){
+	        	
+	        }else{
+	            if(input==0){
+	            	$('#next_quest').prop('disabled',true);
+	            }else{
+	            $('.quest_body').css('display','none');
+	        	$('#'+input).css('display','block');
+	        	$('#next_quest').attr('next_id',input);
+	            }
+	        }
+	        if(input_checkbox == undefined){
+	            
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+input_checkbox).css('display','block');
+	        	$('#next_quest').attr('next_id',input_checkbox);
+	        }
+	        if(select == undefined){
+	            
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+select).css('display','block');
+	        	$('#next_quest').attr('next_id',select);
+	        }
+	    });
+
+	    $(document).on("click", "#back_quest", function () {
+	    	$('#next_quest').prop('disabled',false);
+	    	var input_radio    = '';
+	        var input_checkbox = '';
+	        var input          = '';
+	        var select         = '';
+	    	input_radio = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .radio_input:checked').attr('next_quest');
+	        input_checkbox = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .check_input:checked').attr('next_quest');
+	        input = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' input[type="text"]').attr('next_quest');
+	        select = $('#' + $('.quest_body:visible #next_quest').attr('next_id') + ' .hand_select').attr('next_quest');
+	        if(input_radio == undefined){
+	            
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+input_radio).css('display','block');
+	        	$('#next_quest').attr('next_id',input_radio);
+	        	$('#back_quest').prop('disabled',false);
+	        	if(input_radio == 0){
+	        		$('.last_quest').css('display','block');
+	        		$('#next_quest').prop('disabled',true);
+	        	}
+	        }
+	        if(input == undefined){
+	        	
+	        }else{
+	            if(input==0){
+	            	$('#next_quest').prop('disabled',true);
+	            }else{
+	            $('.quest_body').css('display','none');
+	        	$('#'+input).css('display','block');
+	        	$('#next_quest').attr('next_id',input);
+	            }
+	        }
+	        if(input_checkbox == undefined){
+	            
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+input_checkbox).css('display','block');
+	        	$('#next_quest').attr('next_id',input_checkbox);
+	        }
+	        if(select == undefined){
+	            
+	        }else{
+	        	$('.quest_body').css('display','none');
+	        	$('#'+select).css('display','block');
+	        	$('#next_quest').attr('next_id',select);
+	        }
+	    	
+	    	$('.quest_body,.last_quest').css('display','none');
+	    	$('#'+$(this).attr('back_id')).css('display','block');
+	    	$('#next_quest').attr('next_id',$(this).attr("back_id"));
+	    });
+
+	    $(document).on("click", "#show_all_scenario", function () {
+	        if($(this).attr('who') == 0){            
+    	        $('#scenar').css('overflow-y','scroll');
+    	        $('.quest_body,.last_quest').css('display','block');
+    	        $('#next_quest').prop('disabled', true);
+    	        $(this).attr('who',1);
+    	        $('#show_all_scenario span').text('დამალვა');
+    	        $('#next_quest').attr('next_id',$('.1').attr('id'));
+	        }else{
+	        	$('#scenar').css('overflow-y','visible');
+	            $('.quest_body,.last_quest').css('display','none');
+	            $('.1').css('display','block');
+	            $('#next_quest').prop('disabled', false);
+	            $(this).attr('who',0);
+	            $('#show_all_scenario span').text('ყველას ჩვენება');
+	        }
+	    });
     </script>
 <style type="text/css">
 #callapp_tab{

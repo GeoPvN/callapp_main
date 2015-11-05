@@ -18,7 +18,7 @@
 						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");			
-			SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
+			SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL,'','index',colum_number,main_act,change_colum_main,'',aJaxURL);
 		});
         
 		function LoadTable(tbl,col_num,act,change_colum,custom_param,URL){
@@ -196,7 +196,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable();
+								LoadTable('index',colum_number,main_act,change_colum_main,'',aJaxURL);
 				        		CloseDialog(fName);
 							}
 						}
@@ -231,18 +231,22 @@
                         <tr id="datatable_header">
                             <th>ID</th>
                             <th style="width: 100%;">სახელი</th>
-                            <th class="check">#</th>
+                            <th class="check" style="width: 30px;">&nbsp;</th>
                         </tr>
                     </thead>
                     <thead>
                         <tr class="search_header">
                             <th class="colum_hidden">
+                                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                            </th>
                             <th>
                                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                             </th>
-                            
-                          <th>
-                            	<input type="checkbox" name="check-all" id="check-all">
+                            <th>
+                            	<div class="callapp_checkbox">
+                                    <input type="checkbox" id="check-all" name="check-all" />
+                                    <label for="check-all"></label>
+                                </div>
                             </th>
                         </tr>
                     </thead>

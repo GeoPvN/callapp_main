@@ -977,13 +977,14 @@ if(fName=='add-edit-form-task'){
     $(document).on("click", "#show_all_scenario", function () {
         if($(this).attr('who') == 0){            
         $('#scenar').css('overflow-y','scroll');
-        $('.quest_body').css('display','block');
+        $('.quest_body,.last_quest').css('display','block');
         $('#next_quest').prop('disabled', true);
         $(this).attr('who',1);
         $('#show_all_scenario span').text('დამალვა');
+        $('#next_quest').attr('next_id',$('.1').attr('id'));
         }else{
         	$('#scenar').css('overflow-y','visible');
-            $('.quest_body').css('display','none');
+            $('.quest_body,.last_quest').css('display','none');
             $('.1').css('display','block');
             $('#next_quest').prop('disabled', false);
             $(this).attr('who',0);

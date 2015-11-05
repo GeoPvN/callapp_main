@@ -188,7 +188,7 @@
     <div id="add-edit-form" class="form-dialog" title="სცენარის ცნობარი">
     	<!-- aJax -->
 	</div>
-	<div id="add-edit-form-detail" class="form-dialog" title="სცენარის ვნობარის პარამეტრები">
+	<div id="add-edit-form-detail" class="form-dialog" title="სცენარის ცნობარის პარამეტრები">
     	<!-- aJax -->
 	</div>
 </body>

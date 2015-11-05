@@ -243,9 +243,9 @@ function incomming_insert($user_id,$incomming_id,$incomming_date,$incomming_phon
                  ('$incomming_id','$user_id','$incomming_date','$incomming_phone','$incomming_cat_1','$incomming_cat_1_1','$incomming_cat_1_1_1','$incomming_comment','$scenario_id','$inc_status_id')");
     
     mysql_query("INSERT INTO `personal_info` 
-                 (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`)
+                 (`user_id`, `incomming_call_id`, `client_person_number`, `client_person_lname`, `client_person_fname`, `client_person_phone1`, `client_person_phone2`, `client_person_mail1`, `client_person_mail2`, `client_person_note`, `client_person_addres1`, `client_person_addres2`, `client_number`, `client_name`, `client_phone1`, `client_phone2`, `client_mail1`, `client_mail2`, `client_city1`, `client_city2`, `client_addres1`, `client_addres2`, `client_index1`, `client_index2`, `client_note`, `client_status`)
                  VALUES
-                 ('$user_id', '$incomming_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '$client_addres1', '$client_addres2', '', '', '$client_note');");
+                 ('$user_id', '$incomming_id', '$client_person_number', '$client_person_lname', '$client_person_fname', '$client_person_phone1', '$client_person_phone2', '$client_person_mail1', '$client_person_mail2', '$client_person_note', '$client_person_addres1', '$client_person_addres2', '$client_number', '$client_name', '$client_phone1', '$client_phone2', '$client_mail1', '$client_mail2', '', '', '$client_addres1', '$client_addres2', '', '', '$client_note','$client_status');");
 }
 
 function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,$incomming_cat_1_1,$incomming_cat_1_1_1,$incomming_comment,$client_status,$client_person_number,$client_person_lname,$client_person_fname,$client_person_phone1,$client_person_phone2,$client_person_mail1,$client_person_mail2,$client_person_addres1,$client_person_addres2,$client_person_note,$client_number,$client_name,$client_phone1,$client_phone2,$client_mail1,$client_mail2,$client_note,$client_addres1,$client_addres2,$inc_status_id){
@@ -291,7 +291,8 @@ function incomming_update($user_id,$hidden_id,$incomming_phone,$incomming_cat_1,
                         `client_addres2`='$client_addres2',
                         `client_index1`=NULL,
                         `client_index2`=NULL,
-                        `client_note`='$client_note'
+                        `client_note`='$client_note',
+                        `client_status`='$client_status'
                 WHERE   `incomming_call_id`='$hidden_id'");
     }
 }
@@ -422,6 +423,7 @@ function Getincomming($hidden_id,$open_number)
                                     				personal_info.`client_mail2`,
 	                                                personal_info.`client_addres1`,
 	                                                personal_info.`client_addres2`,
+	                                                personal_info.`client_status`,
 	                                                incomming_call.scenario_id AS `inc_scenario_id`,
                                     				personal_info.`client_note`,
 	                                                asterisk_incomming.dst_queue
@@ -520,6 +522,18 @@ function GetPage($res,$increment,$open_number,$queue)
     }else{
         $ch_queue = $queue;
     }
+    $dis = '';
+    $checked = '';
+    if($res != ''){
+        $dis='disabled';
+    }else{
+        $checked = 'checked';
+    }
+    if($res != '' && $res[client_status] == 1){
+        $data .= "<script>client_status('pers')</script>";
+    }elseif ($res != '' && $res[client_status] == 2){
+        $data .= "<script>client_status('iuri')</script>";
+    }
     $rr = mysql_fetch_array(mysql_query("SELECT scenario_id FROM queue WHERE number = '$ch_queue'"));
 	$data  .= '
 	<div id="dialog-form">
@@ -597,8 +611,8 @@ function GetPage($res,$increment,$open_number,$queue)
 	            <span class="hide_said_menu">x</span>
                 <table>
                     <tr style="height:20px;">
-                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" checked><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
-                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status"><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
+                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" '.(($res['client_status']=='1')?'checked':"").' '.$dis.' '.$checked.'><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
+                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status" '.(($res['client_status']=='2')?'checked':"").' '.$dis.'><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
                     </tr>
                 </table>
 	    
@@ -708,29 +722,6 @@ function GetPage($res,$increment,$open_number,$queue)
         	                    <td><input style="width: 250px;" id="client_addres2" type="text" value="'.$res['client_addres2'].'"></td>
                             </tr>
                         </table>
-                	    <fieldset style="display:block !important;margin-left: 1px;width: 170px;margin-left: 215px;">
-                                <legend>ფაქტიური</legend>
-                                <table>
-                                <tr>
-                                    <td><label for="client_city2">ქალაქი/რაიონი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><select id="client_city2"></select></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_addres2">მისამართი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_addres2" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-	                            <tr>
-                                    <td><label for="client_index2">საფოსტო ინდექი</label></td>
-                                </tr>
-	                            <tr>
-                                    <td><input id="client_index2" type="text" value="" style="width: 160px;"></td>
-                                </tr>
-                                </table>
-                	    </fieldset>
     	               <table class="margin_top_10">
         	               <tr>
         	                   <td><label for="client_note">შენიშვნა</label></td>

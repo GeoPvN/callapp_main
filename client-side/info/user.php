@@ -30,24 +30,10 @@
 			if(id != ""){
 				$("#lname_fname").attr("disabled", "disabled");
 			}
-			$("#choose_button").button({
-	            icons: {
-	                primary: "ui-icon-arrowreturnthick-1-n"
-	            }
-        	});
 
-			$("#upload_button").button({
-	            icons: {
-	                primary: "ui-icon-arrowreturnthick-1-n"
-	            }
-        	});
-
-			var img_url	= $("#upload_img").attr("src");
-	    	img_name	= img_url.split("\/")[4]; //Get image name element 4
-	    	if(img_name != "0.jpg"){
-	    		$("#choose_button").button("disable");
-	    	}
-
+			GetButtons("choose_button");
+			GetButtons("choose_buttondisabled");
+			
 			/* Dialog Form Selector Name, Buttons Array */
 			GetDialog(fName, 450, "auto", "");
 
@@ -118,125 +104,106 @@
 		    $("#choose_file").click();
 		});
 
+	    $(document).on("click", "#choose_buttondisabled", function () {
+		    alert('თუ გსურთ ახალი სურათის ატვირთვა, წაშალეთ მიმდინარე შურათი!');
+		});
 
+	    
 	    $(document).on("change", "#choose_file", function () {
-	    	var file		= $(this).val();
-		    var name		= uniqid();
-		    var path		= "../../media/uploads/images/worker/";
+	        var file_url  = $(this).val();
+	        var file_name = this.files[0].name;
+	        var file_size = this.files[0].size;
+	        var file_type = file_url.split('.').pop().toLowerCase();
+	        var path	  = "../../media/uploads/file/";
 
-		    var ext = file.split('.').pop().toLowerCase();
-	        if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) { //echeck file type
-	        	alert('This is not an allowed file type.');
-                this.value = '';
+	        if($.inArray(file_type, ['png','jpg']) == -1){
+	            alert("დაშვებულია მხოლოდ 'png', 'jpg'  გაფართოება");
+	        }else if(file_size > '15728639'){
+	            alert("ფაილის ზომა 15MB-ზე მეტია");
 	        }else{
-	        	img_name = name + "." + ext;
-	        	$("#choose_button").button("disable");
+	            if($("#pers_id").val() == ''){
+		            users_id = $("#is_user").val();
+	            }else{
+	            	users_id = $("#pers_id").val()
+	            }
 	        	$.ajaxFileUpload({
-	    			url: upJaxURL,
-	    			secureuri: false,
-	    			fileElementId: "choose_file",
-	    			dataType: 'json',
-	    			data:{
-						act: "upload_file",
+			        url: "server-side/upload/file.action.php",
+			        secureuri: false,
+	     			fileElementId: "choose_file",
+	     			dataType: 'json',
+				    data: {
+						act: "file_upload",
+						button_id: "choose_file",
+						table_name: 'users',
+						file_name: Math.ceil(Math.random()*99999999999),
+						file_name_original: file_name,
+						file_type: file_type,
+						file_size: file_size,
 						path: path,
-						file_name: name,
-						type: ext
+						table_id: users_id,
+
 					},
-	    			success: function (data, status){
-	    				if(typeof(data.error) != 'undefined'){
-    						if(data.error != ''){
-    							alert(data.error);
-    						}else{
-    							$("#upload_img").attr("src", "media/uploads/images/worker/" + img_name);
-    						}
-    					}
-    				},
-    				error: function (data, status, e)
-    				{
-    					alert(e);
-    				}
-    			});
+			        success: function(data) {			        
+				        if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								$("#upload_img").attr('src','media/uploads/file/'+data.page[0].rand_name);
+								$('#choose_button').attr('id','choose_buttondisabled');
+								$("#delete_image").attr('image_id',data.page[0].id);
+								$(".complate").attr('onclick','view_image('+ data.page[0].id + ')');
+							}						
+						}					
+				    }
+			    });
 	        }
-		});
-
-	    $(document).on("click", "#view_image", function () {
-		    var src = $("#upload_img").attr("src");
-		    $("#view_img").attr("src", src);
-			var buttons = {
-				"cancel": {
-		            text: "დახურვა",
-		            id: "cancel-dialog",
-		            click: function () {
-		                $(this).dialog("close");
-		            }
-		        }
-		    };
-	    	GetDialog("image-form", "auto", "auto", buttons);
-		});
-
-	    $(document).on("click", "#upload_img", function () {
-		    var src = $("#upload_img").attr("src");
-		    $("#view_img").attr("src", src);
-			var buttons = {
-				"cancel": {
-		            text: "დახურვა",
-		            id: "cancel-dialog",
-		            click: function () {
-		                $(this).dialog("close");
-		            }
-		        }
-		    };
-	    	GetDialog("image-form", "auto", "auto", buttons);
-		});
+	    });
 
 	    $(document).on("click", "#delete_image", function () {
-	    	var img_url	= $("#upload_img").attr("src");
-	    	img_name	= img_url.split("\/")[4];	//Get image name element 4
-	    	if(img_name != "0.jpg"){
-		    	param = new Object();
-
-	            //Action
-		    	param.act		= "delete_file";
-
-		    	param.path	 	= "../../media/uploads/images/worker/";
-			    param.file_name	= img_name;
-			    var id			= $("#pers_id").val();
-
-	            $.ajax({
-	                url: upJaxURL,
-	                data: param,
-	                success: function(data) {
-	                    if (typeof(data.error) != "undefined") {
-	                        if (data.error != "") {
-	                            alert(data.error);
-	                        } else {
-	                        	$("#choose_button").button("enable");
-	                        	$("#upload_img").attr("src", "media/uploads/images/worker/0.jpg");
-	                        	if(!empty(id)){
-	                        		DeleteImage(id);
-		                        }
-	                        }
-	                    }
-	                }
-	            });
-			}
+		    $.ajax({
+	            url: "server-side/upload/file.action.php",
+	            data: "act=delete_file&file_id="+$(this).attr('image_id')+"&table_name=client",
+	            success: function(data) {
+	               $('#upload_img').attr('src','media/uploads/file/0.jpg');               
+	               $("#choose_button").button();
+	               $('#choose_buttondisabled').attr('id','choose_button')
+	            }
+	        });
 		});
 
-	    function DeleteImage(prod_id) {
-            $.ajax({
-                url: aJaxURL,
-                data: "act=delete_image&id=" + prod_id,
-                success: function(data) {
-                    if (typeof(data.error) != "undefined") {
-                    	if (data.error != "") {
-                            alert(data.error);
-                        } else{
-                        	img_name = "0.jpg";
-                        }
-                    }
-                }
-            });
-        }
+		function view_image(id){
+			param = new Object();
+
+	        //Action
+	    	param.act	= "view_img";
+	    	param.id    = id;
+	    	
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							var buttons = {
+						        	"cancel": {
+							            text: "დახურვა",
+							            id: "cancel-dialog",
+							            click: function () {
+							            	$(this).dialog("close");
+							            }
+							        }
+							    };
+							GetDialog("add-edit-form-img", 401, "auto", buttons, 'center top');
+							$("#add-edit-form-img").html(data.page);
+						}
+					}
+			    }
+		    });
+		}
+
+
 
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -326,5 +293,8 @@
 	 <!-- jQuery Dialog -->
     <div id="add-group-form" class="form-dialog" title="ჯგუფი">
 	</div>
+	<div id="add-edit-form-img" class="form-dialog" title="თანამშრომლის სურათი">
+	</div>
+	
 </body>
 </html>
