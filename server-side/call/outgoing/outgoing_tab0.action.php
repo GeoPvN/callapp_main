@@ -678,10 +678,10 @@ function GetPage($res)
                     	            FROM question_detail
                     	            LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
                     	            LEFT JOIN outgoing_campaign_detail ON outgoing_campaign_detail.id = scenario_results.outgoing_campaign_detail_id
-                    	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario
+                    	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario AND scenario_detail.actived = 1
                             	    LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
                     	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
-                    	            WHERE question_detail.id = $last_a[0] AND scenario_detail.actived = 1
+                    	            WHERE question_detail.id = $last_a[0]
                     	            ");
 	
 	
