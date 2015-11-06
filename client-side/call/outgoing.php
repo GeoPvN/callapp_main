@@ -975,21 +975,27 @@ if(fName=='add-edit-form-task'){
     });
     
     $(document).on("click", "#show_all_scenario", function () {
-        if($(this).attr('who') == 0){            
-        $('#scenar').css('overflow-y','scroll');
-        $('.quest_body,.last_quest').css('display','block');
-        $('#next_quest').prop('disabled', true);
-        $(this).attr('who',1);
-        $('#show_all_scenario span').text('დამალვა');
-        $('#next_quest').attr('next_id',$('.1').attr('id'));
-        }else{
-        	$('#scenar').css('overflow-y','visible');
-            $('.quest_body,.last_quest').css('display','none');
-            $('.1').css('display','block');
-            $('#next_quest').prop('disabled', false);
-            $(this).attr('who',0);
-            $('#show_all_scenario span').text('ყველას ჩვენება');
-        }
+    	if($(this).attr('who') == 0){            
+            //$('#scenar').css('overflow-y','scroll');
+            $('.quest_body').css('display','block');
+            $('#next_quest').prop('disabled', true);
+            $(this).attr('who',1);
+            $('#show_all_scenario span').text('სცენარის მიხედვით');
+            $('#back_quest,#next_quest').css('display','none');
+            $('.quest_body').attr('style','height: 130px;border: 1px solid #CCCCCC;padding: 0 10px;float: left;margin-right: 5px;width: 260px;margin-top: 5px;');
+            $('.myhr,.last_quest').css('display','none');
+            }else{
+            	$('#next_quest').attr('next_id',$('.1').attr('id'));
+            	$('.quest_body').attr('style','');
+            	//$('#scenar').css('overflow-y','visible');
+                $('.quest_body').css('display','none');
+                $('.1').css('display','block');
+                $('#next_quest').prop('disabled', false);
+                $(this).attr('who',0);
+                $('#show_all_scenario span').text('ყველას ჩვენება');
+                $('#back_quest,#next_quest').css('display','block');
+                $('.myhr').css('display','block');
+            }
     });
 
     $(document).on("click", "#save-dialog", function () {
@@ -1294,7 +1300,7 @@ if(fName=='add-edit-form-task'){
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;" id="first_th">№</th>
+            <th style="width: 30px;" id="first_th">№</th>
             <th style="width: 100%;">თარიღი</th>
             <th style="width: 100%;">ტელეფონი 1</th>
             <th style="width: 100%;">ტელეფონი 2</th>
@@ -1302,7 +1308,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">პირადი ნომერი</th>
             <th style="width: 100%;">სცენარი</th>
             <th style="width: 100%;">პასუხისმგებელი პირი</th>
-            <th class="check" style="width: 20px;" id="last_th">&nbsp;</th>
+            <th class="check" style="width: 30px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
     <thead>
@@ -1347,10 +1353,10 @@ if(fName=='add-edit-form-task'){
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;" id="first_th">№</th>
+            <th style="width: 30px;" id="first_th">№</th>
             <th style="width: 50% !important;;">შექმნის თარიღი</th>
             <th style="width: 100% !important;" id="jhijnik">პროექტის სახელი</th>
-            <th class="check" style="width: 20px;" id="last_th">&nbsp;</th>
+            <th class="check" style="width: 30px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
     <thead>
@@ -1382,7 +1388,7 @@ if(fName=='add-edit-form-task'){
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;">№</th>
+            <th style="width: 30px;">№</th>
             <th style="width: 50%;">დასაწყისი</th>
             <th style="width: 50%;">დასასრული</th>
             <th style="width: 50%;">დავალების ტიპი</th>
@@ -1393,7 +1399,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 50%;">პრიორიტეტი</th>
             <th style="width: 50%;">აღწერა</th>
             <th style="width: 50%;">შენიშვნა</th>
-            <th class="check" style="width: 20px;">&nbsp;</th>
+            <th class="check" style="width: 30px;">&nbsp;</th>
         </tr>
     </thead>
     <thead>

@@ -53,8 +53,8 @@
         GetDate1("task_end_date");
         GetDate1("task_start_date");
 		GetDateTimes1("date_time_input");
-		$('.quest_body').css('display','none');
-		$('.1').css('display','block');
+		$('#back_quest,#next_quest').css('display','none');
+		//$('.1').css('display','block');
 		$('#next_quest').attr('next_id',$('.1').attr('id'));
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
@@ -556,18 +556,25 @@
     
     $(document).on("click", "#show_all_scenario", function () {
         if($(this).attr('who') == 0){            
-        $('#scenar').css('overflow-y','scroll');
+        //$('#scenar').css('overflow-y','scroll');
         $('.quest_body').css('display','block');
         $('#next_quest').prop('disabled', true);
         $(this).attr('who',1);
-        $('#show_all_scenario span').text('დამალვა');
+        $('#show_all_scenario span').text('სცენარის მიხედვით');
+        $('#back_quest,#next_quest').css('display','none');
+        $('.quest_body').attr('style','height: 130px;border: 1px solid #CCCCCC;padding: 0 10px;float: left;margin-right: 5px;width: 260px;margin-top: 5px;');
+        $('.myhr,.last_quest').css('display','none');
         }else{
-        	$('#scenar').css('overflow-y','visible');
+        	$('#next_quest').attr('next_id',$('.1').attr('id'));
+        	$('.quest_body').attr('style','');
+        	//$('#scenar').css('overflow-y','visible');
             $('.quest_body').css('display','none');
             $('.1').css('display','block');
             $('#next_quest').prop('disabled', false);
             $(this).attr('who',0);
             $('#show_all_scenario span').text('ყველას ჩვენება');
+            $('#back_quest,#next_quest').css('display','block');
+            $('.myhr').css('display','block');
         }
     });
     
@@ -769,6 +776,7 @@
             setTimeout(runAjax, 1000);
         });        
 	}
+
 </script>
 <style type="text/css">
 .callapp_tabs{
@@ -997,14 +1005,14 @@
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 20px;">№</th>
-            <th style="width: 50px;">თარიღი</th>
-            <th style="width: 13%;">ტელეფონი</th>
-            <th style="width: 20%;">სახელი</th>
-            <th style="width: 25%;">კატეგორია 1</th>
-            <th style="width: 25%;">კატეგორია 1_1</th>            
-            <th style="width: 25%;">კატეგორია 1_1_1</th>
-            <th style="width: 50%;">კომენტარი</th>
+            <th style="width: 46px;">№</th>
+            <th style="width: 13%;">თარიღი</th>
+            <th style="width: 10%;">ადრესატი</th>
+            <th style="width: 20%;">წყარო</th>
+            <th style="width: 25%;">ოპერატორი</th>
+            <th style="width: 25%;">საუბრის ხან.</th>            
+            <th style="width: 25%;">სტატუსი</th>
+            <th style="width: 50%;">მოსმენა</th>
         </tr>
     </thead>
     <thead>

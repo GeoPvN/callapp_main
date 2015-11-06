@@ -103,7 +103,7 @@ switch ($action) {
 	       update($quest_id, $name, $cat, $le_cat);
 	    }	    
 	    
-	    if($_REQUEST[dest_checker] == 1){
+	    //if($_REQUEST[dest_checker] == 1){
 	        $checker     = json_decode($_REQUEST[checker]);
     	    foreach ($checker as $key => $value) {
     	         $quest_id = str_replace("scenarquest","",$key);
@@ -126,7 +126,7 @@ switch ($action) {
                  }
 
     	    }
-	    }
+	    //}
 		break;
 	case 'save_answer':
 	    if($_REQUEST['quest_detail_id'] == ''){
@@ -381,7 +381,7 @@ function GetPage($res = '')
 			<input type="hidden" id="quest_id" value="' . $res['scenario_id'] . '" />
 			<input type="hidden" id="quest_detail_id" value="'.$_REQUEST['id'].'" />
 			<input type="hidden" id="add_id" value="' . $_REQUEST['add_id'] . '" />
-			<input type="hidden" id="dest_checker" value="0" /> <script>$("#cat,#le_cat,#quest_id1").chosen({ search_contains: true });$("#add-edit-form-answer,.add-edit-form-answer-class").css("overflow","visible")</script>
+			<input type="hidden" id="dest_checker" value="0" /> <script>$("#cat,#le_cat,#quest_id1").chosen({ search_contains: true });$("#add-edit-form-answer,.add-edit-form-class,.add-edit-form-answer-class").css("overflow","visible")</script>
 	<div id="dialog-form">
 	    <fieldset>
 	    	<legend>ძირითადი ინფორმაცია</legend>
@@ -595,7 +595,7 @@ function GetPage($res = '')
                                                     	            scenario_destination.destination
                                             	            FROM question_detail
                                             	            JOIN scenario_detail ON scenario_detail.scenario_id = $res[scenario_id]
-                                            	            LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
+                                            	            JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
                                             	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
                                             	            WHERE question_detail.id = $last_a[0] AND question_detail.quest_id = $last_a[1] AND scenario_detail.actived = 1
                                             	            ");

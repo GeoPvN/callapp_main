@@ -87,7 +87,7 @@
 	    	var items          = {};
 	    	var checker        = {};
 	    	
-	    	if(dest_checker == 1){
+	    	//if(dest_checker == 1){
     	    	$('.scenarquest').each(function() {	
     		    	
     	    		key      = this.id;
@@ -96,7 +96,7 @@
     	    		checker[key] = checker[key] + "," + value;
     
     	    	});
-	    	}
+	    	//}
 	    	
 	    	items.checker = checker;
 	    	

@@ -613,7 +613,7 @@ function GetPage($res)
 	    
             </fieldset>
         	                        
-        	<fieldset style="display:none;" id="scenar">
+        	<fieldset style="display:none;height: 465px;" id="scenar">
                 <legend>სცენარი</legend>
 	            <span class="hide_said_menu">x</span>';
 	$my_scenario = $res[scenario_id];
@@ -633,7 +633,7 @@ function GetPage($res)
 	
 	$data .= '
 	
-		            <button who="0" id="show_all_scenario" style="margin-bottom: 10px;float: right; margin-top: 15px;">ყველას ჩვენება</button>';
+		            <button who="0" id="show_all_scenario" style="float: right; margin-top: 15px;">ყველას ჩვენება</button><div class="clear"></div>';
 	
 	
 	if($res[id] == ''){
@@ -651,7 +651,7 @@ function GetPage($res)
                     	        AND scenario_detail.scenario_id = $my_scenario
                     	        WHERE question_detail.quest_id = $row[0]");
 	
-	    $data .= '<div style="margin-top: 15px;" class="quest_body '.$row[5].'" id="'.$row[0].'">
+	    $data .= '<div style="" class="quest_body '.$row[5].'" id="'.$row[0].'">
 		            <table class="dialog-form-table">
 		    		<tr>
 						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img onclick="imnote(\''.$row[5].'\')" style="border: none;padding: 0;margin-left: 8px;margin-top: -7px;cursor: pointer;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24"></td>
@@ -679,7 +679,7 @@ function GetPage($res)
                     	            LEFT JOIN scenario_results ON question_detail.id = scenario_results.question_detail_id $inc_checker
                     	            LEFT JOIN outgoing_campaign_detail ON outgoing_campaign_detail.id = scenario_results.outgoing_campaign_detail_id
                     	            JOIN scenario_detail ON scenario_detail.scenario_id = $my_scenario AND scenario_detail.actived = 1
-                            	    LEFT JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
+                            	    JOIN scenario_destination ON scenario_detail.id = scenario_destination.scenario_detail_id AND scenario_destination.answer_id = $last_a[0]
                     	            LEFT JOIN scenario_handbook ON question_detail.answer = scenario_handbook.id
                     	            WHERE question_detail.id = $last_a[0]
                     	            ");
@@ -701,7 +701,7 @@ function GetPage($res)
 	        }}
 	
 	        $data .= '</table>
-                    <hr><br></div>';
+                    <hr class="myhr"><br></div>';
 	
 	}
 	
