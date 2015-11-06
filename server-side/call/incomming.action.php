@@ -81,7 +81,7 @@ switch ($action) {
                                         asterisk_incomming.source,
                                         asterisk_incomming.dst_queue,
                                         user_info.`name`,
-                                        asterisk_incomming.duration,
+                                        SEC_TO_TIME(asterisk_incomming.duration),
                                         inc_status.`name` AS inc_status,
                                         CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
                                 FROM 	`incomming_call`

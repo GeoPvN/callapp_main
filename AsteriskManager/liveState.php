@@ -145,13 +145,16 @@ foreach($filter_queues as $qn) {
 	foreach($queues[$qn]['calls'] as $key=>$val) {
 		if($position==1) {
 			echo '   <tr>
-                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">რიგი</td>
+                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;"></td>
+                     </tr>
+			         <tr>
+                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">მოლოდინშია</td>
                      </tr>
 			         <tr class="tb_head" style="border: 1px solid #E6E6E6;">
             			 <td>რიგი</td>
             			 <td>პოზიცია</th>
             			 <td>ნომერი</td>
-            			 <td>ლოდინის დრო</td>
+            			 <td colspan="3">ლოდინის დრო</td>
         			 </tr>';
 		}
 
@@ -164,7 +167,7 @@ foreach($filter_queues as $qn) {
 		echo "<tr $odd>";
 		echo "<td>$qn</td><td>$position</td>";
 		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['callerid']."</td>";
-		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['duration_str']." წუთი</td>";
+		echo "<td colspan='3'>".$queues[$qn]['calls'][$key]['chaninfo']['duration_str']." წუთი</td>";
         echo "</tr>";
 		$position++;
 	}
