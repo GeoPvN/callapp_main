@@ -148,7 +148,7 @@ foreach($filter_queues as $qn) {
                          <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;"></td>
                      </tr>
 			         <tr>
-                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">მოლოდინშია</td>
+                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">ზარების რიგი</td>
                      </tr>
 			         <tr class="tb_head" style="border: 1px solid #E6E6E6;">
             			 <td>რიგი</td>
