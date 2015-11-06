@@ -117,6 +117,8 @@
         }else{
             if(input==0){
             	$('#next_quest').prop('disabled',true);
+            	$('.quest_body').css('display','none');
+            	$('.last_quest').css('display','block');
             }else{
             $('.quest_body').css('display','none');
         	$('#'+input).css('display','block');
@@ -1001,18 +1003,18 @@
 </tr>
 </table>
 
-<table class="display" id="table_index">
+<table class="display" id="table_index" style="width: 100%;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
             <th style="width: 46px;">№</th>
-            <th style="width: 13%;">თარიღი</th>
-            <th style="width: 10%;">ადრესატი</th>
-            <th style="width: 20%;">წყარო</th>
+            <th style="width: 150px;">თარიღი</th>
+            <th style="width: 120px;">ადრესატი</th>
+            <th style="width: 120px;">წყარო</th>
             <th style="width: 25%;">ოპერატორი</th>
             <th style="width: 25%;">საუბრის ხან.</th>            
             <th style="width: 25%;">სტატუსი</th>
-            <th style="width: 50%;">მოსმენა</th>
+            <th style="width: 25%;">მოსმენა</th>
         </tr>
     </thead>
     <thead>

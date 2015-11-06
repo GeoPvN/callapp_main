@@ -144,12 +144,15 @@ foreach($filter_queues as $qn) {
 
 	foreach($queues[$qn]['calls'] as $key=>$val) {
 		if($position==1) {
-			echo "<tr>";
-			echo "<td>რიგი</td>";
-			echo "<td>პოზიცია</th>";
-			echo "<td>ნომერი</td>";
-			echo "<td>ლოდინის დრო</td>";
-			echo "</tr>";
+			echo '   <tr>
+                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">რიგი</td>
+                     </tr>
+			         <tr class="tb_head" style="border: 1px solid #E6E6E6;">
+            			 <td>რიგი</td>
+            			 <td>პოზიცია</th>
+            			 <td>ნომერი</td>
+            			 <td>ლოდინის დრო</td>
+        			 </tr>';
 		}
 
 		if($position%2) {

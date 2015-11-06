@@ -312,6 +312,8 @@ if(fName=='add-edit-form-task'){
         }else{
             if(input==0){
             	$('#next_quest').prop('disabled',true);
+            	$('.quest_body').css('display','none');
+            	$('.last_quest').css('display','block');
             }else{
             $('.quest_body').css('display','none');
         	$('#'+input).css('display','block');

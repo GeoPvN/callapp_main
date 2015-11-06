@@ -609,7 +609,7 @@ function GetPage($res = '')
                         	                $data .= '  <tr>
                                                     <td style="width:428px; text-align:left;">
                                                     <label style="float:left; padding: 7px 0;width: 428px;" for="">'.$row1[2].'</label>
-                                                    <select class="hand_select" next_quest="'.$row1[6].'" style="float:left;width: 235px;"  id="hand_select|'.$row1[4].'|'.$row1[5].'" >'.gethandbook($row1[0],'').'</select>
+                                                    <select class="hand_select" next_quest="'.$row1[5].'" style="float:left;width: 235px;"  id="hand_select|'.$row1[3].'|'.$row1[4].'" >'.gethandbook($row1[0],'').'</select>
                                                     </td>';
                         	            }else{
                         	                $data .= $row1[0];

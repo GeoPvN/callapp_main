@@ -279,6 +279,7 @@ function GetTask($task_id)
                                     				personal_info.`client_mail2`,
                                     				personal_info.`client_addres1`,
                                     				personal_info.`client_addres2`,
+	                                                personal_info.`client_status`,
                                     				personal_info.`client_note`
                                         FROM 		`task`                                                                       
                                         LEFT JOIN 	`outgoing_campaign_detail` ON `task`.`outgoing_id` = `outgoing_campaign_detail`.`id`
@@ -291,6 +292,18 @@ function GetTask($task_id)
 
 function GetPage($res)
 {
+    $dis = '';
+    $checked = '';
+    if($res != ''){
+        $dis='disabled';
+    }else{
+        $checked = 'checked';
+    }
+    if($res != '' && $res[client_status] == 1){
+        $data .= "<script>client_status('pers')</script>";
+    }elseif ($res != '' && $res[client_status] == 2){
+        $data .= "<script>client_status('iuri')</script>";
+    }
 	$data  .= '
 	<div id="dialog-form">
 	    <fieldset style="width: 430px;  float: left;">
@@ -423,8 +436,8 @@ function GetPage($res)
 	    }else{
 	        $data .= '<table>
                     <tr style="height:20px;">
-                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" checked><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
-                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status"><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
+                    	<td style="padding: 0px 0px 10px 110px;"><input type="radio" style="float:left;" onclick="client_status(\'pers\')" value="1" name="client_status" '.(($res['client_status']=='1')?'checked':"").' '.$dis.' '.$checked.'><span style="display: inline-block; margin: 8px;">ფიზიკური </span></td>
+                    	<td style="height:20px;"><input type="radio" style="float:left;" onclick="client_status(\'iuri\')" value="2" name="client_status" '.(($res['client_status']=='2')?'checked':"").' '.$dis.'><span style="display: inline-block; margin: 8px;">იურიდიული </span></td>
                     </tr>
                 </table>
 	    
