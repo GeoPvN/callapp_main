@@ -73,22 +73,106 @@ switch ($action) {
     
         break;
 	case 'get_list':
-        $count = 		$_REQUEST['count'];
-		$hidden = 		$_REQUEST['hidden'];
-	  	$rResult = mysql_query("SELECT 	incomming_call.id,
-                                        incomming_call.id,
-                                        incomming_call.date,
-                                        asterisk_incomming.source,
-                                        asterisk_incomming.dst_queue,
-                                        user_info.`name`,
-                                        SEC_TO_TIME(asterisk_incomming.duration),
-                                        inc_status.`name` AS inc_status,
-                                        CONCAT('<p onclick=play(', '\'',DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\'',  ')>მოსმენა</p>', '<a download=\"audio.wav\" href=\"http://212.72.155.176:9191/records/', DATE_FORMAT(DATE(call_datetime),'%Y/%m/%d/'), file_name, '\">ჩამოტვირთვა</a>') AS `file`
-                                FROM 	`incomming_call`
-                                LEFT JOIN asterisk_incomming ON incomming_call.asterisk_incomming_id = asterisk_incomming.id
-                                LEFT JOIN users ON users.id = incomming_call.user_id
-                                LEFT JOIN user_info ON users.id = user_info.user_id
-                                LEFT JOIN inc_status ON inc_status.id = incomming_call.inc_status_id");
+        $count        = $_REQUEST['count'];
+		$hidden       = $_REQUEST['hidden'];
+		$start_date   = $_REQUEST['start_date'];
+		$end_date     = $_REQUEST['end_date'];
+		$operator_id  = $_REQUEST['operator_id'];
+		$tab_id       = $_REQUEST['tab_id'];
+		$filter_1     = $_REQUEST['filter_1'];
+		$filter_2     = $_REQUEST['filter_2'];
+		$filter_3     = $_REQUEST['filter_3'];
+		$filter_4     = $_REQUEST['filter_4'];
+		$filter_5     = $_REQUEST['filter_5'];
+		$filter_6     = $_REQUEST['filter_6'];
+		$filter_7     = $_REQUEST['filter_7'];
+		$filter_8     = $_REQUEST['filter_8'];
+		$filter_9     = $_REQUEST['filter_9'];
+		
+		// OPERATOR CHECKER
+		if($operator_id != 0){
+		    $op_check = " AND user_id = '$operator_id'";
+		}else{
+		    $op_check = '';
+		    
+		    
+		    
+		    
+		    
+		}
+		
+		// STATUS CHECKER
+		if($tab_id != 0){
+		    $tab_check = " AND inc_status_id = '$tab_id'";
+		}else{
+		    $tab_check = '';
+		}
+		
+        // INCOMMING DONE
+		if($filter_1 == 1){
+		    $check_1 = 1;
+		}else{
+		    $check_1 = 0;
+		}
+		
+		// INCOMMING UNDONE
+		if($filter_2 == 2){
+		    $check_2 = 2;
+		}else{
+		    $check_2 = 0;
+		}
+		
+		// INCOMMING UNANSSWER
+		if($filter_3 == 3){
+		    $check_3 = 3;
+		}else{
+		    $check_3 = 0;
+		}
+		
+		// OUT DONE
+		if($filter_4 == 4){
+		    $check_4 = 4;
+		}else{
+		    $check_4 = 0;
+		}
+		
+		// OUT UNDONE
+		if($filter_5 == 5){
+		    $check_5 = 5;
+		}else{
+		    $check_5 = 0;
+		}
+		
+		// OUT UNANSSWER
+		if($filter_6 == 6){
+		    $check_6 = 6;
+		}else{
+		    $check_6 = 0;
+		}
+		
+		// INPUT DONE
+		if($filter_7 == 7){
+		    $check_7 = 7;
+		}else{
+		    $check_7 = 0;
+		}
+		if($filter_1 != 'undefined' || $filter_2 != 'undefined' || $filter_3 != 'undefined' || $filter_4 != 'undefined' || $filter_5 != 'undefined' || $filter_6 != 'undefined' || $filter_7 != 'undefined'){
+		    $main_status = " AND main_status IN(0,$check_1,$check_2,$check_3,$check_4,$check_5,$check_6,$check_7)";
+		}else{
+		    $main_status = '';
+		}
+		
+	  	$rResult = mysql_query("SELECT 	id,
+                        				id,
+                        				date,
+                        				source,
+                        				queue,
+                        				pers_name,
+                        				duration,
+                        				inc_status,
+                        				file
+                                FROM 	calls
+	  	                        WHERE DATE(date) >= '$start_date' AND DATE(date) <= '$end_date' $op_check $tab_check $main_status");
 	  
 		$data = array(
 				"aaData"	=> array()
@@ -111,6 +195,46 @@ switch ($action) {
         $data		= array('page'	=> $page);
     
         break;
+    case 'send_mail':
+        $page		= GetMailSendPage();
+        $data		= array('page'	=> $page);
+    
+        break;
+    case 'get_list_mail':
+        $count = 		$_REQUEST['count'];
+		$hidden = 		$_REQUEST['hidden'];
+
+		    $rResult = mysql_query("SELECT id,
+                            		        date,
+                            		        address,
+                            		        `subject`,
+                            		        if(`status`=3,'გასაგზავნია',IF(`status`=2,'გაგზავნილია',''))
+                    		        FROM `sent_mail`
+                    		        WHERE incomming_call_id = $_REQUEST[incomming_id] AND status != 1");
+		
+		$data = array(
+				"aaData"	=> array()
+		);
+
+		while ( $aRow = mysql_fetch_array( $rResult ) )
+		{
+			$row = array();
+			for ( $i = 0 ; $i < $count ; $i++ )
+			{
+				/* General output */
+				$row[] = $aRow[$i];
+				if($i == ($count - 1)){
+				    $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
+				}
+			}
+			$data['aaData'][] = $row;
+		}
+	
+    
+        break;
     case 'cat_2':
         $page		= get_cat_1_1($_REQUEST['cat_id'],'');
         $data		= array('page'	=> $page);
@@ -118,11 +242,6 @@ switch ($action) {
         break;
     case 'cat_3':
         $page		= get_cat_1_1_1($_REQUEST['cat_id'],'');
-        $data		= array('page'	=> $page);
-    
-        break;
-    case 'send_mail':
-        $page		= GetMailSendPage();
         $data		= array('page'	=> $page);
     
         break;
@@ -1109,7 +1228,7 @@ function GetSmsSendPage() {
 }
 
 function GetMailSendPage(){
-    $data = '
+   $data = '
             <div id="dialog-form">
         	    <fieldset style="height: auto;">
         	    	<table class="dialog-form-table">

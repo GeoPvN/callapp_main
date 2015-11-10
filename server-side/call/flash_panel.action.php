@@ -1,13 +1,11 @@
 <?php
- 
-mysql_connect('localhost', 'root', 'Gl-1114');
-mysql_select_db('asteriskcdrdb');
+require_once '../../includes/classes/core.php';
 
-//require_once '../../includes/classes/asteriskcore.php';
 
-$res = mysql_query("SELECT queue_stats.info1
-					FROM   queue_stats
-					WHERE  DATE(queue_stats.datetime) = CURDATE() AND queue_stats.qevent = 10
+
+$res = mysql_query("SELECT asterisk_incomming.wait_time
+					FROM   asterisk_incomming
+					WHERE  DATE(asterisk_incomming.call_datetime) = CURDATE() AND asterisk_incomming.dst_extension IN(100,101,102,103,104)
 					"); 
 $w15 = 0;
 $w30 = 0;
@@ -17,32 +15,29 @@ $w75 = 0;
 $w90 = 0;
 $w91 = 0;
 
-
-
-
 while ($row = mysql_fetch_assoc($res)) {
 	
-	if ($row['info1'] < 15) {
+	if ($row['wait_time'] < 15) {
 		$w15++;
 	}
 	
- 	if ($row['info1'] < 30){
+ 	if ($row['wait_time'] < 30){
  		$w30++;
  	}
  	
-	if ($row['info1'] < 45){
+	if ($row['wait_time'] < 45){
  		$w45++;
  	}
  	
-	if ($row['info1'] < 60){
+	if ($row['wait_time'] < 60){
 		$w60++;
 	}
 	
-	if ($row['info1'] < 75){
+	if ($row['wait_time'] < 75){
 		$w75++;
 	}
 	
-	if ($row['info1'] < 90){
+	if ($row['wait_time'] < 90){
 		$w90++;
 	}
 	
@@ -66,15 +61,16 @@ $p75 = round($w75 * 100 / $w91);
 $p90 = round($w90 * 100 / $w91);
 
  $data = '
-         		<tr>
-                  <td colspan="4" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">Service Level</td>
-                </tr>
-		 		<tr class="tb_head" style="border: 1px solid #E6E6E6;">
-			 		<td style="width: 80px;">პასუხი</td>
-		 			<td style="width: 80px;">რაოდ.</td>
-		 			<td style="width: 80px;">დელტა</td>
-		 			<td>%</th>
+ 		<table  id="box-table-b">
+ 			<thead>
+		 		<tr>
+			 		<th style="width: 120px;">ნაპასუხები</th>
+		 			<th style="width: 80px;">რაოდ.</th>
+		 			<th style="width: 80px;">დელტა</th>
+		 			<th>%</th>
 		 		</tr>
+ 			<thead>
+ 			<tbody>
 	 			<tr class="odd">
 			 		<td>15 წამში</td>
 		 			<td>'.$w15.'</td>
@@ -117,6 +113,8 @@ $p90 = round($w90 * 100 / $w91);
 		 			<td>'.$d91.'</td>
 		 			<td>100%</td>
 		 		</tr>
+	 		<tbody>
+ 		</table>
  		';
  
  echo  $data;

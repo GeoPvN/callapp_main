@@ -13,7 +13,11 @@ $mail_id    = $_REQUEST['mail_id'];
 
 switch ($action) {
 	case 'send_mail':
-		$out_id 	= $_REQUEST['out_id'];
+	    if($_REQUEST['call_type'] == 'inc'){
+	        $out_id     = $_REQUEST['incomming_id'];
+	    }else{
+	        $out_id 	= $_REQUEST['out_id'];
+	    }
 		
 		$page				= GetPage($out_id,GetSMS($mail_id));
 		$data				= array('page'	=> $page);
@@ -263,12 +267,22 @@ function GetSMS($id){
 }
 
 function GetPage($out_id, $res){
-    if($out_id!=''){
-    mysql_query("INSERT INTO `sent_mail`
+    if($_REQUEST['call_type'] == 'inc'){
+        if($out_id!=''){
+            mysql_query("INSERT INTO `sent_mail`
+                (`incomming_call_id`, `status`)
+                VALUES
+                ('$out_id','1')");
+            $rrr = mysql_fetch_array(mysql_query("SELECT id AS id FROM `sent_mail` WHERE actived = 1 ORDER BY id DESC LIMIT 1"));
+        }
+    }else{
+        if($out_id!=''){
+            mysql_query("INSERT INTO `sent_mail`
                 (`outgoing_id`, `status`)
                 VALUES
                 ('$out_id','1')");
-    $rrr = mysql_fetch_array(mysql_query("SELECT id AS id FROM `sent_mail` WHERE actived = 1 ORDER BY id DESC LIMIT 1"));
+            $rrr = mysql_fetch_array(mysql_query("SELECT id AS id FROM `sent_mail` WHERE actived = 1 ORDER BY id DESC LIMIT 1"));
+        }
     }
     $file = mysql_query("SELECT file.file_date,file.`name`,rand_name,file.id
                         FROM `send_mail_detail`

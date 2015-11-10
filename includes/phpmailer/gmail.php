@@ -102,7 +102,7 @@ if (!$mail->send()) {
 						('$incomming_call_id', '1', NOW(), '$address', '$cc_address', '$bcc_address', '$subject', '$body', '2', '1');");
 	}else{
 	mysql_query("UPDATE `sent_mail`
-			 	 SET 	`incomming_call_id`='$incomming_call_id',
+			 	 SET 	
 			 	 		`user_id`='$user', 
 						`date`=NOW(), 
 						`address`='$address', 

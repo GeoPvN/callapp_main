@@ -1,5 +1,5 @@
 <?php
- 
+
 require_once("AsteriskManager/config.php");
 //include("AsteriskManager/sesvars.php");
 
@@ -10,20 +10,23 @@ require_once("AsteriskManager/config.php");
 		      
 		$(document).ready(function () {  	  
 	       runAjax();  
-	       runAjax1();  		    
-		});
+	       runAjax1();
+	       $('#queue, #departament_id, #ext, #persons_id, #state').chosen({ search_contains: true });
+	   });
 
 		function runAjax() {
             $.ajax({
             	async: false,
             	dataType: "html",
 		        url: 'AsteriskManager/liveState.php',
-			    data: 'sesvar=hideloggedoff&value=true&stst=1',
+			    data: 'sesvar=hideloggedoff&value=true',
+			    beforeSend: false,
+	            complete: false,
 		        success: function(data) {
-					$("#flesh_panel_table").html(data);						
+					$("#jq").html(data);						
 			    }
             }).done(function(data) { 
-                setTimeout(runAjax, 1000);
+                //setTimeout(runAjax, 1000);
             });
 		}
 
@@ -32,77 +35,104 @@ require_once("AsteriskManager/config.php");
             	async: true,
             	dataType: "html",
 		        url: 'server-side/call/flash_panel.action.php',
+		        beforeSend: false,
+	            complete: false,
 		        success: function(data) {
-					$(".level").html(data);						
+					$("#level").html(data);						
 			    }
             }).done(function(data) { 
-                setTimeout(runAjax1, 1000);
+                //setTimeout(runAjax1, 1000);
             });
 		}
 		
     </script>
-    <style type='text/css'>
-
-#flesh_panel_table, #flesh_panel_table_mini{
-	box-shadow: 0px 0px 7px #888888;
-	margin-top: 20px;
-}
-
-#flesh_panel_table td, #flesh_panel_table_mini td {
-	height: 25px;	
-	vertical-align: middle;
-	text-align: left;
-	padding: 0 5px;
-	background: #FFF;
-}
-.tb_head td{
-	border-right: 1px solid #E6E6E6;	
-}
-#show_flesh_panel,#show_flesh_panel_right{
-    float: left;
-	cursor: pointer;
-}
-.td_center{
-    text-align: center !important;
-}
-.ui-widget-header{
-	box-shadow: 0px 0px 7px #888888;
-}
-.display{
-	box-shadow: 0px -2px 10px #888888;
-}
-.callapp_head{
-	font-family: pvn;
-	font-weight: bold;
-	font-size: 20px;
-	color: #2681DC;
-}
-.callapp_head_hr{
-	border: 1px solid #2681DC;
-}
-</style>
 </head>
 
-<body>
-<div id="tabs" style="width: 90%">
-<div class="callapp_head">Flash Panel<hr class="callapp_head_hr"></div>
-    
+<style type='text/css'>
+#my_div{
+    margin-top: 30px;
+}
+#my_selector{
+	width: 97%;
+    margin: auto;
+	background: #fff;
+	border-radius: 5px;
+    border: 1px solid #BABDBF;
+}
+#flesh_table{
+    width: 98%;
+    margin: auto;
+}
+#flesh_table thead tr th{
+	text-align: left;
+	padding: 10px;
+}
+#flesh_table tbody tr td{
+	height: 70px;
+	padding-left: 10px;
+	text-align: left;
+	vertical-align: middle;	
+}
+#flesh_table tbody tr{
+	border-top: 1px solid #E5E5E5;
+}
+#flesh_table tbody tr:last-child{
+	border-bottom: 1px solid #E5E5E5;
+}
+#filter{
+	padding: 10px 10px 20px 10px;
+	height: 43px;
+}
+#filter span {
+	float: left;
+	margin-right: 38px;
+}
+.chosen-container {
+	margin-top: 6px;
+}
+#jq{
+	margin-top: 20px;
+}
+</style>
 
-    
-<div class="callapp_filter_show">    
-
-    <table style=" margin: 0 auto;" border="1">
-		<tr>				
-			<td>		
-			   <table id="flesh_panel_table">
-			   </table>
-			</td>
-			<td style="width: 20px;">
-			</td>
-			<td>
-				<table id="flesh_panel_table" class="level"></table>
-			</td>			
-		</tr>
-	</table>
-</div>
+<body>	
+<div id="tabs">
+<div class="callapp_head">განყოფილებები<hr class="callapp_head_hr"></div>	
+    <div id="my_div">
+        <div id="my_selector">
+            <div id="filter">
+                <span>
+                <label>რიგი</label>
+                <select id="queue" style="width: 165px"></select>
+                </span>
+                
+                <span>
+                <label>დეპარტამენტი</label>
+                <select id="departament_id" style="width: 165px"></select>
+                </span>
+                
+                <span>
+                <label>შიდა ნომერი</label>
+                <select id="ext" style="width: 165px"></select>
+                </span>
+                
+                <span>
+                <label>თანამშრომელი</label>
+                <select id="persons_id" style="width: 165px"></select>
+                </span>
+                
+                <span style="  margin-right: 0px;">
+                <label>მდგომარეობა</label>
+                <select id="state" style="width: 165px"></select>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div id="my_div"> 
+        <div id="my_selector">
+            
+            <div id="jq">
+            </div>
+        </div> 
+    </div>
 </body>
