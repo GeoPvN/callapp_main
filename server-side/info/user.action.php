@@ -327,6 +327,7 @@ function GetWorker($per_id)
                                     				`user_info`.`position_id` as `position`,
                                     				`user_info`.`address` as `address`,
                                     				`file`.`rand_name` as `image`,
+                                                    `file`.`id` as `image_id`,
                                     				`users`.`username` as `username`,
                                     				`users`.`password` as `user_password`,
                                     				`users`.`group_id` as `group_id`,
