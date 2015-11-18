@@ -21,7 +21,7 @@
 			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "asc", "", change_colum_main);
 			setTimeout(function(){
 		    	$('.ColVis, .dataTable_buttons').css('display','none');
-		    }, 10);
+		    }, 90);
 		}
 
 		function LoadDialog(){

@@ -28,23 +28,116 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
+	case 'get_hour':
+	    $page		= GetHour($_REQUEST[wday],$_REQUEST[clock],$_REQUEST[project_id]);
+	    $data		= array('hour'	=> $page);
+	
+	    break;
+		
 	case 'disable':
 		$hidden_id        = $_REQUEST['id'];
-		mysql_query("	UPDATE  `project`
-		SET
-		`actived` = 0
-		WHERE `id`='$hidden_id'
-		");
-	
+		mysql_query("	UPDATE  `project` SET
+                		        `actived` = 0
+                		WHERE   `id`='$hidden_id'");
+		
 		break;
+	case 'delete_all_holiday':
+	    $project_id    = $_REQUEST['project_id'];
+	    mysql_query("	UPDATE  `project_holiday` SET
+        	                    `actived` = 0
+            	        WHERE   `project_id`='$project_id'");
+	
+	    break;
+    case 'delete_holiday':
+        $project_id    = $_REQUEST['project_id'];
+        mysql_query("	UPDATE  `project_holiday` SET
+                                `actived` = 0
+                        WHERE   `id`='$hidden_id'");
+    
+        break;
+	case 'add_all_holiday':
+	    $project_id    = $_REQUEST['project_id'];
+	    $user          = $_SESSION['USERID'];
+	    
+	    $res = mysql_query("SELECT id
+                            FROM `holidays`
+                            WHERE actived = 1");
+	    while ($req = mysql_fetch_array($res)){
+	        $ch_hl = mysql_num_rows(mysql_query("SELECT id FROM project_holiday WHERE project_id=$project_id AND holidays_id=$req[0] AND actived = 1"));
+    	    if($ch_hl == 0){
+    	    mysql_query("INSERT INTO `project_holiday`
+                         (`user_id`, `project_id`, `holidays_id`)
+                         VALUES
+                         ('$user', '$project_id', '$req[0]')");
+    	    }
+	    }
+	    break;
+    case 'add_holiday':
+        $project_id    = $_REQUEST['project_id'];
+        $holiday_id    = $_REQUEST['holiday_id'];
+        $user          = $_SESSION['USERID'];
+         
+        $req = mysql_num_rows(mysql_query("SELECT id
+                                           FROM `project_holiday`
+                                           WHERE project_id = $project_id AND holidays_id = $holiday_id AND actived = 1"));
+        if($req == 0){
+        mysql_query("INSERT INTO `project_holiday`
+                     (`user_id`, `project_id`, `holidays_id`)
+                     VALUES
+                     ('$user', '$project_id', '$holiday_id')");
+        }else{
+            $error = 'ეს დსვენების დღე უკვე დამატებულია!';
+        }
+            
+        break;
+    case 'get_wk':
+        $project_id    = $_REQUEST['project_id'];
+         
+        $res = mysql_query("SELECT  week_day_id,
+                                    start_time,
+                                    break_start_time,
+                                    break_end_time,
+                                    end_time
+                            FROM `week_day_graphic`
+                            WHERE project_id = '$project_id' AND actived = 1");
+        
+        while ($req = mysql_fetch_array($res)){
+            $data[] = array('wday'	=> $req[0],'start_time'	=> $req[1],'break_start_time'	=> $req[2],'break_end_time'	=> $req[3],'end_time'	=> $req[4]);
+        }
+    
+        break;
+        
+    case 'work_gr':
+        $num_row = mysql_fetch_array(mysql_query("  SELECT 	`id`
+                                                    FROM 	`week_day_graphic`
+                                                    WHERE 	`project_id` = '$_REQUEST[project_id]' AND week_day_id = '$_REQUEST[wday]' "));
+        if($num_row[0] == ''){
+            mysql_query("INSERT INTO `week_day_graphic`
+                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `break_start_time`, `break_end_time`)
+                        VALUES
+                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[break_start_time]', '$_REQUEST[break_end_time]');");
+        }else{
+            mysql_query("UPDATE `week_day_graphic` SET
+                                `project_id`='$_REQUEST[project_id]',
+                                `week_day_id`='$_REQUEST[wday]',
+                                `start_time`='$_REQUEST[start_time]',
+                                `end_time`='$_REQUEST[end_time]',
+                                `break_start_time`='$_REQUEST[break_start_time]',
+                                `break_end_time`='$_REQUEST[break_end_time]'
+                         WHERE  `id`='$num_row[0]'");
+        }
+    
+        break;
 	case 'save-project':
 		$hidden_id		  = $_REQUEST['project_hidden_id'];
     	$hidden_client_id = $_REQUEST['hidden_client_id'];
+    	$start_date_holi  = $_REQUEST['start_date_holi'];
+    	$end_date_holi    = $_REQUEST['end_date_holi'];
     	
     	if($hidden_id==''){
-    		Addproject($hidden_client_id, $project_name, $project_type, $project_add_date);
+    		Addproject($hidden_client_id, $project_name, $project_type, $project_add_date, $start_date_holi, $end_date_holi);
     	}else{
-    		Saveproject($hidden_id,$project_name, $project_type, $project_add_date);
+    		Saveproject($hidden_id,$project_name, $project_type, $project_add_date, $start_date_holi, $end_date_holi);
     	}
     		
     	break;
@@ -63,18 +156,18 @@ echo json_encode($data);
 * ******************************
 */
 
-function Addproject($hidden_client_id, $project_name, $project_type, $project_add_date){
+function Addproject($hidden_client_id, $project_name, $project_type, $project_add_date, $start_date_holi, $end_date_holi){
 	
 	$user = $_SESSION['USERID'];
 
 	mysql_query("INSERT INTO `project` 
-						(`user_id`, `client_id`, `name`, `type_id`, `create_date`, `actived`) 
+						(`user_id`, `client_id`, `name`, `type_id`, `create_date`, `actived`, `start_date`, `end_date`) 
 					VALUES 
-						('$user', '$hidden_client_id', '$project_name', '$project_type', '$project_add_date', '1')");
+						('$user', '$hidden_client_id', '$project_name', '$project_type', '$project_add_date', '1', '$start_date_holi', '$end_date_holi')");
 
 }
 
-function Saveproject($hidden_id,$project_name, $project_type, $project_add_date){
+function Saveproject($hidden_id,$project_name, $project_type, $project_add_date, $start_date_holi, $end_date_holi){
 	
 	$user = $_SESSION['USERID'];
 	
@@ -82,7 +175,9 @@ function Saveproject($hidden_id,$project_name, $project_type, $project_add_date)
 	 				SET  `user_id`='$user', 
 						 `name`='$project_name', 
 						 `type_id`='$project_type', 
-						 `create_date`='$project_add_date' 
+						 `create_date`='$project_add_date',
+	                     `start_date`='$start_date_holi',
+	                     `end_date`='$end_date_holi'
 				WHERE `id`='$hidden_id'");
 
 }
@@ -133,6 +228,110 @@ function object($hidden_id){
 	return $res;
 }
 
+function GetHoliday(){
+    $data = '';
+    $req = mysql_query("SELECT  `id`,
+                                `name`
+						FROM    `holidays`");
+    
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+    
+        if($res['id'] == $count){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        }else{
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function GetHour($wday,$clock,$project_id){
+    if(strlen($clock)==1){
+        $real_clock = '0'.$clock;   
+    }else{
+        $real_clock = $clock;
+    }
+    $req = mysql_fetch_array(mysql_query("  SELECT  CASE 
+                                						WHEN week_day_id = 1 THEN 'ორშ'
+                                						WHEN week_day_id = 2 THEN 'სამ'
+                                						WHEN week_day_id = 3 THEN 'ოთხ'
+                                						WHEN week_day_id = 4 THEN 'ხუთ'
+                                						WHEN week_day_id = 5 THEN 'პარ'
+                                						WHEN week_day_id = 6 THEN 'შაბ'
+                                						WHEN week_day_id = 7 THEN 'კვი'
+                                    				END AS `week_day`,
+                                    				TIME_FORMAT(start_time,'%H:%i') AS `start_time`,
+                                    				TIME_FORMAT(break_start_time,'%H:%i') AS `break_start_time`,
+                                    				TIME_FORMAT(break_end_time,'%H:%i') AS `break_end_time`,
+                                    				TIME_FORMAT(end_time,'%H:%i') AS `end_time`,
+                                                    TIME_FORMAT(start_time,'%i'),
+                                                    TIME_FORMAT(break_start_time,'%i'),
+                                                    TIME_FORMAT(break_end_time,'%i'),
+                                                    TIME_FORMAT(end_time,'%i'),
+                                                    TIME_FORMAT(start_time,'%H'),
+                                                    TIME_FORMAT(break_start_time,'%H'),
+                                                    TIME_FORMAT(break_end_time,'%H'),
+                                                    TIME_FORMAT(end_time,'%H')
+                                            FROM `week_day_graphic`
+                                            WHERE project_id = '$project_id' AND week_day_id = '$wday' AND actived = 1"));
+    $data = '
+        <style>
+	    #table_hour{
+	    
+	    width: 100%;
+	    margin-top:25px;
+	    }
+	    #table_hour td,#table_hour th{
+	    border: 1px solid;
+        font-size: 11px;
+        font-weight: normal;
+	    }
+	    </style>
+        <div id="dialog-form">
+    	    <fieldset style="width: 175px;">
+    	       <legend>ძირითადი ინფორმაცია</legend>
+                <div style="width: 855px;">
+                <table id="table_hour">
+                    <tr>
+                        <th style="width: ;"></th>';
+                        for($i = 5;$i < 60;$i+=5){
+                            if(strlen($i) == 1){
+                                $data .= '<th style="width: ;"><span id="clock_hour">'.$real_clock.'</span>:0'.$i.'</th>';
+                            }else{
+                                $data .= '<th style="width: ;"><span id="clock_hour">'.$real_clock.'</span>:'.$i.'</th>';
+                            }
+                        }
+                        $data .= '
+                    </tr>
+    	            <tr id="wday1">
+                        <td class="wday">'.$req[0].'</td>';
+                            for($i = 5;$i < 60;$i+=5){
+                                //if(strlen($i) == 1){
+                                    $data .= '<td style="background: green;" clockid="'.$i.'"  check_clock=""></td>';
+                                    if($req[9] == $real_clock && $req[5] >= $i){
+                                    $data .= '<script>$("td[clockid='.$i.']").css("background","");</script>';
+                                    }
+                                    if($req[10] == $real_clock && $req[6] <= $i){
+                                        $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
+                                    }
+                                    if($req[11] == $real_clock && $req[7] >= $i){
+                                        $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
+                                    }
+                                    if($req[12] == $real_clock && $req[8] < $i){
+                                        $data .= '<script>$("td[clockid='.$i.']").css("background","");</script>';
+                                    }
+                            }
+                        $data .= '
+                	   
+                    </tr>
+                </table>
+                </div>
+            </fieldset>
+        </div>';
+    return $data;
+}
+
 function GetPage($res,$increment){
 	if ($res[id]=='') {
 		$incr_id=increment(project);
@@ -174,11 +373,12 @@ function GetPage($res,$increment){
 	    
         <div id="side_menu1" style="float: left;height: 273px; width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
 	       <spam class="phone" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'phone\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ნომერი</div></spam>
+           <spam class="holiday" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'holiday\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/holiday.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სამუშაო<br>დღე/სთ</div></spam>
 	       <spam class="import" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'import\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/import.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">იმპორტი</div></spam>
 	       <spam class="actived" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'actived\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/actived.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">აქტივაცია</div></spam>
 	    </div>
 	    
-	    <div style="width: 545px; float: left; margin-left: 10px;" id="right_side_project">
+	    <div style="width: 790px; float: left; margin-left: 10px;" id="right_side_project">
             <fieldset style="display:none;" id="phone">
                 <legend>ნომერი</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
@@ -187,15 +387,15 @@ function GetPage($res,$increment){
                     <button id="add_number">დამატება</button>
 					<button id="delete_number">წაშლა</button>
                 </div>
-				<table class="display" id="table_number" >
+				<table class="display" id="table_number" style="width: 100%;">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 73px;">ნომერი</th>
-                            <th style="width: 73px;">რიგი</th>
-                            <th style="width: 110px;">შიდა ნომ.</th>
-                            <th style="width: 150px;">სცენარი</th>
-							<th style="width: 11px;" class="check"></th>
+                            <th style="width: 30%;">ნომერი</th>
+                            <th style="width: 20%;">რიგი</th>
+                            <th style="width: 30%;">შიდა ნომ.</th>
+                            <th style="width: 20%;">სცენარი</th>
+							<th style="width: 25px;" class="check">&nbsp;</th>
 						</tr>
                     </thead>
                     <thead>
@@ -226,6 +426,326 @@ function GetPage($res,$increment){
                 </table>
 	            </div>
 		</fieldset>
+                       
+                       <fieldset style="display:none;" id="holiday">
+                <legend>სამუშაო დღე/სთ</legend>
+	            <span class="hide_said_menu">x</span>
+	    <style>
+	    #work_table{
+	    
+	    width: 100%;
+	    margin-top:25px;
+	    }
+	    #work_table td,#work_table th{
+	    border: 1px solid;
+        font-size: 11px;
+        font-weight: normal;
+	    }
+	    .im_border{
+	    border:1px solid;
+	    }
+        #work_table td input{
+        display:none;
+        }
+	    </style>
+               <table class="dialog-form-table">
+                    <tr>
+	                   <td style="width: 190px;">აირჩიე დღე</td>
+                       <td style="width: 190px;">სამუშაო იწყიბა</td>
+                       <td style="width: 190px;">შესვენებ იწყება</td>
+                       <td style="width: 190px;">შესვენება მთავრდება</td>
+                       <td style="width: 190px;">სამუშაო მთავრდება</td>
+                    </tr>
+                    <tr>
+	                   <td><select id="weak_id" style="width: 120px;">
+                       <option value="1">ორშაბათი</option>
+                       <option value="2">სამშაბათი</option>
+                       <option value="3">ოთხშაბათი</option>
+                       <option value="4">ხუთშაბათი</option>
+                       <option value="5">პარასკევი</option>
+                       <option value="6">შაბათი</option>
+                       <option value="7">კვირა</option>
+                       </select></td>
+                       <td><input id="start_time" type="text" style="width: 120px;"></td>
+                       <td><input id="break_start_time" type="text" style="width: 120px;"></td>
+                       <td><input id="break_end_time" type="text" style="width: 120px;"></td>
+                       <td><input id="end_time" type="text" style="width: 120px;"></td>
+                       <td><button id="holi_creap">დამატება</button></td>
+                    </tr>
+                    
+	            </table>
+	            <table class="dialog-form-table" id="work_table">
+                    <tr>
+                        <th style="width: ;"></th>
+                	    <th style="width: ;">00:00</th>
+                	    <th style="width: ;">01:00</th>
+                	    <th style="width: ;">02:00</th>
+                	    <th style="width: ;">03:00</th>
+                	    <th style="width: ;">04:00</th>
+                	    <th style="width: ;">05:00</th>
+                	    <th style="width: ;">06:00</th>
+                	    <th style="width: ;">07:00</th>
+                	    <th style="width: ;">08:00</th>
+                	    <th style="width: ;">09:00</th>
+                	    <th style="width: ;">10:00</th>
+                	    <th style="width: ;">11:00</th>
+                	    <th style="width: ;">12:00</th>
+                	    <th style="width: ;">13:00</th>
+                	    <th style="width: ;">14:00</th>
+	                    <th style="width: ;">15:00</th>
+                	    <th style="width: ;">16:00</th>
+                	    <th style="width: ;">17:00</th>
+                	    <th style="width: ;">18:00</th>
+                	    <th style="width: ;">19:00</th>
+	                    <th style="width: ;">20:00</th>
+                	    <th style="width: ;">21:00</th>
+                	    <th style="width: ;">22:00</th>
+                	    <th style="width: ;">23:00</th>
+                    </tr>
+    	            <tr id="wday1">
+                        <td style="width: ;">ორშ</td>
+                	    <td style="" clock="0"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="1" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="1" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="1" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="1" ></td>
+                    </tr>
+	                <tr id="wday2">
+                        <td style="width: ;">სამ</td>
+                	    <td style="" clock="0"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="2" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="2" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="2" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="2" ></td>
+                    </tr>
+	                <tr id="wday3">
+                        <td style="width: ;">ოთხ</td>
+                	    <td style="" clock="0"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="3" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="3" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="3" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="3" ></td>
+                    </tr>
+	                <tr id="wday4">
+                        <td style="width: ;">ხუთ</td>
+                	    <td style="" clock="0"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="4" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="4" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="4" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="4" ></td>
+                    </tr>
+	                <tr id="wday5">
+                        <td style="width: ;">პარ</td>
+                	    <td style="" clock="0"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="5" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="5" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="5" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="5" ></td>
+                    </tr>
+	                <tr id="wday6">
+                        <td style="width: ;">შაბ</td>
+                	    <td style="" clock="0"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="6" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="6" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="6" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="6" ></td>
+                    </tr>
+	                <tr id="wday7">
+                        <td style="">კვი</td>
+                	    <td style="" clock="0"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="1"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="2"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="3"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="4"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="5"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="6"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="7"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="8"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="9"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="10"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="11"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="12"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="13"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="14"  check_clock="" wday="7" ></td>
+	                    <td style="" clock="15"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="16"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="17"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="18"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="19"  check_clock="" wday="7" ></td>
+	                    <td style="" clock="20"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="21"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="22"  check_clock="" wday="7" ></td>
+                	    <td style="" clock="23"  check_clock="" wday="7" ></td>
+                    </tr>
+	            </table>
+	            <table class="dialog-form-table">
+                    <tr>
+                       <td style="width: 210px;"><label for="queue_scenar">საანგარიშო პერიოდი</label></td>    
+	                   <td></td>              
+                    </tr>
+    	            <tr>
+                       <td><input style="width: 150px; float: left;" id="start_date_holi" type="text"><span style="margin-top: 5px;float: left;">-დან</span></td>
+	                   <td><input style="width: 150px; float: left;" id="end_date_holi" type="text"><span style="margin-top: 5px;float: left;">-მდე</span></td>
+                    </tr>
+	            </table>
+	            <table class="dialog-form-table">
+                    <tr>
+	                   <td><input id="holiday_all" type="checkbox"></td>
+                       <td style="width: ;"><label for="holiday_id">დღესასწაულები</label></td>
+                	   <td style="width: ;"><select id="holiday_id" style="width:253px;">'.GetHoliday().'</select></td>
+	                   <td style="width: ;"><button id="add_holiday">დამატება</button></td>
+                	   <td style="width: ;"><button id="delete_holiday">წაშლა</button></td>
+                    </tr>
+	            </table>
+                <table class="display" id="table_holiday" >
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 29%;">თარიღი</th>
+                            <th style="width: 40%;;">სახელი</th>
+                            <th style="width: 29%;">კატეგორია</th>
+							<th style="width: 30px;" class="check">&nbsp;</th>
+						</tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+							<th>
+				            	<div class="callapp_checkbox">
+				                    <input type="checkbox" id="check-all-holiday" name="check-all" />
+				                    <label style="margin-top: 3px;" for="check-all-holiday"></label>
+				                </div>
+				            </th>
+						</tr>
+                    </thead>
+                </table>
+            </fieldset>
+                       
         <fieldset style="display:none;" id="import">
                 <legend>იმპორტი</legend>
 	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
@@ -246,7 +766,7 @@ function GetPage($res,$increment){
                             <th style="width: 70px;">პირადი ნომერი</th>
                             <th style="width: 95px;">ტელეფონი 1</th>
                             <th style="width: 95px;">ტელეფონი 2</th>
-							<th style="width: 11px;" class="check"></th>
+							<th style="width: 11px;" class="check">&nbsp;</th>
 						</tr>
                     </thead>
                     <thead>
@@ -299,7 +819,7 @@ function GetPage($res,$increment){
                             <th style="width: 70px;">პირადი ნომერი</th>
                             <th style="width: 95px;">ტელეფონი 1</th>
                             <th style="width: 95px;">ტელეფონი 2</th>
-							<th style="width: 11px;" class="check"></th>
+							<th style="width: 11px;" class="check">&nbsp;</th>
 						</tr>
                     </thead>
                     <thead>

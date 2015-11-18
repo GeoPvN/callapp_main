@@ -86,6 +86,39 @@ switch ($action) {
 		}
 	
 	    break;
+    case 'get_holiday':
+        $count = 		$_REQUEST['count'];
+        $hidden = 		$_REQUEST['hidden'];
+        $rResult = mysql_query("SELECT 	`project_holiday`.`id`,
+                        				`holidays`.`date`,
+                        				`holidays`.`name`,
+                        				`holidays_category`.`name`
+                                FROM    `project_holiday`
+                                JOIN    `holidays` ON project_holiday.holidays_id = holidays.id
+                                JOIN    `holidays_category` ON `holidays`.holidays_category_id = `holidays_category`.`id`
+                                WHERE   `project_holiday`.`actived` = 1 AND `project_holiday`.`project_id` = '$_REQUEST[project_id]'");
+    
+        $data = array(
+            "aaData"	=> array()
+        );
+         
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                if($i == ($count - 1)){
+                    $row[] = '<div class="callapp_checkbox">
+                              <input type="checkbox" id="callapp_checkbox_holiday_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                              <label style="margin-top: 2px;" for="callapp_checkbox_holiday_'.$aRow[$hidden].'"></label>
+                          </div>';
+                }
+            }
+            $data['aaData'][] = $row;
+        }
+        break;
     case 'get_list_import':
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
@@ -282,6 +315,7 @@ switch ($action) {
 		$data		= array('page'	=> $page);
          
         break;
+    
    default:
 		$error = 'Action is Null';
 }
@@ -557,16 +591,16 @@ function GetPage($res,$increment){
                     <button id="add_client">დამატება</button>
 					<button id="delete_client">წაშლა</button>
                 </div>
-				<table class="display" id="table_client">
+				<table class="display" id="table_client" style="width: 100%;">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 91px;">სახელი</th>
-                            <th style="width: 92px;">გვარი</th>
-                            <th style="width: 92px;">თანამდებობა</th>
-                            <th style="width: 90px;">მობილური</th>
-							<th style="width: 90px;">ელ ფოსტა</th>
-							<th style="width: 11px;" class="check">&nbsp;</th>
+                            <th style="width: 50%;">სახელი</th>
+                            <th style="width: 50%;">გვარი</th>
+                            <th style="width: 50%;">თანამდებობა</th>
+                            <th style="width: 50%;">მობილური</th>
+							<th style="width: 50%;">ელ ფოსტა</th>
+							<th style="width: 25px;" class="check">&nbsp;</th>
                         </tr>
                     </thead>
                     <thead>
@@ -692,15 +726,15 @@ function GetPage($res,$increment){
                     <button id="add_project">დამატება</button>
 					<button id="delete_project">წაშლა</button>
                 </div>
-				<table class="display" id="table_project">
+				<table class="display" id="table_project" style="width: 100%;">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 150px;">დასახელება</th>
-                            <th style="width: 90px;">ტიპი</th>
-                            <th style="width: 110px;">შექმნის თარიღი</th>
-                            <th style="width: 234px;">ნომრები</th>
-							<th style="width: 11px;" class="check"></th>
+                            <th style="width: 50%;">დასახელება</th>
+                            <th style="width: 50%;">ტიპი</th>
+                            <th style="width: 50%;">შექმნის თარიღი</th>
+                            <th style="width: 50%;">ნომრები</th>
+							<th style="width: 25px;" class="check">&nbsp;</th>
                         </tr>
                     </thead>
                     <thead>

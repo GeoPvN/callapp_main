@@ -45,6 +45,26 @@ switch ($action) {
         mysql_query("UPDATE `queue_detail` SET `actived`='0' WHERE `id`='$id';");
     
         break;
+    case 'work_gr':
+        $num_row = mysql_fetch_array(mysql_query(" SELECT 	`id`
+                                                FROM 		`week_day_graphic`
+                                                WHERE 	`scenario_id` = '$_REQUEST[queue_scenar]' AND queue = '$_REQUEST[queue_number]' AND week_day_id = '$_REQUEST[wday]' "));
+        if($num_row[0] == ''){
+            mysql_query("INSERT INTO `week_day_graphic`
+                         (`scenario_id`, `queue`, `week_day_id`, `start_time`, `end_time`)
+                         VALUES
+                         ('$_REQUEST[queue_scenar]', '$_REQUEST[queue_number]', '$_REQUEST[wday]', '$_REQUEST[min_val]', '$_REQUEST[max_val]');");
+        }else{
+            mysql_query("UPDATE `week_day_graphic` SET
+                                `scenario_id`='$_REQUEST[queue_scenar]',
+                                `queue`='$_REQUEST[queue_number]',
+                                `week_day_id`='$_REQUEST[wday]',
+                                `start_time`='$_REQUEST[min_val]',
+                                `end_time`='$_REQUEST[max_val]'
+                         WHERE  `id`='$num_row[0]'");
+        }
+    
+        break;
     case 'get_edit_in_num_page':
         $page		= get_in_num(Get_in_num_query($id));
         $data		= array('page'	=> $page);
@@ -305,229 +325,234 @@ function GetPage($res)
 	    width: 100%;
 	    margin-top:5px;
 	    }
-	    #work_table td{
+	    #work_table td,#work_table th{
 	    border: 1px solid;
+        font-size: 11px;
+        font-weight: normal;
 	    }
 	    .im_border{
 	    border:1px solid;
 	    }
+        #work_table td input{
+        display:none;
+        }
 	    </style>
 	            <table class="dialog-form-table" id="work_table">
                     <tr>
-                        <td style="width: ;"></td>
-                	    <td style="width: ;">0</td>
-                	    <td style="width: ;">1</td>
-                	    <td style="width: ;">2</td>
-                	    <td style="width: ;">3</td>
-                	    <td style="width: ;">4</td>
-                	    <td style="width: ;">5</td>
-                	    <td style="width: ;">6</td>
-                	    <td style="width: ;">7</td>
-                	    <td style="width: ;">8</td>
-                	    <td style="width: ;">9</td>
-                	    <td style="width: ;">10</td>
-                	    <td style="width: ;">11</td>
-                	    <td style="width: ;">12</td>
-                	    <td style="width: ;">13</td>
-                	    <td style="width: ;">14</td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                        <th style="width: ;"></th>
+                	    <th style="width: ;">00:00</th>
+                	    <th style="width: ;">01:00</th>
+                	    <th style="width: ;">02:00</th>
+                	    <th style="width: ;">03:00</th>
+                	    <th style="width: ;">04:00</th>
+                	    <th style="width: ;">05:00</th>
+                	    <th style="width: ;">06:00</th>
+                	    <th style="width: ;">07:00</th>
+                	    <th style="width: ;">08:00</th>
+                	    <th style="width: ;">09:00</th>
+                	    <th style="width: ;">10:00</th>
+                	    <th style="width: ;">11:00</th>
+                	    <th style="width: ;">12:00</th>
+                	    <th style="width: ;">13:00</th>
+                	    <th style="width: ;">14:00</th>
+	                    <th style="width: ;">15:00</th>
+                	    <th style="width: ;">16:00</th>
+                	    <th style="width: ;">17:00</th>
+                	    <th style="width: ;">18:00</th>
+                	    <th style="width: ;">19:00</th>
+	                    <th style="width: ;">20:00</th>
+                	    <th style="width: ;">21:00</th>
+                	    <th style="width: ;">22:00</th>
+                	    <th style="width: ;">23:00</th>
                     </tr>
-    	            <tr>
+    	            <tr id="wday1">
                         <td style="width: ;">ორშ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="1" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="1" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="1" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="1" ></td>
                     </tr>
-	                <tr>
+	                <tr id="wday2">
                         <td style="width: ;">სამ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="2" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="2" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="2" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="2" ></td>
                     </tr>
-	                <tr>
+	                <tr id="wday3">
                         <td style="width: ;">ოთხ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="3" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="3" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="3" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="3" ></td>
                     </tr>
-	                <tr>
+	                <tr id="wday4">
                         <td style="width: ;">ხუთ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="4" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="4" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="4" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="4" ></td>
                     </tr>
-	                <tr>
+	                <tr id="wday5">
                         <td style="width: ;">პარ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="5" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="5" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="5" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="5" ></td>
                     </tr>
-	                <tr>
+	                <tr id="wday6">
                         <td style="width: ;">შაბ</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="6" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="6" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="6" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="6" ></td>
                     </tr>
-	                <tr>
-                        <td style="width: ;">კვი</td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-                	    <td style="width: ;"></td>
-	                    <td style="width: ;">15</td>
-                	    <td style="width: ;">16</td>
-                	    <td style="width: ;">17</td>
-                	    <td style="width: ;">18</td>
-                	    <td style="width: ;">19</td>
-	                    <td style="width: ;">20</td>
-                	    <td style="width: ;">21</td>
-                	    <td style="width: ;">22</td>
-                	    <td style="width: ;">23</td>
+	                <tr id="wday7">
+                        <td style="">კვი</td>
+                	    <td style=""><input type="checkbox" value="00:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="01:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="02:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="03:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="04:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="05:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="06:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="07:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="08:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="09:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="10:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="11:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="12:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="13:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="14:00" wday="7" ></td>
+	                    <td style=""><input type="checkbox" value="15:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="16:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="17:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="18:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="19:00" wday="7" ></td>
+	                    <td style=""><input type="checkbox" value="20:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="21:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="22:00" wday="7" ></td>
+                	    <td style=""><input type="checkbox" value="23:00" wday="7" ></td>
                     </tr>
 	            </table>
 	            <table class="dialog-form-table">

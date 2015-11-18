@@ -1,5 +1,5 @@
 <?php
- 
+
 $time = microtime();
 $time = explode(' ', $time);
 $time = $time[1] + $time[0];
@@ -8,6 +8,18 @@ $inuse      = Array();
 $dict_queue = Array();
 $filter_queues = array("2473232");
 require_once '../includes/classes/core.php';
+      $qv=mysql_query("SELECT persons.`name`,
+        			          last_extension
+                       FROM   `users`
+					   JOIN   persons ON users.person_id=persons.id
+                       WHERE  logged = 1 AND NOT ISNULL(last_extension)");
+      while ( $aRow = mysql_fetch_array( $qv ) )
+      {
+          $ext[]=$aRow;
+      }         
+   
+      
+
 require("config.php");
 require("asmanager.php");
 require("realtime_functions.php");
@@ -37,6 +49,9 @@ foreach ($queues as $key=>$val) {
   $queue[] = $key;
 }
 
+///QUEUES
+//echo $lang[$language]['agent_status']." <br/><br/>";
+
 $color['unavailable']="flesh_off.png";
 $color['unknown']="#dadada";
 $color['busy']="flesh_inc.png";
@@ -47,7 +62,6 @@ $color['paused']="#000000";
 
 foreach($filter_queues  as $qn) {
 	if($filter=="" || stristr($qn,$filter)) {
-	    
 		$contador=1;
 		if(!isset($queues[$qn]['members'])) continue;
 
@@ -61,6 +75,7 @@ foreach($filter_queues  as $qn) {
 			$aname = $queues[$qn]['members'][$key]['name'];
 			$aval = $queues[$qn]['members'][$key]['type'];
 			$myExt = explode("/",$queues[$qn]['members'][$key][id]);
+			
 			if(array_key_exists($key,$inuse)) {
 				if($aval=="not in use") {
 					$aval = "dialout";
@@ -82,21 +97,23 @@ foreach($filter_queues  as $qn) {
 				// Skip
 			} else {
 				if($contador==1) {
-					echo '<tr>
-                            <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">სთეიშენები</td>
-                          </tr>
-					      <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-					        <td style="width:75px">რიგი</td>
-                            <td style="width:75px">შიდა ნომერი</td>
-                            <td style="width:115px">თანამშრომელი</td>
-                            <td style="width:50px">სტატუსი</td>
-                            <td style="width:50px">დრო</td>
-                            <td style="width:100px">აბონენტი</td>
-                          </tr>';
+				    ////////////////////////////---------------------------------------------------------------------
+					echo "<table id='flesh_table'>\n";
+					echo "<thead>";
+					echo "<tr>";
+					echo "<th>რიგი</th>";
+					echo "<th>განყოფილება</th>";
+					echo "<th>შიდა ნომერი</th>";
+					echo "<th>თანამშრომელი</th>";
+					echo "<th>მდგომარეობა</th>";
+					echo "<th>დრო</th>";
+					echo "<th>აბონენტი</th>";
+					echo "</tr>\n";
+					echo "</thead><tbody>\n";
 				}
 
 				if($contador%2) {
-					$odd="class='odd'";
+					$odd="";
 				} else {
 					$odd="";
 				}
@@ -108,20 +125,18 @@ foreach($filter_queues  as $qn) {
 				}
 
 				$agent_name = agent_name($aname);
-
 				$rr = mysql_fetch_array(mysql_query("   SELECT  `user_info`.`name`,
-                                    				    `file`.`rand_name`,
-                                    				    `department`.`name`
+                                    				            `file`.`rand_name`,
+				                                                `department`.`name`
                                     				    FROM    `users`
                                     				    JOIN user_info ON users.id = user_info.user_id
                                     				    LEFT JOIN file ON users.id = file.users_id
-                                    				    LEFT JOIN department ON user_info.dep_id = department.id
+				                                        LEFT JOIN department ON user_info.dep_id = department.id
                                     				    WHERE users.extension_id = '$myExt[1]'"));
-				
-				echo '<tr style="border: 1px solid #E6E6E6;">';
+				echo '<tr '.$odd.' queue="'.$qn.'" dep="'.$rr[2].'" ext="'.$myExt[1].'" user="'.$rr[0].'" state="'.$color[$aval].'" >';
 				echo "<td>$qn</td>";
+				echo "<td>$rr[2]</td>";
 				echo "<td>$agent_name</td>";
-				echo "<td>$rr[0]</td>";
 
 				if($stat<>"") {
 				$aval="paused";
@@ -135,41 +150,46 @@ foreach($filter_queues  as $qn) {
 			$mystringaval = $lang[$language][$aval2];
 
 			if($mystringaval=="") $mystringaval = $aval;
+			
+			echo "<td><span style=\"float:left; height: 30px; width: 30px; background: url(media/uploads/file/$rr[1]); background-size: 30px 30px; background-repeat: no-repeat; display: block;\"></span><span style=\"float:left;   margin-top: 11px;  margin-left: 5px;\">$rr[0]</span></td>";
 			echo '<td class="td_center"><img alt="inner" src="media/images/icons/'.$color[$aval].'" height="14" width="14"></td>';
 			echo "<td>$dur</td>";
-			echo "<td style='cursor: pointer;' class='open_dialog'>$clid</td>";			
+			echo "<td>$clid</td>";
 			echo "</tr>";
 			$contador++;
 			}
 			}
 		if($contador>1) {
-		    
+		echo "</tbody>";
+		echo "</table><br/>\n";
 		}
 	}
 }
 
+///QUEUE details
+
+			
 foreach($filter_queues as $qn) {
 	$position=1;
 	if(!isset($queues[$qn]['calls']))  continue;
 
 	foreach($queues[$qn]['calls'] as $key=>$val) {
 		if($position==1) {
-			echo '   <tr>
-                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;"></td>
-                     </tr>
-			         <tr>
-                         <td colspan="6" style="border-left: 1px solid #E6E6E6;border-right: 1px solid #E6E6E6;">ზარების რიგი</td>
-                     </tr>
-			         <tr class="tb_head" style="border: 1px solid #E6E6E6;">
-            			 <td>რიგი</td>
-            			 <td>პოზიცია</th>
-            			 <td>ნომერი</td>
-            			 <td colspan="3">ლოდინის დრო</td>
-        			 </tr>';
+		    echo "<BR><h2>".$lang[$language]['calls_waiting_detail']."</h2><BR>";
+			echo "<table width='450' cellpadding=3 cellspacing=3 border=0 class='sortable' id='box-table-b' >\n";
+			echo "<thead>";
+			echo "<tr>";
+			echo "<th>".$lang[$language]['queue']."</th>";
+			echo "<th>".$lang[$language]['position']."</th>";
+			echo "<th>".$lang[$language]['callerid']."</th>";
+			echo "<th>".$lang[$language]['wait_time']."</th>";
+			echo "</tr>\n";
+			echo "</thead>\n";
+			echo "<tbody>\n";
 		}
 
 		if($position%2) {
-			$odd="class='odd'";
+			$odd="class=''";
 		} else {
 			$odd="";
 		}
@@ -177,13 +197,14 @@ foreach($filter_queues as $qn) {
 		echo "<tr $odd>";
 		echo "<td>$qn</td><td>$position</td>";
 		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['callerid']."</td>";
-		echo "<td colspan='3'>".$queues[$qn]['calls'][$key]['chaninfo']['duration_str']." წუთი</td>";
+		echo "<td>".$queues[$qn]['calls'][$key]['chaninfo']['duration_str']." წუთი</td>";
         echo "</tr>";
 		$position++;
 	}
 			
 	if($position>1) {
-
+	echo "</tbody>\n";
+	echo "</table>\n";
 	}
 }
 

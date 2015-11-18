@@ -63,6 +63,7 @@
 		    param.n		= $("#name").val();
 		    param.t		= $("#tin").val();
 		    param.p		= $("#position").val();
+		    param.dep_id= $("#dep_id").val();
 		    param.a		= $("#address").val();
 		    param.pas	= $("#password").val();
 		    param.h_n	= $("#home_number").val();

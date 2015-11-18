@@ -1,120 +1,47 @@
 <?php
 require_once '../../includes/classes/core.php';
+$data = array();
 
-
-
-$res = mysql_query("SELECT asterisk_incomming.wait_time
-					FROM   asterisk_incomming
-					WHERE  DATE(asterisk_incomming.call_datetime) = CURDATE() AND asterisk_incomming.dst_extension IN(100,101,102,103,104)
-					"); 
-$w15 = 0;
-$w30 = 0;
-$w45 = 0;
-$w60 = 0;
-$w75 = 0;
-$w90 = 0;
-$w91 = 0;
-
-while ($row = mysql_fetch_assoc($res)) {
-	
-	if ($row['wait_time'] < 15) {
-		$w15++;
-	}
-	
- 	if ($row['wait_time'] < 30){
- 		$w30++;
- 	}
- 	
-	if ($row['wait_time'] < 45){
- 		$w45++;
- 	}
- 	
-	if ($row['wait_time'] < 60){
-		$w60++;
-	}
-	
-	if ($row['wait_time'] < 75){
-		$w75++;
-	}
-	
-	if ($row['wait_time'] < 90){
-		$w90++;
-	}
-	
-	$w91++;
-	
+// Queue
+$res = mysql_query("SELECT  `number`
+                    FROM    `queue`
+                    WHERE   `actived` = 1");
+                    
+$data['queue'] =  '<option value="0">----</option>';
+while ($req = mysql_fetch_array($res)){
+    $data['queue'] .=  '<option value="'.$req[0].'">'.$req[0].'</option>';
 }
 
-$d30 = $w30 - $w15;
-$d45 = $w45 - $w30;
-$d60 = $w60 - $w45;
-$d75 = $w75 - $w60;
-$d90 = $w90 - $w75;
-$d91 = $w91 - $w90;
+// Department
+$res = mysql_query("SELECT  `name`
+                    FROM    `department`
+                    WHERE   `actived` = 1");
 
+$data['department'] =  '<option value="0">----</option>';
+while ($req = mysql_fetch_array($res)){
+    $data['department'] .=  '<option value="'.$req[0].'">'.$req[0].'</option>';
+}
 
-$p15 = round($w15 * 100 / $w91);
-$p30 = round($w30 * 100 / $w91);
-$p45 = round($w45 * 100 / $w91);
-$p60 = round($w60 * 100 / $w91);
-$p75 = round($w75 * 100 / $w91);
-$p90 = round($w90 * 100 / $w91);
+// Extension & User
+$res = mysql_query("SELECT  `extension_id`,
+                            `user_info`.`name`
+                    FROM    `users`
+                    JOIN    `user_info` ON `users`.`id` = `user_info`.`user_id`
+                    WHERE   `users`.`actived` = 1");
 
- $data = '
- 		<table  id="box-table-b">
- 			<thead>
-		 		<tr>
-			 		<th style="width: 120px;">ნაპასუხები</th>
-		 			<th style="width: 80px;">რაოდ.</th>
-		 			<th style="width: 80px;">დელტა</th>
-		 			<th>%</th>
-		 		</tr>
- 			<thead>
- 			<tbody>
-	 			<tr class="odd">
-			 		<td>15 წამში</td>
-		 			<td>'.$w15.'</td>
-		 			<td></td>
-		 			<td>'.$p15.'%</td>
-		 		</tr>
-	 			<tr>
-			 		<td>30 წამში</td>
-		 			<td>'.$w30.'</td>
-		 			<td>'.$d30.'</td>
-		 			<td>'.$p30.'%</td>
-		 		</tr>
-	 			<tr class="odd">
-			 		<td>45 წამში</td>
-		 			<td>'.$w45.'</td>
-		 			<td>'.$d45.'</td>
-		 			<td>'.$p45.'%</td>
-		 		</tr>
-	 			<tr>
-			 		<td>60 წამში</td>
-		 			<td>'.$w60.'</td>
-		 			<td>'.$d60.'</td>
-		 			<td>'.$p60.'%</td>
-		 		</tr>
-	 			<tr class="odd">
-			 		<td>75 წამში</td>
-		 			<td>'.$w75.'</td>
-		 			<td>'.$d75.'</td>
-		 			<td>'.$p75.'%</td>
-		 		</tr>
-		 		<tr>
-			 		<td>90 წამში</td>
-		 			<td>'.$w90.'</td>
-		 			<td>'.$d90.'</td>
-		 			<td>'.$p90.'%</td>
-		 		</tr>
-		 		<tr class="odd">
-			 		<td>90+ წამში</td>
-		 			<td>'.$w91.'</td>
-		 			<td>'.$d91.'</td>
-		 			<td>100%</td>
-		 		</tr>
-	 		<tbody>
- 		</table>
- 		';
- 
- echo  $data;
+$data['ext'] =  '<option value="0">----</option>';
+$data['user'] =  '<option value="0">----</option>';
+while ($req = mysql_fetch_array($res)){
+    $data['ext'] .=  '<option value="'.$req[0].'">'.$req[0].'</option>';
+    $data['user'] .=  '<option value="'.$req[1].'">'.$req[1].'</option>';
+}
+
+// State
+$data['state'] =  '<option value="0">----</option>';
+$data['state'] .=  '<option value="flesh_off.png">მიუწდომელი</option>';
+$data['state'] .=  '<option value="flesh_inc.png">დაკავებული</option>';
+$data['state'] .=  '<option value="flesh_ringing.png">რეკავს</option>';
+$data['state'] .=  '<option value="flesh_free.png">თავისუფალი</option>';
+
+echo json_encode($data);
+?>

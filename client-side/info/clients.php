@@ -112,6 +112,49 @@
 		        	$('.phone').css('display','block');
 		        }
 		        $( "#hide_said_menu_number" ).click();
+		        GetDateTimes('start_date_holi');
+		        GetDateTimes('end_date_holi');
+		        GetButtons("add_holiday","delete_holiday");
+		        GetButtons("holi_creap");
+		        LoadTable('holiday',4,'get_holiday',"<'F'lip>");
+		        $('#end_time,#start_time,#break_start_time,#break_end_time').timepicker({
+		        	hourMax: 23,
+		    		hourMin: 00,
+		    		minuteMax: 55,
+		    		minuteMin: 00,
+		    		stepMinute: 5,
+		    		minuteGrid: 10,
+		    		hourGrid: 3,
+		        	dateFormat: '',
+		            timeFormat: 'HH:mm'
+		    	});
+		        $.ajax({
+			        url: aJaxURL_object,
+				    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
+			        success: function(data) {
+						if(typeof(data.error) != "undefined"){
+							if(data.error != ""){
+								alert(data.error);
+							}else{
+    							for(g=0;g < 7;g++){
+        							if(parseInt(data[g].break_start_time) != 0 && parseInt(data[g].break_start_time) != 0){
+        								for(i=parseInt(data[g].start_time);i < parseInt(data[g].break_start_time);i++){
+        					    			$("td[clock='"+i+"'][wday='"+data[g].wday+"']").css('background','green');
+        					    		}
+        					    		$("td[clock='"+parseInt(data[g].break_start_time)+"'][wday='"+data[g].wday+"']").css('background','yellow');
+        					    		for(i=parseInt(data[g].break_end_time);i <= parseInt(data[g].end_time);i++){
+        					    			$("td[clock='"+i+"'][wday='"+data[g].wday+"']").css('background','green');
+        					    		}
+        							}else{
+        								for(i=parseInt(data[g].start_time);i <= parseInt(data[g].end_time);i++){
+        					    			$("td[clock='"+i+"'][wday='"+data[g].wday+"']").css('background','green');
+        					    		}
+        							}
+								}
+							}
+						}
+				    }
+			    });
 		   break;
 		   case "add-edit-form-import":
 		    	var buttons = {
@@ -197,7 +240,7 @@
     function show_right_side1(id){
         $("#right_side_project fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-project-class").css("width", "956");
+        $(".add-edit-form-project-class").css("width", "1200");
         //$('#add-edit-form').dialog({ position: 'left top' });
         hide_right_side1();
         var str = $("."+id).children('img').attr('src');
@@ -218,6 +261,7 @@
     function hide_right_side1(){
     	$("#side_menu1").children('spam').children('div').css('color','#FFF');
         $(".phone").children('img').attr('src','media/images/icons/info.png');
+        $(".holiday").children('img').attr('src','media/images/icons/holiday.png');
         $(".import").children('img').attr('src','media/images/icons/import.png');
         $(".actived").children('img').attr('src','media/images/icons/actived.png');
     }
@@ -672,6 +716,8 @@
 	    param.project_name		= $("#project_name").val();
 	    param.project_type		= $("#project_type").val();
 	    param.project_add_date	= $("#project_add_date").val();
+	    param.start_date_holi	= $("#start_date_holi").val();
+	    param.end_date_holi	    = $("#end_date_holi").val();
 	   
 	    
 	   
@@ -776,7 +822,7 @@
         if($(this).val() == 2){
         	$('.import').css('display','block');
         	$('.actived').css('display','block');
-        	$('.phone').css('display','none');        	
+        	$('.phone').css('display','none');       	
         }else{
         	$('.import').css('display','none');
         	$('.actived').css('display','none');
@@ -784,6 +830,166 @@
         }
         $( "#hide_said_menu_number" ).click();
 	});
+
+	$(document).on("click", "#holi_creap", function () {
+		start = parseInt($("#start_time").val());
+		end = parseInt($("#end_time").val());
+		b_start = parseInt($("#break_start_time").val());
+		b_end = parseInt($("#break_end_time").val());
+		ch_id = 0;
+		if(start < end && start < b_start && b_start < b_end && b_end < end){
+		    ch_id = 1;
+		}else{
+    		if(start < end && isNaN(b_start) && isNaN(b_end)){
+        		console.log(b_start)
+        		console.log(b_end)
+    			ch_id = 1;
+    		}else{
+    			  alert('მიუთითეთ სწოი დრო!');
+    			  ch_id = 0;
+    		}
+		}
+		if(ch_id == 1){
+    		$("td[wday='"+$("#weak_id").val()+"']").css('background','#F1F1F1');
+    		if($("#start_time").val() != '' && $("#break_start_time").val() != '' && $("#break_end_time").val() != '' && $("#end_time").val()){
+        		for(i=parseInt($("#start_time").val());i < parseInt($("#break_start_time").val());i++){
+        			$("td[clock='"+i+"'][wday='"+$("#weak_id").val()+"']").css('background','green');
+        		}
+        		$("td[clock='"+parseInt($("#break_start_time").val())+"'][wday='"+$("#weak_id").val()+"']").css('background','yellow');
+        		for(i=parseInt($("#break_end_time").val());i <= parseInt($("#end_time").val());i++){
+        			$("td[clock='"+i+"'][wday='"+$("#weak_id").val()+"']").css('background','green');
+        		}
+    		}else{
+    			for(i=parseInt($("#start_time").val());i <= parseInt($("#end_time").val());i++){
+        			$("td[clock='"+i+"'][wday='"+$("#weak_id").val()+"']").css('background','green');
+        		}
+    		}
+    		$.ajax({
+    	        url: aJaxURL_object,
+    		    data: 'act=work_gr&project_id='+$('#hidden_project_id').val()+'&start_time='+$("#start_time").val()+'&break_start_time='+$("#break_start_time").val()+'&break_end_time='+$("#break_end_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#weak_id").val(),
+    	        success: function(data) {
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						
+    					}
+    				}
+    		    }
+    	    });
+		}
+	});
+
+    $(document).on("click", "#holiday_all", function () {
+    	if ($(this).is(':checked')) {
+    		$.ajax({
+		        url: aJaxURL_object,
+			    data: 'act=add_all_holiday&project_id='+$('#hidden_project_id').val(),
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('holiday',4,'get_holiday',"<'F'lip>");
+						}
+					}
+			    }
+		    });
+    	}else{
+    		$.ajax({
+		        url: aJaxURL_object,
+			    data: 'act=delete_all_holiday&project_id='+$('#hidden_project_id').val(),
+		        success: function(data) {
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							LoadTable('holiday',4,'get_holiday',"<'F'lip>");
+						}
+					}
+			    }
+		    });
+    	}
+    });
+
+    $(document).on("click", "#work_table tr td[clock]", function () {
+    	wday  = $(this).attr('wday');
+    	clock = $(this).attr('clock');
+    	if($(this).css('background-color') == 'rgb(0, 128, 0)' || $(this).css('background-color') == 'rgb(255, 255, 0)'){
+    		var buttons = {
+		        	"cancel": {
+			            text: "დახურვა",
+			            id: "cancel-dialog",
+			            click: function () {
+			            	$(this).dialog("close");
+			            }
+			        }
+			    };
+			GetDialog("add-edit-form-hour", 900, "auto", buttons, 'center top');
+			$.ajax({
+                url: aJaxURL_object,
+        	    data: 'act=get_hour&wday='+wday+'&clock='+clock+'&project_id='+$('#hidden_project_id').val(),
+                success: function(data) {
+        			if(typeof(data.error) != "undefined"){
+        				if(data.error != ""){
+        					alert(data.error);
+        				}else{
+        					$("#add-edit-form-hour").html(data.hour)
+        				}
+        			}
+        	    }
+            });
+    	}
+    });
+    
+    $(document).on("click", "#add_holiday", function () {
+        if($("#holiday_id").val() != 0){
+            $.ajax({
+                url: aJaxURL_object,
+        	    data: 'act=add_holiday&project_id='+$('#hidden_project_id').val()+'&holiday_id='+$("#holiday_id").val(),
+                success: function(data) {
+        			if(typeof(data.error) != "undefined"){
+        				if(data.error != ""){
+        					alert(data.error);
+        				}else{
+        					LoadTable('holiday',4,'get_holiday',"<'F'lip>");
+        				}
+        			}
+        	    }
+            });
+        }else{
+            alert('აირჩიეთ სასურველი დღე!');
+        }
+    });
+
+    $(document).on("click", "#check-all-holiday", function () {
+    	$("#table_holiday tbody INPUT[type='checkbox']").prop("checked", $("#check-all-holiday").is(":checked"));
+    });
+
+    $(document).on("click", "#delete_holiday", function () {
+        var data = $("#table_holiday tbody .check:checked").map(function () {
+            return this.value;
+        }).get();
+    	
+    
+        for (var i = 0; i < data.length; i++) {
+            $.ajax({
+                url: aJaxURL_object,
+                type: "POST",
+                data: "act=delete_holiday&id=" + data[i],
+                dataType: "json",
+                success: function (data) {
+                        if (data.error != "") {
+                            alert(data.error);
+                        } else {
+                        	LoadTable('holiday',4,'get_holiday',"<'F'lip>");
+                            $("#check-all-holiday").attr("checked", false);
+                        }
+                }
+            });
+        }
+    });
+    
 </script>
 <style type="text/css">
 
@@ -797,7 +1003,8 @@
 #table_number_length,
 #table_import_length,
 #table_import_actived_length,
-#table_client_length{
+#table_client_length,
+#table_holiday_length{
 	position: inherit;
     width: 0px;
 	float: left;
@@ -806,7 +1013,8 @@
 #table_number_length label select,
 #table_import_length label select,
 #table_import_actived_length label select,
-#table_client_length label select{
+#table_client_length label select,
+#table_holiday_length label select{
 	width: 60px;
     font-size: 10px;
     padding: 0;
@@ -819,7 +1027,8 @@
 }
 #table_number_paginate,
 #table_import_paginate,
-#table_import_actived_paginate{
+#table_import_actived_paginate,
+#table_holiday_actived_paginate{
 	margin-left: -22px;
 }
 
@@ -934,6 +1143,9 @@
                 <button id="choose_button1" >აირჩიეთ ფაილი</button>
             </fieldset>
         </div>
+	</div>
+	
+	<div  id="add-edit-form-hour" class="form-dialog" title="წუთი">
 	</div>
 
 </body>

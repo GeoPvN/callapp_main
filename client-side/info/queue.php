@@ -35,7 +35,7 @@
 		            }
 		        }
 		    };
-        GetDialog(fName, 420, "auto", buttons, 'left top');
+        GetDialog(fName, 420, "auto", buttons, 'left+43 top');
         LoadTable('ext',3,'get_list_ext',"<'F'lip>",'','hidden_id='+$('#hidden_id').val());
               // ServerLink,  AddButtonID,    DeleteButtonID,     CheckAllID,  DialogID,   SaveDialogID,  CloseDialogID,  DialogHeight,  DialogPosition,  DialogOpenAct,     DeleteAct        EditDialogAct        TableID  ColumNum     TableAct       TableFunction      TablePageNum     TableOtherParam
         MyEvent(   aJaxURL,  'add_button_ext', 'delete_button_ext', 'check-all-ext', '-in_num', 'save_in_num', 'cancel-dialog',      270,       'center top',  'get_in_num_page', 'disable_ext', 'get_edit_in_num_page',  'ext',   3,        'get_list_ext', "<'F'lip>",      '0',        'hidden_id='+$('#hidden_id').val());
@@ -46,7 +46,7 @@
     function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        $(".add-edit-form-class").css("width", "1000");
+        $(".add-edit-form-class").css("width", "1215");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
 		str = str.substring(0, str.length - 4);
@@ -145,6 +145,76 @@
             $(this).attr('myvar','0');
         }
     });
+    $(document).on("click", "#show_copy_prit_exel", function () {
+        if($(this).attr('myvar') == 0){
+            $('.ColVis,.dataTable_buttons').css('display','block');
+            $(this).css('background','#2681DC');
+            $(this).children('img').attr('src','media/images/icons/select_w.png');
+            $(this).attr('myvar','1');
+        }else{
+        	$('.ColVis,.dataTable_buttons').css('display','none');
+        	$(this).css('background','#E6F2F8');
+            $(this).children('img').attr('src','media/images/icons/select.png');
+            $(this).attr('myvar','0');
+        }
+    });
+
+    $(document).on("click", "#work_table td", function () {
+        if($("input",this).prop('checked') == true){
+            $("input",this).prop('checked',false);
+            $(this).css('background','#F1F1F1');
+        }else{
+        	$("input",this).prop('checked',true);
+        	$(this).css('background','green');
+        }
+        gg($("input",this).attr('wday'));
+
+    });
+    
+    function gg(wday){
+    	values = [];
+        $( "#wday"+wday+" input:checked" ).each(function( index ) {
+        	value = parseInt($(this).val());
+        	values.push(value);
+      	});
+      	var max_val = Math.max.apply(Math,values);
+        var min_val = Math.min.apply(Math,values);
+      	if(max_val != min_val && max_val > min_val){
+          	for(i=min_val;i <= max_val;i++){           
+              	if(i > 9){
+              	    $("input[value='"+i+":00'][wday='"+wday+"']").prop('checked',true);
+                	$("input[value='"+i+":00'][wday='"+wday+"']").parent('td').css('background','green');
+              	}else{
+              		$("input[value='0"+i+":00'][wday='"+wday+"']").prop('checked',true);
+              		$("input[value='0"+i+":00'][wday='"+wday+"']").parent('td').css('background','green');
+              	}
+          	}
+          	param 			= new Object();
+            
+            param.act		    = 'work_gr';
+        	param.queue_number	= $('#queue_number').val();
+        	param.queue_scenar  = $('#queue_scenar').val();
+        	param.wday          = wday;
+        	if(max_val > 9){
+        	    param.max_val       = max_val+":00";
+        	}else{
+        		param.max_val       = "0"+max_val+":00";
+        	}
+        	if(min_val > 9){
+        	    param.min_val       = min_val+":00";
+        	}else{
+        		param.min_val       = "0"+min_val+":00";
+        	}
+            $.ajax({
+                url: aJaxURL,
+                data: param,
+                success: function(data) {
+                    
+                }
+            });
+      	}
+    }
+    
 </script>
 <style type="text/css">
 

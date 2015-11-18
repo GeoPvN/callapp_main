@@ -57,7 +57,7 @@ switch ($action) {
 
         break;
     case 'save_pers':
-		$persons_id 			= $_REQUEST['id'];
+		$persons_id 		= $_REQUEST['id'];
     	$name 				= htmlspecialchars($_REQUEST['n'], ENT_QUOTES);
 		$tin 				= $_REQUEST['t'];
 		$position 			= $_REQUEST['p'];
@@ -70,18 +70,19 @@ switch ($action) {
 		$user				= $_REQUEST['user'];
 		$userpassword		= md5($_REQUEST['userp']);
 		$group_permission	= $_REQUEST['gp'];
+		$dep_id             = $_REQUEST['dep_id'];
 
 		$CheckUser 			= CheckUser($user);
 
 
 		if(empty($persons_id)){
 			if($CheckUser){
-				AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission);
+				AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission, $dep_id);
 				}else{
 					$error = "მომხმარებელი ასეთი სახელით  უკვე არსებობს\nაირჩიეთ სხვა მომხმარებლის სახელი";
 				}
 		}else{
-			SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission);
+			SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission, $dep_id);
 		}
 
 
@@ -229,7 +230,7 @@ function ClearProduct() {
 	}
 }
 
-function AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission)
+function AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission, $dep_id)
 {
     if($user != '' && $userpassword !='' && $group_permission !=''){
         $ext			= $_REQUEST['ext'];
@@ -246,19 +247,20 @@ function AddWorker($user_id, $name, $tin, $position, $address, $image, $password
     $persons_id = mysql_insert_id();
     
 	mysql_query("INSERT INTO `user_info`
-					(`user_id`, `name`, `tin`, `position_id`, `address`, `image`, `home_phone`, `mobile_phone`, `comment`)
+					(`user_id`, `name`, `tin`, `position_id`, `address`, `image`, `home_phone`, `mobile_phone`, `comment`, `dep_id`)
 				 VALUES
-					($persons_id, '$name', '$tin', $position, '$address', '$image', '$home_number', '$mobile_number', '$comment')");
+					($persons_id, '$name', '$tin', $position, '$address', '$image', '$home_number', '$mobile_number', '$comment', '$dep_id')");
 
 }
 
-function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission)
+function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission, $dep_id)
 {
 	mysql_query("UPDATE `user_info` SET
                     	`user_id`		= '$persons_id',
                     	`name`			= '$name',
                     	`tin`			= '$tin',
                     	`position_id`	= $position,
+	                    `dep_id`	    = $dep_id,
                     	`address`		= '$address',
                     	`image`			= '$image',
                     	`home_phone`	= '$home_number',
@@ -319,12 +321,33 @@ function GetPosition($point)
 	return $data;
 }
 
+function GetDepart($id){
+    $data = '';
+    $req = mysql_query("SELECT 	`id`,
+    						   	`name`
+						FROM 	`department`
+						WHERE 	`actived` = '1'");
+    
+    $data = '<option value="0" selected="selected"></option>';
+
+    while( $res = mysql_fetch_assoc( $req )){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    
+    return $data;
+}
+
 function GetWorker($per_id)
 {
     $res = mysql_fetch_assoc(mysql_query("	SELECT	`users`.`id` as `id`,
                                     				`user_info`.`name` as `name`,
                                     				`user_info`.`tin` as `tin`,
                                     				`user_info`.`position_id` as `position`,
+                                                    `user_info`.`dep_id` as `dep_id`,
                                     				`user_info`.`address` as `address`,
                                     				`file`.`rand_name` as `image`,
                                                     `file`.`id` as `image_id`,
@@ -410,6 +433,12 @@ function GetPage($res = '')
 					<td style="width: 170px;"><label for="position">თანამდებობა</label></td>
 					<td>
 						<select id="position" class="idls">' . GetPosition($res['position']) . '</select>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 170px;"><label for="dep_id">დეპარტამენტი</label></td>
+					<td>
+						<select id="dep_id" class="idls">' . GetDepart($res['dep_id']) . '</select>
 					</td>
 				</tr>
 				<tr>

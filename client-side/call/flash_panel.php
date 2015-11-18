@@ -8,42 +8,63 @@ require_once("AsteriskManager/config.php");
 <head>
 	<script type="text/javascript">					
 		      
-		$(document).ready(function () {  	  
-	       runAjax();  
-	       runAjax1();
-	       $('#queue, #departament_id, #ext, #persons_id, #state').chosen({ search_contains: true });
+		$(document).ready(function () {
+			$.ajax({
+            	dataType: "JSON",
+		        url: 'server-side/call/flash_panel.action.php',
+			    data: 'act=1',
+		        success: function(data) {
+					$("#queue").html(data.queue);
+					$("#department").html(data.department);
+					$("#ext").html(data.ext);
+					$("#user").html(data.user);
+					$("#state").html(data.state);
+			    }
+            }).done(function(data) {
+	       runAjax();
+	       $('#queue, #department, #ext, #user, #state').chosen({ search_contains: true });
+            });
 	   });
 
 		function runAjax() {
             $.ajax({
             	async: false,
             	dataType: "html",
-		        url: 'AsteriskManager/liveState.php',
+		        url: 'AsteriskManager/liveState_FP.php',
 			    data: 'sesvar=hideloggedoff&value=true',
 			    beforeSend: false,
 	            complete: false,
 		        success: function(data) {
-					$("#jq").html(data);						
+					$("#jq").html(data);
+					if($("#queue").val() != 0){
+						$("tbody tr").css('display','none');
+					    $("tbody tr[queue="+$("#queue").val()+"]").css('display','');
+					}
+					if($("#department").val() != 0){
+						$("tbody tr").css('display','none');
+					    $("tbody tr[dep='"+$("#department").val()+"']").css('display','');
+					}
+					if($("#ext").val() != 0){
+						$("tbody tr").css('display','none');
+					    $("tbody tr[ext='"+$("#ext").val()+"']").css('display','');
+					}
+					if($("#user").val() != 0){
+						$("tbody tr").css('display','none');
+					    $("tbody tr[user='"+$("#user").val()+"']").css('display','');
+					}
+					if($("#state").val() != 0){
+						$("tbody tr").css('display','none');
+					    $("tbody tr[state='"+$("#state").val()+"']").css('display','');
+					}
+					if($("#user").val() == 0 && $("#ext").val() == 0 && $("#department").val() == 0 && $("#queue").val() == 0 && $("#state").val() == 0){
+						$("tbody tr").css('display','');
+					}
 			    }
-            }).done(function(data) { 
-                //setTimeout(runAjax, 1000);
+            }).done(function(data) {
+                setTimeout(runAjax, 1000);
             });
 		}
 
-		function runAjax1() {
-            $.ajax({
-            	async: true,
-            	dataType: "html",
-		        url: 'server-side/call/flash_panel.action.php',
-		        beforeSend: false,
-	            complete: false,
-		        success: function(data) {
-					$("#level").html(data);						
-			    }
-            }).done(function(data) { 
-                //setTimeout(runAjax1, 1000);
-            });
-		}
 		
     </script>
 </head>
@@ -97,7 +118,7 @@ require_once("AsteriskManager/config.php");
 
 <body>	
 <div id="tabs">
-<div class="callapp_head">განყოფილებები<hr class="callapp_head_hr"></div>	
+<div class="callapp_head">Flesh Panel<hr class="callapp_head_hr"></div>	
     <div id="my_div">
         <div id="my_selector">
             <div id="filter">
@@ -108,7 +129,7 @@ require_once("AsteriskManager/config.php");
                 
                 <span>
                 <label>დეპარტამენტი</label>
-                <select id="departament_id" style="width: 165px"></select>
+                <select id="department" style="width: 165px"></select>
                 </span>
                 
                 <span>
@@ -118,7 +139,7 @@ require_once("AsteriskManager/config.php");
                 
                 <span>
                 <label>თანამშრომელი</label>
-                <select id="persons_id" style="width: 165px"></select>
+                <select id="user" style="width: 165px"></select>
                 </span>
                 
                 <span style="  margin-right: 0px;">
