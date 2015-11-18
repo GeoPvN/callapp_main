@@ -14,6 +14,7 @@ $cc_address 		= $_REQUEST['cc_address'];
 $bcc_address 		= $_REQUEST['bcc_address'];
 $subject 	 		= $_REQUEST['subject'];
 $body 	 			= $_REQUEST['body'];
+$user               = $_SESSION['USERID'];
 
 $signature          = '';
 
@@ -22,14 +23,20 @@ $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `ra
                     JOIN	send_mail_detail ON send_mail_detail.file_id = file.id
                     JOIN   sent_mail ON sent_mail.id = send_mail_detail.sent_mail_id
                     WHERE	send_mail_detail.sent_mail_id = $sent_mail_id AND status=1");
+
+if($user == 7){
+    $user_mail = "akaki@carekids.ge";
+}elseif($user == 8){
+    $user_mail = "natia@carekids.ge";
+}
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
 // Set PHPMailer to use the sendmail transport
 $mail->isSendmail();
 //Set who the message is to be sent from
-$mail->setFrom('akaki@carekids.ge', 'Carekids.ge');
+$mail->setFrom($user_mail, 'Carekids.ge');
 //Set an alternative reply-to address
-$mail->addReplyTo('akaki@carekids.ge', 'Carekids.ge');
+$mail->addReplyTo($user_mail, 'Carekids.ge');
 // Set who the message is to be sent to
 // $mail->addAddress('papalashvilidato@gmail.com', 'dato');
 // //Set the subject line

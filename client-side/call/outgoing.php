@@ -14,7 +14,7 @@
     var colum_number      = 9;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
-     //gmail.php
+
     $(document).ready(function () {
     	param 			= new Object();
 		param.act		= "ststus";
