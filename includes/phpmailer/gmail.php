@@ -15,7 +15,7 @@ $bcc_address 		= $_REQUEST['bcc_address'];
 $subject 	 		= $_REQUEST['subject'];
 $body 	 			= $_REQUEST['body'];
 
-$signature          = '</br></br><span style="font-style: italic;">პატივისცემით,</span><div><span style="font-style: italic;">შპს "ჯორჯიან სერვის ნეთვორკი"</span></div><div>(0322) 2 500 111</div>';
+$signature          = '';
 
 $body 				= $body.$signature;
 
@@ -39,9 +39,9 @@ $mail->SMTPSecure	= 'tls';
 
 $mail->SMTPAuth		= true;
 
-$mail->Username		= "sheniparolichventanaa@gmail.com";
+$mail->Username		= "papalashvilidato@gmail.com";
 
-$mail->Password		= "ubralodpass";
+$mail->Password		= "datoTanac123";
 
 $mail->setFrom('sheniparolichventanaa@gmail.com', 'CallApp Test Mail');
 

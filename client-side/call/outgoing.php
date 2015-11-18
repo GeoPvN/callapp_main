@@ -6,7 +6,7 @@
     var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
     var aJusURL_Actived   = "server-side/call/outgoing/outgoing_actived.action.php";
     var aJusURL_Task      = "server-side/call/outgoing/outgoing_task.action.php";
-    var aJaxURL_getmail	  = "includes/phpmailer/gmail.php";
+    var aJaxURL_getmail	  = "includes/phpmailer/sendmail.php";
     var aJusURL_mail      = "server-side/call/Email_sender.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
@@ -14,7 +14,7 @@
     var colum_number      = 9;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
-     
+     //gmail.php
     $(document).ready(function () {
     	param 			= new Object();
 		param.act		= "ststus";
@@ -689,6 +689,7 @@ if(fName=='add-edit-form-task'){
 							LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
 						}else{
 							alert('შეტყობინება არ გაიგზავნა!');
+							LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
 						}
 					}
 			    });
