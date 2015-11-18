@@ -17,7 +17,7 @@ $body 	 			= $_REQUEST['body'];
 
 $signature          = '';
 
-$body 				= $body.$signature;
+$body 				= $body;
 
 $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
                     FROM 	`file`
