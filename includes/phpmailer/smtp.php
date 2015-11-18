@@ -45,8 +45,8 @@ $mail->Password = "akaki";
 $mail->setFrom('akaki@carekids.ge', 'carekids.ge');
 //Set an alternative reply-to address
 $mail->addReplyTo('akaki@carekids.ge', 'carekids.ge');
-//Set who the message is to be sent to
-$mail->addAddress('papalashvilidato@gmail.com', 'John Doe');
+// //Set who the message is to be sent to
+// $mail->addAddress('papalashvilidato@gmail.com', 'John Doe');
 // //Set the subject line
 // $mail->Subject = 'PHPMailer SMTP test';
 // //Read an HTML message body from an external file, convert referenced images to embedded,
