@@ -38,7 +38,7 @@ $mail->Port = 25;
 //Whether to use SMTP authentication
 $mail->SMTPAuth = true;
 //Username to use for SMTP authentication
-$mail->Username = "akaki@carekids.ge";
+$mail->Username = "akaki";
 //Password to use for SMTP authentication
 $mail->Password = "akaki";
 //Set who the message is to be sent from
