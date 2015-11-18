@@ -14,10 +14,6 @@ $bcc_address 		= $_REQUEST['bcc_address'];
 $subject 	 		= $_REQUEST['subject'];
 $body 	 			= $_REQUEST['body'];
 
-$signature          = '';
-
-$body 				= $body;
-
 $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
                     FROM 	`file`
                     JOIN	send_mail_detail ON send_mail_detail.file_id = file.id
