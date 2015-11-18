@@ -6,7 +6,7 @@
     var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
     var aJusURL_Actived   = "server-side/call/outgoing/outgoing_actived.action.php";
     var aJusURL_Task      = "server-side/call/outgoing/outgoing_task.action.php";
-    var aJaxURL_getmail	  = "includes/phpmailer/smtp.php";
+    var aJaxURL_getmail	  = "includes/phpmailer/sendmail.php";
     var aJusURL_mail      = "server-side/call/Email_sender.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";

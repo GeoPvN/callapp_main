@@ -17,8 +17,6 @@ $body 	 			= $_REQUEST['body'];
 
 $signature          = '';
 
-$body 				= $body;
-
 $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
                     FROM 	`file`
                     JOIN	send_mail_detail ON send_mail_detail.file_id = file.id
@@ -29,11 +27,11 @@ $mail = new PHPMailer;
 // Set PHPMailer to use the sendmail transport
 $mail->isSendmail();
 //Set who the message is to be sent from
-$mail->setFrom('akaki@carekids.ge', 'Akaki');
+$mail->setFrom('akaki@carekids.ge', 'Carekids.ge');
 //Set an alternative reply-to address
-$mail->addReplyTo('akaki@carekids.ge', 'Akaki');
-//Set who the message is to be sent to
-$mail->addAddress('papalashvilidato@gmail.com', 'dato');
+$mail->addReplyTo('akaki@carekids.ge', 'Carekids.ge');
+// Set who the message is to be sent to
+// $mail->addAddress('papalashvilidato@gmail.com', 'dato');
 // //Set the subject line
 // $mail->Subject = 'PHPMailer sendmail test';
 // //Read an HTML message body from an external file, convert referenced images to embedded,
