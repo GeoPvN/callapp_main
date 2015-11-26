@@ -119,6 +119,37 @@ switch ($action) {
             $data['aaData'][] = $row;
         }
         break;
+    case 'get_break':
+        $count = 		$_REQUEST['count'];
+        $hidden = 		$_REQUEST['hidden'];
+        $rResult = mysql_query("SELECT 	week_day_graphic_break.id,
+                        				week_day_graphic_break.break_start,
+                        				week_day_graphic_break.break_end
+                                FROM `week_day_graphic_break`
+                                JOIN week_day_graphic ON week_day_graphic_break.week_day_graphic_id = week_day_graphic.id
+                                WHERE week_day_graphic.project_id = '$_REQUEST[project_id]' AND week_day_graphic.week_day_id = '$_REQUEST[wday]' AND week_day_graphic_break.actived = 1");
+    
+        $data = array(
+            "aaData"	=> array()
+        );
+         
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                if($i == ($count - 1)){
+                    $row[] = '<div class="callapp_checkbox">
+                          <input type="checkbox" id="callapp_checkbox_break_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                          <label style="margin-top: 2px;" for="callapp_checkbox_break_'.$aRow[$hidden].'"></label>
+                      </div>';
+                }
+            }
+            $data['aaData'][] = $row;
+        }
+        break;
     case 'get_list_import':
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];

@@ -23,22 +23,35 @@ $(document).ready(function(){
 	SetEvents("add", "dis", "check-all", "example", "add-edit-form", aJaxURL);
 	});
 function LoadDialog(f){
-	GetDialog(f,450,240);
-	$('.time').timepicker({
-		hourMax: 23,
-		hourMin: 0,
-		stepMinute: 60,		
-		minuteGrid: 60,
-		hourGrid: 3
-
-	});
+	GetDialog(f,450,'auto');
 	$("#save-dialog").click(function(){
 		var param= new Object();
 			param.act 			= "save_dialog";
 			param.id 			= $("#id").val();
-			param.week_day_id   = dey;
+			param.wday          = $("#wday").val();
+			param.project_id    = $("#project_id").val();
 			param.start 		= $("#start").val();
 			param.end			= $("#end").val();
+			// break time
+			param.breakStart1 	= $(".breakStart1").val();
+			param.breakEnd1		= $(".breakEnd1").val();
+			param.my_id1        = $('.breakStart1').attr('my_id1');
+			param.breakStart2 	= $(".breakStart2").val();
+			param.breakEnd2		= $(".breakEnd2").val();
+			param.my_id2        = $('.breakStart2').attr('my_id2');
+			param.breakStart3 	= $(".breakStart3").val();
+			param.breakEnd3		= $(".breakEnd3").val();
+			param.my_id3        = $('.breakStart3').attr('my_id3');
+			param.breakStart4 	= $(".breakStart4").val();
+			param.breakEnd4		= $(".breakEnd4").val();
+			param.my_id4        = $('.breakStart4').attr('my_id4');
+			param.breakStart5 	= $(".breakStart5").val();
+			param.breakEnd5		= $(".breakEnd5").val();
+			param.my_id5        = $('.breakStart5').attr('my_id5');
+			param.breakStart6 	= $(".breakStart6").val();
+			param.breakEnd6		= $(".breakEnd6").val();
+			param.my_id6        = $('.breakStart6').attr('my_id6');
+			
 			if(param.start!="" && param.end!=""){
 			$.getJSON(aJaxURL, param, function(json) {
 				LoadTable();
@@ -56,6 +69,28 @@ function LoadTable(){
     }, 90);
 }
 
+$(document).on("change", "#wday", function () {
+if($("#project_id").val() == 0){
+	alert('აირჩიეთ პროექტი!');
+}else{
+	$.ajax({
+        url: aJaxURL,
+	    data: 'act=get_wk&project_id='+$('#project_id').val()+ '&wday=' + $('#wday').val(),
+        success: function(data) {
+			if(typeof(data.error) != "undefined"){
+				if(data.error != ""){
+					alert(data.error);
+				}else{
+					console.log(data)
+					$('#pasteTable').html('')
+					$("#script").html(data.start[0]+data.end[1]+data.end[2]+data.end[3]+data.end[4]+data.end[5]+data.end[6]);
+				}
+			}
+	    }
+    });
+}
+});
+
 $(document).on("click", "#show_copy_prit_exel", function () {
     if($(this).attr('myvar') == 0){
         $('.ColVis,.dataTable_buttons').css('display','block');
@@ -72,9 +107,6 @@ $(document).on("click", "#show_copy_prit_exel", function () {
 </script>
 
 <style type="text/css">
-.ui_tpicker_minute_label,.ui_tpicker_minute{
-	display: none;
-}
 #table_right_menu{
 	top: 56px;
 }
@@ -87,6 +119,7 @@ $(document).on("click", "#show_copy_prit_exel", function () {
 }</style>
 </head>
 <body>
+<div id="script" style="display:none;"></div>
 <div id="tabs" style="width: 90%">
 <div class="callapp_head">სამუშაო გრაფიკები<hr class="callapp_head_hr"></div>
 
@@ -112,7 +145,7 @@ $(document).on("click", "#show_copy_prit_exel", function () {
             <th>ID</th>
             <th style="width:50%">მუშაობის დასაწყისი</th>
             <th style="width:50%">სამუშაოს დასასრული</th>
-            <th style="width: 30px">#</th>
+            <th style="width: 35px">#</th>
         </tr>
     </thead>
     <thead>
@@ -128,7 +161,10 @@ $(document).on("click", "#show_copy_prit_exel", function () {
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>
             <th>
-                <input type="checkbox" name="check-all" id="check-all">
+                <div class="callapp_checkbox">
+                    <input type="checkbox" id="check-all" name="check-all" />
+                    <label for="check-all"></label>
+                </div>
             </th>
 
     </thead>

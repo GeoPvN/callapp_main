@@ -33,9 +33,12 @@ switch ($action) {
 	    $data		= array('hour'	=> $page);
 	
 	    break;
-		
+    case 'get_break':
+        $page		= GetBreak($_REQUEST[wday],$_REQUEST[project_id]);
+        $data		= array('break'	=> $page);
+    
+        break;
 	case 'disable':
-		$hidden_id        = $_REQUEST['id'];
 		mysql_query("	UPDATE  `project` SET
                 		        `actived` = 0
                 		WHERE   `id`='$hidden_id'");
@@ -49,11 +52,29 @@ switch ($action) {
 	
 	    break;
     case 'delete_holiday':
-        $project_id    = $_REQUEST['project_id'];
         mysql_query("	UPDATE  `project_holiday` SET
                                 `actived` = 0
                         WHERE   `id`='$hidden_id'");
     
+        break;
+    case 'delete_break':
+        mysql_query("	UPDATE  `week_day_graphic_break` SET
+                                `actived` = 0
+                        WHERE   `id`='$hidden_id'");
+    
+        break;
+        
+    case 'check_weak':
+        $project_id    = $_REQUEST['project_id'];
+        $wday          = $_REQUEST['wday'];
+        $req = mysql_fetch_array(mysql_query("  SELECT  TIME_FORMAT(start_time,'%H:%i'),
+                                                        TIME_FORMAT(break_start_time,'%H:%i'),
+                                                        TIME_FORMAT(break_end_time,'%H:%i'),
+                                                        TIME_FORMAT(end_time,'%H:%i'),
+                                                        ext_number
+                                                FROM `week_day_graphic`
+                                                WHERE project_id = '$project_id' AND week_day_id = $wday"));
+        $data = array('start_time'=>$req[0],'break_start_time'=>$req[1],'break_end_time'=>$req[2],'end_time'=>$req[3],'ext_number'=>$req[4]);
         break;
 	case 'add_all_holiday':
 	    $project_id    = $_REQUEST['project_id'];
@@ -95,14 +116,23 @@ switch ($action) {
          
         $res = mysql_query("SELECT  week_day_id,
                                     start_time,
-                                    break_start_time,
-                                    break_end_time,
                                     end_time
                             FROM `week_day_graphic`
                             WHERE project_id = '$project_id' AND actived = 1");
         
+        $res1 = mysql_query("SELECT  week_day_id,
+                    				week_day_graphic_break.break_start,
+                    				week_day_graphic_break.break_end
+                            FROM `week_day_graphic`
+                            JOIN week_day_graphic_break ON week_day_graphic.id = week_day_graphic_break.week_day_graphic_id
+                            WHERE project_id = '$project_id' AND week_day_graphic.actived = 1 AND week_day_graphic_break.actived = 1");
+        
         while ($req = mysql_fetch_array($res)){
-            $data[] = array('wday'	=> $req[0],'start_time'	=> $req[1],'break_start_time'	=> $req[2],'break_end_time'	=> $req[3],'end_time'	=> $req[4]);
+            $data['work'][] = array('wday'	=> $req[0],'starttime'	=> $req[1],'endtime'	=> $req[2]);
+        }
+        
+        while ($req1 = mysql_fetch_array($res1)){
+            $data['break'][] = array('wday'=> $req1[0],'breakstarttime'=> $req1[1],'breakendtime'=> $req1[2]);
         }
     
         break;
@@ -113,9 +143,9 @@ switch ($action) {
                                                     WHERE 	`project_id` = '$_REQUEST[project_id]' AND week_day_id = '$_REQUEST[wday]' "));
         if($num_row[0] == ''){
             mysql_query("INSERT INTO `week_day_graphic`
-                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `break_start_time`, `break_end_time`)
+                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `break_start_time`, `break_end_time`, `ext_number`)
                         VALUES
-                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[break_start_time]', '$_REQUEST[break_end_time]');");
+                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[break_start_time]', '$_REQUEST[break_end_time]', '$_REQUEST[ext_number]');");
         }else{
             mysql_query("UPDATE `week_day_graphic` SET
                                 `project_id`='$_REQUEST[project_id]',
@@ -123,7 +153,8 @@ switch ($action) {
                                 `start_time`='$_REQUEST[start_time]',
                                 `end_time`='$_REQUEST[end_time]',
                                 `break_start_time`='$_REQUEST[break_start_time]',
-                                `break_end_time`='$_REQUEST[break_end_time]'
+                                `break_end_time`='$_REQUEST[break_end_time]',
+                                `ext_number`='$_REQUEST[ext_number]'
                          WHERE  `id`='$num_row[0]'");
         }
     
@@ -141,6 +172,38 @@ switch ($action) {
     	}
     		
     	break;
+	case 'save_holi_break':
+	    $project_id		   = $_REQUEST['project_id'];
+	    $wday              = $_REQUEST['wday'];
+	    $break_start_time  = $_REQUEST['break_start_time'];
+	    $break_end_time    = $_REQUEST['break_end_time'];
+	    $user              = $_SESSION['USERID'];
+	    
+	    $week_day_graphic_id = mysql_fetch_array(mysql_query("  SELECT id
+                                                                FROM `week_day_graphic`
+                                                                WHERE project_id = $project_id AND week_day_id = $wday AND actived = 1"));
+	    
+	    if($week_day_graphic_id[0]==''){
+	        mysql_query("INSERT INTO `week_day_graphic`
+	                     (`project_id`, `week_day_id`)
+                         VALUES
+                         ('$project_id', '$wday');");
+	        $week_day_graphic_id = mysql_fetch_array(mysql_query("  SELECT id
+                                                    	            FROM `week_day_graphic`
+                                                    	            WHERE project_id = $project_id AND week_day_id = $wday AND actived = 1"));
+	        mysql_query("INSERT INTO `week_day_graphic_break`
+                         (`user_id`, `week_day_graphic_id`, `break_start`, `break_end`)
+                         VALUES
+                         ( '$user', '$week_day_graphic_id[0]', '$break_start_time', '$break_end_time');");
+	    }else{
+	        mysql_query("INSERT INTO `week_day_graphic_break`
+                         (`user_id`, `week_day_graphic_id`, `break_start`, `break_end`)
+                         VALUES
+                         ( '$user', '$week_day_graphic_id[0]', '$break_start_time', '$break_end_time');");
+	    }
+	
+	    break;
+    	
     
    default:
 		$error = 'Action is Null';
@@ -246,6 +309,83 @@ function GetHoliday(){
     return $data;
 }
 
+function GetBreak($wday,$project_id){
+    switch ($wday) {
+        case 1:
+        $weak = 'ორშაბათი';
+        break;
+        case 2:
+        $weak = 'სამშაბათი';
+        break;
+        case 3:
+        $weak = 'ოთხშაბათი';
+        break;
+        case 4:
+        $weak = 'ხუთშაბათი';
+        break;
+        case 5:
+        $weak = 'პარსკევი';
+        break;
+        case 6:
+        $weak = 'შაბათი';
+        break;
+        case 7:
+        $weak = 'კვირა';
+        break;
+    }
+    $req = mysql_fetch_array(mysql_query("  SELECT  id
+                                            FROM `week_day_graphic`
+                                            WHERE project_id = '$project_id' AND week_day_id = '$wday' AND actived = 1"));
+    $data = '<div id="dialog-form">
+    	       <fieldset style="">
+    	           <legend>'.$weak.'</legend>
+    	               <input id="week_day_graphic_id" type="hidden">
+    	               <table class="dialog-form-table">
+                        <tr>
+    	                   <td style="width: 130px;">შესვენება<br>იწყება</td>
+                           <td style="width: 140px;">შესვენება<br>მთავრდება</td>
+                        </tr>
+                        <tr>
+    	                   <td><input id="break_start_time" type="text" style="width: 80px;"></td>
+                           <td><input id="break_end_time" type="text" style="width: 80px;"></td>
+                           <td><button id="add_holi_break">დამატება</button></td>
+    	                   <td><button id="del_holi_break">წაშლა</button></td>
+                        </tr>
+    	               </table>
+    	               <table class="display" id="table_break" style="width: 100%;">
+                        <thead>
+                            <tr id="datatable_header">
+                                <th>ID</th>
+                                <th style="width: 48%;">შესვენება იწყება</th>
+                                <th style="width: 48%;">შესვენება მთავრდება</th>
+    							<th style="width: 25px;" class="check">&nbsp;</th>
+    						</tr>
+                        </thead>
+                        <thead>
+                            <tr class="search_header">
+                                <th class="colum_hidden">
+                            	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                </th>
+                                <th>
+                                    <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                </th>
+                                <th>
+                                    <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                </th>
+    							<th>
+    				            	<div class="callapp_checkbox">
+    				                    <input type="checkbox" id="check-all-break" name="check-all" />
+    				                    <label style="margin-top: 3px;" for="check-all-break"></label>
+    				                </div>
+    				            </th>
+    						</tr>
+                        </thead>
+                    </table>
+               </fieldset>
+             </div>';
+    return $data;
+}
+
 function GetHour($wday,$clock,$project_id){
     if(strlen($clock)==1){
         $real_clock = '0'.$clock;   
@@ -275,6 +415,17 @@ function GetHour($wday,$clock,$project_id){
                                                     TIME_FORMAT(end_time,'%H')
                                             FROM `week_day_graphic`
                                             WHERE project_id = '$project_id' AND week_day_id = '$wday' AND actived = 1"));
+    
+    $g = mysql_query("  SELECT  TIME_FORMAT(week_day_graphic_break.break_start,'%H:%i') AS `break_start_time`,
+                                TIME_FORMAT(week_day_graphic_break.break_end,'%H:%i') AS `break_end_time`,
+                                TIME_FORMAT(week_day_graphic_break.break_start,'%i'),
+                                TIME_FORMAT(week_day_graphic_break.break_end,'%i'),
+                                TIME_FORMAT(week_day_graphic_break.break_start,'%H'),
+                                TIME_FORMAT(week_day_graphic_break.break_end,'%H')
+                        FROM `week_day_graphic`
+                        JOIN week_day_graphic_break ON week_day_graphic.id = week_day_graphic_break.week_day_graphic_id
+                        WHERE project_id = '$project_id' AND week_day_id = '$wday' AND week_day_graphic_break.actived = 1 AND week_day_graphic.actived = 1");
+    
     $data = '
         <style>
 	    #table_hour{
@@ -312,16 +463,34 @@ function GetHour($wday,$clock,$project_id){
                                     if($req[9] == $real_clock && $req[5] >= $i){
                                     $data .= '<script>$("td[clockid='.$i.']").css("background","");</script>';
                                     }
-                                    if($req[10] == $real_clock && $req[6] <= $i){
-                                        $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
-                                    }
-                                    if($req[11] == $real_clock && $req[7] >= $i){
-                                        $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
-                                    }
+                                    
                                     if($req[12] == $real_clock && $req[8] < $i){
                                         $data .= '<script>$("td[clockid='.$i.']").css("background","");</script>';
                                     }
                             }
+                            
+                            
+                            $g = mysql_query("  SELECT  TIME_FORMAT(week_day_graphic_break.break_start,'%H:%i') AS `break_start_time`,
+                                                        TIME_FORMAT(week_day_graphic_break.break_end,'%H:%i') AS `break_end_time`,
+                                                        TIME_FORMAT(week_day_graphic_break.break_start,'%i'),
+                                                        TIME_FORMAT(week_day_graphic_break.break_end,'%i'),
+                                                        TIME_FORMAT(week_day_graphic_break.break_start,'%H'),
+                                                        TIME_FORMAT(week_day_graphic_break.break_end,'%H')
+                                                FROM `week_day_graphic`
+                                                JOIN week_day_graphic_break ON week_day_graphic.id = week_day_graphic_break.week_day_graphic_id
+                                                WHERE project_id = '$project_id' AND week_day_id = '$wday' AND week_day_graphic_break.actived = 1 AND week_day_graphic.actived = 1");
+                            while ($gg = mysql_fetch_array($g)){
+                                for($i = 5;$i < 60;$i+=5){
+                                if($gg[4] == $real_clock && $gg[2]=='00' && $gg[3]=='00'){
+                                    $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
+                                }elseif($gg[4] == $real_clock && $gg[2]!='00' && $gg[3]!='00' && $gg[2]< $i){
+                                    $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
+                                }elseif($gg[5] == $real_clock && $gg[2]!='00' && $gg[3]!='00' && $gg[3]> $i){
+                                        $data .= '<script>$("td[clockid='.$i.']").css("background","yellow");</script>';
+                                    }
+                                }
+                            }
+                            
                         $data .= '
                 	   
                     </tr>
@@ -434,7 +603,7 @@ function GetPage($res,$increment){
 	    #work_table{
 	    
 	    width: 100%;
-	    margin-top:25px;
+	    margin-top:10px;
 	    }
 	    #work_table td,#work_table th{
 	    border: 1px solid;
@@ -450,14 +619,13 @@ function GetPage($res,$increment){
 	    </style>
                <table class="dialog-form-table">
                     <tr>
-	                   <td style="width: 190px;">აირჩიე დღე</td>
-                       <td style="width: 190px;">სამუშაო იწყიბა</td>
-                       <td style="width: 190px;">შესვენებ იწყება</td>
-                       <td style="width: 190px;">შესვენება მთავრდება</td>
-                       <td style="width: 190px;">სამუშაო მთავრდება</td>
+	                   <td style="width: 120px;">აირჩიე<br>დღე</td>
+                       <td style="width: 130px;">სამუშაო<br>იწყება</td>
+                       <td style="width: 140px;">სამუშაო<br>მთავრდება</td>
+                       <td style="width: 120px;">სადგურის<br>რაოდენობა</td>
                     </tr>
                     <tr>
-	                   <td><select id="weak_id" style="width: 120px;">
+	                   <td><select id="weak_id" style="width: 100px;">
                        <option value="1">ორშაბათი</option>
                        <option value="2">სამშაბათი</option>
                        <option value="3">ოთხშაბათი</option>
@@ -466,13 +634,15 @@ function GetPage($res,$increment){
                        <option value="6">შაბათი</option>
                        <option value="7">კვირა</option>
                        </select></td>
-                       <td><input id="start_time" type="text" style="width: 120px;"></td>
-                       <td><input id="break_start_time" type="text" style="width: 120px;"></td>
-                       <td><input id="break_end_time" type="text" style="width: 120px;"></td>
-                       <td><input id="end_time" type="text" style="width: 120px;"></td>
+                       <td><input id="start_time" type="text" style="width: 80px;"></td>
+                       <td><input id="end_time" type="text" style="width: 80px;"></td>
+                       <td><input id="ext_number" type="number" style="width: 80px;" min="1" value="1"></td>
+                       
                        <td><button id="holi_creap">დამატება</button></td>
                     </tr>
-                    
+                    <tr>
+                       <td><button id="holi_creap_break">შესვენება</button></td>
+                    </tr>
 	            </table>
 	            <table class="dialog-form-table" id="work_table">
                     <tr>

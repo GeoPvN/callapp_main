@@ -4,9 +4,10 @@ $action 	= $_REQUEST['act'];
 $user_id    = $_SESSION['USERID'];
 $error		= '';
 $data		= '';
+$work_graphic_id = '';
 switch ($action) {
 case 'get_list1' :
-    $data3 .= '<table style="font-weight: bold; width: 400px"><tr><td><table style="width: 200px;">';		    
+    $data3 .= '<table style="font-weight: bold; width: 400px"><tr><td><table style="width: 200px;" id="deep_table">';		    
     $dates=dateRange($_REQUEST[start], $_REQUEST[end]);	    
     $time = array('00:00', '01:00', '02:00', '03:00',  '04:00', '05:00','06:00', '07:00', '08:00','09:00','10:00','11:00','12:00','13:00','14:00',
                   '15:00', '16:00','17:00',  '18:00',  '19:00', '20:00','21:00', '22:00', '23:00');
@@ -17,7 +18,8 @@ case 'get_list1' :
                             			  users.`id`,
                                           DATE('$date') AS `date`,
                                           time(COALESCE(p0.`start`,IF(NOT ISNULL(p1.`end`),'00:00',''))) AS `start`,
-                            			  time(COALESCE(p1.`end`,  IF(NOT ISNULL(p0.`start`),'24:00',''))) AS `end`		
+                            			  time(COALESCE(p1.`end`,  IF(NOT ISNULL(p0.`start`),'24:00',''))) AS `end`,
+                                          p1.work_graphic_id
                             FROM  users
                             JOIN  user_info ON users.id = user_info.user_id
                             left JOIN    person_work_graphic AS p0  ON users.id = p0.person_id   and  p0.`status` = 1 AND 
@@ -26,9 +28,9 @@ case 'get_list1' :
                             						(DATE(p1.`end`)='$date') AND p1.actived=1
                             WHERE users.group_id != 1");
           
-    $data1 .= '<td><table style="font-weight: bold; ">';
+    $data1 .= '<td style="border: none;"><table style="font-weight: bold; ">';
     
-    $data1 .= '<tr style="height:30px; background:#F2FBE6;">               
+    $data1 .= '<tr style="height:30px; background:#E6F2F8;">               
                     <td colspan ="24" style="text-align: center; vertical-align: middle;"> '.$date.'</td>
                </tr>';
     for ($i = 0; $i < sizeof($time); $i++) {
@@ -37,20 +39,30 @@ case 'get_list1' :
     }
     
     $data1 .= '</tr>';
-    $data2='<tr style="height:68px; ">               
-                    <td></td>
+    $data2='<tr style="height:70px; ">   
                </tr>'        ;
     while ( $row = mysql_fetch_array( $result ) ){
     
         $data1 .= '<tr style="height:20px">';
         
-        $data2 .= '<tr style="height:20px"><td>' . $row['name'] . '<td></tr>';
+        $data2 .= '<tr style="height:20px"><td>' . $row['name'] . '</td></tr>';
     
         for ($i = 0; $i < sizeof($time); $i++) {
     
             switch ($time[$i]) {
                 case $time[$i] >= substr( $row['start'],0, 5) && $time[$i] < substr( $row['end'],0, 5):
-                    $data1.='<td style="background: #537A2A; cursor:pointer; "  onclick="change_worc('.$row[id1].')"> </td>';
+                    $data1.='<td clock="'.$time[$i].'" class="'.$row[id1].'" style="background: green; cursor:pointer; "  onclick="change_worc('.$row[id1].')"> </td>';
+                    $work_graphic_id = $row['work_graphic_id'];
+                    $wo_g = mysql_query("SELECT TIME_FORMAT(break_start,'%H:00')
+                                         FROM `week_graphic_break`
+                                         WHERE week_graphic_id = '$work_graphic_id'");
+                    while ($wo_r = mysql_fetch_array($wo_g)){
+                        $data3 .= '<script>
+                                    if($(".'.$row[id1].'[clock=\''.$time[$i].'\']").attr("clock")=="'.$wo_r[0].'"){
+                                        $(".'.$row[id1].'[clock=\''.$time[$i].'\']").css("background","yellow");
+                                    }
+                                   </script>';
+                    }
                 break;
     
                          default:
@@ -62,13 +74,12 @@ case 'get_list1' :
         $data1 .= '</td>';
     
     }
-    $data1 .= '</table><td>';
+    $data1 .= '</table></td>';
     
-        } 
+        }
         $data3 .=$data2.'</table></td></td><td style="width: 900px; overflow: auto; display: block; "><table>'. $data1.'</table></td></tr></table>';    
     
     $data['aaData'] = $data3;
-
      break;
 case "get_edit_page":
     
@@ -94,16 +105,16 @@ if (mysql_num_rows($qvr)>0) {
 }
 else {
 mysql_query("
-	INSERT INTO `person_work_graphic` (`user_id`, `start`, `end`,`person_id`)
-	VALUES ('$user_id', '$_REQUEST[date] $date[0]' , IF('$date[0]'<'$date[1]', '$_REQUEST[date] $date[1]',ADDTIME('$_REQUEST[date] $date[1]','24:00:00')),'$_REQUEST[user]')
+	INSERT INTO `person_work_graphic` (`user_id`, `start`, `end`,`person_id`,`work_graphic_id`)
+	VALUES ('$user_id', '$_REQUEST[date] $date[0]' , IF('$date[0]'<'$date[1]', '$_REQUEST[date] $date[1]',ADDTIME('$_REQUEST[date] $date[1]','24:00:00')),'$_REQUEST[user]','$_REQUEST[work_graphic_id]')
 ");}
 }else{
-   mysql_query("UPDATE `person_work_graphic` 
-            SET 
-            `user_id`='$user_id',
-            `start` ='$_REQUEST[date] $date[0]', 
-            `end`   =IF('$date[0]'<'$date[1]', '$_REQUEST[date] $date[1]',ADDTIME('$_REQUEST[date] $date[1]','24:00:00'))
-    WHERE (`id`='$_REQUEST[id]')");
+   mysql_query("UPDATE  `person_work_graphic` SET 
+                        `user_id`='$user_id',
+                        `start` ='$_REQUEST[date] $date[0]',
+                        `work_graphic_id`='$_REQUEST[work_graphic_id]',
+                        `end`   =IF('$date[0]'<'$date[1]', '$_REQUEST[date] $date[1]',ADDTIME('$_REQUEST[date] $date[1]','24:00:00'))
+                WHERE (`id`='$_REQUEST[id]')");
     
 }
 //------------------------------------
@@ -123,13 +134,17 @@ function dateRange($start, $end){
 
 function getgraphic($time=''){   
     
-    $rResult= mysql_query( "SELECT * FROM `work_graphic` where actived=1;");
+    $rResult= mysql_query( "SELECT TIME_FORMAT(`start`,'%H:%i') AS `start`,
+                    			   TIME_FORMAT(`end`,'%H:%i') AS `end`,
+                                    id
+                            FROM   `work_graphic`
+                            where  actived=1;");
 
     $code.="<option selected>$time[start]  -  $time[end]</option>";    
     while ( $aRow= mysql_fetch_assoc( $rResult ) )
     {
 
-        $code.="<option>$aRow[start]  -  $aRow[end]</option>";
+        $code.="<option original=\"$aRow[id]\">$aRow[start]  -  $aRow[end]</option>";
 
 
     };
@@ -161,20 +176,19 @@ function page1($id='')
         $date=  date('Y-m-d');
     }else{ 
         $date=date('Y-m-d', strtotime($worc[start])); 
-    $time= array( 'start' => date('H:i:00', strtotime ($worc[start])), 'end' => date('H:i:00', strtotime ($worc[end])) );    
+    $time= array( 'start' => date('H:i', strtotime ($worc[start])), 'end' => date('H:i', strtotime ($worc[end])) );    
     };
     return '
 	<div id="dialog-form">
 		<fieldset >
 	    	<legend>ძირითადი ინფორმაცია</legend>
-
         <table>
           <tr>
             <th>აირჩიეთ მომხმარებელი</th>
             <th width="20px"></th>
             <th>აირჩიეთ თარიღი</th>
             <th width="20px"></th>
-            <th>აირჩიეთ გრაფიკი</th>
+            <th style="text-align: left;">აირჩიეთ გრაფიკი</th>
           </tr>
           <tr>
             <td>
@@ -185,7 +199,7 @@ function page1($id='')
             <td><input id="date" value="'.$date.'" class="idle date"/> </td>
         <td></td>
                     <td>
-                <select class="idle" id="graphic_time"> '.
+                <select class="idle" id="graphic_time" > '.
                 getgraphic($time)
                 .'</select>
             </td>

@@ -36,11 +36,12 @@ function LoadDialog(f,buttons,wo){
 
 	$("#save-dialog").click(function(){
 		var param= new Object();
-	        param.id            = wo;
-			param.act 			= "save_dialog";
-			param.graphic_time 	= $('#graphic_time').val();
-			param.user 			= $('#user').val();
+	        param.id             = wo;
+			param.act 			 = "save_dialog";
+			param.graphic_time 	 = $('#graphic_time').val();
+			param.user 			 = $('#user').val();
 			param.date           = $("#date").val();
+			param.work_graphic_id= $('#graphic_time option:selected').attr('original');
 			$.getJSON(aJaxURL, param, function(data) {
                 if (typeof (data.error) != "undefined") {
                     if (data.error != "") {
@@ -147,14 +148,14 @@ function GetDialog1(fname, width, height, buttons,distroy) {
     border-left: 1px solid #ccc;
 }
 ::-webkit-scrollbar-thumb {
-    background-color: #E8F1B8;
+    background-color: #2681DC;
 	border-radius: 12px;
 }
 ::-webkit-scrollbar-thumb:hover {  
     background-color: #aaa;  
 }  
 #time_line td{   
-   border:solid 1px #7EB442;
+   border:solid 1px #A3D0E4;
 }
 </style>
 </head>
