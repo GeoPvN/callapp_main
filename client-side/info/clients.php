@@ -151,6 +151,22 @@
 							}
 						}
 				    }
+			    }).done(function() {
+		        $.ajax({
+		            url: aJaxURL_object,
+		            type: "POST",
+		            data: "act=check_weak&project_id=" + $('#hidden_project_id').val() + '&wday=' + $("#weak_id").val(),
+		            dataType: "json",
+		            success: function (data) {
+		                    if (data.error != "") {
+		                        alert(data.error);
+		                    } else {
+		                        $("#start_time").val(data.start_time);
+		                        $("#end_time").val(data.end_time);
+		                        $("#ext_number").val(data.ext_number);
+		                    }
+		            }
+		        });
 			    });
 		   break;
 		   case "add-edit-form-import":
@@ -834,19 +850,16 @@
 		b_start = parseInt($("#break_start_time").val());
 		b_end = parseInt($("#break_end_time").val());
 		ch_id = 0;
-		if(start < end && start < b_start && b_start < b_end && b_end < end){
+		if(start < end){
 		    ch_id = 1;
 		}else{
-    		if(start < end && isNaN(b_start) && isNaN(b_end)){
-        		console.log(b_start)
-        		console.log(b_end)
-    			ch_id = 1;
-    		}else{
+    		
     			  alert('მიუთითეთ სწორი დრო!');
     			  ch_id = 0;
-    		}
+    		
 		}
-		if(ch_id == 1){
+		if(ch_id == 1){    		
+    		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != ''){
     		$("td[wday='"+$("#weak_id").val()+"']").css('background','#F1F1F1');
     		$.ajax({
     	        url: aJaxURL_object,
@@ -882,10 +895,14 @@
     				}
     		    }
     	    });
+		}else{
+		    alert('შეავსეთ "სამუშაო იწყება","სამუშაო მთავრდება","სადგურის რაოდენობა" !');
+		}
 		}
 	});
 
 	$(document).on("click", "#holi_creap_break", function () {
+		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != ''){
 		var buttons = {
 	        	"cancel": {
 		            text: "დახურვა",
@@ -922,7 +939,9 @@
 				}
 		    }
 	    });
-		
+		}else{
+		    alert('შეავსეთ "სამუშაო იწყება","სამუშაო მთავრდება","სადგურის რაოდენობა" !');
+		}
 	});
 
     $(document).on("click", "#holiday_all", function () {
@@ -1061,10 +1080,32 @@
                 }
             });
         }
+        $.ajax({
+	        url: aJaxURL_object,
+		    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
+	        success: function(data) {
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						for(g=0;g < $(data.work).size();g++){
+							for(i=parseInt(data.work[g].starttime);i <= parseInt(data.work[g].endtime);i++){
+				    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
+				    		}
+						}
+						for(o=0;o < $(data.break).size();o++){
+							for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
+								$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+				    		}
+						}
+					}
+				}
+		    }
+	    });
     });
     
     $(document).on("click", "#add_holi_break", function () {
-        if(parseInt($("#break_start_time").val()) < parseInt($("#break_end_time").val())){
+        if(parseInt($("#break_start_time").val()) < parseInt($("#break_end_time").val()) && parseInt($("#break_start_time").val()) > parseInt($("#start_time").val()) && parseInt($("#break_end_time").val()) < parseInt($("#end_time").val())){
         	$.ajax({
                 url: aJaxURL_object,
                 type: "POST",
@@ -1116,8 +1157,6 @@
                         alert(data.error);
                     } else {
                         $("#start_time").val(data.start_time);
-                        $("#break_start_time").val(data.break_start_time);
-                        $("#break_end_time").val(data.break_end_time);
                         $("#end_time").val(data.end_time);
                         $("#ext_number").val(data.ext_number);
                     }

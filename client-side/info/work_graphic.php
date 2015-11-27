@@ -81,7 +81,6 @@ if($("#project_id").val() == 0){
 				if(data.error != ""){
 					alert(data.error);
 				}else{
-					console.log(data)
 					$('#pasteTable').html('')
 					$("#script").html(data.start[0]+data.end[1]+data.end[2]+data.end[3]+data.end[4]+data.end[5]+data.end[6]);
 				}

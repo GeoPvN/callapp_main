@@ -107,7 +107,7 @@ switch ($action) {
                      VALUES
                      ('$user', '$project_id', '$holiday_id')");
         }else{
-            $error = 'ეს დსვენების დღე უკვე დამატებულია!';
+            $error = 'ეს დასვენების დღე უკვე დამატებულია!';
         }
             
         break;
@@ -295,7 +295,8 @@ function GetHoliday(){
     $data = '';
     $req = mysql_query("SELECT  `id`,
                                 `name`
-						FROM    `holidays`");
+						FROM    `holidays`
+                        WHERE   `actived` = 1");
     
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){

@@ -56,12 +56,20 @@ switch ($action) {
                                                         TIME_FORMAT(end_time,'%i')
                                                 FROM `week_day_graphic`
                                                 WHERE project_id = '$project_id' AND week_day_id = $wday"));
+	    $maxH = $req[1];
+	    $minH = $req[0];
+	    if($req[1] == ''){
+	        $maxH = '23';
+	    }
+	    if($req[0] == ''){
+	        $minH = '00';
+	    }
 	    $data['start'][] = "<script>
 	    $('#pasteStart').html('<input id=\"start\" style=\"width:145px;\" 	type=\"text\" value=\"\" />');
 	    $('#pasteEnd').html('<input id=\"end\" style=\"width:145px;\" 	type=\"text\" value=\"\" />');
 	    $('#start,#end').timepicker({
-	        hourMax: $req[1],
-	        hourMin: $req[0],
+	        hourMax: $maxH,
+	        hourMin: $minH,
 	        minuteMax: 55,
 	        minuteMin: 00,
 	        stepMinute: 5,
@@ -79,6 +87,7 @@ switch ($action) {
                                 FROM `week_day_graphic`
                                 JOIN week_day_graphic_break ON week_day_graphic.id = week_day_graphic_break.week_day_graphic_id
                                 WHERE project_id = $project_id AND week_day_id = $wday");
+	    $data['end'][0] = '';
 	    $i=1;
 	    while ($req1 = mysql_fetch_array($res1)){
 	        $data['end'][$i] = "<script>
