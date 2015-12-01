@@ -55,7 +55,7 @@
     }
 
     function LoadTable1(tbl,col_num,act,change_colum,custom_param,URL){
-    	GetDataTable(tName+tbl, URL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
+    	GetDataTable(tName+tbl, URL, act, col_num, custom_param, 0, "", 1, "desc", '', change_colum);
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
 	    	}, 50);
