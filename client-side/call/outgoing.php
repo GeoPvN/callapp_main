@@ -45,6 +45,7 @@
     	GetDate('end_date');
 
     	    $.session.clear();
+    	    runAjax();
     	    
         });
     });
@@ -1158,6 +1159,20 @@ if(fName=='add-edit-form-task'){
         	$("#imnote_"+id).css('display','none');
         }
     }
+
+    function runAjax() {
+        $.ajax({
+        	async: false,
+        	dataType: "html",
+            url: 'AsteriskManager/liveStatemini.php',
+            data: 'sesvar=hideloggedoff&value=true&stst=1',
+            success: function(data) {
+        		$("#flesh_panel_table_mini").html(data);						
+            }
+        }).done(function(data) {
+        setTimeout(runAjax, 1000);
+        });
+	}
 </script>
 <style type="text/css">
 .callapp_refresh{
@@ -1451,6 +1466,47 @@ if(fName=='add-edit-form-task'){
             </th>
         </tr>
     </thead>
+</table>
+</div>
+<style>
+#flesh_panel_table, #flesh_panel_table_mini{
+	box-shadow: 0px 0px 7px #888888;
+}
+#flesh_panel_table{
+	display: none;
+	
+}
+#flesh_panel_table td, #flesh_panel_table_mini td {
+	height: 25px;	
+	vertical-align: middle;
+	text-align: left;
+	padding: 0 5px;
+	background: #FFF;
+	width: 100%;
+}
+.tb_head td{
+	border-right: 1px solid #E6E6E6;	
+}
+#show_flesh_panel,#show_flesh_panel_right{
+    float: left;
+}
+.td_center{
+    text-align: center !important;
+}
+#flesh_panel{
+    height: 630px;
+    width: 150px;
+    position: absolute;
+    top: 0;
+    padding: 15px;
+    right: 2px;
+	z-index: 49;
+	background: #FFF;
+}
+</style>
+<div id="flesh_panel">
+<div class="callapp_head" style="text-align: right;"><img id="show_flesh_panel" title="პანელის გადიდება" alt="arrow" src="media/images/icons/arrow_left.png" height="18" width="18">ქოლ-ცენტრი<hr class="callapp_head_hr"></div>
+<table id="flesh_panel_table_mini">
 </table>
 </div>
 
