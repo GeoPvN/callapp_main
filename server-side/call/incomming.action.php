@@ -172,7 +172,8 @@ switch ($action) {
                         				inc_status,
                         				file
                                 FROM 	calls
-	  	                        WHERE DATE(date) >= '$start_date' AND DATE(date) <= '$end_date' $op_check $tab_check $main_status");
+	  	                        WHERE DATE(date) >= '$start_date' AND DATE(date) <= '$end_date' $op_check $tab_check $main_status
+	  	                        ORDER BY date DESC");
 	  
 		$data = array(
 				"aaData"	=> array()
