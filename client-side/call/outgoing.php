@@ -1137,7 +1137,7 @@ if(fName=='add-edit-form-task'){
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('index',colum_number,main_act,change_colum_main,'task_type='+$('#task_type').val()+'&status='+$('#tab_id').val(),aJaxURL);
+							LoadTable('index',colum_number,main_act,change_colum_main,'task_type='+$('#task_type').val()+'&status='+$('#tab_id').val()+'&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
 						    CloseDialog("add-edit-form");
 						}
 					}
