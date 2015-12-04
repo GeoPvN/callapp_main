@@ -1,8 +1,8 @@
 <?php
  
-$manager_host   = "212.72.155.176";
+$manager_host   = "localhost";
 $manager_user   = "admin";
-$manager_secret = "elastixsudo";
+$manager_secret = "amp111";
 
 $language 		= "en";
 
