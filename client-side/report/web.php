@@ -75,7 +75,7 @@
 <div class="callapp_head">WEB რეპორტი<hr class="callapp_head_hr"></div>
 <div style=" margin-top: 35px;" id="button_area">
 	<div class="right" style="">            	    
-       	<label for="operatori" class="left" style="margin: 5px 0 0 9px;">ოპერატორი</label>
+       	<label for="operatori" class="left" style="margin: 5px 0 0 9px;">აგენტი</label>
     	<select id="operatori" class="inpt right" style="margin-left: 5px; width: 190px;">
              <option value="0">ყველა</option>
              <option value="203">agent1</option>
