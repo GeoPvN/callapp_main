@@ -108,6 +108,7 @@ switch ($action) {
 		       
 		    }
 		    $rResult = mysql_query("SELECT date,
+		                                   date,
                                     	   ip
                                     FROM `access_log`
                                     WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
