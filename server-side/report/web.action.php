@@ -5,11 +5,11 @@ $error	= '';
 $data	= '';
  
 switch ($action) {
-// 	case 'get_add_page':
-// 		$page		= GetPage();
-// 		$data		= array('page'	=> $page);
+	case 'get_add_page':
+		$page		= GetPage();
+		$data		= array('page'	=> $page);
 
-// 		break;
+		break;
 // 	case 'get_edit_page':
 // 		$departmetn_id		= $_REQUEST['id'];
 // 	       $page		= GetPage(Getdepartment($departmetn_id));
@@ -87,6 +87,54 @@ switch ($action) {
 		}
 
 		break;
+		case 'get_list_visit' :
+		    $count	= $_REQUEST['count'];
+		    $hidden	= $_REQUEST['hidden'];
+		
+		    $start	= $_REQUEST['start'];
+		    $end	= $_REQUEST['end'];
+		    $agent	= $_REQUEST['agent'];
+		
+		    if ($agent==0) {
+		        $filt_agent   = "";
+		    }else {
+		        if ($agent==203) {
+		            $agent_filt='agent1';
+		        }elseif ($agent==204){
+		           $agent_filt='agent2';
+		        }
+		        
+		        $filt_agent   = " AND access_log.agent='$agent_filt'";
+		       
+		    }
+		    $rResult = mysql_query("SELECT date,
+                                    	   ip
+                                    FROM `access_log`
+                                    WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
+                                    GROUP BY ip");
+		
+		    $data = array(
+		        "aaData"	=> array()
+		    );
+		
+		    while ( $aRow = mysql_fetch_array( $rResult ) )
+		    {
+		        $row = array();
+		        for ( $i = 0 ; $i < $count ; $i++ )
+		        {
+		            /* General output */
+		            $row[] = $aRow[$i];
+		            if($i == ($count - 1)){
+		                $row[] = '<div class="callapp_checkbox">
+                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                              </div>';
+		            }
+		        }
+		        $data['aaData'][] = $row;
+		    }
+		
+		    break;
 	case 'save_department':
 		$department_id 		= $_REQUEST['id'];
 		$department_name    = $_REQUEST['name'];
@@ -162,37 +210,39 @@ function CheckdepartmentExist($department_name)
 	return false;
 }
 
-
-function Getdepartment($department_id)
-{
-	$res = mysql_fetch_assoc(mysql_query("	SELECT  `id`,
-													`name`
-											FROM    `department`
-											WHERE   `id` = $department_id" ));
-
-	return $res;
-}
-
 function GetPage($res = '')
 {
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
-	    	<legend>ძირითადი ინფორმაცია</legend>
-
-	    	<table class="dialog-form-table">
-				<tr>
-					<td style="width: 170px;"><label for="CallType">სახელი</label></td>
-					<td>
-						<input type="text" id="name" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['name'] . '" />
-					</td>
-				</tr>
-
-			</table>
-			<!-- ID -->
-			<input type="hidden" id="department_id" value="' . $res['id'] . '" />
-        </fieldset>
-    </div>
+	      <legend>საკონტაქტო პირები</legend>
+	    	<div class="" style="width:400px;">           
+	            
+				<table class="display" id="table_visit" style="width: 100%;">
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 50%;">თარიღი</th>
+                            <th style="width: 50%;">IP</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                         </tr>
+                    </thead>
+                </table>
+	           </div>
+	      </fieldset>
+	</div>
     ';
 	return $data;
 }

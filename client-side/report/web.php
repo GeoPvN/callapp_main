@@ -26,12 +26,51 @@
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
 		}
+
+		function LoadTable_visitor(){
+			var start	= $("#search_start_my").val();
+	    	var end		= $("#search_end_my").val();
+	    	var agent	= $("#operatori").val();
+			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
+			GetDataTable("table_visit", aJaxURL, "get_list_visit", 3, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
+			setTimeout(function(){
+    	    	$('.ColVis, .dataTable_buttons').css('display','none');
+  	    	}, 90);
+		}
 		
 		$(document).on("click", "#fillter", function () {
 			LoadTable();
 		});
-		
-		
+		$(document).on("click", "#example td:nth-child(4)", function () {
+
+			param 			= new Object();
+		 	param.act		= "get_add_page"; 
+		 	
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							var buttons = {	
+									"cancel": {
+							            text: "დახურვა",
+							            id: "cancel-dialog",
+							            click: function () {
+							            	$(this).dialog("close");
+							            }
+									}
+							    };
+						    GetDialog("visitor_dialog", 440, "auto",buttons );
+							$("#visitor_dialog").html(data.page);
+							LoadTable_visitor();
+						}
+					}
+			    }
+		    });
+		});
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -67,6 +106,20 @@
         	font-size: 20px;
         	color: #2681DC;
         }
+#table_visit_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_visit_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_visit_actived_paginate{
+	margin-left: -22px;
+}
     </style>
 </head>
 
@@ -137,6 +190,9 @@
     
     <!-- jQuery Dialog -->
     <div id="add-edit-form" class="form-dialog" title="განყოფილებები">
+    	<!-- aJax -->
+	</div>
+	<div id="visitor_dialog" class="form-dialog" title="მნახველები">
     	<!-- aJax -->
 	</div>
 </body>
