@@ -37,10 +37,10 @@ switch ($action) {
 		        $agent_user_id=8;
 		        $agent_filt='agent2';
 		    }
-		    $filt="AND asterisk_outgoing.extension='$agent'";
-		    $filt_user="AND sent_mail.user_id='$agent_user_id'";
-		    $filt_agent="WHERE access_log.agent='$agent_filt'";
-		    $click_agent="WHERE click.agent='$agent_filt'";
+		    $filt         = "AND asterisk_outgoing.extension='$agent'";
+		    $filt_user    = "AND sent_mail.user_id='$agent_user_id'";
+		    $filt_agent   = "WHERE access_log.agent='$agent_filt'";
+		    $click_agent  = "WHERE click.agent='$agent_filt'";
 		}
 		$rResult = mysql_query("SELECT  access_log.id,
 		                                (SELECT COUNT(asterisk_outgoing.phone) FROM `asterisk_outgoing`
