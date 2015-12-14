@@ -1,9 +1,5 @@
 <?php
-
-mysql_connect('localhost','root','Gl-1114');
-mysql_selectdb('mspy');
-mysql_set_charset ( 'utf8');
-
+require_once('../../includes/classes/core.php');
 $action	= $_REQUEST['act'];
 $error	= '';
 $data	= '';
