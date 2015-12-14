@@ -27,14 +27,18 @@ switch ($action) {
 		if ($agent==0) {
 		    $agent="";
 		    $filt_user="";
+		    $filt_agent="";
 		}else {
 		    if ($agent==203) {
 		        $agent_user_id=7;
+		        $agent_filt='agent1';
 		    }elseif ($agent==204){
 		        $agent_user_id=8;
+		        $agent_filt='agent2';
 		    }
 		    $filt="AND asterisk_outgoing.extension='$agent'";
 		    $filt_user="AND sent_mail.user_id='$agent_user_id'";
+		    $filt_agent="WHERE access_log.agent='$agent_filt'";
 		}
 		$rResult = mysql_query("SELECT  access_log.id,
 		                                (SELECT COUNT(asterisk_outgoing.phone) FROM `asterisk_outgoing`
@@ -52,7 +56,8 @@ switch ($action) {
                         				) AS mail_count,
                         				COUNT(DISTINCT access_log.ip) AS visitor_count,
                         				'' AS click_count
-                                FROM access_log");
+                                  FROM access_log
+		                          $filt_agent ");
 
 		$data = array(
 				"aaData"	=> array()
