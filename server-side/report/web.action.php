@@ -125,12 +125,50 @@ switch ($action) {
 		        {
 		            /* General output */
 		            $row[] = $aRow[$i];
-		            if($i == ($count - 1)){
-		                $row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
-                              </div>';
-		            }
+		        }
+		        $data['aaData'][] = $row;
+		    }
+		
+		    break;
+		    case 'get_list_price' :
+		    $count	= $_REQUEST['count'];
+		    $hidden	= $_REQUEST['hidden'];
+		
+		    $start	= $_REQUEST['start'];
+		    $end	= $_REQUEST['end'];
+		    $agent	= $_REQUEST['agent'];
+		
+		    if ($agent==0) {
+		        $filt_agent   = "";
+		    }else {
+		        if ($agent==203) {
+		            $agent_filt='agent1';
+		        }elseif ($agent==204){
+		           $agent_filt='agent2';
+		        }
+		        
+		        $filt_agent   = " AND access_log.agent='$agent_filt'";
+		       
+		    }
+		    $rResult = mysql_query("SELECT date,
+		                                   date,
+                                    	   ip
+                                    FROM `click_log`
+                                    WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
+                                    GROUP BY ip");
+		
+		    $data = array(
+		        "aaData"	=> array()
+		    );
+		
+		    while ( $aRow = mysql_fetch_array( $rResult ) )
+		    {
+		        $row = array();
+		        for ( $i = 0 ; $i < $count ; $i++ )
+		        {
+		            /* General output */
+		            $row[] = $aRow[$i];
+		            
 		        }
 		        $data['aaData'][] = $row;
 		    }
