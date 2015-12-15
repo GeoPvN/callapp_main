@@ -63,7 +63,7 @@ switch ($action) {
 		                                 $click_agent
 		                                ) AS click_count
                                   FROM access_log
-		                          WHERE  DATE(access_log.date) BETWEEN '$start' AND '$end '$filt_agent ");
+		                          WHERE  DATE(access_log.date) BETWEEN '$start' AND '$end ' $filt_agent ");
 
 		$data = array(
 				"aaData"	=> array()
