@@ -105,7 +105,7 @@ switch ($action) {
 		    $rResult = mysql_query("SELECT date,
 		                                   date,
                                     	   ip,
-		                                   agent
+		                                   MAX(agent)
                                     FROM `access_log`
                                     WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
                                     GROUP BY ip");
@@ -149,7 +149,7 @@ switch ($action) {
 		   $rResult = mysql_query("SELECT date,
 		                                   date,
                                     	   ip,
-		                                   agent
+		                                   MAX(agent)
                                     FROM `click_log`
                                     WHERE DATE(click_log.date) BETWEEN '$start' AND '$end'  $filt_agent
                                     GROUP BY ip");
