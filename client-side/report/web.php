@@ -157,7 +157,7 @@
 							    };
 						    GetDialog("mail_dialog", 650, "auto",buttons );
 							$("#mail_dialog").html(data.page);
-							LoadTable_click_mail();
+							LoadTable_mail();
 						}
 					}
 			    }
