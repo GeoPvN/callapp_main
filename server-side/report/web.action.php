@@ -253,7 +253,7 @@ function GetPage_mail($res = '')
                             <th>ID</th>
                             <th style="width: 50%;">თარიღი</th>
                             <th style="width: 50%;">გამგზავნი</th>
-	                        <th style="width: 50%;">მიმღების ადრესი</th>
+	                        <th style="width: 50%;">მიმღების მისამართი</th>
                         </tr>
                     </thead>
                     <thead>
