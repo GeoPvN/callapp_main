@@ -146,7 +146,7 @@ switch ($action) {
 		        $filt_agent   = " AND click_log.agent='$agent_filt'";
 		       
 		    }
-		    $rResult = mysql_query("SELECT date,
+		   $rResult = mysql_query("SELECT date,
 		                                   date,
                                     	   ip,
 		                                   agent
