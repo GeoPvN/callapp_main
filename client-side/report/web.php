@@ -210,16 +210,15 @@
 	    });
 
 	    var record;
-		function play(record){
-			
-			link = 'http://212.72.155.176:9191/' + record;
-			GetDialog_audio("audio_dialog", "auto", "auto","" );
-			$(".ui-dialog-buttonpane").html(" ");
-			$( ".ui-dialog-buttonpane" ).removeClass( "ui-widget-content ui-helper-clearfix ui-dialog-buttonpane" );
-			$("#audio_dialog").html('<audio controls autoplay style="width:500px;"><source src="'+link+'" type="audio/wav"> Your browser does not support the audio element.</audio>');
-            $(".download").css( "background","#408c99" );
-            $(this).css( "background","#FF5555" )
-            
+	    function play(str){
+			var win = window.open('http://212.72.155.176:9191/records/'+str, '_blank');
+			if(win){
+			    //Browser has allowed it to be opened
+			    win.focus();
+			}else{
+			    //Broswer has blocked it
+			    alert('Please allow popups for this site');
+			}
 		}
 </script>
 <style type="text/css">
