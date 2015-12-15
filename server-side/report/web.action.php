@@ -240,7 +240,7 @@ switch ($action) {
                             				user_info.`name`,
                             				asterisk_outgoing.phone,
                             				SEC_TO_TIME(MAX(asterisk_outgoing.duration)),
-                            				CONCAT('<p onclick=play(', '\'', asterisk_outgoing.file_name, '\'',  ')>მოსმენა</p>')
+                            				CONCAT('<p onclick=play(', '\'', CONCAT(DATE_FORMAT(asterisk_outgoing.call_datetime, '%Y/%m/%d/'),`file_name`), '\'',  ')>მოსმენა</p>')
                                     FROM `asterisk_outgoing`
                                     JOIN users ON asterisk_outgoing.extension=users.extension_id
                                     JOIN user_info ON users.id=user_info.user_id
