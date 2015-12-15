@@ -32,7 +32,7 @@
 	    	var end		= $("#search_end_my").val();
 	    	var agent	= $("#operatori").val();
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable("table_visit", aJaxURL, "get_list_visit", 3, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
+			GetDataTable("table_visit", aJaxURL, "get_list_visit", 4, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
@@ -42,7 +42,7 @@
 	    	var end		= $("#search_end_my").val();
 	    	var agent	= $("#operatori").val();
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable("table_visit", aJaxURL, "get_list_price", 3, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
+			GetDataTable("table_visit", aJaxURL, "get_list_price", 4, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
