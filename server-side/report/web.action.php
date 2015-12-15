@@ -216,8 +216,7 @@ function GetPage($res = '')
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
-	      <legend>საკონტაქტო პირები</legend>
-	    	<div class="" style="width:400px;">           
+	      <div class="" style="width:400px;">           
 	            
 				<table class="display" id="table_visit" style="width: 100%;">
                     <thead>
