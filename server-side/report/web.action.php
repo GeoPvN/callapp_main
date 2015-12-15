@@ -221,7 +221,7 @@ switch ($action) {
         }
         
         break;
-   case 'get_list_mail' :
+   case 'get_list_record' :
             $count	= $_REQUEST['count'];
             $hidden	= $_REQUEST['hidden'];
         
