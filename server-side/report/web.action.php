@@ -245,7 +245,7 @@ function GetPage_mail($res = '')
     $data = '
 	<div id="dialog-form">
 	    <fieldset>
-	      <div class="" style="width:400px;">
+	      <div class="" style="width:600px;">
 	      
 				<table class="display" id="table_mail" style="width: 100%;">
                     <thead>
