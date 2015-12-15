@@ -147,14 +147,14 @@ switch ($action) {
 		           $agent_filt='agent2';
 		        }
 		        
-		        $filt_agent   = " AND access_log.agent='$agent_filt'";
+		        $filt_agent   = " AND click_log.agent='$agent_filt'";
 		       
 		    }
 		    $rResult = mysql_query("SELECT date,
 		                                   date,
                                     	   ip
                                     FROM `click_log`
-                                    WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
+                                    WHERE DATE(click_log.date) BETWEEN '$start' AND '$end'  $filt_agent
                                     GROUP BY ip");
 		
 		    $data = array(
