@@ -48,12 +48,23 @@
   	    	}, 90);
 		}
 
-		function LoadTable_click_mail(){
+		function LoadTable_mail(){
 			var start	= $("#search_start_my").val();
 	    	var end		= $("#search_end_my").val();
 	    	var agent	= $("#operatori").val();
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
 			GetDataTable("table_mail", aJaxURL, "get_list_mail", 4, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
+			setTimeout(function(){
+    	    	$('.ColVis, .dataTable_buttons').css('display','none');
+  	    	}, 90);
+		}
+
+		function LoadTable_record(){
+			var start	= $("#search_start_my").val();
+	    	var end		= $("#search_end_my").val();
+	    	var agent	= $("#operatori").val();
+			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
+			GetDataTable("table_record", aJaxURL, "get_list_record", 6, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
@@ -152,6 +163,38 @@
 			    }
 		    });
 		});
+
+		$(document).on("click", "#example td:nth-child(2)", function () {
+
+			param 			= new Object();
+		 	param.act		= "get_edit_page_record"; 
+		 	
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							var buttons = {	
+									"cancel": {
+							            text: "დახურვა",
+							            id: "cancel-dialog",
+							            click: function () {
+							            	$(this).dialog("close");
+							            }
+									}
+							    };
+						    GetDialog("record_dialog", 850, "auto",buttons );
+							$("#record_dialog").html(data.page);
+							LoadTable_record();
+						}
+					}
+			    }
+		    });
+		});
+		
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -165,59 +208,95 @@
 	            $(this).attr('myvar','0');
 	        }
 	    });
-	   
-    </script>
-    <style type="text/css">
-        #table_right_menu{
-            position: relative;
-            float: right;
-            width: 70px;
-            top: 42px;
-        	z-index: 99;
-        	border: 1px solid #E6E6E6;
-        	padding: 4px;
-        }
-        
-        .ColVis, .dataTable_buttons{
-        	z-index: 100;
-        }
-        .callapp_head{
-        	font-family: pvn;
-        	font-weight: bold;
-        	font-size: 20px;
-        	color: #2681DC;
-        }
-        
-#table_visit_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_visit_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
-#table_visit_actived_paginate{
-	margin-left: -22px;
-}
 
-#table_mail_length{
-	position: inherit;
-    width: 0px;
-	float: left;
-}
-#table_mail_length label select{
-	width: 60px;
-    font-size: 10px;
-    padding: 0;
-    height: 18px;
-}
-#table_mail_actived_paginate{
-	margin-left: -22px;
-}
-    </style>
+	    var record;
+		function play(record){
+			
+			link = 'http://212.72.155.176:9191/' + record;
+			GetDialog_audio("audio_dialog", "auto", "auto","" );
+			$(".ui-dialog-buttonpane").html(" ");
+			$( ".ui-dialog-buttonpane" ).removeClass( "ui-widget-content ui-helper-clearfix ui-dialog-buttonpane" );
+			$("#audio_dialog").html('<audio controls autoplay style="width:500px;"><source src="'+link+'" type="audio/wav"> Your browser does not support the audio element.</audio>');
+            $(".download").css( "background","#408c99" );
+            $(this).css( "background","#FF5555" )
+            
+		}
+</script>
+<style type="text/css">
+
+    #table_right_menu{
+        position: relative;
+        float: right;
+        width: 70px;
+        top: 42px;
+    	z-index: 99;
+    	border: 1px solid #E6E6E6;
+    	padding: 4px;
+    }
+    
+    .ColVis, .dataTable_buttons{
+    	z-index: 100;
+    }
+    .callapp_head{
+    	font-family: pvn;
+    	font-weight: bold;
+    	font-size: 20px;
+    	color: #2681DC;
+    }
+    
+    
+    
+    /*visit*/ 
+    #table_visit_length{
+    	position: inherit;
+        width: 0px;
+    	float: left;
+    }
+    #table_visit_length label select{
+    	width: 60px;
+        font-size: 10px;
+        padding: 0;
+        height: 18px;
+    }
+    #table_visit_actived_paginate{
+    	margin-left: -22px;
+    }
+    
+    
+    /*mail*/
+    #table_mail_length{
+    	position: inherit;
+        width: 0px;
+    	float: left;
+    }
+    #table_mail_length label select{
+    	width: 60px;
+        font-size: 10px;
+        padding: 0;
+        height: 18px;
+    }
+    #table_mail_actived_paginate{
+    	margin-left: -22px;
+    }
+    
+    /*record*/
+    #table_record_length{ 
+    	position: inherit;
+        width: 0px;
+    	float: left;
+    }
+    #table_record_length label select{
+    	width: 60px;
+        font-size: 10px;
+        padding: 0;
+        height: 18px;
+    }
+    #table_record_actived_paginate{
+    	margin-left: -22px;
+    }
+    
+</style>
+
 </head>
 
 <body>
@@ -293,6 +372,9 @@
     	<!-- aJax -->
 	</div>
 	<div id="mail_dialog" class="form-dialog" title="დაგზავნილი მეილები">
+    	<!-- aJax -->
+	</div>
+	<div id="record_dialog" class="form-dialog" title="ჩანაწერები">
     	<!-- aJax -->
 	</div>
 </body>

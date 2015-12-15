@@ -14,6 +14,10 @@ switch ($action) {
 		$page		= GetPage_mail();
         $data		= array('page'	=> $page);
         break;
+    case 'get_edit_page_record':
+        $page		= GetPage_record();
+        $data		= array('page'	=> $page);
+        break;
 	case 'get_list' :
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
@@ -217,6 +221,51 @@ switch ($action) {
         }
         
         break;
+   case 'get_list_mail' :
+            $count	= $_REQUEST['count'];
+            $hidden	= $_REQUEST['hidden'];
+        
+            $start	= $_REQUEST['start'];
+            $end	= $_REQUEST['end'];
+            $agent	= $_REQUEST['agent'];
+        
+            if ($agent==0) {
+                $filt_agent   = "";
+            }else {
+                $filt_agent   = " AND asterisk_outgoing.extension='$agent'";
+                 
+            }
+            $rResult = mysql_query("SELECT 	asterisk_outgoing.call_datetime,
+                            				asterisk_outgoing.call_datetime,
+                            				user_info.`name`,
+                            				asterisk_outgoing.phone,
+                            				SEC_TO_TIME(MAX(asterisk_outgoing.duration)),
+                            				CONCAT('<p onclick=play(', '\'', asterisk_outgoing.file_name, '\'',  ')>მოსმენა</p>')
+                                    FROM `asterisk_outgoing`
+                                    JOIN users ON asterisk_outgoing.extension=users.extension_id
+                                    JOIN user_info ON users.id=user_info.user_id
+                                    WHERE LENGTH(phone)>3 AND DATE(call_datetime) BETWEEN '$start' AND '$end' 
+                                    AND duration>0  AND asterisk_outgoing.phone != '2555130'
+                                    $filt_agent
+                                    GROUP BY asterisk_outgoing.phone");
+        
+            $data = array(
+                "aaData"	=> array()
+            );
+        
+            while ( $aRow = mysql_fetch_array( $rResult ) )
+            {
+                $row = array();
+                for ( $i = 0 ; $i < $count ; $i++ )
+                {
+                    /* General output */
+                    $row[] = $aRow[$i];
+        
+                }
+                $data['aaData'][] = $row;
+            }
+        
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -240,8 +289,60 @@ function CheckdepartmentExist($department_name)
 	}
 	return false;
 }
-function GetPage_mail($res = '')
-{
+
+function GetPage_record($res = ''){
+    
+    $data = '
+	<div id="dialog-form">
+	    <fieldset>
+	      <div class="" style="width:800px;">
+	   
+				<table class="display" id="table_record" style="width: 100%;">
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 50%;">თარიღი</th>
+                            <th style="width: 50%;">ოპერატორი</th>
+	                        <th style="width: 50%;">ნომერი</th>
+                            <th style="width: 50%;">საუბრის დრო</th>
+                            <th style="width: 50%;">ჩანაწერი</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input style="width: 97%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                         </tr>
+                    </thead>
+                </table>
+	           </div>
+	      </fieldset>
+	</div>
+    ';
+    return $data;
+}
+
+function GetPage_mail($res = ''){
+    
     $data = '
 	<div id="dialog-form">
 	    <fieldset>
@@ -279,8 +380,9 @@ function GetPage_mail($res = '')
     ';
     return $data;
 }
-function GetPage($res = '')
-{
+
+function GetPage($res = ''){
+    
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
