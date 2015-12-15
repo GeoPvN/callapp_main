@@ -178,11 +178,11 @@
 	</div>
 	<div class="right" style="">
 		<label for="search_end_my" class="left" style="margin: 5px 0 0 9px;">დასასრული</label>
-		<input style="width: 75px; margin-left: 5px; height: 18px;" type="text" name="search_end_my" id="search_end_my" class="inpt right" />
+		<input style="width: 75px; margin-left: 5px; height: 17px;" type="text" name="search_end_my" id="search_end_my" class="inpt right" />
 	</div>
 	<div class="right" style="width: 200px;">
 		<label for="search_start_my" class="left" style="margin: 5px 0 0 35px;">დასაწყისი</label>
-		<input style="width: 75px; margin-left: 5px; height: 18px;" type="text" name="search_start_my" id="search_start_my" class="inpt right"/>
+		<input style="width: 75px; margin-left: 5px; height: 17px;" type="text" name="search_start_my" id="search_start_my" class="inpt right"/>
 	</div>
 	
 		
