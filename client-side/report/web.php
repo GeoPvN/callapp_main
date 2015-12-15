@@ -47,6 +47,17 @@
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
 		}
+
+		function LoadTable_click_mail(){
+			var start	= $("#search_start_my").val();
+	    	var end		= $("#search_end_my").val();
+	    	var agent	= $("#operatori").val();
+			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
+			GetDataTable("table_mail", aJaxURL, "get_list_mail", 4, "start=" + start + "&end="+end +"&agent="+agent, 0, "", 1, "desc", "", "<'F'lip>");
+			setTimeout(function(){
+    	    	$('.ColVis, .dataTable_buttons').css('display','none');
+  	    	}, 90);
+		}
 		
 		$(document).on("click", "#fillter", function () {
 			LoadTable();
@@ -111,6 +122,36 @@
 			    }
 		    });
 		});
+		$(document).on("click", "#example td:nth-child(3)", function () {
+
+			param 			= new Object();
+		 	param.act		= "get_edit_page"; 
+		 	
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							var buttons = {	
+									"cancel": {
+							            text: "დახურვა",
+							            id: "cancel-dialog",
+							            click: function () {
+							            	$(this).dialog("close");
+							            }
+									}
+							    };
+						    GetDialog("mail_dialog", 440, "auto",buttons );
+							$("#mail_dialog").html(data.page);
+							LoadTable_click_mail();
+						}
+					}
+			    }
+		    });
+		});
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -146,6 +187,7 @@
         	font-size: 20px;
         	color: #2681DC;
         }
+        
 #table_visit_length{
 	position: inherit;
     width: 0px;
@@ -158,6 +200,21 @@
     height: 18px;
 }
 #table_visit_actived_paginate{
+	margin-left: -22px;
+}
+
+#table_mail_length{
+	position: inherit;
+    width: 0px;
+	float: left;
+}
+#table_mail_length label select{
+	width: 60px;
+    font-size: 10px;
+    padding: 0;
+    height: 18px;
+}
+#table_mail_actived_paginate{
 	margin-left: -22px;
 }
     </style>
@@ -233,6 +290,9 @@
     	<!-- aJax -->
 	</div>
 	<div id="visitor_dialog" class="form-dialog" title="მომხმარებლები">
+    	<!-- aJax -->
+	</div>
+	<div id="mail_dialog" class="form-dialog" title="დაგზავნილი მეილები">
     	<!-- aJax -->
 	</div>
 </body>

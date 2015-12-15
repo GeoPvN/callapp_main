@@ -10,12 +10,10 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
-// 	case 'get_edit_page':
-// 		$departmetn_id		= $_REQUEST['id'];
-// 	       $page		= GetPage(Getdepartment($departmetn_id));
-//            $data		= array('page'	=> $page);
-
-// 		break;
+	case 'get_edit_page':
+		$page		= GetPage_mail();
+        $data		= array('page'	=> $page);
+        break;
 	case 'get_list' :
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
@@ -126,52 +124,99 @@ switch ($action) {
 		    }
 		
 		    break;
-	case 'get_list_price' :
-		    $count	= $_REQUEST['count'];
-		    $hidden	= $_REQUEST['hidden'];
-		
-		    $start	= $_REQUEST['start'];
-		    $end	= $_REQUEST['end'];
-		    $agent	= $_REQUEST['agent'];
-		
-		    if ($agent==0) {
-		        $filt_agent   = "";
-		    }else {
-		        if ($agent==203) {
-		            $agent_filt='agent1';
-		        }elseif ($agent==204){
-		           $agent_filt='agent2';
-		        }
-		        
-		        $filt_agent   = " AND click_log.agent='$agent_filt'";
-		       
-		    }
-		   $rResult = mysql_query("SELECT date,
-		                                   date,
-                                    	   ip,
-		                                   MAX(agent)
-                                    FROM `click_log`
-                                    WHERE DATE(click_log.date) BETWEEN '$start' AND '$end'  $filt_agent
-                                    GROUP BY ip");
-		
-		    $data = array(
-		        "aaData"	=> array()
-		    );
-		
-		    while ( $aRow = mysql_fetch_array( $rResult ) )
-		    {
-		        $row = array();
-		        for ( $i = 0 ; $i < $count ; $i++ )
-		        {
-		            /* General output */
-		            $row[] = $aRow[$i];
-		            
-		        }
-		        $data['aaData'][] = $row;
-		    }
-		
-		    break;
-	
+    case 'get_list_price' :
+        $count	= $_REQUEST['count'];
+        $hidden	= $_REQUEST['hidden'];
+        
+        $start	= $_REQUEST['start'];
+        $end	= $_REQUEST['end'];
+        $agent	= $_REQUEST['agent'];
+        
+        if ($agent==0) {
+            $filt_agent   = "";
+        }else {
+            if ($agent==203) {
+                $agent_filt='agent1';
+            }elseif ($agent==204){
+               $agent_filt='agent2';
+            }
+            
+            $filt_agent   = " AND click_log.agent='$agent_filt'";
+           
+        }
+        $rResult = mysql_query("SELECT date,
+                                       date,
+                                	   ip,
+                                       MAX(agent)
+                                FROM `click_log`
+                                WHERE DATE(click_log.date) BETWEEN '$start' AND '$end'  $filt_agent
+                                GROUP BY ip");
+        
+        $data = array(
+            "aaData"	=> array()
+        );
+        
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                
+            }
+            $data['aaData'][] = $row;
+        }
+        
+        break;
+        
+    case 'get_list_mail' :
+        $count	= $_REQUEST['count'];
+        $hidden	= $_REQUEST['hidden'];
+        
+        $start	= $_REQUEST['start'];
+        $end	= $_REQUEST['end'];
+        $agent	= $_REQUEST['agent'];
+        
+        if ($agent==0) {
+            $filt_agent   = "";
+        }else {
+            if ($agent==203) {
+                $agent_user_id=7;
+            }elseif ($agent==204){
+                $agent_user_id=8;
+            }
+        
+            $filt_agent   = " AND sent_mail.user_id='$agent_user_id'";
+             
+        }
+        $rResult = mysql_query("SELECT 	sent_mail.date,
+                                		sent_mail.date,
+                                        user_info.`name`,
+                                		sent_mail.address
+                                FROM `sent_mail`
+                                JOIN users ON users.id=sent_mail.user_id
+                                JOIN user_info ON user_info.user_id=users.id
+                                WHERE sent_mail.address !='' AND NOT ISNULL(sent_mail.body) AND DATE(date) BETWEEN '$start' AND '$end' $filt_agent
+                                GROUP BY sent_mail.address");
+        
+        $data = array(
+            "aaData"	=> array()
+        );
+        
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+        
+            }
+            $data['aaData'][] = $row;
+        }
+        
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -195,7 +240,45 @@ function CheckdepartmentExist($department_name)
 	}
 	return false;
 }
-
+function GetPage_mail($res = '')
+{
+    $data = '
+	<div id="dialog-form">
+	    <fieldset>
+	      <div class="" style="width:400px;">
+	      
+				<table class="display" id="table_mail" style="width: 100%;">
+                    <thead>
+                        <tr id="datatable_header">
+                            <th>ID</th>
+                            <th style="width: 50%;">თარიღი</th>
+                            <th style="width: 50%;">გამგზავნი</th>
+	                        <th style="width: 50%;">მიმღების ადრესი</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="search_header">
+                            <th class="colum_hidden">
+                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                            </th>
+                            <th>
+                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+                         </tr>
+                    </thead>
+                </table>
+	           </div>
+	      </fieldset>
+	</div>
+    ';
+    return $data;
+}
 function GetPage($res = '')
 {
 	$data = '
