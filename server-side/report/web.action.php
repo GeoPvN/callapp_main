@@ -39,7 +39,7 @@ switch ($action) {
 		    }
 		    $filt         = "AND asterisk_outgoing.extension='$agent'";
 		    $filt_user    = "AND sent_mail.user_id='$agent_user_id'";
-		    $filt_agent   = "WHERE access_log.agent='$agent_filt'";
+		    $filt_agent   = "AND access_log.agent='$agent_filt'";
 		    $click_agent  = "WHERE click.agent='$agent_filt'";
 		}
 		$rResult = mysql_query("SELECT  access_log.id,
@@ -63,7 +63,7 @@ switch ($action) {
 		                                 $click_agent
 		                                ) AS click_count
                                   FROM access_log
-		                          $filt_agent ");
+		                          WHERE  DATE(access_log.date) BETWEEN '$start' AND '$end '$filt_agent ");
 
 		$data = array(
 				"aaData"	=> array()
