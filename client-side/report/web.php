@@ -232,7 +232,7 @@
     <div id="add-edit-form" class="form-dialog" title="განყოფილებები">
     	<!-- aJax -->
 	</div>
-	<div id="visitor_dialog" class="form-dialog" title="მნახველები">
+	<div id="visitor_dialog" class="form-dialog" title="მომხმარებლები">
     	<!-- aJax -->
 	</div>
 </body>

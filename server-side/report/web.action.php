@@ -76,18 +76,13 @@ switch ($action) {
 			{
 				/* General output */
 				$row[] = $aRow[$i];
-				if($i == ($count - 1)){
-					$row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
-                              </div>';
-				}
+				
 			}
 			$data['aaData'][] = $row;
 		}
 
 		break;
-		case 'get_list_visit' :
+    case 'get_list_visit' :
 		    $count	= $_REQUEST['count'];
 		    $hidden	= $_REQUEST['hidden'];
 		
@@ -109,7 +104,8 @@ switch ($action) {
 		    }
 		    $rResult = mysql_query("SELECT date,
 		                                   date,
-                                    	   ip
+                                    	   ip,
+		                                   agent
                                     FROM `access_log`
                                     WHERE DATE(access_log.date) BETWEEN '$start' AND '$end'  $filt_agent
                                     GROUP BY ip");
@@ -130,7 +126,7 @@ switch ($action) {
 		    }
 		
 		    break;
-		    case 'get_list_price' :
+	case 'get_list_price' :
 		    $count	= $_REQUEST['count'];
 		    $hidden	= $_REQUEST['hidden'];
 		
@@ -152,7 +148,8 @@ switch ($action) {
 		    }
 		    $rResult = mysql_query("SELECT date,
 		                                   date,
-                                    	   ip
+                                    	   ip,
+		                                   agent
                                     FROM `click_log`
                                     WHERE DATE(click_log.date) BETWEEN '$start' AND '$end'  $filt_agent
                                     GROUP BY ip");
@@ -174,32 +171,7 @@ switch ($action) {
 		    }
 		
 		    break;
-	case 'save_department':
-		$department_id 		= $_REQUEST['id'];
-		$department_name    = $_REQUEST['name'];
-		
 	
-		
-		if($department_name != ''){
-			if(!CheckdepartmentExist($department_name, $department_id)){
-				if ($department_id == '') {
-					Adddepartment( $department_id, $department_name);
-				}else {
-					Savedepartment($department_id, $department_name);
-				}
-								
-			} else {
-				$error = '"' . $department_name . '" უკვე არის სიაში!';
-				
-			}
-		}
-		
-		break;
-	case 'disable':
-		$department_id	= $_REQUEST['id'];
-		Disabledepartment($department_id);
-
-		break;
 	default:
 		$error = 'Action is Null';
 }
@@ -213,31 +185,6 @@ echo json_encode($data);
  *	Category Functions
 * ******************************
 */
-
-function Adddepartment($department_id, $department_name)
-{
-	$user_id	= $_SESSION['USERID'];
-	mysql_query("INSERT INTO 	 `department`
-								(`name`,`user_id`)
-					VALUES 		('$department_name', '$user_id')");
-}
-
-function Savedepartment($department_id, $department_name)
-{
-	$user_id	= $_SESSION['USERID'];
-	mysql_query("	UPDATE `department`
-					SET     `name` = '$department_name',
-							`user_id` ='$user_id'
-					WHERE	`id` = $department_id");
-}
-
-function Disabledepartment($department_id)
-{
-	mysql_query("	UPDATE `department`
-					SET    `actived` = 0
-					WHERE  `id` = $department_id");
-}
-
 function CheckdepartmentExist($department_name)
 {
 	$res = mysql_fetch_assoc(mysql_query("	SELECT `id`
@@ -262,6 +209,7 @@ function GetPage($res = '')
                             <th>ID</th>
                             <th style="width: 50%;">თარიღი</th>
                             <th style="width: 50%;">IP</th>
+	                        <th style="width: 50%;">აგენტი</th>
                         </tr>
                     </thead>
                     <thead>
@@ -271,6 +219,9 @@ function GetPage($res = '')
                             </th>
                             <th>
                             	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            </th>
+	                        <th>
+                            	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
                             </th>
 	                        <th>
                             	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
