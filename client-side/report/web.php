@@ -377,6 +377,9 @@
 	<div id="record_dialog" class="form-dialog" title="ჩანაწერები">
     	<!-- aJax -->
 	</div>
+	<div id="audio_dialog" class="form-dialog" title="ჩანაწერი">
+    	<!-- aJax -->
+	</div>
 </body>
 </html>
 
