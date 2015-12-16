@@ -31,6 +31,7 @@ switch ($action) {
 		    $filt_user    = "";
 		    $filt_agent   = "";
 		    $click_agent  = "";
+		    $filt         = "AND asterisk_outgoing.extension IN (203, 204)";
 		}else {
 		    if ($agent==203) {
 		        $agent_user_id=7;
@@ -245,7 +246,7 @@ switch ($action) {
                                     JOIN users ON asterisk_outgoing.extension=users.extension_id
                                     JOIN user_info ON users.id=user_info.user_id
                                     WHERE LENGTH(phone)>3 AND DATE(call_datetime) BETWEEN '$start' AND '$end' 
-                                    AND duration>0  AND asterisk_outgoing.phone != '2555130'
+                                    AND asterisk_outgoing.duration>0  AND asterisk_outgoing.phone != '2555130'
                                     $filt_agent
                                     GROUP BY asterisk_outgoing.phone");
         
