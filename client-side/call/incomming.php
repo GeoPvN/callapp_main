@@ -783,7 +783,7 @@
 	}
 
 	function play(str){
-		var win = window.open('http://212.72.155.176:9191/records/'+str, '_blank');
+		var win = window.open('http://212.72.155.176:8000/'+str, '_blank');
 		if(win){
 		    //Browser has allowed it to be opened
 		    win.focus();
@@ -796,7 +796,6 @@
 	$(document).on("dblclick", "#table_mail tbody tr", function () {
     	var nTds = $("td", this);
         var empty = $(nTds[0]).attr("class");
-
         
             var rID = $(nTds[0]).text();
             
