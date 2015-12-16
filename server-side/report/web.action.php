@@ -338,6 +338,7 @@ function GetPage_record($res = ''){
 	      </fieldset>
 	</div>
     ';
+    
     return $data;
 }
 
