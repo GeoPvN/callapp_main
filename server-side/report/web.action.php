@@ -46,7 +46,7 @@ switch ($action) {
 		    $click_agent  = "AND click_log.agent='$agent_filt'";
 		}
 		$rResult = mysql_query("SELECT  access_log.id,
-		                                (SELECT COUNT(asterisk_outgoing.phone) FROM `asterisk_outgoing`
+		                                (SELECT COUNT( DISTINCT asterisk_outgoing.phone) FROM `asterisk_outgoing`
 		                                 JOIN users ON asterisk_outgoing.extension=users.extension_id
                                          JOIN user_info ON users.id=user_info.user_id
                     					 WHERE LENGTH(asterisk_outgoing.phone)>3 
