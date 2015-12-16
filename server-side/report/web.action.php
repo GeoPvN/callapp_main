@@ -329,10 +329,7 @@ function GetPage_record($res = ''){
                             	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
                             </th>
                             <th>
-                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                            	<input style="width: 97%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
+                            	<input style="width: 98%;" type="text" name="search_number" value="ფილტრი" class="search_init" />
                             </th>
                          </tr>
                     </thead>
