@@ -230,7 +230,7 @@ switch ($action) {
             $agent	= $_REQUEST['agent'];
         
             if ($agent==0) {
-                $filt_agent   = "";
+                $filt_agent   = "AND asterisk_outgoing.extension IN(203, 204)";
             }else {
                 $filt_agent   = " AND asterisk_outgoing.extension='$agent'";
                  
