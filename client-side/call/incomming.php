@@ -796,7 +796,6 @@
 	$(document).on("dblclick", "#table_mail tbody tr", function () {
     	var nTds = $("td", this);
         var empty = $(nTds[0]).attr("class");
-
         
             var rID = $(nTds[0]).text();
             
