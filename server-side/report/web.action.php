@@ -47,6 +47,8 @@ switch ($action) {
 		}
 		$rResult = mysql_query("SELECT  access_log.id,
 		                                (SELECT COUNT(asterisk_outgoing.phone) FROM `asterisk_outgoing`
+		                                 JOIN users ON asterisk_outgoing.extension=users.extension_id
+                                         JOIN user_info ON users.id=user_info.user_id
                     					 WHERE LENGTH(asterisk_outgoing.phone)>3 
                     					 AND asterisk_outgoing.duration>0 
                     					 AND asterisk_outgoing.phone != '2555130'
