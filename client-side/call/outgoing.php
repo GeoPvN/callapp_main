@@ -697,7 +697,7 @@ if(fName=='add-edit-form-task'){
 			});
     
     function listen(file){
-        var url = location.origin + "/records/" + file;
+        var url = 'http://'+location.hostname+':8000/' + file;
         $("audio source").attr('src',url);
         $("audio").load();
     }
