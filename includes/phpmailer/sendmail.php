@@ -68,17 +68,17 @@ $mail->msgHTML($body);
 
 $mail->CharSet="UTF-8";
 
-// while ($row = mysql_fetch_assoc($res)) {
+while ($row = mysql_fetch_assoc($res)) {
 
-//     $mail->addAttachment($row[rand_name]);
+    $mail->addAttachment($row[rand_name]);
 
-// }
+}
 
-// while ($row1 = mysql_fetch_assoc($res1)) {
+while ($row1 = mysql_fetch_assoc($res1)) {
 
-//     $mail->addAttachment($row1[rand_name]);
+    $mail->addAttachment($row1[rand_name]);
 
-// }
+}
 
 
 //send the message, check for errors
