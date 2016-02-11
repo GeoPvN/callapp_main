@@ -9,6 +9,7 @@ require_once('../../includes/classes/core.php');
 $sent_mail_id 	 	= $_REQUEST['source_id'];
 $incomming_call_id	= $_REQUEST['incomming_call_id'];
 
+$mail_shabl_id      = $_REQUEST['mail_shabl_id'];
 $address 			= $_REQUEST['address'];
 $cc_address 		= $_REQUEST['cc_address'];
 $bcc_address 		= $_REQUEST['bcc_address'];
@@ -23,6 +24,10 @@ $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `ra
                     JOIN	send_mail_detail ON send_mail_detail.file_id = file.id
                     JOIN   sent_mail ON sent_mail.id = send_mail_detail.sent_mail_id
                     WHERE	send_mail_detail.sent_mail_id = $sent_mail_id AND status=1");
+                    
+$res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
+                    FROM 	`file`
+                    WHERE	mail_id = $mail_shabl_id");
 
 if($user == 7){
     $user_mail = "akaki@carekids.ge";
@@ -65,6 +70,13 @@ while ($row = mysql_fetch_assoc($res)) {
     $mail->addAttachment($row[rand_name]);
 
 }
+
+while ($row1 = mysql_fetch_assoc($res1)) {
+
+    $mail->addAttachment($row1[rand_name]);
+
+}
+
 
 //send the message, check for errors
 if (!$mail->send()) {
