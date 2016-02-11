@@ -4,6 +4,7 @@ date_default_timezone_set('Etc/UTC');
 header('Content-Type: text/html; charset=utf-8');
 
 require_once('PHPMailerAutoload.php');
+require_once('class.phpmailer.php');
 require_once('../../includes/classes/core.php');
 
 $sent_mail_id 	 	= $_REQUEST['source_id'];
@@ -38,7 +39,6 @@ if($user == 7){
 $mail = new PHPMailer;
 // Set PHPMailer to use the sendmail transport
 $mail->isSendmail();
-$mail->CharSet = "utf-8";
 //Set who the message is to be sent from
 $mail->setFrom($user_mail, 'Carekids.ge');
 //Set an alternative reply-to address
