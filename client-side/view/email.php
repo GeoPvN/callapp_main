@@ -33,7 +33,7 @@
 			var id		= $("#source_id").val();
 			
 			/* Dialog Form Selector Name, Buttons Array */
-			GetDialog(fName, "529", "auto", "");
+			GetDialog(fName, "624", "auto", "");
 			
 			$("#choose_button").button();
 			setTimeout(function(){ 
@@ -110,57 +110,58 @@
 		});
 		
 	    $(document).on("change", "#choose_file", function () {
-	    	var file		= $(this).val();	    
-	    	var files 		= this.files[0];
-		    var name		= uniqid();
-		    var path		= "../../media/uploads/file/";
-		    
-		    var ext = file.split('.').pop().toLowerCase();
-	        if($.inArray(ext, ['pdf','png','xls','xlsx','jpg','docx']) == -1) { //echeck file type
-	        	alert('This is not an allowed file type.');
-                this.value = '';
-	        }else{
-	        	file_name = files.name;
-	        	rand_file = name + "." + ext;
-	        	$.ajaxFileUpload({
-	    			url: upJaxURL,
-	    			secureuri: false,
-	    			fileElementId: "choose_file",
-	    			dataType: 'json',
-	    			data:{
-						act: "upload_file",
-						path: path,
-						file_name: name,
-						type: ext
-					},
-	    			success: function (data, status){
-	    				if(typeof(data.error) != 'undefined'){
-    						if(data.error != ''){
-    							alert(data.error);
-    						}
-    					}
-    							
-	    				$.ajax({
-					        url: aJaxURL,
-						    data: {
-								act: "up_now",
-								rand_file: rand_file,
-					    		file_name: file_name,
-								edit_id: $("#mail_hidde_id").val(),
+	    	var file_url  = $(this).val();
+	        var file_name = this.files[0].name;
+	        var file_size = this.files[0].size;
+	        var file_type = file_url.split('.').pop().toLowerCase();
+	        var path	  = "../../media/uploads/file/";
 
-							},
-					        success: function(data) {
-						        $("#file_div").html(data.page);
-						    }
-					    });	   					    				
-    				},
-    				error: function (data, status, e)
-    				{
-    					alert(e);
-    				}    				
-    			});
+	        if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+	            alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
+	        }else if(file_size > '15728639'){
+	            alert("ფაილის ზომა 15MB-ზე მეტია");
+	        }else{
+	        	$.ajaxFileUpload({
+			        url: "server-side/upload/file.action.php",
+			        secureuri: false,
+	     			fileElementId: "choose_file",
+	     			dataType: 'json',
+				    data: {
+						act: "file_upload",
+						button_id: "choose_file",
+						table_name: 'mail',
+						file_name: Math.ceil(Math.random()*99999999999),
+						file_name_original: file_name,
+						file_type: file_type,
+						file_size: file_size,
+						path: path,
+						table_id: $("#mail_hidde_id").val(),
+
+					},
+			        success: function(data) {			        
+				        if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								var tbody = '';
+								for(i = 0;i <= data.page.length;i++){
+									tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+									tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+									tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+									tbody += "<div id=\"for_div\" onclick=\"delete_file1('" + data.page[i].id + "')\">-</div>";
+									$("#paste_files1").html(tbody);								
+								}							
+							}						
+						}					
+				    }
+			    });
 	        }
 		});
+	    function download_file(file,original_name){
+	        var download_file	= "media/uploads/file/"+file;
+	    	var download_name 	= original_name;
+	    	SaveToDisk(download_file, download_name);
+	    }
 		 function isValid(str){
 		     var check = false;
 		     for(var i=0;i<str.length;i++){
@@ -209,6 +210,27 @@
 	    	  isValid(sms_text);
 	    	$('#simbol_caunt').val((sms_text.length)+'/150');
 	    });
+	    
+	    function delete_file1(id){
+	    	$.ajax({
+	            url: "server-side/upload/file.action.php",
+	            data: "act=delete_file&file_id="+id+"&table_name=mail",
+	            success: function(data) {
+	               
+	            	var tbody = '';
+	            	if(data.page.length == 0){
+	            		$("#paste_files1").html('');
+	            	};
+					for(i = 0;i <= data.page.length;i++){
+						tbody += "<div id=\"first_div\">" + data.page[i].file_date + "</div>";
+						tbody += "<div id=\"two_div\">" + data.page[i].name + "</div>";
+						tbody += "<div id=\"tree_div\" onclick=\"download_file('" + data.page[i].rand_name + "','"+data.page[i].name+"')\">ჩამოტვირთვა</div>";
+						tbody += "<div id=\"for_div\" onclick=\"delete_file('" + data.page[i].id + "')\">-</div>";
+						$("#add-edit-form #paste_files1").html(tbody);
+					}	
+	            }
+	        });
+	    }
 	   
     </script>
     <link rel="stylesheet" href="media/css/tinyeditor.css" />

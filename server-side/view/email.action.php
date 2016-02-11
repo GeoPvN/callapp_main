@@ -242,19 +242,15 @@ function GetPage($res = ''){
 					</td>
 			   </tr>	
 			</table>
-						    <div style="text-align: center;vertical-align: middle;float: left;width: 506px;"><button id="choose_button" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="choose_file" id="choose_file"></div>
-			<table id="file_div" style="float: left; border: 1px solid #85b1de; width: 504px;   margin-top: 5px; text-align: left;">';
-				
-				while($increm_row = mysql_fetch_assoc($increm))	{	
-					$data .=' 
-					        <tr style="border-bottom: 1px solid #85b1de;">
-					          <td style="width:110px; display:block;word-wrap:break-word;">'.$increm_row['name'].'</td>													 
-					          <td style=" width: 18px;"><button type="button" value="media/uploads/file/'.$increm_row['name'].'" style="cursor:pointer; border:none; margin-top:5%; display:block; height:16px;   margin-right: 0px; width:16px; background:none;background-image:url(\'media/images/get.png\');" id="download_name" value="'.$increm_row[rand_name].'"> </td>
-					          <td style=" width: 18px;"><button type="button" value="'.$increm_row['id'].'" style="cursor:pointer; border:none; margin-top:5%; display:block; height:16px; width:16px;   margin-right: 0px; background:none; background-image:url(\'media/images/x.png\');" id="delete"></button></td>
-					        </tr>';
-				}
-	 $data .= '
-	 		</table>
+			<div style="text-align: center;vertical-align: middle;float: left;width: 506px;"><button id="choose_button" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="choose_file" id="choose_file"></div>
+			<div id="paste_files1">';
+        	while ($file_body = mysql_fetch_array($increm)) {
+        	    $data .= '<div id="first_div">'.$file_body[0].'</div>
+                	        <div id="two_div">'.$file_body[1].'</div>
+                	        <div id="tree_div" onclick="download_file(\''.$file_body[2].'\',\''.$file_body[1].'\')">ჩამოტვირთვა</div>
+                	            <div id="for_div" onclick="delete_file1(\''.$file_body[2].'\')">-</div>';
+        	}
+                                   $data .='</div>
 			
 			<!-- ID -->
 	 		<input type="hidden" id="mail_hidde_id" value="' . $hidde . '" />

@@ -78,6 +78,19 @@ switch ($action) {
         			        ('$user', '$rrr[0]', '$rr[0]');");
 			}
 			
+			if($table_name=='mail'){
+			    $rr = mysql_fetch_array(mysql_query("   SELECT `id`
+                                        			    FROM   `file`
+                                        			    WHERE  `".$table_name."_id` = $table_id AND `actived` = 1
+			        ORDER BY id DESC
+			        LIMIT 1"));
+			    //$rrr = mysql_fetch_array(mysql_query("SELECT id AS id FROM `mail` WHERE actived = 1 ORDER BY id DESC LIMIT 1"));
+			    mysql_query("INSERT INTO `mail_detail`
+			        (`user_id`, `mail_id`, `file_id`)
+			        VALUES
+			        ('$user', '$table_id', '$rr[0]');");
+			}
+			
 			$data		= array('page'	=> $str_file_table);
 			
 			// for security reason, we force to remove all uploaded file
