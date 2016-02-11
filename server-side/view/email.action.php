@@ -242,6 +242,7 @@ function GetPage($res = ''){
 					</td>
 			   </tr>	
 			</table>
+						    <div style="text-align: center;vertical-align: middle;float: left;width: 506px;"><button id="choose_button" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="choose_file" id="choose_file"></div>
 			<table id="file_div" style="float: left; border: 1px solid #85b1de; width: 504px;   margin-top: 5px; text-align: left;">';
 				
 				while($increm_row = mysql_fetch_assoc($increm))	{	
