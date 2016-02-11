@@ -63,7 +63,7 @@ $mail->AddBCC($cc_address);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML($body);
+$mail->msgHTML('სფსდფსდფსდფ სდფ სდფ სდფსდფდგფგსგჰჰდფჰფდჰდფჰ');
 
 $mail->CharSet="UTF-8";
 
