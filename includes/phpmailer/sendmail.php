@@ -64,7 +64,7 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->Body($body);
+$mail->Body = $body;
 
 $mail->CharSet="UTF-8";
 
