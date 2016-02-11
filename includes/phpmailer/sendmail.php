@@ -2,7 +2,6 @@
 
 date_default_timezone_set('Etc/UTC');
 header('Content-Type: text/html; charset=utf-8');
-echo '<meta charset="UTF-8">';
 
 require_once('PHPMailerAutoload.php');
 require_once('../../includes/classes/core.php');
@@ -64,7 +63,7 @@ $mail->AddBCC($cc_address);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML($body);
+$mail->msgHTML(utf8_encode($body));
 
 
 while ($row = mysql_fetch_assoc($res)) {
