@@ -667,6 +667,7 @@ if(fName=='add-edit-form-task'){
     $(document).on("click", "#send_email", function () {
 		  	param 			= new Object();
 
+		  	param.mail_shabl_id     = $("#mail_shabl_id").val();
 		  	param.source_id         = $("#source_id").val();
 	    	param.address		    = $("#mail_address").val();
 	    	param.cc_address		= $("#mail_address1").val();
