@@ -393,7 +393,7 @@ function GetShablon() {
         $tbody .= '<tr>
                     <td>'.$req[0].'</td>
                     <td>'.$req[1].'</td>
-                    <td><span onclick="pase_body(\'body_'.$req[0].'\',\''.$req[1].'\')">არჩევა</span> <div id="body_'.$req[0].'" style="display:none;">'.$req[2].'</div></td>
+                    <td><span onclick="pase_body(\'body_'.$req[0].'\',\''.$req[1].'\',\''.$req[0].'\')">არჩევა</span> <div id="body_'.$req[0].'" style="display:none;">'.$req[2].'</div></td>
                    </tr>';
     }
     $data = '<div id="dialog-form">
