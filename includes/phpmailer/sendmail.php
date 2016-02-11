@@ -63,8 +63,9 @@ $mail->AddBCC($cc_address);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML(utf8_encode($body));
+$mail->msgHTML($body);
 
+$mail->CharSet="UTF-8";
 
 while ($row = mysql_fetch_assoc($res)) {
 
