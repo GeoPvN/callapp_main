@@ -657,8 +657,9 @@ if(fName=='add-edit-form-task'){
 			}); }, 100);
     });
 
-    function pase_body(id,head){
+    function pase_body(id,head,real_id){
         $('#mail_text').val(head);
+        $("#mail_shabl_id").val(real_id);
     	$("iframe").contents().find("body").html($('#'+id).html());
     	$('#add-edit-form-mail-shablon').dialog('close');
     }

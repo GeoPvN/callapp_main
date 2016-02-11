@@ -291,6 +291,7 @@ function GetPage($out_id, $res){
 	$data = '
 	<div id="dialog-form">
 	    <fieldset style="height: auto;">
+	    <input type="hidden" id="mail_shabl_id" value="" />
 	    	<table class="dialog-form-table">
 				
 				<tr>
