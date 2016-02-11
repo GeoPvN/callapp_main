@@ -60,6 +60,7 @@ $mail->addAddress($address);
 $mail->AddCC($bcc_address);
 
 $mail->AddBCC($cc_address);
+$mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
