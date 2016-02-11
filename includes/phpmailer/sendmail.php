@@ -36,7 +36,7 @@ if($user == 7){
 }
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
-$mail->CharSet = "utf8";
+$mail->CharSet = "utf-8";
 // Set PHPMailer to use the sendmail transport
 $mail->isSendmail();
 //Set who the message is to be sent from
