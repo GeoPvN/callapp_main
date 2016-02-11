@@ -64,7 +64,25 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML($body);
+$mail->msgHTML('შეთანხმებისამებრ, გიგზავნით პრეზენტაციას (იხ. მიმაგრებული ფაილი).
+<br><br>
+ჩვენი ვებ-გვერდის სანახავად, მიჰყევით ლინკს:
+<br><br>
+http://carekids.ge/index.php?opid=agent1
+<br><br>
+
+პატივისცემით,
+<br><br>
+Akaki 
+Sales Coordinator
+<br><br>
+Adress: Politkovskaia A. 10, 0186, Tbilisi, Georgia
+<br><br>
+Phone:  032 2 500 055
+<br><br>
+Mobile: 577 62 61 16
+<br><br>
+e-mail: a_meparishvili@carekids.ge');
 
 $mail->CharSet="UTF-8";
 
