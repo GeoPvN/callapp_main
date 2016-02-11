@@ -64,29 +64,21 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->Body = 'შეთანხმებისამებრ, გიგზავნით პრეზენტაციას (იხ. მიმაგრებული ფაილი).
-<br><br>
-ჩვენი ვებ-გვერდის სანახავად, მიჰყევით ლინკს:
-<br><br>
-http://carekids.ge/index.php?opid=agent1
-<br><br>
-
-პატივისცემით,
-<p class="MsoNormal" style="margin-bottom: 12pt;"><b><span helvetica","sans-serif";mso-fareast-font-family:"times="" new="" roman";mso-no-proof:="" yes"="">Akaki<span style="color: rgb(49, 163, 188);">&nbsp;</span></span></b><br><b><span times="" new="" roman";="" color:#31a3bc;mso-no-proof:yes"="" style="font-size: 10pt;">Sales</span></b><span times="" new="" roman";mso-no-proof:yes"="" style="font-size: 10pt;">&nbsp;<span style="font-weight: bold;">Coordinator</span><o:p></o:p></span></p><p class="MsoNormal" style="margin-bottom: 12pt;"><b><span style="font-size: 10pt; color: rgb(49, 163, 188);">Adress:&nbsp;</span></b><span style="font-size: 13.3333px;">Politkovskaia A. 10, 0186, Tbilisi, Georgia</span></p><p class="MsoNormal" style="margin-bottom: 12pt;"><b><span style="font-size: 10pt; color: rgb(49, 163, 188);">Phone: &nbsp;</span></b><span style="font-size: 13.3333px;">032 2 500 055</span></p><p class="MsoNormal" style="margin-bottom: 12pt;"><b><span style="font-size: 10pt; color: rgb(49, 163, 188);">Mobile:&nbsp;</span></b><span style="font-size: 13.3333px;">577 62 61 16</span></p><p class="MsoNormal" style="margin-bottom: 12pt;"><b><span style="font-size: 10pt; color: rgb(49, 163, 188);">e-mail:&nbsp;</span></b><span times="" new="" roman";mso-no-proof:="" yes"="" style="font-size: 10pt;"><a href="mailto:akaki@carekids.ge">a_meparishvili@carekids.ge</a><o:p></o:p></span></p><p class="MsoNormal" style="margin-bottom: 12pt;"></p><p class="MsoNormal" style="margin-bottom: 12pt;"><br></p>';
+$mail->msgHTML($body);
 
 $mail->CharSet="UTF-8";
 
-while ($row = mysql_fetch_assoc($res)) {
+// while ($row = mysql_fetch_assoc($res)) {
 
-    $mail->addAttachment($row[rand_name]);
+//     $mail->addAttachment($row[rand_name]);
 
-}
+// }
 
-while ($row1 = mysql_fetch_assoc($res1)) {
+// while ($row1 = mysql_fetch_assoc($res1)) {
 
-    $mail->addAttachment($row1[rand_name]);
+//     $mail->addAttachment($row1[rand_name]);
 
-}
+// }
 
 
 //send the message, check for errors
