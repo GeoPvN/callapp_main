@@ -54,7 +54,7 @@
     	GetDataTable(tName+tbl, URL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
-	    	}, 50);
+	    	}, 99);
     	$('.display').css('width','100%');
     }
     
