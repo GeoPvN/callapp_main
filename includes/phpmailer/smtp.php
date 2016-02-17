@@ -8,17 +8,31 @@ require_once('../../includes/classes/core.php');
 $sent_mail_id 	 	= $_REQUEST['source_id'];
 $incomming_call_id	= $_REQUEST['incomming_call_id'];
 
+$mail_shabl_id      = $_REQUEST['mail_shabl_id'];
 $address 			= $_REQUEST['address'];
 $cc_address 		= $_REQUEST['cc_address'];
 $bcc_address 		= $_REQUEST['bcc_address'];
 $subject 	 		= $_REQUEST['subject'];
 $body 	 			= $_REQUEST['body'];
+$user               = $_SESSION['USERID'];
+
+$signature          = '';
 
 $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
                     FROM 	`file`
                     JOIN	send_mail_detail ON send_mail_detail.file_id = file.id
                     JOIN   sent_mail ON sent_mail.id = send_mail_detail.sent_mail_id
                     WHERE	send_mail_detail.sent_mail_id = $sent_mail_id AND status=1");
+                    
+$res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
+                    FROM 	`file`
+                    WHERE	mail_id = $mail_shabl_id");
+
+if($user == 7){
+    $user_mail = "akaki@carekids.ge";
+}elseif($user == 8){
+    $user_mail = "natia@carekids.ge";
+}
 
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
@@ -32,19 +46,19 @@ $mail->SMTPDebug = 2;
 //Ask for HTML-friendly debug output
 $mail->Debugoutput = 'html';
 //Set the hostname of the mail server
-$mail->Host = "carekids.ge";
+$mail->Host = "mail.carekids.ge";
 //Set the SMTP port number - likely to be 25, 465 or 587
 $mail->Port = 25;
 //Whether to use SMTP authentication
 $mail->SMTPAuth = true;
 //Username to use for SMTP authentication
-$mail->Username = "akaki";
+$mail->Username = "a_meparishvili@carekids.ge";
 //Password to use for SMTP authentication
-$mail->Password = "akaki";
+$mail->Password = "123456789";
 //Set who the message is to be sent from
-$mail->setFrom('akaki@carekids.ge', 'carekids.ge');
+$mail->setFrom('a_meparishvili@carekids.ge', 'Care Kids');
 //Set an alternative reply-to address
-$mail->addReplyTo('akaki@carekids.ge', 'carekids.ge');
+$mail->addReplyTo('a_meparishvili@carekids.ge', 'Care Kids');
 // //Set who the message is to be sent to
 // $mail->addAddress('papalashvilidato@gmail.com', 'John Doe');
 // //Set the subject line
@@ -68,12 +82,21 @@ $mail->Subject = $subject;
 $mail->msgHTML($body);
 
 
+$mail->CharSet="UTF-8";
+
 while ($row = mysql_fetch_assoc($res)) {
 
     $mail->addAttachment($row[rand_name]);
 
 }
 
+while ($row1 = mysql_fetch_assoc($res1)) {
+
+    $mail->addAttachment($row1[rand_name]);
+
+}
+
+//send the message, check for errors
 //send the message, check for errors
 if (!$mail->send()) {
     //echo "Mailer Error: " . $mail->ErrorInfo;
