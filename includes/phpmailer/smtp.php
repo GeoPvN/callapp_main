@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('Etc/UTC');
 header('Content-Type: text/html; charset=utf-8');
 
 require_once('PHPMailerAutoload.php');
@@ -71,6 +70,7 @@ $mail->addReplyTo('a_meparishvili@carekids.ge', 'Care Kids');
 // //Attach an image file
 // $mail->addAttachment('images/phpmailer_mini.png');
 
+
 $mail->addAddress($address);
 
 $mail->AddCC($bcc_address);
@@ -82,7 +82,6 @@ $mail->IsHTML(true);
 $mail->Subject = $subject;
 
 $mail->msgHTML($body);
-
 
 $mail->CharSet="UTF-8";
 
