@@ -35,6 +35,8 @@ if($user == 7){
 
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
+//UTF-8
+$mail->CharSet="UTF-8";
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
 //Enable SMTP debugging
@@ -82,8 +84,6 @@ $mail->IsHTML(true);
 $mail->Subject = $subject;
 
 $mail->msgHTML($body);
-
-$mail->CharSet="UTF-8";
 
 while ($row = mysql_fetch_assoc($res)) {
 
