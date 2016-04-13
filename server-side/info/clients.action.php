@@ -119,15 +119,26 @@ switch ($action) {
             $data['aaData'][] = $row;
         }
         break;
-    case 'get_break':
+    case 'table_week':
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
-        $rResult = mysql_query("SELECT 	week_day_graphic_break.id,
-                        				week_day_graphic_break.break_start,
-                        				week_day_graphic_break.break_end
-                                FROM `week_day_graphic_break`
-                                JOIN week_day_graphic ON week_day_graphic_break.week_day_graphic_id = week_day_graphic.id
-                                WHERE week_day_graphic.project_id = '$_REQUEST[project_id]' AND week_day_graphic.week_day_id = '$_REQUEST[wday]' AND week_day_graphic_break.actived = 1");
+        $rResult = mysql_query("SELECT  week_day_graphic.id,
+                        				week_day_graphic.start_time,
+                        				week_day_graphic.end_time,
+                        				week_day_graphic.ext_number,
+                        				week_day_graphic.type,				
+                        				(SELECT  GROUP_CONCAT(spoken_lang.`name`)
+                        				FROM `week_day_graphic` AS te1
+                        				LEFT JOIN week_day_lang ON te1.id = week_day_lang.week_day_graphic_id
+                        				LEFT JOIN spoken_lang ON week_day_lang.spoken_lang_id = spoken_lang.id
+                        				WHERE te1.id = week_day_graphic.id) AS `lang`,
+                        				(SELECT  GROUP_CONCAT(information_source.`name`)
+                        				FROM `week_day_graphic` AS te2
+                        				LEFT JOIN week_day_info_sorce ON te2.id = week_day_info_sorce.week_day_graphic_id
+                        				LEFT JOIN information_source ON week_day_info_sorce.information_source_id = information_source.id
+                        				WHERE te2.id = week_day_graphic.id) AS `info_sorce`
+                                FROM `week_day_graphic`
+                                WHERE week_day_graphic.project_id = $_REQUEST[project_id] AND week_day_graphic.week_day_id = $_REQUEST[wday] AND week_day_graphic.actived = 1");
     
         $data = array(
             "aaData"	=> array()

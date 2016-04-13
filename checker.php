@@ -2,7 +2,7 @@
 
 include 'includes/classes/core.php';
 
-if($_REQUEST['act'] = 'get_checker'){
+if($_REQUEST[type] = 'get_checker'){
 
     $user_id	= $_SESSION['USERID'];
     if($user_id == 1){

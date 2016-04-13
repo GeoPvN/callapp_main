@@ -25,6 +25,25 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
+		
+	case 'get_project':
+        $res = mysql_query("SELECT  `id`,
+                		            `name`
+                    		FROM 	`project`
+                    		WHERE 	`actived` = 1");
+        $page = '<option value="0">-----</option>';
+	    while ($req = mysql_fetch_array($res)){
+		  $page .= '<option value="'.$req[0].'">'.$req[1].'</option>';
+	    }	
+		$data		= array('proj'	=> $page);
+
+		break;
+	case 'get_GetHoliday':
+
+	    $page       = GetHoliday();
+	    $data		= array('holiday'	=> $page);
+	
+	    break;
 	case 'get_hour':
 	    $page		= GetHour($_REQUEST[wday],$_REQUEST[clock],$_REQUEST[project_id]);
 	    $data		= array('hour'	=> $page);
@@ -36,7 +55,7 @@ switch ($action) {
     
         break;
     case 'get_weekADD':
-        $page		= GetDialogWeekAdd($_REQUEST[week_id],$_REQUEST[project_id]);
+        $page		= GetDialogWeekAdd($_REQUEST[week_id],$_REQUEST[project_id],$_REQUEST[get_weekADD_id]);
         $data		= array('weekADD'	=> $page);
     
         break;
@@ -63,12 +82,11 @@ switch ($action) {
             	        WHERE   `project_id`='$project_id'");
 	
 	    break;
-    case 'delete_gr':
-        $project_id = $_REQUEST['project_id'];
-        $wday       = $_REQUEST['wday'];
+    case 'delete_week':
+        $id = $_REQUEST['id'];
         mysql_query("UPDATE  `week_day_graphic` SET
                              `actived` = 0
-                     WHERE   `project_id`='$project_id' AND `week_day_id` = '$wday'");
+                     WHERE   `id`='$id'");
     
         break;
     case 'delete_holiday':
@@ -77,13 +95,20 @@ switch ($action) {
                         WHERE   `id`='$hidden_id'");
     
         break;
-    case 'delete_break':
-        mysql_query("	UPDATE  `week_day_graphic_break` SET
+    case 'delete_lang':
+        $id = $_REQUEST['id'];
+        mysql_query("	UPDATE  `week_day_lang` SET
                                 `actived` = 0
-                        WHERE   `id`='$hidden_id'");
+                        WHERE   `id`='$id'");
     
         break;
-        
+    case 'delete_infosorce':
+        $id = $_REQUEST['id'];
+        mysql_query("	UPDATE  `week_day_info_sorce` SET
+                                `actived` = 0
+                        WHERE   `id`='$id'");
+                
+        break;
     case 'check_weak':
         $project_id    = $_REQUEST['project_id'];
         $wday          = $_REQUEST['wday'];
@@ -93,6 +118,80 @@ switch ($action) {
                                                 FROM `week_day_graphic`
                                                 WHERE project_id = '$project_id' AND week_day_id = $wday"));
         $data = array('start_time'=>$req[0],'end_time'=>$req[1],'ext_number'=>$req[2]);
+        break;
+    case 'get_holiday':
+        $count = 		$_REQUEST['count'];
+        $hidden = 		$_REQUEST['hidden'];
+        $rResult = mysql_query("SELECT 	`project_holiday`.`id`,
+            `holidays`.`date`,
+            `holidays`.`name`,
+            `holidays_category`.`name`
+            FROM    `project_holiday`
+            JOIN    `holidays` ON project_holiday.holidays_id = holidays.id
+            JOIN    `holidays_category` ON `holidays`.holidays_category_id = `holidays_category`.`id`
+            WHERE   `project_holiday`.`actived` = 1 AND `project_holiday`.`project_id` = '$_REQUEST[project_id]'");
+    
+        $data = array(
+            "aaData"	=> array()
+        );
+         
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                if($i == ($count - 1)){
+                    $row[] = '<div class="callapp_checkbox">
+                          <input type="checkbox" id="callapp_checkbox_holiday_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                          <label style="margin-top: 2px;" for="callapp_checkbox_holiday_'.$aRow[$hidden].'"></label>
+                      </div>';
+                }
+            }
+            $data['aaData'][] = $row;
+        }
+        break;
+    case 'table_week':
+        $count = 		$_REQUEST['count'];
+        $hidden = 		$_REQUEST['hidden'];
+        $rResult = mysql_query("SELECT  week_day_graphic.id,
+                                        week_day_graphic.start_time,
+                                        week_day_graphic.end_time,
+                                        IF(week_day_graphic.type=1,'სამუშაო საათი','არა სამუშაო საათი'),
+                                        (SELECT  GROUP_CONCAT(`language`.`name`)
+                                        FROM `week_day_graphic` AS te1
+                                        LEFT JOIN week_day_lang ON te1.id = week_day_lang.week_day_graphic_id AND week_day_lang.actived = 1
+                                        LEFT JOIN `language` ON week_day_lang.spoken_lang_id = `language`.id
+                                        WHERE te1.id = week_day_graphic.id AND language.actived = 1) AS `lang`,
+                                        (SELECT  GROUP_CONCAT(source.`name`)
+                                        FROM `week_day_graphic` AS te2
+                                        LEFT JOIN week_day_info_sorce ON te2.id = week_day_info_sorce.week_day_graphic_id AND week_day_info_sorce.actived = 1
+                                        LEFT JOIN source ON week_day_info_sorce.information_source_id = source.id
+                                        WHERE te2.id = week_day_graphic.id) AS `info_sorce`
+                                FROM `week_day_graphic`
+                                WHERE week_day_graphic.project_id = $_REQUEST[project_id] AND week_day_graphic.week_day_id = $_REQUEST[wday] AND week_day_graphic.actived = 1");
+    
+        $data = array(
+            "aaData"	=> array()
+        );
+         
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            $row = array();
+            for ( $i = 0 ; $i < $count ; $i++ )
+            {
+                /* General output */
+                $row[] = $aRow[$i];
+                if($i == ($count - 1)){
+                    $row[] = '<div class="callapp_checkbox">
+                      <input type="checkbox" id="callapp_checkbox_break_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                      <label style="margin-top: 2px;" for="callapp_checkbox_break_'.$aRow[$hidden].'"></label>
+                  </div>';
+                }
+            }
+            $data['aaData'][] = $row;
+        }
         break;
 	case 'add_all_holiday':
 	    $project_id    = $_REQUEST['project_id'];
@@ -133,15 +232,15 @@ switch ($action) {
         $project_id    = $_REQUEST['project_id'];
          
         $res = mysql_query("SELECT  week_day_id,
-                                    start_time,
-                                    end_time,
+                                    DATE_FORMAT(start_time,'%H%i'),
+                                    DATE_FORMAT(end_time,'%H%i'),
                                     ext_number
                             FROM `week_day_graphic`
                             WHERE project_id = '$project_id' AND actived = 1 AND type = 1");
         
         $res1 = mysql_query("SELECT  week_day_id,
-                                     start_time,
-                                     end_time,
+                                     DATE_FORMAT(start_time,'%H%i'),
+                                     DATE_FORMAT(end_time,'%H%i'),
                                      ext_number
                              FROM `week_day_graphic`
                              WHERE project_id = '$project_id' AND actived = 1 AND type = 2");
@@ -157,12 +256,38 @@ switch ($action) {
         break;
         
     case 'work_gr':
-
+        $res = mysql_num_rows(mysql_query("  SELECT id
+                                             FROM week_day_graphic
+                                             WHERE id = '$_REQUEST[week_day_graphic_id]'"));
+        
+        if($res == 0){
             mysql_query("INSERT INTO `week_day_graphic`
-                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `ext_number`, `type`)
+                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `type`)
                         VALUES
-                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[ext_number]', '$_REQUEST[type]');");
+                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[type]');");
+        }else{
+            mysql_query("UPDATE `week_day_graphic` SET
+                                `project_id`='$_REQUEST[project_id]',
+                                `week_day_id`='$_REQUEST[wday]',
+                                `type`='$_REQUEST[type]',
+                                `start_time`='$_REQUEST[start_time]',
+                                `end_time`='$_REQUEST[end_time]'
+                         WHERE  `id`='$_REQUEST[week_day_graphic_id]'");
+        }
 
+        break;
+    case 'add_lang':
+         mysql_query("INSERT INTO `week_day_lang`
+                    (`user_id`, `week_day_graphic_id`, `spoken_lang_id`)
+                    VALUES
+                    ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[spoken_lang_id]');");
+
+        break;
+    case 'add_infosorce':
+        mysql_query("INSERT INTO `week_day_info_sorce`
+                    (`user_id`, `week_day_graphic_id`, `information_source_id`)
+                    VALUES
+                    ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[information_source_id]');");
     
         break;
 	case 'save-project':
@@ -182,13 +307,10 @@ switch ($action) {
 	    $count = 		$_REQUEST['count'];
 	    $hidden = 		$_REQUEST['hidden'];
 	    $rResult = mysql_query("SELECT 	week_day_lang.id,
-                        				spoken_lang.`name`
-                                FROM    `week_day_graphic`
-                                JOIN    week_day_lang ON week_day_graphic.id = week_day_lang.week_day_graphic_id
-                                JOIN    spoken_lang ON week_day_lang.spoken_lang_id = spoken_lang.id
-                                WHERE   week_day_graphic.project_id = 1 
-	                            AND     week_day_graphic.week_day_id = 1 
-	                            AND     week_day_graphic.actived = 1");
+                        				language.`name`
+                                FROM    `week_day_lang`
+                                JOIN language ON week_day_lang.spoken_lang_id = language.id
+                                WHERE   week_day_graphic_id = $_REQUEST[week_day_graphic_id] AND week_day_lang.actived = 1");
 	
 	    $data = array(
 	        "aaData"	=> array()
@@ -215,13 +337,10 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
         $rResult = mysql_query("SELECT 	week_day_info_sorce.id,
-                        				information_source.`name`
-                                FROM    `week_day_graphic`
-                                JOIN    week_day_info_sorce ON week_day_graphic.id = week_day_info_sorce.week_day_graphic_id
-                                JOIN    information_source ON week_day_info_sorce.information_source_id = information_source.id
-                                WHERE   week_day_graphic.project_id = 1
-                                AND     week_day_graphic.week_day_id = 1
-                                AND     week_day_graphic.actived = 1");
+                        				source.`name`
+                                FROM    `week_day_info_sorce`
+                                JOIN    source ON week_day_info_sorce.information_source_id = source.id
+                                WHERE   week_day_graphic_id = $_REQUEST[week_day_graphic_id] AND week_day_info_sorce.actived = 1");
     
         $data = array(
             "aaData"	=> array()
@@ -340,12 +459,7 @@ function GetHoliday(){
     
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
-    
-        if($res['id'] == $count){
-            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-        }else{
-            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-        }
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
     }
     return $data;
 }
@@ -354,7 +468,7 @@ function GetLang($id){
     $data = '';
     $req = mysql_query("SELECT  `id`,
 								`name`
-						FROM    `spoken_lang`
+						FROM    `language`
                         WHERE   `actived` = 1");
 
     $data .= '<option value="0" selected="selected">----</option>';
@@ -373,7 +487,7 @@ function GetInfoSource($id){
     $data = '';
     $req = mysql_query("SELECT 	`id`,
                 				`name`
-                        FROM    `information_source`
+                        FROM    `source`
                         WHERE   `actived` = 1");
 
     $data .= '<option value="0" selected="selected">----</option>';
@@ -592,92 +706,9 @@ function GetPage($res,$increment){
 	$data  .= '
 	
 	<div id="dialog-form">
-	    <fieldset style="width: 260px; height: 255px; float: left;">
-	       <legend>ძირითადი ინფორმაცია</legend>
-			<table class="dialog-form-table">
-	           <tr>
-	               <td colspan="2"><label for="incomming_cat_1_1_1">დასახელება</label></td>
-    	       </tr>
-	           <tr>
-	               <td colspan="2"><input id="project_name" style="resize: vertical;width: 250px;" value="'.$res[name].'"></td>
-    	       </tr>
-	       		<tr>
-	               <td colspan="2"><label style="margin-top: 30px;" for="incomming_comment">ტიპი</label></td>
-	           </tr>
-	           <tr>
-               		<td>
-						<select style="margin-top: 10px; width: 257px;"  id="project_type">'. Get_type($res[type_id]).'</select>
-					</td>
-	               
-	           </tr>
-			   <tr>
-                             
-        	       <td><label style="margin-top: 30px;" for="client_person_phone2">შექმნის თარიღი</label></td>
-               </tr>
-    	       <tr>
-                   <td><input id="project_add_date" type="text" value="'.$res[create_date].'"></td>
-               </tr>
-	       </table>
-		 </fieldset>
 	    
-	    
-        <div id="side_menu1" style="float: left;height: 273px; width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
-	       <spam class="phone" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'phone\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ნომერი</div></spam>
-           <spam class="holiday" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'holiday\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/holiday.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სამუშაო<br>დღე/სთ</div></spam>
-	       <spam class="import" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'import\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/import.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">იმპორტი</div></spam>
-	       <spam class="actived" style="display: none;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side1(\'actived\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/actived.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">აქტივაცია</div></spam>
-	    </div>
-	    
-	    <div style="width: 790px; float: left; margin-left: 10px;" id="right_side_project">
-            <fieldset style="display:none;" id="phone">
-                <legend>ნომერი</legend>
-	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
-                <div class="margin_top_10">           
-	            <div id="button_area">
-                    <button id="add_number">დამატება</button>
-					<button id="delete_number">წაშლა</button>
-                </div>
-				<table class="display" id="table_number" style="width: 100%;">
-                    <thead>
-                        <tr id="datatable_header">
-                            <th>ID</th>
-                            <th style="width: 30%;">ნომერი</th>
-                            <th style="width: 20%;">რიგი</th>
-                            <th style="width: 30%;">შიდა ნომ.</th>
-                            <th style="width: 20%;">სცენარი</th>
-							<th style="width: 25px;" class="check">&nbsp;</th>
-						</tr>
-                    </thead>
-                    <thead>
-                        <tr class="search_header">
-                            <th class="colum_hidden">
-                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-							<th>
-				            	<div class="callapp_checkbox">
-				                    <input type="checkbox" id="check-all-number" name="check-all" />
-				                    <label style="margin-top: 3px;" for="check-all-number"></label>
-				                </div>
-				            </th>
-						</tr>
-                    </thead>
-                </table>
-	            </div>
-		</fieldset>
                        
-                       <fieldset style="display:none;" id="holiday">
+                       <fieldset style="" id="holiday">
                 <legend>სამუშაო დღე/სთ</legend>
 	            <span class="hide_said_menu">x</span>
 	    <style>
@@ -971,114 +1002,6 @@ function GetPage($res,$increment){
                     </thead>
                 </table>
             </fieldset>
-                       
-        <fieldset style="display:none;" id="import">
-                <legend>იმპორტი</legend>
-	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
-                <div class="margin_top_10">           
-	            <div id="button_area">
-                       
-                    <button id="download_exel">შაბლონის ჩამოტვირთვა</button>
-                    <button id="open_choseFile">ბაზის ატვირთვა</button>
-					<button id="add_import">დამატება</button>
-                    <button id="delete_import">წაშლა</button>
-                </div>
-				<table class="display" id="table_import" >
-                    <thead>
-                        <tr id="datatable_header">
-                            <th>ID</th>
-                            <th style="width: 70px;">სახელი</th>
-                            <th style="width: 70px;">გვარი</th>
-                            <th style="width: 70px;">პირადი ნომერი</th>
-                            <th style="width: 95px;">ტელეფონი 1</th>
-                            <th style="width: 95px;">ტელეფონი 2</th>
-							<th style="width: 11px;" class="check">&nbsp;</th>
-						</tr>
-                    </thead>
-                    <thead>
-                        <tr class="search_header">
-                            <th class="colum_hidden">
-                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-							<th>
-				            	<div class="callapp_checkbox">
-				                    <input type="checkbox" id="check-all-import" name="check-all" />
-				                    <label style="margin-top: 3px;" for="check-all-import"></label>
-				                </div>
-				            </th>
-						</tr>
-                    </thead>
-                </table>
-	            </div>
-		</fieldset>
-                       
-        <fieldset style="display:none;" id="actived">
-                <legend>აქტივაცია</legend>
-	            <span id="hide_said_menu_number" class="hide_said_menu">x</span>
-                <div class="margin_top_10">           
-	            <div id="button_area">
-                    <button id="add_import_actived">აქტივაცია</button>
-                    <button id="delete_import_actived">წაშლა</button>
-                </div>
-                </div>
-				<table class="display" id="table_import_actived" >
-                    <thead>
-                        <tr id="datatable_header">
-                            <th>ID</th>
-                            <th style="width: 70px;">სახელი</th>
-                            <th style="width: 70px;">გვარი</th>
-                            <th style="width: 70px;">პირადი ნომერი</th>
-                            <th style="width: 95px;">ტელეფონი 1</th>
-                            <th style="width: 95px;">ტელეფონი 2</th>
-							<th style="width: 11px;" class="check">&nbsp;</th>
-						</tr>
-                    </thead>
-                    <thead>
-                        <tr class="search_header">
-                            <th class="colum_hidden">
-                        	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-                            <th>
-                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-                            </th>
-							<th>
-				            	<div class="callapp_checkbox">
-				                    <input type="checkbox" id="check-all-import-actived" name="check-all" />
-				                    <label style="margin-top: 3px;" for="check-all-import-actived"></label>
-				                </div>
-				            </th>
-						</tr>
-                    </thead>
-                </table>
-	            </div>
-		</fieldset>
     	</div>
 	</div>
 	</div>
@@ -1126,7 +1049,6 @@ function GetDialogWeek($week_id,$project_id){
                                 <th>ID</th>
                                 <th style="width: 70px;">დასაწყისი</th>
                                 <th style="width: 70px;">დასასრული</th>
-                                <th style="width: 70px;">სადგური</th>
                                 <th style="width: 95px;">სამუშაოს ტიპი</th>
                                 <th style="width: 95px;">ენა</th>
                                 <th style="width: 95px;">ინფ. წყარო</th>
@@ -1140,9 +1062,6 @@ function GetDialogWeek($week_id,$project_id){
                                 </th>
                                 <th>
                                 	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                                </th>
-                                <th>
-                                    <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                                 </th>
                                 <th>
                                     <input type="text" name="search_date" value="ფილტრი" class="search_init" />
@@ -1171,7 +1090,35 @@ function GetDialogWeek($week_id,$project_id){
     return $data;
 }
 
-function GetDialogWeekAdd($week_id,$project_id){
+function GetDialogWeekAdd($week_id,$project_id,$get_weekADD_id){
+    $start = '';
+    $end = '';
+    $ext = 1;
+    $type = 1;
+    $req = mysql_fetch_assoc(mysql_query("SELECT 	id+1 AS `inc`
+                                          FROM 	week_day_graphic
+                                            ORDER BY id DESC LIMIT 1"));
+    $id = $req[inc];
+    if($get_weekADD_id != 0){
+        $res = mysql_fetch_assoc(mysql_query("  SELECT 	id,start_time,
+                                        				end_time,
+                                        				ext_number,
+                                        				type
+                                                FROM 	week_day_graphic
+                                                WHERE 	id = $get_weekADD_id"));
+        $id      = $res[id];
+    }
+    $start   = $res[start_time];
+    $end     = $res[end_time];
+    $ext     = $res[ext_number];
+    $type    = $res[type];
+    $select1 = '';
+    $select2 = '';
+    if($type == 1){
+        $select1 = "selected";
+    }elseif($type == 2){
+        $select2 = "selected";
+    }
     $data = '<div id="dialog-form">
         	    <fieldset>
         	       <legend>ძირითადი ინფორმაცია</legend>
@@ -1185,16 +1132,15 @@ function GetDialogWeekAdd($week_id,$project_id){
                     <tr>
                        <td style="width: 99px;">სამუშაო<br>იწყება</td>
                        <td style="width: 99px;">სამუშაო<br>მთავრდება</td>
-                       <td style="width: 99px;">სადგურის<br>რაოდენობა</td>
                        <td >სამუშაოს<br>ტიპი</td>
                     </tr>
                     <tr>
-                        <td><input id="start_time" type="text" style="width: 60px;"></td>
-                        <td><input id="end_time" type="text" style="width: 60px;"></td>
-                        <td><input id="ext_number" type="number" style="width: 60px;" min="1" value="1"></td>
-                        <td><select id="type"><option value="1">სამუშაო სთ.</option><option value="2">არა სამუშაო სთ.</option></select></td>
+                        <td><input id="start_time" type="text" style="width: 60px;" value="'.$start.'"></td>
+                        <td><input id="end_time" type="text" style="width: 60px;" value="'.$end.'"></td>
+                        <td><select id="type"><option value="1" '.$select1.'>სამუშაო სთ.</option><option value="2" '.$select2.'>არა სამუშაო სთ.</option></select></td>
                     </tr>
 	              </table>
+                            <input type="hidden" value="'.$id.'" id="week_day_graphic_id">
                 </fieldset>
              </div>
             ';
@@ -1221,8 +1167,8 @@ function GetDialogLangAdd($week_id,$project_id){
                         <thead>
                             <tr id="datatable_header">
                                 <th>ID</th>
-                                <th style="width: 70px;">სასაუბრო ენა</th>
-    							<th style="width: 11px;" class="check">&nbsp;</th>
+                                <th style="width: 90%;">სასაუბრო ენა</th>
+    							<th style="width: 10%;" class="check">&nbsp;</th>
     						</tr>
                         </thead>
                         <thead>
@@ -1268,8 +1214,8 @@ function GetDialogInfoSorceAdd($week_id,$project_id){
                         <thead>
                             <tr id="datatable_header">
                                 <th>ID</th>
-                                <th style="width: 70px;">ინფორმაციის წყარო</th>
-    							<th style="width: 11px;" class="check">&nbsp;</th>
+                                <th style="width: 90%;">ინფორმაციის წყარო</th>
+    							<th style="width: 10%;" class="check">&nbsp;</th>
     						</tr>
                         </thead>
                         <thead>

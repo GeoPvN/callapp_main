@@ -116,20 +116,11 @@
 		        GetDateTimes('start_date_holi');
 		        GetDateTimes('end_date_holi');
 		        GetButtons("add_holiday","delete_holiday");
-		        GetButtons("holi_creap");
+		        GetButtons("holi_creap","holi_creap_delete");
 		        GetButtons("holi_creap_break");
+		        GetButtons("holi_creap_ext");
 		        LoadTable('holiday',4,'get_holiday',"<'F'lip>");
-		        $('#end_time,#start_time,#break_start_time,#break_end_time').timepicker({
-		        	hourMax: 23,
-		    		hourMin: 00,
-		    		minuteMax: 55,
-		    		minuteMin: 00,
-		    		stepMinute: 5,
-		    		minuteGrid: 10,
-		    		hourGrid: 3,
-		        	dateFormat: '',
-		            timeFormat: 'HH:mm'
-		    	});
+		        
 		        $.ajax({
 			        url: aJaxURL_object,
 				    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
@@ -139,34 +130,36 @@
 								alert(data.error);
 							}else{
     							for(g=0;g < $(data.work).size();g++){
-    								for(i=parseInt(data.work[g].starttime);i <= parseInt(data.work[g].endtime);i++){
+    								for(i=parseInt(data.work[g].starttime);i < parseInt(data.work[g].endtime);i++){
     					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
+    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").html(data.work[g].ext_number);
     					    		}
 								}
 								for(o=0;o < $(data.break).size();o++){
     								for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
     									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").html('');
     					    		}
 								}
 							}
 						}
 				    }
 			    }).done(function() {
-		        $.ajax({
-		            url: aJaxURL_object,
-		            type: "POST",
-		            data: "act=check_weak&project_id=" + $('#hidden_project_id').val() + '&wday=' + $("#weak_id").val(),
-		            dataType: "json",
-		            success: function (data) {
-		                    if (data.error != "") {
-		                        alert(data.error);
-		                    } else {
-		                        $("#start_time").val(data.start_time);
-		                        $("#end_time").val(data.end_time);
-		                        $("#ext_number").val(data.ext_number);
-		                    }
-		            }
-		        });
+// 		        $.ajax({
+// 		            url: aJaxURL_object,
+// 		            type: "POST",
+// 		            data: "act=check_weak&project_id=" + $('#hidden_project_id').val() + '&wday=' + $("#weak_id").val(),
+// 		            dataType: "json",
+// 		            success: function (data) {
+// 		                    if (data.error != "") {
+// 		                        alert(data.error);
+// 		                    } else {
+// 		                        $("#start_time").val(data.start_time);
+// 		                        $("#end_time").val(data.end_time);
+// 		                        $("#ext_number").val(data.ext_number);
+// 		                    }
+// 		            }
+// 		        });
 			    });
 		   break;
 		   case "add-edit-form-import":
@@ -847,8 +840,6 @@
 	$(document).on("click", "#holi_creap", function () {
 		start = parseInt($("#start_time").val());
 		end = parseInt($("#end_time").val());
-		b_start = parseInt($("#break_start_time").val());
-		b_end = parseInt($("#break_end_time").val());
 		ch_id = 0;
 		if(start < end){
 		    ch_id = 1;
@@ -858,17 +849,18 @@
     			  ch_id = 0;
     		
 		}
-		if(ch_id == 1){    		
+		if(ch_id == 1){
     		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != ''){
-    		$("td[wday='"+$("#weak_id").val()+"']").css('background','#F1F1F1');
+    		$("td[wday='"+$("#wday").val()+"']").css('background','#F1F1F1');
     		$.ajax({
     	        url: aJaxURL_object,
-    		    data: 'act=work_gr&project_id='+$('#hidden_project_id').val()+'&start_time='+$("#start_time").val()+'&break_start_time='+$("#break_start_time").val()+'&break_end_time='+$("#break_end_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#weak_id").val() + '&ext_number=' + $("#ext_number").val(),
+    		    data: 'act=work_gr&project_id='+$('#hidden_project_id').val()+'&start_time='+$("#start_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#wday").val() + '&ext_number=' + $("#ext_number").val() + '&type=' + $("#type").val(),
     	        success: function(data) {
     				if(typeof(data.error) != "undefined"){
     					if(data.error != ""){
     						alert(data.error);
     					}else{
+    						CloseDialog("#add-edit-form-weekADD");
     						$.ajax({
     					        url: aJaxURL_object,
     						    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
@@ -878,13 +870,15 @@
     										alert(data.error);
     									}else{
     		    							for(g=0;g < $(data.work).size();g++){
-    		    								for(i=parseInt(data.work[g].starttime);i <= parseInt(data.work[g].endtime);i++){
+    		    								for(i=parseInt(data.work[g].starttime);i < parseInt(data.work[g].endtime);i++){
     		    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
+    		    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").html(data.work[g].ext_number);
     		    					    		}
     										}
     										for(o=0;o < $(data.break).size();o++){
     		    								for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
     		    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+    		    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").html('');
     		    					    		}
     										}
     									}
@@ -901,47 +895,45 @@
 		}
 	});
 
-	$(document).on("click", "#holi_creap_break", function () {
-		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != ''){
-		var buttons = {
-	        	"cancel": {
-		            text: "დახურვა",
-		            id: "cancel-dialog",
-		            click: function () {
-		            	$(this).dialog("close");
-		            }
-		        }
-		    };
-		GetDialog("add-edit-form-break", 465, "auto", buttons, 'center top');
-		$.ajax({
+	$(document).on("click", "#holi_creap_delete", function () {
+    	$.ajax({
 	        url: aJaxURL_object,
-		    data: 'act=get_break&project_id='+$('#hidden_project_id').val() + '&wday=' + $('#weak_id').val(),
+		    data: 'act=delete_gr&project_id='+$('#hidden_project_id').val()+'&wday='+$("#weak_id").val(),
 	        success: function(data) {
 				if(typeof(data.error) != "undefined"){
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						$('#add-edit-form-break').html(data.break);
-						$("#add_holi_break,#del_holi_break").button();						
-						LoadTable('break',3,'get_break',"<'F'lip>");
-						$('#break_start_time,#break_end_time').timepicker({
-				        	hourMax: 23,
-				    		hourMin: 00,
-				    		minuteMax: 55,
-				    		minuteMin: 00,
-				    		stepMinute: 5,
-				    		minuteGrid: 10,
-				    		hourGrid: 3,
-				        	dateFormat: '',
-				            timeFormat: 'HH:mm'
-				    	});
+						$("#work_table tr td").css('background','');
+						$("td[clock]").html('');
+						$.ajax({
+					        url: aJaxURL_object,
+						    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
+					        success: function(data) {
+								if(typeof(data.error) != "undefined"){
+									if(data.error != ""){
+										alert(data.error);
+									}else{
+		    							for(g=0;g < $(data.work).size();g++){
+		    								for(i=parseInt(data.work[g].starttime);i < parseInt(data.work[g].endtime);i++){
+		    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
+		    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").html(data.work[g].ext_number);
+		    					    		}
+										}
+										for(o=0;o < $(data.break).size();o++){
+		    								for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
+		    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+		    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").html('');
+		    					    		}
+										}
+									}
+								}
+						    }
+					    });
 					}
 				}
 		    }
 	    });
-		}else{
-		    alert('შეავსეთ "სამუშაო იწყება","სამუშაო მთავრდება","სადგურის რაოდენობა" !');
-		}
 	});
 
     $(document).on("click", "#holiday_all", function () {
@@ -1054,115 +1046,138 @@
         }
     });
 
-    $(document).on("click", "#check-all-break", function () {
-    	$("#table_break tbody INPUT[type='checkbox']").prop("checked", $("#check-all-break").is(":checked"));
-    });
-
-    $(document).on("click", "#del_holi_break", function () {
-        var data = $("#table_break tbody .check:checked").map(function () {
-            return this.value;
-        }).get();
-    	
-    
-        for (var i = 0; i < data.length; i++) {
-            $.ajax({
-                url: aJaxURL_object,
-                type: "POST",
-                data: "act=delete_break&id=" + data[i],
-                dataType: "json",
-                success: function (data) {
-                        if (data.error != "") {
-                            alert(data.error);
-                        } else {
-                        	LoadTable('break',3,'get_break',"<'F'lip>");
-                            $("#check-all-break").attr("checked", false);
-                        }
-                }
-            });
-        }
-        $.ajax({
-	        url: aJaxURL_object,
-		    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
-	        success: function(data) {
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						for(g=0;g < $(data.work).size();g++){
-							for(i=parseInt(data.work[g].starttime);i <= parseInt(data.work[g].endtime);i++){
-				    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
-				    		}
-						}
-						for(o=0;o < $(data.break).size();o++){
-							for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
-								$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
-				    		}
-						}
-					}
-				}
-		    }
-	    });
-    });
-    
-    $(document).on("click", "#add_holi_break", function () {
-        if(parseInt($("#break_start_time").val()) < parseInt($("#break_end_time").val()) && parseInt($("#break_start_time").val()) > parseInt($("#start_time").val()) && parseInt($("#break_end_time").val()) < parseInt($("#end_time").val())){
-        	$.ajax({
-                url: aJaxURL_object,
-                type: "POST",
-                data: "act=save_holi_break&project_id=" + $('#hidden_project_id').val() + '&wday=' + $("#weak_id").val() + '&break_start_time='+$("#break_start_time").val() + '&break_end_time=' + $("#break_end_time").val(),
-                dataType: "json",
-                success: function (data) {
-                        if (data.error != "") {
-                            alert(data.error);
-                        } else {
-                        	LoadTable('break',3,'get_break',"<'F'lip>");
-                        	$.ajax({
-    					        url: aJaxURL_object,
-    						    data: 'act=get_wk&project_id='+$('#hidden_project_id').val(),
-    					        success: function(data) {
-    								if(typeof(data.error) != "undefined"){
-    									if(data.error != ""){
-    										alert(data.error);
-    									}else{
-    		    							for(g=0;g < $(data.work).size();g++){
-    		    								for(i=parseInt(data.work[g].starttime);i <= parseInt(data.work[g].endtime);i++){
-    		    					    			$("td[clock='"+i+"'][wday='"+data.work[g].wday+"']").css('background','green');
-    		    					    		}
-    										}
-    										for(o=0;o < $(data.break).size();o++){
-    		    								for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
-    		    									$("td[clock='"+i+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
-    		    					    		}
-    										}
-    									}
-    								}
-    						    }
-    					    });
-                        }
-                }
-            });
-        }else{
-            alert('მიუთითეთ სწორი დრო!')
-        }
-    });
-    
-    $(document).on("change", "#weak_id", function () {
-    	$.ajax({
+    function OpenWeek(id){
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+		GetDialog("add-edit-form-week", 770, "auto", buttons, 'top top');
+		$.ajax({
             url: aJaxURL_object,
             type: "POST",
-            data: "act=check_weak&project_id=" + $('#hidden_project_id').val() + '&wday=' + $(this).val(),
+            data: "act=get_week&week_id=" + id + '&project_id=' + $('#hidden_project_id').val(),
             dataType: "json",
             success: function (data) {
                     if (data.error != "") {
                         alert(data.error);
                     } else {
-                        $("#start_time").val(data.start_time);
-                        $("#end_time").val(data.end_time);
-                        $("#ext_number").val(data.ext_number);
+                    	$('#add-edit-form-week').html(data.week);
+                    	GetButtons("add_week","delete_week");
+                    	GetDataTable('table_week', aJaxURL, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+id, 0, "", 1, "desc", '', "<'F'lip>");
+                    }
+            }
+        });
+    }
+
+    $(document).on("click", "#add_week", function () {
+    	var buttons = {
+    			"save": {
+		            text: "შენახვა",
+		            id: "holi_creap"
+		        },
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+    	GetDialog("add-edit-form-weekADD", 500, "auto", buttons, 'top top');
+    	$.ajax({
+            url: aJaxURL_object,
+            type: "POST",
+            data: "act=get_weekADD&week_id=" + 1 + '&project_id=' + $('#hidden_project_id').val(),
+            dataType: "json",
+            success: function (data) {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                    	$('#add-edit-form-weekADD').html(data.weekADD);
+                    	$('#end_time,#start_time').timepicker({
+        		        	hourMax: 23,
+        		    		hourMin: 00,
+        		    		minuteMax: 55,
+        		    		minuteMin: 00,
+        		    		stepMinute: 5,
+        		    		minuteGrid: 10,
+        		    		hourGrid: 3,
+        		        	dateFormat: '',
+        		            timeFormat: 'HH:mm'
+        		    	});
+        		    	$('#addlang,#addinfosorce').button();
                     }
             }
         });
     });
+
+    $(document).on("click", "#addlang", function () {
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+    	GetDialog("add-edit-form-lang", 500, "auto", buttons, 'top top');
+    	$.ajax({
+            url: aJaxURL_object,
+            type: "POST",
+            data: "act=get_langdialog&week_id=" + 1 + '&project_id=' + $('#hidden_project_id').val(),
+            dataType: "json",
+            success: function (data) {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                    	$('#add-edit-form-lang').html(data.lang);
+                    	client_id	= $("#hidden_client_id").val();
+                        project_id	= $("#hidden_project_id").val();
+                        wday = $('#wday').val();
+                        GetButtons("add_lang","delete_lang");
+                    	GetDataTable('table_lang', aJaxURL_object, 'get_list_lang', 2, "client_id="+client_id+"&project_id="+project_id+"&wday="+wday, 0, "", 1, "desc", '', "<'F'lip>");
+                    }
+            }
+        });
+    });
+
+    $(document).on("click", "#addinfosorce", function () {
+    	var buttons = {
+	        	"cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		            	$(this).dialog("close");
+		            }
+		        }
+		    };
+    	GetDialog("add-edit-form-infosorce", 500, "auto", buttons, 'top top');
+    	$.ajax({
+            url: aJaxURL_object,
+            type: "POST",
+            data: "act=get_infosorce&week_id=" + 1 + '&project_id=' + $('#hidden_project_id').val(),
+            dataType: "json",
+            success: function (data) {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                    	$('#add-edit-form-infosorce').html(data.infosorce);
+                    	client_id	= $("#hidden_client_id").val();
+                        project_id	= $("#hidden_project_id").val();
+                        wday = $('#wday').val();
+                        GetButtons("add_infosorce","delete_infosorce");
+                    	GetDataTable('table_infosorce', aJaxURL_object, 'get_list_infosorce', 2, "client_id="+client_id+"&project_id="+project_id+"&wday="+wday, 0, "", 1, "desc", '', "<'F'lip>");
+                    }
+            }
+        });
+    });
+    
 </script>
 <style type="text/css">
 
@@ -1178,7 +1193,10 @@
 #table_import_actived_length,
 #table_client_length,
 #table_holiday_length,
-#table_break_length{
+#table_break_length,
+#table_week_length,
+#table_lang_length,
+#table_infosorce_length{
 	position: inherit;
     width: 0px;
 	float: left;
@@ -1189,7 +1207,10 @@
 #table_import_actived_length label select,
 #table_client_length label select,
 #table_holiday_length label select,
-#table_break_length label select{
+#table_break_length label select,
+#table_week_length label select,
+#table_lang_length label select,
+#table_infosorce_length label select{
 	width: 60px;
     font-size: 10px;
     padding: 0;
@@ -1323,8 +1344,13 @@
 	
 	<div  id="add-edit-form-hour" class="form-dialog" title="წუთი">
 	</div>
-	<div  id="add-edit-form-break" class="form-dialog" title="შესვენება">
+	<div  id="add-edit-form-weekADD" class="form-dialog" title="დამატება">
 	</div>
-	
+	<div  id="add-edit-form-week" class="form-dialog" title="სამუშაო გრაფიკი">
+	</div>
+	<div  id="add-edit-form-lang" class="form-dialog" title="სასაუბრო ენა">
+	</div>
+	<div  id="add-edit-form-infosorce" class="form-dialog" title="ინფორმაციის წყარო">
+	</div>
 
 </body>
