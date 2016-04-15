@@ -14,6 +14,8 @@ $project_name      = $_REQUEST['project_name'];
 $project_type      = $_REQUEST['project_type'];
 $project_add_date  = $_REQUEST['project_add_date'];
 
+global  $error;
+
 switch ($action) {
 	case 'get_add_page':
 		$page		= GetPage('',object($hidden_id));
@@ -50,7 +52,12 @@ switch ($action) {
 	
 	    break;
     case 'get_week':
-        $page		= GetDialogWeek($_REQUEST[week_id],$_REQUEST[project_id]);
+        $page		= GetDialogWeek($_REQUEST[cycle],$_REQUEST[project_id]);
+        $data		= array('week'	=> $page);
+    
+        break;
+    case 'get_cikle':
+        $page		= GetDialogCikle($_REQUEST[project_id]);
         $data		= array('week'	=> $page);
     
         break;
@@ -123,13 +130,13 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
         $rResult = mysql_query("SELECT 	`project_holiday`.`id`,
-            `holidays`.`date`,
-            `holidays`.`name`,
-            `holidays_category`.`name`
-            FROM    `project_holiday`
-            JOIN    `holidays` ON project_holiday.holidays_id = holidays.id
-            JOIN    `holidays_category` ON `holidays`.holidays_category_id = `holidays_category`.`id`
-            WHERE   `project_holiday`.`actived` = 1 AND `project_holiday`.`project_id` = '$_REQUEST[project_id]'");
+                                        `holidays`.`date`,
+                                        `holidays`.`name`,
+                                        `holidays_category`.`name`
+                                FROM    `project_holiday`
+                                JOIN    `holidays` ON project_holiday.holidays_id = holidays.id
+                                JOIN    `holidays_category` ON `holidays`.holidays_category_id = `holidays_category`.`id`
+                                WHERE   `project_holiday`.`actived` = 1 AND `project_holiday`.`project_id` = '$_REQUEST[project_id]'");
     
         $data = array(
             "aaData"	=> array()
@@ -155,7 +162,18 @@ switch ($action) {
     case 'table_week':
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
+        
+        $cycli = $_REQUEST[hidde_cycle];
+        
+//         $res_cycle = mysql_fetch_assoc(mysql_query(" SELECT MAX(cycle) AS cycle
+//                                                      FROM `week_day_graphic`
+//                                                      WHERE actived=1 "));
+        
+//         if ($cycli == 0 ){
+//             $cycli=$res_cycle[cycle];
+//         }
         $rResult = mysql_query("SELECT  week_day_graphic.id,
+                                        week_day.`name`,
                                         week_day_graphic.start_time,
                                         week_day_graphic.end_time,
                                         IF(week_day_graphic.type=1,'სამუშაო საათი','არა სამუშაო საათი'),
@@ -170,7 +188,8 @@ switch ($action) {
                                         LEFT JOIN source ON week_day_info_sorce.information_source_id = source.id
                                         WHERE te2.id = week_day_graphic.id) AS `info_sorce`
                                 FROM `week_day_graphic`
-                                WHERE week_day_graphic.project_id = $_REQUEST[project_id] AND week_day_graphic.week_day_id = $_REQUEST[wday] AND week_day_graphic.actived = 1");
+                                JOIN week_day ON week_day.id=week_day_graphic.week_day_id
+                                WHERE week_day_graphic.project_id = $_REQUEST[project_id]  AND week_day_graphic.actived = 1 AND week_day_graphic.cycle=$cycli");
     
         $data = array(
             "aaData"	=> array()
@@ -193,6 +212,41 @@ switch ($action) {
             $data['aaData'][] = $row;
         }
         break;
+  case 'table_cikle':
+            $count = 		$_REQUEST['count'];
+            $hidden = 		$_REQUEST['hidden'];
+            
+            
+            $rResult = mysql_query("SELECT week_day_graphic.cycle,
+                                           project.`name`,
+                                		   CONCAT('ციკლი',week_day_graphic.cycle)
+                                		   
+                                    FROM `week_day_graphic`
+                                    JOIN project ON week_day_graphic.project_id=project.id
+                                    WHERE week_day_graphic.project_id=$_REQUEST[project_id] AND week_day_graphic.actived=1
+                                    GROUP BY week_day_graphic.cycle ");
+        
+            $data = array(
+                "aaData"	=> array()
+            );
+             
+            while ( $aRow = mysql_fetch_array( $rResult ) )
+            {
+                $row = array();
+                for ( $i = 0 ; $i < $count ; $i++ )
+                {
+                    /* General output */
+                    $row[] = $aRow[$i];
+                    if($i == ($count - 1)){
+                        $row[] = '<div class="callapp_checkbox">
+                      <input type="checkbox" id="callapp_checkbox_break_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                      <label style="margin-top: 2px;" for="callapp_checkbox_break_'.$aRow[$hidden].'"></label>
+                  </div>';
+                    }
+                }
+                $data['aaData'][] = $row;
+            }
+            break;
 	case 'add_all_holiday':
 	    $project_id    = $_REQUEST['project_id'];
 	    $user          = $_SESSION['USERID'];
@@ -260,11 +314,39 @@ switch ($action) {
                                              FROM week_day_graphic
                                              WHERE id = '$_REQUEST[week_day_graphic_id]'"));
         
-        if($res == 0){
-            mysql_query("INSERT INTO `week_day_graphic`
-                        (`project_id`, `week_day_id`, `start_time`, `end_time`, `type`)
-                        VALUES
-                        ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[type]');");
+        $res_c = mysql_fetch_assoc(mysql_query(" SELECT IF(ISNULL(MAX(cycle)),1,MAX(cycle)+1) AS cycle
+                                                FROM `week_day_graphic`
+                                                WHERE actived=1 "));
+        
+        $cycli = $_REQUEST[hidde_cycle];
+        
+        if ($cycli == 0 ){
+            $cycli=$res_c[cycle];
+        }
+        
+        
+        $check=mysql_query("SELECT week_day_id AS cycle
+                            FROM `week_day_graphic`
+                            WHERE actived=1 AND project_id=$_REQUEST[project_id] AND cycle=$cycli AND week_day_id=$_REQUEST[wday]");
+        if($res==0){
+            
+            if (mysql_num_rows($check)==0) {
+                mysql_query("INSERT INTO `week_day_graphic`
+                            (`project_id`, `week_day_id`, `start_time`, `end_time`, `type`, `cycle`)
+                            VALUES
+                            ('$_REQUEST[project_id]', '$_REQUEST[wday]', '$_REQUEST[start_time]', '$_REQUEST[end_time]', '$_REQUEST[type]', '$cycli');");
+                       
+             $new_cycle = mysql_insert_id();
+             
+             $cycl=mysql_fetch_assoc(mysql_query("SELECT cycle AS cycle
+                                                  FROM  `week_day_graphic`
+                                                  WHERE  actived=1 AND week_day_graphic.id=$new_cycle"));
+            }else {
+                
+                $error = 'მოცემული დღე უკვე არის სიაში';
+            }
+            
+             
         }else{
             mysql_query("UPDATE `week_day_graphic` SET
                                 `project_id`='$_REQUEST[project_id]',
@@ -273,22 +355,61 @@ switch ($action) {
                                 `start_time`='$_REQUEST[start_time]',
                                 `end_time`='$_REQUEST[end_time]'
                          WHERE  `id`='$_REQUEST[week_day_graphic_id]'");
+            
+           $cycl=mysql_fetch_assoc(mysql_query("SELECT cycle AS cycle
+                                                  FROM  `week_day_graphic`
+                                                  WHERE  actived=1 AND week_day_graphic.id='$_REQUEST[week_day_graphic_id]'"));
+             
         }
-
+        $data = array("new_cycle"	=> $cycl[cycle]);
         break;
     case 'add_lang':
-         mysql_query("INSERT INTO `week_day_lang`
-                    (`user_id`, `week_day_graphic_id`, `spoken_lang_id`)
-                    VALUES
-                    ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[spoken_lang_id]');");
-
+         
+         $check_lang=mysql_query("SELECT spoken_lang_id
+                                  FROM  `week_day_lang`
+                                  WHERE  actived=1 AND week_day_graphic_id=$_REQUEST[week_day_graphic_id] AND spoken_lang_id=$_REQUEST[spoken_lang_id]");
+         
+         if (mysql_num_rows($check_lang)==0) {
+             
+             
+             mysql_query("INSERT INTO `week_day_lang`
+                                     (`user_id`, `week_day_graphic_id`, `spoken_lang_id`)
+                               VALUES
+                                     ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[spoken_lang_id]');");
+             }else {
+                 $error='მოცემული ენა უკვე არის სიაში';
+             }  
+             $cycl=mysql_fetch_assoc(mysql_query("SELECT cycle AS cycle
+                                                  FROM  `week_day_graphic`
+                                                  WHERE  actived=1 AND week_day_graphic.id=$_REQUEST[week_day_graphic_id]"));
+             
+             $data = array("new_cycle"	=> $cycl[cycle]);
+         
         break;
     case 'add_infosorce':
-        mysql_query("INSERT INTO `week_day_info_sorce`
-                    (`user_id`, `week_day_graphic_id`, `information_source_id`)
-                    VALUES
-                    ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[information_source_id]');");
-    
+        
+        $check1=mysql_query("SELECT information_source_id
+                             FROM  `week_day_info_sorce`
+                             WHERE  actived=1 AND week_day_graphic_id=$_REQUEST[week_day_graphic_id] AND information_source_id=$_REQUEST[information_source_id]");
+       
+            if (mysql_num_rows($check1)==0) {
+           
+       
+            mysql_query("INSERT INTO `week_day_info_sorce`
+                                    (`user_id`, `week_day_graphic_id`, `information_source_id`)
+                              VALUES
+                                    ('$_SESSION[USERID]', $_REQUEST[week_day_graphic_id], '$_REQUEST[information_source_id]');");
+            }else {
+                
+                $error='მოცემული წყარო უკვე არის სიაში';
+            }   
+            $cycl=mysql_fetch_assoc(mysql_query("SELECT cycle AS cycle
+                                                FROM  `week_day_graphic`
+                                                WHERE  actived=1 AND week_day_graphic.id=$_REQUEST[week_day_graphic_id]"));
+             
+            $data = array("new_cycle"	=> $cycl[cycle]);
+        
+        
         break;
 	case 'save-project':
 		$hidden_id		  = $_REQUEST['project_hidden_id'];
@@ -502,6 +623,24 @@ function GetInfoSource($id){
     return $data;
 }
 
+function GetDay($day_id)
+{
+    $data = '';
+    $req = mysql_query("SELECT id,
+                              `name` 
+                        FROM `week_day` ");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $day_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+
+    return $data;
+}
 function GetHour($wday,$clock,$project_id){
     if(strlen($clock)==1){
         $real_clock = '0'.$clock;   
@@ -1011,34 +1150,34 @@ function GetPage($res,$increment){
 	return $data;
 }
 
-function GetDialogWeek($week_id,$project_id){
-    switch ($week_id) {
-        case 1:
-            $lang = 'ორშაბათი';
-        break;
-        case 2:
-            $lang = 'სამშაბათი';
-        break;
-        case 3:
-            $lang = 'ოთხშაბათი';
-        break;
-        case 4:
-            $lang = 'ხუთშაბათი';
-        break;
-        case 5:
-            $lang = 'პარასკევი';
-        break;
-        case 6:
-            $lang = 'შაბათი';
-        break;
-        case 7:
-            $lang = 'კვირა';
-        break;
-    }
+function GetDialogWeek($cycle,$project_id){
+//     switch ($week_id) {
+//         case 1:
+//             $lang = 'ორშაბათი';
+//         break;
+//         case 2:
+//             $lang = 'სამშაბათი';
+//         break;
+//         case 3:
+//             $lang = 'ოთხშაბათი';
+//         break;
+//         case 4:
+//             $lang = 'ხუთშაბათი';
+//         break;
+//         case 5:
+//             $lang = 'პარასკევი';
+//         break;
+//         case 6:
+//             $lang = 'შაბათი';
+//         break;
+//         case 7:
+//             $lang = 'კვირა';
+//         break;
+//     }
     $data = '<div id="dialog-form">
         	    <fieldset>
-        	       <legend>'.$lang.'</legend>
-                    <input id="wday" type="hidden" value="'.$week_id.'">
+        	       <legend>ქწექწე</legend>
+                    <input id="hidde_cycle" type="hidden" value="'.$cycle.'">
                     <div id="button_area">
                         <button id="add_week">დამატება</button>
                         <button id="delete_week">წაშლა</button>
@@ -1047,6 +1186,7 @@ function GetDialogWeek($week_id,$project_id){
                         <thead>
                             <tr id="datatable_header">
                                 <th>ID</th>
+                                <th style="width: 70px;">სამუშაო დღე</th>
                                 <th style="width: 70px;">დასაწყისი</th>
                                 <th style="width: 70px;">დასასრული</th>
                                 <th style="width: 95px;">სამუშაოს ტიპი</th>
@@ -1059,6 +1199,9 @@ function GetDialogWeek($week_id,$project_id){
                             <tr class="search_header">
                                 <th class="colum_hidden">
                             	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                </th>
+                                <th>
+                                	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
                                 </th>
                                 <th>
                                 	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
@@ -1089,7 +1232,71 @@ function GetDialogWeek($week_id,$project_id){
             ';
     return $data;
 }
-
+function GetDialogCikle($project_id){
+    //     switch ($week_id) {
+    //         case 1:
+    //             $lang = 'ორშაბათი';
+    //         break;
+    //         case 2:
+    //             $lang = 'სამშაბათი';
+    //         break;
+    //         case 3:
+    //             $lang = 'ოთხშაბათი';
+    //         break;
+    //         case 4:
+    //             $lang = 'ხუთშაბათი';
+    //         break;
+    //         case 5:
+    //             $lang = 'პარასკევი';
+    //         break;
+    //         case 6:
+    //             $lang = 'შაბათი';
+    //         break;
+    //         case 7:
+    //             $lang = 'კვირა';
+    //         break;
+    //     }
+    $data = '
+         <div id="dialog-form">
+        	    <fieldset>
+        	       <legend>ძირითადი ინფორმაცია</legend>
+                    <div id="button_area">
+                        <button id="add_weeks">დამატება</button>
+                        <button id="delete_weeks">წაშლა</button>
+                    </div>
+    				<table class="display" id="table_cikle" style="width: 100%;">
+                        <thead>
+                            <tr id="datatable_header">
+                                <th>ID</th>
+                                <th style="width: 50%;">პროექტი</th>
+                                <th style="width: 40%;">ციკლი</th>
+    							<th style="width: 10%;" class="check">&nbsp;</th>
+    						</tr>
+                        </thead>
+                        <thead>
+                            <tr class="search_header">
+                                <th class="colum_hidden">
+                            	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                </th>
+                                <th>
+                                	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                </th>
+                                <th>
+                                	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                </th>
+    							<th>
+    				            	<div class="callapp_checkbox">
+    				                    <input type="checkbox" id="check-all-cikle" name="check-all" />
+    				                    <label style="margin-top: 3px;" for="check-all-lang"></label>
+    				                </div>
+    				            </th>
+    						</tr>
+                        </thead>
+                    </table>
+                </fieldset>
+             </div>';
+    return $data;
+}
 function GetDialogWeekAdd($week_id,$project_id,$get_weekADD_id){
     $start = '';
     $end = '';
@@ -1103,6 +1310,7 @@ function GetDialogWeekAdd($week_id,$project_id,$get_weekADD_id){
         $res = mysql_fetch_assoc(mysql_query("  SELECT 	id,start_time,
                                         				end_time,
                                         				ext_number,
+                                                        week_day_id,
                                         				type
                                                 FROM 	week_day_graphic
                                                 WHERE 	id = $get_weekADD_id"));
@@ -1111,6 +1319,7 @@ function GetDialogWeekAdd($week_id,$project_id,$get_weekADD_id){
     $start   = $res[start_time];
     $end     = $res[end_time];
     $ext     = $res[ext_number];
+    $w_d_id  = $res[week_day_id];
     $type    = $res[type];
     $select1 = '';
     $select2 = '';
@@ -1130,11 +1339,13 @@ function GetDialogWeekAdd($week_id,$project_id,$get_weekADD_id){
 	               </table>
                    <table class="dialog-form-table">
                     <tr>
+                       <td style="width: 99px;">სამუშაო<br>დღე</td>
                        <td style="width: 99px;">სამუშაო<br>იწყება</td>
                        <td style="width: 99px;">სამუშაო<br>მთავრდება</td>
                        <td >სამუშაოს<br>ტიპი</td>
                     </tr>
                     <tr>
+                        <td><select style="width: 180px;" id="week_day_id" class="idls object">'.GetDay($w_d_id).'</select></td>
                         <td><input id="start_time" type="text" style="width: 60px;" value="'.$start.'"></td>
                         <td><input id="end_time" type="text" style="width: 60px;" value="'.$end.'"></td>
                         <td><select id="type"><option value="1" '.$select1.'>სამუშაო სთ.</option><option value="2" '.$select2.'>არა სამუშაო სთ.</option></select></td>

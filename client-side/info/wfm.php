@@ -10,6 +10,7 @@ $(document).ready(function () {
     GetButtons("holi_creap","holi_creap_delete");
     GetButtons("holi_creap_break");
     GetButtons("holi_creap_ext");
+    GetButtons("add_cirkle");
     LoadTable('holiday',4,'get_holiday',"<'F'lip>");
     
     $.ajax({
@@ -112,7 +113,9 @@ $(document).on("click", "#delete_week", function () {
 $(document).on("click", "#check-all-lang", function () {
 	$("#table_lang  INPUT[type='checkbox']").prop("checked", $("#check-all-lang").is(":checked"));
 });
-
+$(document).on("click", "#check-all-cikle", function () {
+	$("#table_cikle  INPUT[type='checkbox']").prop("checked", $("#check-all-lang").is(":checked"));
+});
 $(document).on("click", "#delete_lang", function () {
 
     var data = $("#table_lang .check:checked").map(function () { //Get Checked checkbox array
@@ -187,6 +190,7 @@ function LoadTable(tbl,col_num,act,change_colum){
 $(document).on("click", "#holi_creap", function () {
 	start = parseInt($("#start_time").val());
 	end = parseInt($("#end_time").val());
+	hidde_cycle = $("#hidde_cycle").val();
 	ch_id = 0;
 	if(start < end){
 	    ch_id = 1;
@@ -197,18 +201,19 @@ $(document).on("click", "#holi_creap", function () {
 		
 	}
 	if(ch_id == 1){
-		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != ''){
+		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != '' && $("#week_day_id").val()!=''){
 		$("td[wday='"+$("#wday").val()+"']").css('background','#FFF');
 		$.ajax({
 	        url: aJaxURL_object,
-		    data: 'act=work_gr&project_id='+$('#project_id').val()+'&start_time='+$("#start_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#wday").val() + '&week_day_graphic_id=' + $("#week_day_graphic_id").val() + '&type=' + $("#type").val(),
+		    data: 'act=work_gr&project_id='+$('#project_id').val()+'&start_time='+$("#start_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#week_day_id").val() + '&week_day_graphic_id=' + $("#week_day_graphic_id").val() + '&type=' + $("#type").val()+ '&hidde_cycle=' + $("#hidde_cycle").val(),
 	        success: function(data) {
 				if(typeof(data.error) != "undefined"){
 					if(data.error != ""){
 						alert(data.error);
 					}else{
 						CloseDialog("add-edit-form-weekADD");
-						GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "desc", '', "<'F'lip>");
+						$("#hidde_cycle").val(data.new_cycle)
+						GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");
 						$.ajax({
 					        url: aJaxURL_object,
 						    data: 'act=get_wk&project_id='+$('#project_id').val(),
@@ -250,7 +255,7 @@ $(document).on("click", "#holi_creap", function () {
 		    }
 	    });
 	}else{
-	    alert('შეავსეთ "სამუშაო იწყება","სამუშაო მთავრდება","სადგურის რაოდენობა" !');
+	    alert('შეავსეთ "სამუშაო დღე", "სამუშაო იწყება","სამუშაო მთავრდება","სადგურის რაოდენობა" !');
 	}
 	}
 });
@@ -334,8 +339,7 @@ $(document).on("click", "#delete_holiday", function () {
         });
     }
 });
-
-function OpenWeek(id){
+$(document).on("click", "#add_cirkle", function () {
 	if($('#project_id').val()!=0){
     	var buttons = {
             	"cancel": {
@@ -343,6 +347,39 @@ function OpenWeek(id){
     	            id: "cancel-dialog",
     	            click: function () {
     	            	$(this).dialog("close");
+    	            	
+    	            }
+    	        }
+    	    };
+    	GetDialog("add-edit-form-cikle", 400, "auto", buttons, 'top top');
+    	$.ajax({
+            url: aJaxURL_object,
+            type: "POST",
+            data: "act=get_cikle&project_id=" + $('#project_id').val(),
+            dataType: "json",
+            success: function (data) {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                    	$('#add-edit-form-cikle').html(data.week);
+                    	GetButtons("add_weeks","delete_weeks");
+                    	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
+                    }
+            }
+        });
+	}else{
+	    alert('აირჩიეთ პროექტი!')
+	}
+});
+
+$(document).on("click", "#add_weeks", function () {
+		var buttons = {
+            	"cancel": {
+    	            text: "დახურვა",
+    	            id: "cancel-dialog",
+    	            click: function () {
+    	            	$(this).dialog("close");
+    	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
     	            }
     	        }
     	    };
@@ -350,7 +387,7 @@ function OpenWeek(id){
     	$.ajax({
             url: aJaxURL_object,
             type: "POST",
-            data: "act=get_week&week_id=" + id + '&project_id=' + $('#project_id').val(),
+            data: "act=get_week&project_id=" + $('#project_id').val()+"&cycle=" + 0,
             dataType: "json",
             success: function (data) {
                     if (data.error != "") {
@@ -358,14 +395,44 @@ function OpenWeek(id){
                     } else {
                     	$('#add-edit-form-week').html(data.week);
                     	GetButtons("add_week","delete_week");
-                    	GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+id, 0, "", 1, "desc", '', "<'F'lip>");
+                    	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&cycle="+0, 0, "", 1, "desc", '', "<'F'lip>");
                     }
             }
         });
-	}else{
-	    alert('აირჩიეთ პროექტი!')
-	}
-}
+	
+});
+
+// function OpenWeek(id){
+// 	if($('#project_id').val()!=0){
+//     	var buttons = {
+//             	"cancel": {
+//     	            text: "დახურვა",
+//     	            id: "cancel-dialog",
+//     	            click: function () {
+//     	            	$(this).dialog("close");
+//     	            }
+//     	        }
+//     	    };
+//     	GetDialog("add-edit-form-week", 770, "auto", buttons, 'top top');
+//     	$.ajax({
+//             url: aJaxURL_object,
+//             type: "POST",
+//             data: "act=get_week&week_id=" + id + '&project_id=' + $('#project_id').val(),
+//             dataType: "json",
+//             success: function (data) {
+//                     if (data.error != "") {
+//                         alert(data.error);
+//                     } else {
+//                     	$('#add-edit-form-week').html(data.week);
+//                     	GetButtons("add_week","delete_week");
+//                     	GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+id, 0, "", 1, "desc", '', "<'F'lip>");
+//                     }
+//             }
+//         });
+// 	}else{
+// 	    alert('აირჩიეთ პროექტი!')
+// 	}
+// }
 
 $(document).on("dblclick", "#table_week tbody tr", function () {
 	var buttons = {
@@ -385,6 +452,7 @@ $(document).on("dblclick", "#table_week tbody tr", function () {
 	$.ajax({
         url: aJaxURL_object,
         type: "POST",
+        
         data: "act=get_weekADD&week_id=" + 1 + '&project_id=' + $('#project_id').val() + '&get_weekADD_id='+$($(this).children(0)[0]).html(),
         dataType: "json",
         success: function (data) {
@@ -408,7 +476,36 @@ $(document).on("dblclick", "#table_week tbody tr", function () {
         }
     });
 });
-
+$(document).on("dblclick", "#table_cikle tbody tr", function () {
+	var buttons = {
+			
+        	"cancel": {
+	            text: "დახურვა",
+	            id: "cancel-dialog",
+	            click: function () {
+	            	$(this).dialog("close");
+	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
+	            }
+	        }
+	    };
+    var cycle=$($(this).children(0)[0]).html();
+	GetDialog("add-edit-form-week", 770, "auto", buttons, 'top top');
+	$.ajax({
+        url: aJaxURL_object,
+        type: "POST",
+        data: "act=get_week&project_id=" + $('#project_id').val()+"&cycle=" + cycle,
+        dataType: "json",
+        success: function (data) {
+                if (data.error != "") {
+                    alert(data.error);
+                } else {
+                	$('#add-edit-form-week').html(data.week);
+                	GetButtons("add_week","delete_week");
+                	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&hidde_cycle="+cycle, 0, "", 1, "desc", '', "<'F'lip>");
+                }
+        }
+    });
+});
 $(document).on("click", "#add_week", function () {
 	var buttons = {
 			"save": {
@@ -492,9 +589,13 @@ $(document).on("click", "#add_lang", function () {
             data: "act=add_lang&week_id=" + $('#wday').val() + '&project_id=' + $('#project_id').val() + '&spoken_lang_id=' + $('#spoken_lang_id').val() + '&week_day_graphic_id=' + $('#week_day_graphic_id').val(),
             dataType: "json",
             success: function (data) {
-            	week_day_graphic_id = $('#week_day_graphic_id').val()
-            	GetDataTable('table_lang', aJaxURL_object, 'get_list_lang', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-            	GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val(), 0, "", 1, "desc", '', "<'F'lip>");
+            	if (data.error != "") {
+                    alert(data.error);
+                } else {
+                	week_day_graphic_id = $('#week_day_graphic_id').val()
+                	GetDataTable('table_lang', aJaxURL_object, 'get_list_lang', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
+                	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+'&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");
+                }
             }
         });
 	}else{
@@ -512,7 +613,7 @@ $(document).on("click", "#add_infosorce", function () {
             success: function (data) {
             	week_day_graphic_id = $('#week_day_graphic_id').val()
             	GetDataTable('table_infosorce', aJaxURL_object, 'get_list_infosorce', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-            	GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val(), 0, "", 1, "desc", '', "<'F'lip>");  
+            	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");  
             }
         });
 	}else{
@@ -563,6 +664,7 @@ $(document).on("click", "#addinfosorce", function () {
 #table_holiday_length,
 #table_week_length,
 #table_lang_length,
+#table_cikle_length,
 #table_infosorce_length{
 	position: inherit;
     width: 0px;
@@ -571,6 +673,7 @@ $(document).on("click", "#addinfosorce", function () {
 #table_holiday_length label select,
 #table_week_length label select,
 #table_lang_length label select,
+#table_cikle_length label select,
 #table_infosorce_length label select{
 	width: 60px;
     font-size: 10px;
@@ -622,7 +725,7 @@ $(document).on("click", "#addinfosorce", function () {
         display:none;
         }
 	    </style>
-               
+               <td style="width: ;"><button id="add_cirkle">ციკლი</button></td>
                 <span style="margin-right: 10px;width: 250px;">აირჩიე პროექტი</span><select id="project_id"></select>
 	            <table class="dialog-form-table" id="work_table">
                     <tr>
@@ -752,7 +855,7 @@ $(document).on("click", "#addinfosorce", function () {
                 	    <th style="width: ;" class="right_border_bold">45</th>
                     </tr>
     	            <tr id="wday1">
-                        <td onclick="OpenWeek(1)" class="left_border_bold" style="cursor: pointer;">ორშ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ორშ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="1" class="left_border_bold"></td>
                 	    <td style="" clock="0015"  check_clock="" wday="1" ></td>
                 	    <td style="" clock="0030"  check_clock="" wday="1" ></td>
@@ -851,7 +954,7 @@ $(document).on("click", "#addinfosorce", function () {
                 	    <td style="" clock="2345"  check_clock="" wday="1" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday2">
-                        <td onclick="OpenWeek(2)" class="left_border_bold" style="cursor: pointer;">სამ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">სამ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="2" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="2" ></td>
                         <td style="" clock="0030"  check_clock="" wday="2" ></td>
@@ -950,7 +1053,7 @@ $(document).on("click", "#addinfosorce", function () {
                         <td style="" clock="2345"  check_clock="" wday="2" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday3">
-                        <td onclick="OpenWeek(3)" class="left_border_bold" style="cursor: pointer;">ოთხ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ოთხ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="3" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="3" ></td>
                         <td style="" clock="0030"  check_clock="" wday="3" ></td>
@@ -1049,7 +1152,7 @@ $(document).on("click", "#addinfosorce", function () {
                         <td style="" clock="2345"  check_clock="" wday="3" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday4">
-                        <td onclick="OpenWeek(4)" class="left_border_bold" style="cursor: pointer;">ხუთ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ხუთ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="4" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="4" ></td>
                         <td style="" clock="0030"  check_clock="" wday="4" ></td>
@@ -1148,7 +1251,7 @@ $(document).on("click", "#addinfosorce", function () {
                         <td style="" clock="2345"  check_clock="" wday="4" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday5">
-                        <td onclick="OpenWeek(5)" class="left_border_bold" style="cursor: pointer;">პარ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">პარ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="5" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="5" ></td>
                         <td style="" clock="0030"  check_clock="" wday="5" ></td>
@@ -1247,7 +1350,7 @@ $(document).on("click", "#addinfosorce", function () {
                         <td style="" clock="2345"  check_clock="" wday="5" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday6">
-                        <td onclick="OpenWeek(6)" class="left_border_bold" style="cursor: pointer;">შაბ</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">შაბ</td>
                 	    <td style="" clock="0000"  check_clock="" wday="6" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="6" ></td>
                         <td style="" clock="0030"  check_clock="" wday="6" ></td>
@@ -1346,7 +1449,7 @@ $(document).on("click", "#addinfosorce", function () {
                         <td style="" clock="2345"  check_clock="" wday="6" class="right_border_bold"></td>
                     </tr>
 	                <tr id="wday7" style="border-bottom: 2px solid black;">
-                        <td onclick="OpenWeek(7)" class="left_border_bold" style="cursor: pointer;">კვი</td>
+                        <td onclick="" class="left_border_bold" style="cursor: pointer;">კვი</td>
                 	    <td style="" clock="0000"  check_clock="" wday="7" class="left_border_bold"></td>
                         <td style="" clock="0015"  check_clock="" wday="7" ></td>
                         <td style="" clock="0030"  check_clock="" wday="7" ></td>
@@ -1508,6 +1611,8 @@ $(document).on("click", "#addinfosorce", function () {
 	<div  id="add-edit-form-weekADD" class="form-dialog" title="დამატება">
 	</div>
 	<div  id="add-edit-form-week" class="form-dialog" title="სამუშაო გრაფიკი">
+	</div>
+	<div  id="add-edit-form-cikle" class="form-dialog" title="სამუშაო ციკლი">
 	</div>
 	<div  id="add-edit-form-lang" class="form-dialog" title="სასაუბრო ენა">
 	</div>
