@@ -149,7 +149,9 @@
 			<div id="newsmain">
 			
 			</div>
-			
+			<!-- jQuery Dialog -->
+            <div  id="logout" class="form-dialog" title="გასვლა">
+            </div>
 		</body>
 	</html>
 <?php endif;?>

@@ -55,20 +55,20 @@ switch ($action) {
 		$name                     = $_REQUEST['name'];
 		$date                     = $_REQUEST['date'];
 		$holidays_category_id     = $_REQUEST['holidays_category_id'];
-		
-	
-		
+
 		if($name != ''){
-			if(!CheckHolidaysExist($name, $id)){
-				if ($id == '') {
-					AddHolidays($name, $date, $holidays_category_id);
-				}else {
-					SaveHolidays($id, $name, $date, $holidays_category_id);
+		    if ($id == '') {
+                if(!CheckHolidaysExist($name, $id)){
+                    if(!CheckHolidaysDateExist($date)){
+                        AddHolidays($name, $date, $holidays_category_id);
+                    }else{
+                        $error = 'ეს "' . $date . '" თარიღი უკვე არის სიაში!';
+                    }
+				} else {
+				    $error = '"' . $name . '" უკვე არის სიაში!';
 				}
-								
-			} else {
-				$error = '"' . $name . '" უკვე არის სიაში!';
-				
+			}else {
+				SaveHolidays($id, $name, $date, $holidays_category_id);
 			}
 		}
 		
@@ -129,6 +129,16 @@ function CheckHolidaysExist($name)
 	return false;
 }
 
+function CheckHolidaysDateExist($date)
+{
+    $res = mysql_fetch_assoc(mysql_query("	SELECT id
+                                            FROM   `holidays`
+                                            WHERE  DATE(date) = '$date' AND `actived` = 1"));
+    if($res['id'] != ''){
+        return true;
+    }
+    return false;
+}
 
 function GetHolidays($id)
 {

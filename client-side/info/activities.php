@@ -1,7 +1,7 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	= "server-side/info/work_shift.action.php";		//server side folder url
+		var aJaxURL	= "server-side/info/activities.action.php";		//server side folder url
 		var tName	= "example";													//table name
 		var fName	= "add-edit-form";												//form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
@@ -16,7 +16,7 @@
         
 		function LoadTable(){
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 10, "", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, "get_list", 8, "", 0, "", 1, "desc", "", change_colum_main);
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
@@ -26,29 +26,17 @@
 			var id		= $("#lang_id").val();
 			/* Dialog Form Selector Name, Buttons Array */
 			GetDialog(fName, 410, "auto", "");
-			$('#start_date,#end_date').timepicker({
+			$('#timer').timepicker({
 	        	hourMax: 23,
-	    		hourMin: 00,
-	    		minuteMax: 55,
-	    		minuteMin: 00,
-	    		stepMinute: 15,
-	    		minuteGrid: 15,
-	    		hourGrid: 3,
-	        	dateFormat: '',
-	            timeFormat: 'HH:mm'
-	    	});
-			$('#timeout,#start_timeout,#end_timeout').timepicker({
-	        	hourMax: 24,
 	    		hourMin: 00,
 	    		minuteMax: 59,
 	    		minuteMin: 00,
 	    		stepMinute: 1,
 	    		minuteGrid: 15,
-	    		hourGrid: 5,
+	    		hourGrid: 3,
 	        	dateFormat: '',
 	            timeFormat: 'HH:mm'
 	    	});
-			$( "#lang_id" ).focus();
 		}
 		
 	    // Add - Save
@@ -65,13 +53,11 @@
 	    	param.project_id	= $("#project_id").val();
 	    	param.comment	    = $("#comment").val();
 	    	param.pay	        = $("#pay").val();
-	    	param.timeout       = $("#timeout").val();
-	    	param.start_timeout = $("#start_timeout").val();
-	    	param.end_timeout   = $("#end_timeout").val();
+	    	param.timer	        = $("#timer").val();
 	    	
 			if(param.name == "" || param.color == '' || param.type == 0 || param.pay == 0 || param.project_id == 0){
 				alert("შეავსეთ ველი!");
-			}else{
+			}else {
 			    $.ajax({
 			        url: aJaxURL,
 				    data: param,
@@ -102,19 +88,12 @@
 	            $(this).attr('myvar','0');
 	        }
 	    });
-	   
     </script>
-    <style type="text/css">
-        #table_right_menu{
-            top: 42px;
-        }        
-        
-    </style>
 </head>
 
 <body>
 <div id="tabs" style="width: 95.5%;">
-<div class="callapp_head">ცვლები<hr class="callapp_head_hr"></div>
+<div class="callapp_head">აქტივობები<hr class="callapp_head_hr"></div>
 
 
 <div id="button_area">
@@ -135,15 +114,13 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 13%;">დასახელება</th>
-                <th style="width: 8%;">დასაწყისი</th>
-                <th style="width: 8%;">დასასრული</th>
-                <th style="width: 8%;">შესვენება</th>
-                <th style="width: 14%;">სამუშაო ტიპი</th>
-                <th style="width: 12%;">ანაზღაურებადი/არა ანაზღაურებადი</th>
-                <th style="width: 14%;">კომენტარი</th>
-                <th style="width: 14%;">პროექტი</th>
-                <th style="width: 5%;">ფერი</th>
+                <th style="width: 16%;">დასახელება</th>
+                <th style="width: 16%;">კატეგორია</th>
+                <th style="width: 16%;">ანაზღაურებადი/არა ანაზღაურებადი</th>
+                <th style="width: 16%;">კომენტარი</th>
+                <th style="width: 16%;">პროექტი</th>
+                <th style="width: 16%;">ხანგრძლივობა</th>
+                <th style="width: 16%;">ფერი</th>
             	<th class="check">#</th>
             </tr>
         </thead>
@@ -153,31 +130,25 @@
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input style="width: 95%;" type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
                 	<div class="callapp_checkbox">
@@ -191,8 +162,10 @@
 
     
     <!-- jQuery Dialog -->
-    <div id="add-edit-form" class="form-dialog" title="ცვლები">
+    <div id="add-edit-form" class="form-dialog" title="აქტივობები">
     	<!-- aJax -->
 	</div>
 </body>
 </html>
+
+

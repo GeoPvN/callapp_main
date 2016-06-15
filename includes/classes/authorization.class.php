@@ -196,6 +196,18 @@ class Authorization {
 		session_regenerate_id();
 		$this->sess_id 	= session_id();
 		$this->date		= date("Y-m-d H:i:s");
+		
+		$work_id = mysql_fetch_row(mysql_query("
+		    SELECT actived FROM `worker_action` WHERE actived = 1 AND person_id = $this->user_id AND DATE(start_date) = DATE(NOW())
+		    "));
+			
+		if($work_id[0] == ''){
+		    mysql_query("INSERT INTO `worker_action`
+		        (`person_id`, `start_date`, `actived`)
+		        VALUES
+		        ('$this->user_id', NOW(), '1')
+		        ");
+		}
 			
 		mysql_query("INSERT INTO `user_log`
                      (`user_id`, `session_id`, `ip`, `login_date`)
@@ -215,11 +227,6 @@ class Authorization {
 	function logout(){
 		session_start();
 		session_destroy();
-		$date = date("Y-m-d H:i:s");
-		$user_id = $_SESSION['USERID'];
-		mysql_query("UPDATE `user_log` SET
-                            `logout_date`='$date'
-                     WHERE  `user_id` = '$user_id' AND ISNULL(logout_date)");
 		
 		mysql_query("UPDATE `users` SET `logged`='0' WHERE `id`=$user_id");
 		unset($_SESSION['USERID']);	

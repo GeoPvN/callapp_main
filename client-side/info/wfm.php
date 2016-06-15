@@ -33,6 +33,20 @@ $(document).ready(function () {
     });
 });
 
+$(document).on("click", "#24st", function () {
+	if ($(this).is(':checked')) {
+		$('#start_time').val('00:00');
+		$('#end_time').val('24:00');
+		$("#start_time").prop('disabled', true);
+		$("#end_time").prop('disabled', true);
+	}else{
+		$('#start_time').val('');
+		$('#end_time').val('');
+		$("#start_time").prop('disabled', false);
+		$("#end_time").prop('disabled', false);
+	}
+});
+
 $(document).on("change", "#project_id", function () {
 	$('#work_table td').css('background', '#fff');
 	$.ajax({
@@ -43,9 +57,86 @@ $(document).on("change", "#project_id", function () {
     			if(data.error != ""){
     				alert(data.error);
     			}else{
+    				$("td[check_clock]").html('');
+
+    				
     				for(g=0;g < $(data.work).size();g++){
-    					for(i=parseInt(data.work[g].starttime);i < parseInt(data.work[g].endtime);i++){
-    						
+    					for(i=(parseInt(data.work[g].starttime)+15);i <= parseInt(data.work[g].endtime);i+=15){
+        					
+    						switch(i) {
+    						case 60:
+        		    	    	i+=40;
+        		    	        break;
+    						case 160:
+        		    	    	i+=40;
+        		    	        break;
+    						case 260:
+        		    	    	i+=40;
+        		    	        break;
+    						case 360:
+        		    	    	i+=40;
+        		    	        break;
+    						case 460:
+        		    	    	i+=40;
+        		    	        break;
+    						case 560:
+        		    	    	i+=40;
+        		    	        break;
+    						case 660:
+        		    	    	i+=40;
+        		    	        break;
+    						case 760:
+        		    	    	i+=40;
+        		    	        break;
+    						case 860:
+        		    	    	i+=40;
+        		    	        break;
+    						case 960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1460:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1560:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1660:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1760:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1860:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    }
     						if(i<9){
     							er='000'+i;
     						}else if(i<99){
@@ -55,6 +146,7 @@ $(document).on("change", "#project_id", function () {
         					}else{
             					er=i;
             				}
+    						
     						intvar = parseInt($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(),10)
     						if($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background-color') == 'rgb(0, 128, 0)'){
    		    				   $("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(intvar + 1);
@@ -62,10 +154,12 @@ $(document).on("change", "#project_id", function () {
         						$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(1);
         		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background','green');
       		    			}
+        		    	   
     		    		}
+    		    		
     				}
     				for(o=0;o < $(data.break).size();o++){
-    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
+    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i+=5){
     						if(i<99){er='00'+i;}else{er=i;}
     						if(i<999){er='0'+i;}else{er=i;}
     						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
@@ -102,20 +196,287 @@ $(document).on("click", "#delete_week", function () {
                     alert(data.error);
                 } else {
                     $("#check-all-import-actived").attr("checked", false);
-                    GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "desc", '', "<'F'lip>");
+                    GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val()+ '&hidde_cycle=' + $('#hidde_cycle').val(), 0, "", 1, "asc", [5], "<'F'lip>");
                 }
             }
         });
     }
+
+    $.ajax({
+        url: aJaxURL_object,
+        data: 'act=get_wk&project_id='+$('#project_id').val(),
+        success: function(data) {
+    		if(typeof(data.error) != "undefined"){
+    			if(data.error != ""){
+    				alert(data.error);
+    			}else{
+    				$('#work_table td').css('background', '#fff');
+    				$("td[check_clock]").html('');
+    				for(g=0;g < $(data.work).size();g++){
+        				
+    					for(i=(parseInt(data.work[g].starttime)+15);i < parseInt(data.work[g].endtime);i+=15){
+    						switch(i) {
+    						case 60:
+        		    	    	i+=40;
+        		    	        break;
+    						case 160:
+        		    	    	i+=40;
+        		    	        break;
+    						case 260:
+        		    	    	i+=40;
+        		    	        break;
+    						case 360:
+        		    	    	i+=40;
+        		    	        break;
+    						case 460:
+        		    	    	i+=40;
+        		    	        break;
+    						case 560:
+        		    	    	i+=40;
+        		    	        break;
+    						case 660:
+        		    	    	i+=40;
+        		    	        break;
+    						case 760:
+        		    	    	i+=40;
+        		    	        break;
+    						case 860:
+        		    	    	i+=40;
+        		    	        break;
+    						case 960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1460:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1560:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1660:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1760:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1860:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    }
+    						if(i<9){
+    							er='000'+i;
+    						}else if(i<99){
+        						er='00'+i;
+        					}else if(i<999){
+                				er='0'+i;
+        					}else{
+            					er=i;
+            				}
+    						intvar = parseInt($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(),10)
+    						if($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background-color') == 'rgb(0, 128, 0)'){
+   		    				   $("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(intvar + 1);
+      		    			}else{
+        						$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(1);
+        		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background','green');
+      		    			}
+        		    	    
+    		    		}
+    		    		
+    				}
+    				for(o=0;o < $(data.break).size();o++){
+    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i+=5){
+    						if(i<99){er='00'+i;}else{er=i;}
+    						if(i<999){er='0'+i;}else{er=i;}
+    						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+    						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").html('');
+    		    		}
+    				}
+    			}
+    		}
+        }
+    })
+
+});
+
+$(document).on("click", "#check-all-cikle", function () {
+	$("#table_cikle  INPUT[type='checkbox']").prop("checked", $("#check-all-cikle").is(":checked"));
+});
+
+$(document).on("click", "#delete_weeks", function () {
+
+    var data = $("#table_cikle .check:checked").map(function () { //Get Checked checkbox array
+        return this.value;
+    }).get();
+
+    for (var i = 0; i < data.length; i++) {
+        $.ajax({
+            url: aJaxURL_object,
+            type: "POST",
+            data: "act=delete_cikle&id=" + data[i],
+            dataType: "json",
+            success: function (data) {
+                if (data.error != "") {
+                    alert(data.error);
+                } else {
+                    $("#check-all-cikle").attr("checked", false);
+                    GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 5, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", [2,3,4], "<'F'lip>");
+                }
+            }
+        });
+    }
+
+    
+	$.ajax({
+        url: aJaxURL_object,
+        data: 'act=get_wk&project_id='+$('#project_id').val(),
+        success: function(data) {
+    		if(typeof(data.error) != "undefined"){
+    			if(data.error != ""){
+    				alert(data.error);
+    			}else{
+    				$('#work_table td').css('background', '#fff');
+    				$("td[check_clock]").html('');
+    				for(g=0;g < $(data.work).size();g++){
+    					for(i=(parseInt(data.work[g].starttime)+15);i < parseInt(data.work[g].endtime);i+=15){
+    						switch(i) {
+    						case 60:
+        		    	    	i+=40;
+        		    	        break;
+    						case 160:
+        		    	    	i+=40;
+        		    	        break;
+    						case 260:
+        		    	    	i+=40;
+        		    	        break;
+    						case 360:
+        		    	    	i+=40;
+        		    	        break;
+    						case 460:
+        		    	    	i+=40;
+        		    	        break;
+    						case 560:
+        		    	    	i+=40;
+        		    	        break;
+    						case 660:
+        		    	    	i+=40;
+        		    	        break;
+    						case 760:
+        		    	    	i+=40;
+        		    	        break;
+    						case 860:
+        		    	    	i+=40;
+        		    	        break;
+    						case 960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1460:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1560:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1660:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1760:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1860:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 1960:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2060:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2160:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2260:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    case 2360:
+        		    	    	i+=40;
+        		    	        break;
+        		    	    }
+    						if(i<9){
+    							er='000'+i;
+    						}else if(i<99){
+        						er='00'+i;
+        					}else if(i<999){
+                				er='0'+i;
+        					}else{
+            					er=i;
+            				}
+    						intvar = parseInt($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(),10)
+    						if($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background-color') == 'rgb(0, 128, 0)'){
+   		    				   $("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(intvar + 1);
+      		    			}else{
+        						$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(1);
+        		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background','green');
+      		    			}
+        		    	    
+    		    		}
+    		    		
+    				}
+    				for(o=0;o < $(data.break).size();o++){
+    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i+=5){
+    						if(i<99){er='00'+i;}else{er=i;}
+    						if(i<999){er='0'+i;}else{er=i;}
+    						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
+    						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").html('');
+    		    		}
+    				}
+    			}
+    		}
+        }
+    })
 
 });
 
 $(document).on("click", "#check-all-lang", function () {
 	$("#table_lang  INPUT[type='checkbox']").prop("checked", $("#check-all-lang").is(":checked"));
 });
-$(document).on("click", "#check-all-cikle", function () {
-	$("#table_cikle  INPUT[type='checkbox']").prop("checked", $("#check-all-lang").is(":checked"));
-});
+
 $(document).on("click", "#delete_lang", function () {
 
     var data = $("#table_lang .check:checked").map(function () { //Get Checked checkbox array
@@ -135,7 +496,7 @@ $(document).on("click", "#delete_lang", function () {
                     $("#check-all-lang").attr("checked", false);
                     week_day_graphic_id = $('#week_day_graphic_id').val();
                     GetDataTable('table_lang', aJaxURL_object, 'get_list_lang', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-                    GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "desc", '', "<'F'lip>");
+                    GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "asc", [5], "<'F'lip>");
                 }
             }
         });
@@ -166,7 +527,7 @@ $(document).on("click", "#delete_infosorce", function () {
                     $("#check-all-infosorce").attr("checked", false);
                     week_day_graphic_id = $('#week_day_graphic_id').val();
                     GetDataTable('table_infosorce', aJaxURL_object, 'get_list_infosorce', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-                    GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "desc", '', "<'F'lip>");
+                    GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val(), 0, "", 1, "asc", [5], "<'F'lip>");
                 }
             }
         });
@@ -202,7 +563,6 @@ $(document).on("click", "#holi_creap", function () {
 	}
 	if(ch_id == 1){
 		if($('#start_time').val() != '' && $('#end_time').val() != '' && $('#ext_number').val() != '' && $("#week_day_id").val()!=''){
-		$("td[wday='"+$("#wday").val()+"']").css('background','#FFF');
 		$.ajax({
 	        url: aJaxURL_object,
 		    data: 'act=work_gr&project_id='+$('#project_id').val()+'&start_time='+$("#start_time").val()+'&end_time='+$("#end_time").val()+'&wday='+$("#week_day_id").val() + '&week_day_graphic_id=' + $("#week_day_graphic_id").val() + '&type=' + $("#type").val()+ '&hidde_cycle=' + $("#hidde_cycle").val(),
@@ -213,7 +573,7 @@ $(document).on("click", "#holi_creap", function () {
 					}else{
 						CloseDialog("add-edit-form-weekADD");
 						$("#hidde_cycle").val(data.new_cycle)
-						GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");
+						GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$("#wday").val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "asc", [5], "<'F'lip>");
 						$.ajax({
 					        url: aJaxURL_object,
 						    data: 'act=get_wk&project_id='+$('#project_id').val(),
@@ -222,8 +582,84 @@ $(document).on("click", "#holi_creap", function () {
 									if(data.error != ""){
 										alert(data.error);
 									}else{
-										for(g=0;g < $(data.work).size();g++){
-					    					for(i=parseInt(data.work[g].starttime);i < parseInt(data.work[g].endtime);i++){
+										$('#work_table td').css('background', '#fff');
+					    				$("td[check_clock]").html('');
+					    				for(g=0;g < $(data.work).size();g++){
+					    					for(i=(parseInt(data.work[g].starttime)+15);i < parseInt(data.work[g].endtime);i+=15){
+					    						switch(i) {
+					    						case 60:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 160:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 260:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 360:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 460:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 560:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 660:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 760:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 860:
+					        		    	    	i+=40;
+					        		    	        break;
+					    						case 960:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1060:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1160:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1260:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1360:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1460:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1560:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1660:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1760:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1860:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 1960:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 2060:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 2160:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 2260:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    case 2360:
+					        		    	    	i+=40;
+					        		    	        break;
+					        		    	    }
 					    						if(i<9){
 					    							er='000'+i;
 					    						}else if(i<99){
@@ -233,13 +669,19 @@ $(document).on("click", "#holi_creap", function () {
 					        					}else{
 					            					er=i;
 					            				}
-					        					
-					    		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background','green');
-					    		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(data.work[g].ext_number);
+					    						intvar = parseInt($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(),10)
+					    						if($("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background-color') == 'rgb(0, 128, 0)'){
+					   		    				   $("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(intvar + 1);
+					      		    			}else{
+					        						$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").html(1);
+					        		    			$("td[clock='"+er+"'][wday='"+data.work[g].wday+"']").css('background','green');
+					      		    			}
+					        		    	    
 					    		    		}
+					    		    		
 					    				}
 					    				for(o=0;o < $(data.break).size();o++){
-					    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i++){
+					    					for(i=parseInt(data.break[o].breakstarttime);i < parseInt(data.break[o].breakendtime);i+=5){
 					    						if(i<99){er='00'+i;}else{er=i;}
 					    						if(i<999){er='0'+i;}else{er=i;}
 					    						$("td[clock='"+er+"'][wday='"+data.break[o].wday+"']").css('background','yellow');
@@ -351,7 +793,7 @@ $(document).on("click", "#add_cirkle", function () {
     	            }
     	        }
     	    };
-    	GetDialog("add-edit-form-cikle", 400, "auto", buttons, 'top top');
+    	GetDialog("add-edit-form-cikle", 630, "auto", buttons, 'top top');
     	$.ajax({
             url: aJaxURL_object,
             type: "POST",
@@ -363,7 +805,7 @@ $(document).on("click", "#add_cirkle", function () {
                     } else {
                     	$('#add-edit-form-cikle').html(data.week);
                     	GetButtons("add_weeks","delete_weeks");
-                    	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
+                    	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 5, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", [2,3,4], "<'F'lip>");
                     }
             }
         });
@@ -379,7 +821,7 @@ $(document).on("click", "#add_weeks", function () {
     	            id: "cancel-dialog",
     	            click: function () {
     	            	$(this).dialog("close");
-    	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
+    	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 5, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", [2,3,4], "<'F'lip>");
     	            }
     	        }
     	    };
@@ -395,44 +837,12 @@ $(document).on("click", "#add_weeks", function () {
                     } else {
                     	$('#add-edit-form-week').html(data.week);
                     	GetButtons("add_week","delete_week");
-                    	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&cycle="+0, 0, "", 1, "desc", '', "<'F'lip>");
+                    	GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&cycle="+0, 0, "", 1, "asc", [5], "<'F'lip>");
                     }
             }
         });
 	
 });
-
-// function OpenWeek(id){
-// 	if($('#project_id').val()!=0){
-//     	var buttons = {
-//             	"cancel": {
-//     	            text: "დახურვა",
-//     	            id: "cancel-dialog",
-//     	            click: function () {
-//     	            	$(this).dialog("close");
-//     	            }
-//     	        }
-//     	    };
-//     	GetDialog("add-edit-form-week", 770, "auto", buttons, 'top top');
-//     	$.ajax({
-//             url: aJaxURL_object,
-//             type: "POST",
-//             data: "act=get_week&week_id=" + id + '&project_id=' + $('#project_id').val(),
-//             dataType: "json",
-//             success: function (data) {
-//                     if (data.error != "") {
-//                         alert(data.error);
-//                     } else {
-//                     	$('#add-edit-form-week').html(data.week);
-//                     	GetButtons("add_week","delete_week");
-//                     	GetDataTable('table_week', aJaxURL_object, 'table_week', 6, "client_id="+client_id+"&project_id="+project_id+"&wday="+id, 0, "", 1, "desc", '', "<'F'lip>");
-//                     }
-//             }
-//         });
-// 	}else{
-// 	    alert('აირჩიეთ პროექტი!')
-// 	}
-// }
 
 $(document).on("dblclick", "#table_week tbody tr", function () {
 	var buttons = {
@@ -484,7 +894,7 @@ $(document).on("dblclick", "#table_cikle tbody tr", function () {
 	            id: "cancel-dialog",
 	            click: function () {
 	            	$(this).dialog("close");
-	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 3, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", '', "<'F'lip>");
+	            	GetDataTable('table_cikle', aJaxURL_object, 'table_cikle', 5, "client_id="+client_id+"&project_id="+project_id, 0, "", 1, "desc", [2,3,4], "<'F'lip>");
 	            }
 	        }
 	    };
@@ -501,7 +911,7 @@ $(document).on("dblclick", "#table_cikle tbody tr", function () {
                 } else {
                 	$('#add-edit-form-week').html(data.week);
                 	GetButtons("add_week","delete_week");
-                	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&hidde_cycle="+cycle, 0, "", 1, "desc", '', "<'F'lip>");
+                	GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&hidde_cycle="+cycle, 0, "", 1, "asc", [5], "<'F'lip>");
                 }
         }
     });
@@ -594,7 +1004,7 @@ $(document).on("click", "#add_lang", function () {
                 } else {
                 	week_day_graphic_id = $('#week_day_graphic_id').val()
                 	GetDataTable('table_lang', aJaxURL_object, 'get_list_lang', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-                	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+'&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");
+                	GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+'&hidde_cycle=' + data.new_cycle, 0, "", 1, "asc", [5], "<'F'lip>");
                 }
             }
         });
@@ -613,7 +1023,7 @@ $(document).on("click", "#add_infosorce", function () {
             success: function (data) {
             	week_day_graphic_id = $('#week_day_graphic_id').val()
             	GetDataTable('table_infosorce', aJaxURL_object, 'get_list_infosorce', 2, "week_day_graphic_id="+week_day_graphic_id, 0, "", 1, "desc", '', "<'F'lip>");
-            	GetDataTable('table_week', aJaxURL_object, 'table_week', 7, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "desc", '', "<'F'lip>");  
+            	GetDataTable('table_week', aJaxURL_object, 'table_week', 9, "client_id="+client_id+"&project_id="+project_id+"&wday="+$('#wday').val()+ '&hidde_cycle=' + data.new_cycle, 0, "", 1, "asc", [5], "<'F'lip>");  
             }
         });
 	}else{
@@ -695,6 +1105,12 @@ $(document).on("click", "#addinfosorce", function () {
 .right_border_bold{
     border-right: 2px solid !important;
 }
+#table_cikle td:nth-child(3),
+#table_cikle td:nth-child(4),
+#table_cikle td:nth-child(5),
+#table_week td:nth-child(5)  {
+    text-align: right;
+}
 </style>
 </head>
 
@@ -725,7 +1141,7 @@ $(document).on("click", "#addinfosorce", function () {
         display:none;
         }
 	    </style>
-               <td style="width: ;"><button id="add_cirkle">ციკლი</button></td>
+               <td style="width: ;"><button id="add_cirkle">სამუშაო გრაფიკი</button></td>
                 <span style="margin-right: 10px;width: 250px;">აირჩიე პროექტი</span><select id="project_id"></select>
 	            <table class="dialog-form-table" id="work_table">
                     <tr>
@@ -855,697 +1271,131 @@ $(document).on("click", "#addinfosorce", function () {
                 	    <th style="width: ;" class="right_border_bold">45</th>
                     </tr>
     	            <tr id="wday1">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ორშ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="1" class="left_border_bold"></td>
-                	    <td style="" clock="0015"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0030"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0045"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0100"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0115"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0130"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0145"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0200"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0215"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0230"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0245"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0300"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0315"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0330"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0345"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0400"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0415"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0430"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0445"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0500"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0515"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0530"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0545"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0600"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0615"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0630"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0645"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0700"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0715"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0730"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0745"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0800"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0815"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0830"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0845"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="0900"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0915"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0930"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="0945"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1000"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1015"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1030"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1045"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1100"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1115"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1130"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1145"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1200"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1215"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1230"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1245"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1300"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1315"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1330"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1345"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1400"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1415"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1430"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1445"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1500"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1515"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1530"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1545"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1600"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1615"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1630"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1645"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1700"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1715"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1730"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1745"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1800"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1815"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1830"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1845"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="1900"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1915"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1930"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="1945"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="2000"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2015"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2030"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2045"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="2100"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2115"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2130"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2145"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="2200"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2215"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2230"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2245"  check_clock="" wday="1" class="right_border_bold"></td>
-                	    <td style="" clock="2300"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2315"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2330"  check_clock="" wday="1" ></td>
-                	    <td style="" clock="2345"  check_clock="" wday="1" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">ორშ</td>
+                        <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="1" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="1" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="1" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="1" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="1" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="1" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="1" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="1" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
+                	    
                     </tr>
 	                <tr id="wday2">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">სამ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="2" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="2" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="2" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="2" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="2" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="2" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">სამ</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="2" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="2" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="2" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="2" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="2" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="2" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="2" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="2" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	                <tr id="wday3">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ოთხ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="3" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="3" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="3" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="3" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="3" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="3" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">ოთხ</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="3" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="3" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="3" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="3" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="3" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="3" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="3" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="3" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	                <tr id="wday4">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">ხუთ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="4" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="4" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="4" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="4" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="4" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="4" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">ხუთ</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="4" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="4" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="4" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="4" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="4" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="4" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="4" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="4" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	                <tr id="wday5">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">პარ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="5" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="5" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="5" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="5" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="5" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="5" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">პარ</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="5" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="5" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="5" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="5" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="5" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="5" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="5" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="5" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	                <tr id="wday6">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">შაბ</td>
-                	    <td style="" clock="0000"  check_clock="" wday="6" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="6" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="6" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="6" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="6" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="6" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">შაბ</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="6" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="6" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="6" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="6" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="6" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="6" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="6" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="6" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	                <tr id="wday7" style="border-bottom: 2px solid black;">
-                        <td onclick="" class="left_border_bold" style="cursor: pointer;">კვი</td>
-                	    <td style="" clock="0000"  check_clock="" wday="7" class="left_border_bold"></td>
-                        <td style="" clock="0015"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0030"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0045"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0100"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0115"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0130"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0145"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0200"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0215"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0230"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0245"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0300"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0315"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0330"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0345"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0400"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0415"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0430"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0445"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0500"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0515"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0530"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0545"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0600"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0615"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0630"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0645"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0700"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0715"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0730"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0745"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0800"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0815"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0830"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0845"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="0900"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0915"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0930"  check_clock="" wday="7" ></td>
-                        <td style="" clock="0945"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1000"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1015"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1030"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1045"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1100"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1115"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1130"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1145"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1200"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1215"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1230"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1245"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1300"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1315"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1330"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1345"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1400"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1415"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1430"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1445"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1500"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1515"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1530"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1545"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1600"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1615"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1630"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1645"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1700"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1715"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1730"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1745"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1800"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1815"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1830"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1845"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="1900"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1915"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1930"  check_clock="" wday="7" ></td>
-                        <td style="" clock="1945"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="2000"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2015"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2030"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2045"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="2100"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2115"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2130"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2145"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="2200"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2215"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2230"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2245"  check_clock="" wday="7" class="right_border_bold"></td>
-                        <td style="" clock="2300"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2315"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2330"  check_clock="" wday="7" ></td>
-                        <td style="" clock="2345"  check_clock="" wday="7" class="right_border_bold"></td>
+                        <td onclick="" class="left_border_bold" style="">კვი</td>
+                	    <?php 
+                        for($i = 0;$i <= 23;$i++){
+                            if (strlen($i) != 2){
+                            echo '<td style="" clock="0'.$i.'15"  check_clock="" wday="7" class="left_border_bold"></td>
+                                  <td style="" clock="0'.$i.'30"  check_clock="" wday="7" ></td>
+                                  <td style="" clock="0'.$i.'45"  check_clock="" wday="7" ></td>
+                	              <td style="" clock="'.((($i+1)=='10')?'':"0").''.($i+1).'00"  check_clock="" wday="7" class="right_border_bold"></td>';
+                            }else{
+                                echo '<td style="" clock="'.$i.'15"  check_clock="" wday="7" class="left_border_bold"></td>
+                                      <td style="" clock="'.$i.'30"  check_clock="" wday="7" ></td>
+                                      <td style="" clock="'.$i.'45"  check_clock="" wday="7" ></td>
+                	                  <td style="" clock="'.($i+1).'00"  check_clock="" wday="7" class="right_border_bold"></td>';
+                            }
+                        }
+                        ?>
                     </tr>
 	            </table>
 	            <table class="dialog-form-table">
@@ -1610,9 +1460,9 @@ $(document).on("click", "#addinfosorce", function () {
 	</div>
 	<div  id="add-edit-form-weekADD" class="form-dialog" title="დამატება">
 	</div>
-	<div  id="add-edit-form-week" class="form-dialog" title="სამუშაო გრაფიკი">
+	<div  id="add-edit-form-week" class="form-dialog" title="სადგური/ სამუშაო დრო/ კვირა">
 	</div>
-	<div  id="add-edit-form-cikle" class="form-dialog" title="სამუშაო ციკლი">
+	<div  id="add-edit-form-cikle" class="form-dialog" title="სატელეფონო სადგური/სთ/ოპერატორი">
 	</div>
 	<div  id="add-edit-form-lang" class="form-dialog" title="სასაუბრო ენა">
 	</div>

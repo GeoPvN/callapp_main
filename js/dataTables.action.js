@@ -574,12 +574,16 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
 	                    if (data.error != "") {
 	                        alert(data.error);
 	                    } else {
+	                    	if(other_act == 1){
+	                    		LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
+	                    	}else{
 	                    	LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
 	                    	LoadTable('index',colum_number,main_act,change_colum_main);
 	                    	LoadTable('client',6,'get_list_person',"<'F'lip>");
 	                    	LoadTable('project',5,'get_list_project',"<'F'lip>");
 	                    	LoadTable('number',5,'get_list_number',"<'F'lip>");
 	                    	LoadTable('import',6,'get_list_import',"<'F'lip>");
+	                    	}
 	                        $("#" + check).attr("checked", false);
 	                    }
                 }
@@ -596,6 +600,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
     $(document).on("dialogbeforeclose", "#" + fname, function( event, ui ) {
     	if($(this).is(":ui-dialog") || $(this).is(":data(dialog)")){
 			$(this).dialog("destroy");
+			$(this).html('');
 		}
 	});
 }

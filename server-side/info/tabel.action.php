@@ -20,56 +20,96 @@ switch ($action) {
  		$data		= array('page'	=> $page);
 		
 		break; 
+	case 'get_deep':	    
+	
+	    $page		= GetBalanceDeep();
+	    $data		= array('page'	=> $page);
+	
+	    break;
+    case 'gdl':
+    
+        $page		= gdl();
+        $data		= array('page'	=> $page);
+    
+        break;
+	    
+    case 'check_status':
+        
+        $person_id     = $_SESSION[USERID];
+        
+        $res = mysql_fetch_assoc(mysql_query("SELECT  actived
+                                              FROM  worker_action
+                                              WHERE  person_id = 1
+                                              ORDER BY id DESC
+                                              LIMIT 1"));
+	
+    	if($res[actived] == 0){
+    		$check = 1;
+    	}else{
+    	    $check = 0;
+    	}
+        $data		= array('check'	=> $check);
+    
+        break;
 	case 'save_act':
-		$person_id  = $_REQUEST['user'];
-		$pwd        = $_REQUEST['pwd'];
-		$action     = $_REQUEST['action'];
-		$check      = CheckPassword($person_id, $pwd);
+	    
+		$person_id     = $_SESSION[USERID];
+		$pwd           = $_REQUEST['pwd'];
+		$action        = $_REQUEST['action'];
+		$comment_start = $_REQUEST['comment_start'];
+		$comment_end   = $_REQUEST['comment_end'];
+		$check         = CheckPassword($person_id, $pwd);
 		
-
-			 switch ($action){
-				case '1' :
-					if(CheckHere($person_id)){
-						WorkerStart($person_id);
-					}else{
-						$error = "შეცდომა: " . GetName($person_id) . "  უკვე არის აღრიცხული";
-					}			
-					break;
-				case '2' :
-					if(!CheckHere($person_id)){
-						WorkerEnd($person_id);
-					}else{
-						$error = "შეცდომა: " . GetName($person_id) . "  არ  არის აღრიცხული";
-					}
-					break;
+            switch ($action){
+// 				case '1' :
+// 					if(CheckHere($person_id)){
+// 						$status = WorkerStart($person_id);
+// 					}else{
+// 						$error = "შეცდომა:  უკვე არის აღრიცხული";
+// 					}			
+// 					break;
+// 				case '2' :
+// 					if(!CheckHere($person_id)){
+// 						$status = WorkerEnd($person_id);
+// 					}else{
+// 						$error = "შეცდომა:  არ  არის აღრიცხული";
+// 					}
+// 					break;
 				case '3' :
-					GoTimeOut($person_id);
+				    $check=CheckGoTimeOut($person_id);
+				    
+				    if ($check==3) {
+				        $error = "შეცდომა: არ გაქვთ გაკეთებული მოსვლა";
+				    }else {
+    				    if($check==1){
+    					    $status = GoTimeOut($person_id,$comment_start);
+    					    
+    				    }else{
+    						$error = "შეცდომა:  უკვე არის შესვენებაზე";
+    					}
+				    }
 					break;
 				case '4' :
-					BackTimeOut($person_id);
+				    if(!CheckBackTimeOut($person_id)){
+					    $status = BackTimeOut($person_id,$comment_end);
+				    }else{
+						$error = "შეცდომა:  ჯერ შესვენებაზე გადი";
+					}
 					break;
 				default:
 					break;
 			}
+			
+			$data = array('status'	=> $status[0], 'done' => $status[1], 'timer'=>$status[2]);
 		
 		break;
 	case 'get_balance' :
+	    
 		$page = GetBalance();
  		$data = array('page'	=> $page);
  		
  		break;
-	case 'check_password' :
-		$person_id = $_REQUEST['user'];
-		$pwd       = $_REQUEST['pwd'];
-		$check = CheckPassword($person_id, $pwd);
-		
-		if($check){
-			$page = 'true';
-			$data = array('page'	=> $page);
-		}else{
-			$error = "პაროლი არასწორია!";
-		}
-		break;
+	
     default:
        $error = 'Action is Null';
 }
@@ -84,15 +124,6 @@ echo json_encode($data);
  * ******************************
  */
 
-function GetName($person_id){
-	
-	$res = mysql_fetch_assoc(mysql_query("SELECT   name AS `name`
-											FROM   persons
-										   WHERE   id =$person_id"));
-	
-	return $res['name'];
-}
-
 function WorkerStart($person_id){
 	
 	$date = date('Y-m-d H:i:s');
@@ -102,6 +133,8 @@ function WorkerStart($person_id){
 				 VALUES
 				     ($person_id, '$date', 1)
 			    ");
+	
+	return  $data=1;
 }
 
 function WorkerEnd($person_id){
@@ -117,35 +150,122 @@ function WorkerEnd($person_id){
 				end_date = '$date',
 				actived  = 0
 				WHERE    person_id = $person_id AND id = $res[id]");
+	
+	return  $data=4;
 }
 
-function GoTimeOut($person_id){
+function GoTimeOut($person_id,$comment_start){
 	
-	$date = date('Y-m-d H:i:s');
+	$date = date('H:i:s');
 	
-	$res = mysql_fetch_assoc(mysql_query("SELECT  MAX(id) AS `id`
+	$res = mysql_fetch_assoc(mysql_query("  SELECT  MAX(id) AS `id`
 											FROM  worker_action
 											WHERE person_id = $person_id"));
 	
-	mysql_query("UPDATE worker_action
-				 SET
-				 timeout_start_date = '$date',
-				 actived            = 2
-				 WHERE person_id    = $person_id AND id = $res[id]");
+    mysql_query("INSERT INTO `worker_action_break`
+                (`worker_action_id`, `start_date`, `end_date`, `comment_start`, `comment_end`)
+                VALUES
+                ('$res[id]', '$date', NULL, '$comment_start', '');");
+    
+    $user_id        = $_SESSION['USERID'];
+    $logout_actions = $_REQUEST['logout_actions'];
+    $logout_comment = $_REQUEST['logout_comment'];
+     
+    mysql_query("UPDATE `user_log` SET
+                        `logout_date`= NOW(),
+                        `comment`='$logout_comment',
+                        `work_activities_id`='$logout_actions'
+                 WHERE  `user_id` = '$user_id' AND ISNULL(logout_date)");
+    
+    if($logout_actions == 0){
+        $date = date('Y-m-d H:i:s');
+        
+        $res = mysql_fetch_assoc(mysql_query("SELECT  MAX(id) AS `id`
+            FROM  worker_action
+            WHERE person_id = $person_id"));
+        
+        mysql_query("UPDATE worker_action
+                    SET
+                    end_date = '$date',
+                    actived  = 0
+                    WHERE    person_id = $person_id AND id = $res[id]");
+        
+        unset($_SESSION['USERID']);
+        unset($_SESSION['lifetime']);
+        $data[1]=1;
+    }
+    $data[0]=2;
+    
+    $res_timer = mysql_fetch_assoc(mysql_query("SELECT TIME_TO_SEC(timer) AS `timer`
+                                                FROM work_activities
+                                                WHERE id = $logout_actions"));
+    $data[2]=$res_timer[timer];
+    
+    return $data;
+	
+}
+function CheckGoTimeOut($person_id){
+    $date = date('H:i:s');
+    
+    $res_num = mysql_fetch_assoc(mysql_query("SELECT  MAX(id) AS `id`
+                                              FROM  worker_action
+                                              WHERE person_id = $person_id AND actived=1"));
+    
+    if ($res_num[id]==null || empty($res_num[id])) {
+        return 3;
+    }else {
+        
+        $break_check = mysql_num_rows(mysql_query(" SELECT id
+                                                    FROM `worker_action_break`
+                                                    WHERE actived = 1 AND worker_action_id = '$res_num[id]' AND ISNULL(end_date)"));
+        
+        if($break_check == 0){
+            return 1;
+        }else{
+            return 0;
+        }  
+    }
 }
 
-function BackTimeOut($person_id){
-	$date = date('Y-m-d H:i:s');
+function CheckBackTimeOut($person_id){
+    $date = date('H:i:s');
+
+    $res = mysql_fetch_assoc(mysql_query("  SELECT  MAX(id) AS `id`
+                                            FROM  worker_action
+                                            WHERE person_id = $person_id"));
+
+    $break_check = mysql_num_rows(mysql_query(" SELECT id
+                                                FROM `worker_action_break`
+                                                WHERE actived = 1 AND worker_action_id = '$res[id]' AND ISNULL(end_date)"));
+
+    if($break_check == 1){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+function BackTimeOut($person_id,$comment_end){
+	$date = date('H:i:s');
 	
-	$res = mysql_fetch_assoc(mysql_query("SELECT  MAX(id) AS `id`
-			FROM  worker_action
-			WHERE person_id = $person_id"));
+	$res = mysql_fetch_assoc(mysql_query("  SELECT  MAX(id) AS `id`
+                                			FROM  worker_action
+                                			WHERE person_id = $person_id"));
 	
-	mysql_query("UPDATE worker_action
-	SET
-	timeout_end_date = '$date',
-	actived          = 3
-	WHERE person_id  = $person_id AND id = $res[id]");
+	mysql_query("UPDATE `worker_action_break` SET
+                        `end_date`='$date',
+	                    `comment_end`='$comment_end'
+                 WHERE worker_action_id = '$res[id]'
+                 ORDER BY id DESC
+                 LIMIT 1");
+	$user_id        = $_SESSION['USERID'];
+	
+	mysql_query("INSERT INTO `user_log`
+        	    (`user_id`, `session_id`, `ip`, `login_date`)
+        	    VALUES
+        	    ($user_id, '', '', NOW())");
+	$data[0]=3;
+	return $data;
 }
 
 function CheckPassword($person_id, $pwd){
@@ -154,81 +274,40 @@ function CheckPassword($person_id, $pwd){
 											FROM   users
 											WHERE  person_id = $person_id"));
 	
-	
-		$check = true;
-	
-	
+	$check = true;
 	
 	return $check;
 }
 
-function GetWorkers($action)
-{
+function GetWorkers($action){
+    
 	$data = '';
+	if($_SESSION[USERID] != 1){
+	    $check_group=mysql_fetch_assoc(mysql_query("SELECT users.group_id
+                                                    FROM users
+                                                    WHERE users.id=$_SESSION[USERID] and users.actived=1"));
+	    
+	    if ($check_group[group_id]==1 && $action!=1 && $action!=2 && $action!=3 && $action!=4) {
+	        $check_user='';
+	    }else {
+	       $check_user = "AND `users`.id = $_SESSION[USERID]";
+	    }
+	}
 	
-	switch ($action){
-		case '1' :
-		$req = mysql_query("    SELECT	    DISTINCT `persons`.`id`,
-										    `persons`.`name`
-								FROM		`persons`
-		                        JOIN users ON persons.id = users.person_id
-								LEFT JOIN	`worker_action` ON `worker_action`.`person_id` = `persons`.`id`
-								WHERE       `users`.`group_id` in (1,3,15) AND (ISNULL(worker_action.actived) OR (SELECT actived FROM worker_action WHERE person_id = `persons`.`id` ORDER BY id DESC LIMIT 1) = 0)
-							");
-			break;
-		case '2' :
-			
-			$req = mysql_query("SELECT	    DISTINCT `persons`.`id`,
-										    `persons`.`name`
-								FROM		`persons`
-			                    JOIN users ON persons.id = users.person_id
-								LEFT JOIN	`worker_action` ON `worker_action`.`person_id` = `persons`.`id`
-							    WHERE       `users`.`group_id` in (1,3,15) AND (worker_action.actived = 1 OR worker_action.actived = 3 )
-								");
-			
-			break;
-			
-		case '3' :
-			
-			$req = mysql_query("SELECT	     DISTINCT `persons`.`id`,
-										    `persons`.`name`
-								FROM		`persons`
-			                    JOIN users ON persons.id = users.person_id
-								LEFT JOIN	`worker_action` ON `worker_action`.`person_id` = `persons`.`id`
-							    WHERE        worker_action.actived = 1 and `users`.`group_id` in (1,3,15)
-								");
-			
-			break;
-			
-		case '4' :
-			
-			$req = mysql_query("SELECT     DISTINCT `persons`.`id`,
-										  `persons`.`name`
-								FROM	  `persons`
-			                    JOIN users ON persons.id = users.person_id
-								LEFT JOIN `worker_action` ON `worker_action`.`person_id` = `persons`.`id`
-								WHERE      worker_action.actived = 2 and `users`.`group_id` in (1,3,15)
-								");
-			
-			break;
-			
-		default:
-			$req = mysql_query("SELECT	    DISTINCT `persons`.`id`,
-										    `persons`.`name`
-								FROM		`persons`
-			                    JOIN users ON persons.id = users.person_id
-								LEFT JOIN	`worker_action` ON `worker_action`.`person_id` = `persons`.`id`
-			                    WHERE       `users`.`group_id` in (1,3,15)
-								");
-			
-			break;	
+	$req = mysql_query("SELECT id, 
+                              `name` 
+                        FROM  `group`
+	                    WHERE `group`.id !=5
+						");
+	$report_checker = 1;
+	
+    if($report_checker == 1){
+	    $data = '<option value="0">ყველა</option>';
+	}else{
+		$data = '<option value="0" selected="selected"></option>';
 	}
 
-
-		$data = '<option value="0" selected="selected"></option>';
-
-
-	while( $res = mysql_fetch_assoc($req)){
+	while( $res = mysql_fetch_assoc($req)){	        
 			$data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
 		}
 
@@ -248,27 +327,67 @@ function CheckHere($person_id){
 	return $check;
 }
 
+function gdl(){
+    $res = mysql_query("SELECT id,`name` FROM `work_activities` WHERE actived = 1");
+    $option = '<option value="0">----</option>';
+    while ($req = mysql_fetch_assoc($res)){
+        $option .= '<option value="'.$req[id].'">'.$req[name].'</option>';
+    }
+    $data = '<div id="dialog-form">
+        	               <fieldset style="height: auto;">
+	                           <table class="dialog-form-table">
+	                                <tr>
+                    					<td>	
+                    						<label for="logout_actions">აქტივობა</label>
+                    					</td>
+                    			    </tr>
+                    				<tr>
+                    					<td>	
+                    						<select id="logout_actions" style="width:200px;">'.$option.'</select>
+                    					</td>
+                    			   </tr>
+	                               <tr>
+                    					<td>	
+                    						<label for="logout_comment">კომენტარი</label>
+                    					</td>
+                    			   </tr>
+	                               <tr>
+                    					<td>	
+                    						<textarea id="logout_comment" style="width:300px; height:100px;background: #fff;"></textarea>
+                    					</td>
+                    			   </tr>
+                    		   </table>
+            	           </fieldset>
+            		     </div>';
+    
+    return $data;
+}
+
 function GetComeIn($action){	
 	$data = '
 	<div id="dialog-form">
- 	    <fieldset style="width: 400px;">
+ 	    <fieldset style="width: 400px;height: 100%;">
 	    	<legend>ძირითადი ინფორმაცია</legend>
-			<div style=" margin-top: 2px; ">
-				<div style="width: 170px; display: inline;">
-			<table width="80%" class="dialog-form-table" cellpadding="10px" >
-				<tr	style="float: left">
-			
-					<td style="width: 170px;"><label for="user">მომხმარებელი</label></td>
-					<td>
-						<select id="user" class="idls">' . GetWorkers($action) . '</select>
-					</td>		
-																			
-				</tr>									
-			</table>
-						</div>				
-					</th>	
-				</div>
-			</div>
+    			<table width="100%"  cellpadding="10px" >
+    				<tr	style="float: left;">
+    					<td style="width: 170px;"><label for="user">მომხმარებელი</label></td>
+    					<td>
+    						<select id="user" class="idls">' . GetWorkers($action) . '</select>
+    					</td>
+    				</tr>
+    				<tr	style="float: left;margin-top: 12px;display:none;" id="showTr">
+    					<td style="width: 170px;"><label for="user">კომენტარი</label></td>
+    					<td>
+    						<textarea id="comment_start" style="background:#F8F8F8;width: 157px;border: 1px solid #75AD3B;height: 35px;"></textarea>
+    					</td>
+    				</tr>
+    			    <tr	style="float: left;margin-top: 12px;display:none;" id="showTr1">
+    					<td style="width: 170px;"><label for="user">კომენტარი</label></td>
+    					<td>
+    						<textarea id="comment_end" style="background:#F8F8F8;width: 157px;border: 1px solid #75AD3B;height: 35px;"></textarea>
+    					</td>
+    				</tr>
+    			</table>
         </fieldset>						
     </div>
 
@@ -279,6 +398,16 @@ function GetComeIn($action){
 }
 
 function GetBalance(){
+    $user_id = $_SESSION['USERID'];
+    
+    $check_group = mysql_fetch_assoc(mysql_query("SELECT group_id
+                                                  FROM  `users`
+                                                  WHERE  id = $user_id"));
+    $style = '';
+    if ($check_group[group_id] !=1 && $check_group[group_id] !=3 && $check_group[group_id] !=5) {
+      $style="display:none;";  
+    }
+    
 	$data = '
 	<div id="dialog-form">
  	    <fieldset style="width: 400px;">
@@ -288,7 +417,7 @@ function GetBalance(){
 			<table width="80%" class="dialog-form-table" cellpadding="10px" >
 				<tr	style="float: left">
 		
-					<td style="width: 170px;"><label for="user">მომხმარებელი</label></td>
+					<td style="width: 170px;"><label for="user">ჯგუფები</label></td>
 					<td>
 						<select id="user1" class="idls">' . GetWorkers(10) . '</select>
 					</td>
@@ -301,36 +430,110 @@ function GetBalance(){
 
 		<div style="margin-left:180px;"><input type="button" id="check" value="შემოწმება" /></div>
 	 </div>
-        </fieldset>
-								<br><br>
+    </fieldset>
+	<br><br>
 	<fieldset>	
-		<legend>ბალანსი</legend>									
-														
-		<div id="button_area">
-	            	<div class="left" style="width: 250px;">
-	            		<label for="search_start" class="left" style="margin: 5px 0 0 9px;">დასაწყისი</label>
-	            		<input type="text" name="search_start" id="search_start" class="inpt right"/>
-	            	</div>
-	            	<div class="right" style="width: 250px;">
-	            		<label for="search_end" class="left" style="margin:5px 0 0 3px">დასასრული</label>
-	            		<input type="text" name="search_end" id="search_end" class="inpt right" />
-            		</div>
-           </div>							
-								
-		   <table class="display" id="report">
+		<legend>ბალანსი</legend>	
+						    
+		    <div id="button_area">
+				<table>
+    				<tr>
+        				<td>
+            	        	<label for="search_start" class="left">დასაწყისი</label>
+                    		<input style="width: 120px; margin-left: 10px; margin-top: -5px;" type="text" name="search_start" id="search_start" class="inpt right"/>
+                    	</td>
+        				<td>
+                        	<label for="search_end" style="margin-left: 20px;" class="left" >დასასრული</label>
+                        	<input style="width: 120px; margin-left: 10px; margin-top: -5px;" type="text" name="search_end" id="search_end" class="inpt right" />
+                    	</td>
+        				<td>
+            			    <button style="width: 120px; margin-left: 20px; margin-top: -5px; '.$style.'" id="exel_button">სრული ექსელი</button>
+            			</td>
+    				</tr>
+			    </table>
+             </div>							
+			 
+			<div class="inner-table" style="width: 100%; margin-top: 33px;">
+			    <div id="container" style="width: 100%;">        	
+            		<div id="dynamic">
+                		<table class="display" id="report">
+                                    <thead>
+                                        <tr id="datatable_header">
+                                            <th>ID</th>
+                                            <th style="width: 120px !important;">თარიღი</th>
+                                            <th style="width: 200px !important;">პიროვნება</th>
+                                            <th style="width: 120px !important;">სამ. გეგმ. დრო</th>
+                                            <th style="width: 120px !important;">სამ. ფაქტ. დრო</th>
+                                            <th style="width: 120px !important;">შეს  გეგმ. დრო</th>
+                						    <th style="width: 120px !important;">შეს  ფაქტ. დრო</th>
+                                        </tr>
+                                    </thead>
+                                    <thead>
+                                        <tr class="search_header">
+                                            <th class="colum_hidden">
+                                            	<input type="text" name="search_id" value="ფილტრი" class="search_init" style="width: 80px !important;"/>
+                                            </th>
+                                            <th>
+                                            	<input type="text" name="search_number" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                                            <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                                            <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                                            <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                						    <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                                            <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+                                        </tr>
+                                   </thead>
+                				   <tfoot>
+                                        <tr id="datatable_header" class="search_header">
+                							<th style="width: 150px"></th>
+                							<th style="width: 150px"></th>
+                						    <th style="width: 150px; text-align: right;">ჯამი :<br>სულ :</th>
+                							<th style="width: 150px"></th>
+                							<th style="width: 150px;"></th>
+                							<th style="width: 150px;"></th>
+                						    <th style="width: 150px;"></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+		          </div>
+		      </fieldset>
+        </div>
+
+
+		
+    ';
+	return $data;
+}
+
+function GetBalanceDeep(){
+    $data = '
+	<div id="dialog-form">
+	<fieldset style="padding-top: 50px;">
+		<legend>ბალანსი</legend>
+        <div class="inner-table" style="width: 100%;">
+                <table class="display" id="report_deep">
                     <thead>
                         <tr id="datatable_header">
                             <th>ID</th>
-                            <th style="width: 120px !important;">თარიღი</th>
-                            <th style="width: 100% !important;">პიროვნება</th>
-                            <th style="width: 120px !important;">მოსვლა</th>
-                            <th style="width: 120px !important;">შეს. დაწყება</th>
-                            <th style="width: 120px !important;">შეს. დასრულება</th>
-                            <th style="width: 120px !important;">წასვლა</th>
-                            <th style="width: 120px !important;">შესვენების დრო</th>
-                            <th style="width: 120px !important;">მუშაობის  დრო</th>
-                            <th style="width: 120px !important;">+</th>
-                            <th style="width: 120px !important;">-</th>
+                            <th style="width: 120px !important;">Log In</th>
+                            <th style="width: 120px !important;">სამ. დასაწყისი</th>
+                            <th style="width: 120px !important;">შეს. გასვლა</th>
+                            <th style="width: 120px !important;">შეს. დაბრუნება</th>
+                            <th style="width: 120px !important;">სამ. დასრულება</th>
+                            <th style="width: 120px !important;">Log Out</th>
+                            <th style="width: 120px !important;">კომენტარი</th>
                         </tr>
                     </thead>
                     <thead>
@@ -340,9 +543,6 @@ function GetBalance(){
                             </th>
                             <th>
                             	<input type="text" name="search_number" value="ფილტრი" class="search_init" style="width: 80px !important;">
-                            </th>
-                            <th>
-                            	<input type="text" name="search_method" value="ფილტრი" class="search_init">
                             </th>
                             <th>
                             	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
@@ -364,29 +564,17 @@ function GetBalance(){
                             </th>
                         </tr>
                    </thead>
-                   <tfoot>
-                        <tr>
-                            <th>&nbsp;</th>                         
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                        </tr>
-                    </tfoot>
+                    
                 </table>
+            </div>
+        
 		</fieldset>
     </div>
 
 
-		
+
     ';
-	return $data;
+    return $data;
 }
 
 ?>

@@ -213,7 +213,11 @@
       		    		
        		    	});
       		    	  sub_menu += '</ul>';
-        		      menu += '<li class="give_me_blue" onclick="parent.location=\'' + url +'\'"><img id="img_'+ page_id +'" src="media/images/icons/'+data.nav[i].icon+'" alt="24 ICON" height="24" width="24"><a class="link_'+ page_id +'" href="'+ url +'">' + page_name + '</a>'+ sub_menu +'</li>';
+      		    	  if(page_id == 1){
+        		    	    menu += '<li logout="logout" onclick="parent.location=\'' + url +'\'"><img id="img_'+ page_id +'" src="media/images/icons/'+data.nav[i].icon+'" alt="24 ICON" height="24" width="24"><a class="link_'+ page_id +'" href="'+ url +'">' + page_name + '</a>'+ sub_menu +'</li>';
+      		    	  }else{
+        		    		menu += '<li class="give_me_blue" onclick="parent.location=\'' + url +'\'"><img id="img_'+ page_id +'" src="media/images/icons/'+data.nav[i].icon+'" alt="24 ICON" height="24" width="24"><a class="link_'+ page_id +'" href="'+ url +'">' + page_name + '</a>'+ sub_menu +'</li>';
+      		    	  }
       		    }else{
         		      menu += '<li onclick="parent.location=\'index.php?pg=' + page_id +'\'"><img id="img_'+ page_id +'" src="media/images/icons/'+data.nav[i].icon+'" alt="24 ICON" height="24" width="24"><a id="link_'+ page_id +'" href="index.php?pg=' + page_id +'">' + page_name + '</a></li>';
       		    }
@@ -235,14 +239,55 @@
         }
     });		
 	$(document).on("click", "#menuwrapper ul li", function () {
-    	$("#menuwrapper ul li").children('ul').attr('id', '');
-    	$("#menuwrapper ul li").children('a').attr('id', '');
-    	$("#menuwrapper ul li").children('a').attr('class', '');
-        $(this).children('ul').attr('id', 'show_ul');
-        $(this).children('a').attr('id', 'change_a');
-        if($(this).children('ul').text() != ''){
-        $(this).children('a').attr('class', 'isari');
-        }
+		if($(this).attr('logout')=='logout'){
+			var buttons = {
+					"save": {
+			            text: "შენახვა",
+			            id: "save_logout",
+			            click: function () {
+			            	param 			        = new Object();
+    						param.act		        = "add_user_log";
+    						param.logout_actions    = $('#logout_actions').val();
+    						param.logout_comment    = $('#logout_comment').val();
+    				        $.ajax({
+    				            url: 'logout.php',
+    				            data: param,
+    				            success: function(data) {
+    				            	window.location = 'http://192.168.11.96:8080/callapp_main/index.php?pg=1';
+    				            }
+    				        });
+			            }
+			        },
+		        	"cancel": {
+			            text: "დახურვა",
+			            id: "cancel-dialog",
+			            click: function () {
+			            	$(this).dialog("close");
+			            }
+			        }
+			    };
+	        GetDialog('logout', 357, "auto", buttons, 'center top');
+	        
+	        param 			= new Object();
+			param.act		= "get_logout";
+			param.cat_id    = $('#incomming_cat_1').val();
+	        $.ajax({
+	            url: 'logout.php',
+	            data: param,
+	            success: function(data) {
+	                $("#logout").html(data.page);
+	            }
+	        });
+		}else{
+        	$("#menuwrapper ul li").children('ul').attr('id', '');
+        	$("#menuwrapper ul li").children('a').attr('id', '');
+        	$("#menuwrapper ul li").children('a').attr('class', '');
+            $(this).children('ul').attr('id', 'show_ul');
+            $(this).children('a').attr('id', 'change_a');
+            if($(this).children('ul').text() != ''){
+            $(this).children('a').attr('class', 'isari');
+            }
+		}
     });
 	$(document).on("click", "#page-container", function () {
 		$("#menuwrapper ul li").children('ul').attr('id', '');
