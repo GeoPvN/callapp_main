@@ -25,15 +25,19 @@ switch ($action) {
             $new_line   = 0;
         }
         
+        $total_houre = mysql_fetch_assoc(mysql_query("  SELECT ROUND(SUM(HOUR(TIMEDIFF(end_time,start_time))/7)) AS `hour`
+                                                        FROM `week_day_graphic`
+                                                        WHERE project_id = $project_id;"));
+        
         $res = mysql_query("    SELECT ROUND((TIME_FORMAT( SEC_TO_TIME(  TIME_TO_SEC( TIMEDIFF(  SUM( `end_time` ), SUM(  `start_time`  ) ) ) ),'%H,%i') / 40)) AS `OPER_NEED`
                                 FROM `week_day_graphic`
                                 WHERE week_day_graphic.project_id = $project_id AND week_day_graphic.actived = 1
 	                            GROUP BY week_day_graphic.cycle");
         
         $get_user = mysql_query("   SELECT  `users`.`id`,
-                    				        `user_info`.`name`
+                    				        CONCAT(`persons`.`name`,' ',`persons`.surname) AS `name`
                                     FROM    `users`
-                                    JOIN    `user_info` ON user_info.user_id = users.id
+                                    JOIN    `persons` ON persons.id = users.person_id
                                     WHERE   `users`.`actived` = 1");
          
         $get_cycle = mysql_query("  SELECT work_cycle.id,work_cycle.`name`,GROUP_CONCAT(work_cycle_detail.work_shift_id ORDER BY work_cycle_detail.num ASC) AS `shift_id`
@@ -57,31 +61,36 @@ switch ($action) {
         }
         
         function check_real($date,$rigi,$project_id){
+            $ch_my_br = mysql_num_rows(mysql_query("SELECT  work_real_break.end_break AS `hour`
+                                                    FROM    `work_real`
+                                                    JOIN    work_real_break ON work_real.id = work_real_break.work_real_id AND work_real_break.actived = 1
+                                                    WHERE   DATE(date) = '$date' AND rigi_num = '$rigi' AND `work_real`.project_id = $project_id
+                                                    LIMIT 1"));
+            if($ch_my_br > 0){
             $req = mysql_fetch_array(mysql_query("  SELECT  work_shift.id,
                                                     color,
                                                     work_shift.`name`,
-                                                    ((TIME_TO_SEC(work_shift.end_date) - TIME_TO_SEC(work_shift.start_date)) - IF(ISNULL(work_real_break.end_break),0,(SUM((TIME_TO_SEC(work_real_break.end_break) - TIME_TO_SEC(work_real_break.start_break)))))) AS `hour`,
-                                                    if(work_shift.start_date > work_shift.end_date,
-                                                    ((TIME_TO_SEC('24:00') - TIME_TO_SEC(work_shift.start_date)) - IF(ISNULL(work_real_break.end_break),0,(SUM((TIME_TO_SEC(work_real_break.end_break) - TIME_TO_SEC(work_real_break.start_break))))))
-                                                    ,
-                                                    0
-                                                    ) AS `start_half`,
-                                                    if(work_shift.start_date > work_shift.end_date,
-                                                    ((TIME_TO_SEC(work_shift.end_date) - TIME_TO_SEC('00:00'))   - IF(ISNULL(work_real_break.end_break),0,(SUM((TIME_TO_SEC(work_real_break.end_break) - TIME_TO_SEC(work_real_break.start_break))))))
-                                                    ,
-                                                    0
-                                                    ) AS `end_half`
+                                                    ((TIME_TO_SEC(work_shift.end_date) - TIME_TO_SEC(work_shift.start_date)) - IF(ISNULL(work_real_break.end_break),0,(SUM((TIME_TO_SEC(work_real_break.end_break) - TIME_TO_SEC(work_real_break.start_break)))))) AS `hour`
                                                     FROM    `work_real`
                                                     left JOIN    work_real_break ON work_real.id = work_real_break.work_real_id AND work_real_break.actived = 1
-                                                    JOIN    work_shift ON work_real.work_shift_id = work_shift.id AND work_shift.actived = 1
+                                                    JOIN    work_shift ON work_real.work_shift_id = work_shift.id
                                                     WHERE   DATE(date) = '$date' AND rigi_num = '$rigi' AND `work_real`.project_id = $project_id"));
+            }else{
+                $req = mysql_fetch_array(mysql_query("  SELECT  work_shift.id,
+                                                        color,
+                                                        work_shift.`name`,
+                                                        ((TIME_TO_SEC(work_shift.end_date) - TIME_TO_SEC(work_shift.start_date)) - TIME_TO_SEC(work_shift.timeout)) AS `hour`
+                                                        FROM    `work_real`
+                                                        JOIN    work_shift ON work_real.work_shift_id = work_shift.id
+                                                        WHERE   DATE(date) = '$date' AND rigi_num = '$rigi' AND `work_real`.project_id = $project_id"));
+            }
             return $req;
         }
         
         function check_user_cycle($rigi,$project_id,$date){
             $req = mysql_fetch_array(mysql_query("  SELECT work_real.user_id,work_real.work_cycle_id
                                                     FROM `work_real`
-                                                    JOIN work_shift ON work_real.work_shift_id = work_shift.id AND work_shift.actived = 1
+                                                    JOIN work_shift ON work_real.work_shift_id = work_shift.id
                                                     WHERE  rigi_num = '$rigi' AND `work_real`.project_id = $project_id AND DATE(date) = '$date'
                                                     LIMIT 1"));
             return $req;
@@ -130,13 +139,13 @@ switch ($action) {
         $marcxena .= "<tr>";
 
         for($i = 1;$i <= $month_day;$i++){
-            $zeda .= "<td style=\"width: 50px;\" onclick=\"openhour('$year-$month-$i','$i/$month/$year')\">$i/$month/$year</td>";
+            $zeda .= "<td style=\"width: 50px;\" onclick=\"openhour('$year-$month-$i')\">$i/$month/$year</td>";
             
             $my_res = mysql_query(" SELECT  
                                             ROUND((((SUM(TIME_TO_SEC(end_break))-SUM(TIME_TO_SEC(start_break)))) * 100 / TIME_TO_SEC(work_shift.timeout)),2) AS `gay`
                                     FROM `work_real`
                                     LEFT JOIN work_real_break ON work_real.id = work_real_break.work_real_id AND work_real_break.actived = 1
-                                    JOIN work_shift ON work_real.work_shift_id = work_shift.id AND work_shift.actived = 1
+                                    JOIN work_shift ON work_real.work_shift_id = work_shift.id
                                     WHERE DATE(work_real.date) = '$year-$month-$i' AND work_real.project_id = $project_id AND work_shift.start_date != 0
                                     GROUP BY work_real.id
                                     ");
@@ -148,13 +157,13 @@ switch ($action) {
             }
             $last_total = round($total_pr * 100 / intval($cc.'00'));
             $zeda_pr .= '<td style=\"width: 50px;\" >
-                         <div class="progress" style="margin: auto;width: 90%;background-color: #f5f5f5;border-radius: 4px;overflow: hidden;">
-                            <div style="width:'.$last_total.'%;background-color: green;text-align: center;">
+                         <div class="progress" style="margin: auto;width: 90%;background-color: #f5f5f5;border-radius: 4px;">
+                            <div style="border-radius: 4px 0 0 4px;width:'.$last_total.'%;background-color: green;text-align: center;">
                                 '.$last_total.'%
                             </div>
                          </div></td>';
             $shua_faq .= '<td class="qveda_dge_'.$i.'" style="width: 50px;">0</td>';
-            $shua_geg .= '<td class="qveda_dge_geg_'.$i.'" style="width: 50px;">60</td>';
+            $shua_geg .= '<td class="qveda_dge_geg_'.$i.'" style="width: 50px;">'.$total_houre[hour].':00</td>';
             $shua_sxvaoba .= '<td class="qveda_dge_sx_'.$i.'" style="width: 50px;"></td>';
         }
         
@@ -163,7 +172,7 @@ switch ($action) {
         }else{
             $new_line1 = ($new_line+1);
         }
-
+        //echo $new_line;
         for ($g = 1;$g <= ($tr_numb+$new_line1);$g++){
             $qveda .= "<tr>";
             $vrtikal = 'vertikal="'.$g.'"';
@@ -175,37 +184,22 @@ switch ($action) {
                     $name_r = '';
                     $hour = 0;
                     $wsi = 0;
-                    $hco = 0;
                 }else{
                     $background = "none";
                     $rr = check_real("$year-$month-$i","rigi".$g,$project_id);
                     $hour = 0;
-                    if($rr[1] != ''){
+                    if($rr[1] !=''){
                         $background = $rr[1];
                         $name_r = $rr[2];
-                        if($rr[4]== 0){
-                            $hour = round(((abs($rr[3]) / 60) / 60),2);
-                        }else{
-                            $hour = round(((abs($rr[4]) / 60) / 60),2);
-                            $hour1 = round(((abs($rr[5]) / 60) / 60),2);
-                            $hco = $i+1;
-                        }
+                        $hour = $rr[3];//round((($rr[3] / 60) / 60),2);
                         $wsi = $rr[0];
                     }
                     
                 }
-                if($hco == $i && $rr[1] != ''){
-                    $hour = $hour1;
-                    $tarigi1 = "$i/$month/$year";
-                    $hco = $i;
-                }
                 
-                $qveda .= '<td '.$vrtikal.' '.$horizontal.' hour="'.$hour.'" work_shift_id="'.$wsi.'" tarigi1="'.$tarigi1.'" tarigi_back="'.$year.'-'.$month.'-'.($i-1).'" tarigi="'."$year-$month-$i".'" holy="'.$background.'" rigi_num="rigi'.$g.'" style="height: 25px;background: '.$background.';" onclick="opendialog('.$wsi.',\''.$background.'\',\''."$year-$month-$i".'\',\'rigi'.$g.'\')">'.$name_r.'</td>';
-                $rr = '';
+                $qveda .= '<td '.$vrtikal.' '.$horizontal.' hour="'.$hour.'" work_shift_id="'.$wsi.'" tarigi="'."$year-$month-$i".'" holy="'.$background.'" rigi_num="rigi'.$g.'" style="height: 25px;background: '.$background.';" onclick="opendialog('.$wsi.',\''.$background.'\',\''."$year-$month-$i".'\',\'rigi'.$g.'\')">'.$name_r.'</td>';
                 $name_r = '';
                 $hour = '';
-                $tarigi1 = '';
-                $wsi = '';
                 $rrr = check_user_cycle('rigi'.$g,$project_id,"$year-$month-$i");
                 if(!empty($rrr[user_id])){
                     $test .= "<script>$(\"#$g option[value='".$rrr[1]."']\").prop('selected', true);$(\"#user_id_$g option[value='".$rrr[0]."']\").prop('selected', true);</script>";
@@ -228,7 +222,7 @@ switch ($action) {
                 
                 $gg = mysql_fetch_array(mysql_query("   SELECT  COUNT(*) AS `count`
                                                         FROM    `work_real`
-                                                        JOIN    work_shift ON work_real.work_shift_id = work_shift.id AND work_shift.actived = 1
+                                                        JOIN    work_shift ON work_real.work_shift_id = work_shift.id
                                                         
                                                         WHERE   `work_real`.project_id = $project_id AND color = '$req_shift[2]' AND DATE(work_real.date) = '$year-$month-$d'"));
                 
@@ -323,7 +317,7 @@ switch ($action) {
         $res = mysql_query("SELECT  `id`,
                                     `name`
                             FROM `work_shift`
-                            WHERE actived = 1 AND project_id = $_REQUEST[project_id]");
+                            WHERE actived = 1 AND project_id = $_REQUEST[project_id] AND actived = 1");
     
         while ($req = mysql_fetch_array($res)){
             if($work_shift == $req[0]){
@@ -384,7 +378,7 @@ switch ($action) {
         $et = intval($ety[0].$ety[1]);
         $checker_date = mysql_fetch_assoc(mysql_query(" SELECT TIME_FORMAT(work_shift.start_date,'%H%i') AS start_date,TIME_FORMAT(work_shift.end_date,'%H%i') AS end_date
                                                         FROM `work_real`
-                                                        JOIN work_shift ON work_real.work_shift_id = work_shift.id AND work_shift.actived = 1
+                                                        JOIN work_shift ON work_real.work_shift_id = work_shift.id
                                                         WHERE work_real.id = '$r_id' OR work_real.id = '$b_id'"));
         $stt = intval($checker_date[start_date]);
         $ett = intval($checker_date[end_date]);
@@ -515,8 +509,8 @@ switch ($action) {
         $user = $_REQUEST['user'];
         $check_num = mysql_fetch_assoc(mysql_query("SELECT (num+1) AS `num`
                                                     FROM `work_real`
-                                                    JOIN work_cycle ON work_real.work_cycle_id = work_cycle.id AND work_cycle.actived = 1
-                                                    JOIN work_cycle_detail ON work_cycle.id = work_cycle_detail.work_cycle_id AND work_cycle_detail.work_shift_id = work_real.work_shift_id AND work_cycle_detail.actived = 1
+                                                    JOIN work_cycle ON work_real.work_cycle_id = work_cycle.id
+                                                    JOIN work_cycle_detail ON work_cycle.id = work_cycle_detail.work_cycle_id AND work_cycle_detail.work_shift_id = work_real.work_shift_id
                                                     WHERE work_real.project_id = $project_id AND work_real.user_id = $user AND work_real.rigi_num = '$rigi'
                                                     ORDER BY work_real.id DESC
                                                     LIMIT 1"));
@@ -525,7 +519,6 @@ switch ($action) {
     case 'get_24_hour' :
         $project_id = $_REQUEST['project_id'];
         $date       = $_REQUEST['date'];
-        $date1      = $_REQUEST['date1'];
         $hour = "";
         $minute = "";
         $mid = "";
@@ -533,7 +526,7 @@ switch ($action) {
         $pr = mysql_fetch_assoc(mysql_query("   SELECT HOUR(start_time) AS `start`,
                                                 HOUR(end_time) AS `end`
                                                 FROM `week_day_graphic`
-                                                WHERE project_id = $project_id
+                                                WHERE project_id = $project_id AND actived = 1
                                                 LIMIT 1"));
         $start = $pr['start'];
         $end   = $pr['end'];
@@ -552,35 +545,18 @@ switch ($action) {
             }
         }
         
-        $my_res = mysql_query(" SELECT  user_info.`name`,
+        $my_res = mysql_query(" SELECT  CONCAT(persons.`name`,' ',persons.surname) AS `name`,
                                         HOUR(work_shift.start_date) AS `start`,
                                         HOUR(work_shift.end_date) AS `end`,
         								CAST(SUBSTRING_INDEX(work_real.rigi_num, 'rigi',-1) AS UNSIGNED) as num,
                                         work_real.id,
-                                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),TIME_FORMAT(ABS(TIMEDIFF(work_shift.start_date,'24:00')),'%H:%i'),TIME_FORMAT(ABS(TIMEDIFF(work_shift.end_date,work_shift.start_date)),'%H:%i')) AS `dif`,
-                                        TIME_TO_SEC(work_shift.timeout) AS `timeout`,
-                                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),24,0) AS `start_half`,
-				                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),0,HOUR(work_shift.end_date)) AS `end_half`
+                                        TIME_FORMAT(TIMEDIFF(work_shift.end_date,work_shift.start_date),'%H:%i') AS `dif`,
+                                        TIME_TO_SEC(work_shift.timeout) AS `timeout`
                                 FROM `work_real`
                                 JOIN work_shift ON work_real.work_shift_id = work_shift.id
                                 JOIN users ON work_real.user_id = users.id
-                                JOIN user_info ON user_info.user_id = users.id
-                                WHERE DATE(date) = '$date' AND work_real.project_id = $project_id AND HOUR(work_shift.start_date) != 0
-                                UNION ALL
-                                SELECT  user_info.`name`,
-                                        HOUR(work_shift.start_date) AS `start`,
-                                        HOUR(work_shift.end_date) AS `end`,
-        								CAST(SUBSTRING_INDEX(work_real.rigi_num, 'rigi',-1) AS UNSIGNED) as num,
-                                        work_real.id,
-                                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),TIME_FORMAT(ABS(TIMEDIFF(work_shift.end_date,'00:00')),'%H:%i'),TIME_FORMAT(ABS(TIMEDIFF(work_shift.end_date,work_shift.start_date)),'%H:%i')) AS `dif`,
-                                        TIME_TO_SEC(work_shift.timeout) AS `timeout`,
-                                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),24,0) AS `start_half`,
-				                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),0,HOUR(work_shift.end_date)) AS `end_half`
-                                FROM `work_real`
-                                JOIN work_shift ON work_real.work_shift_id = work_shift.id
-                                JOIN users ON work_real.user_id = users.id
-                                JOIN user_info ON user_info.user_id = users.id
-                                WHERE DATE(date) = '$date1' AND work_real.project_id = $project_id AND HOUR(work_shift.start_date) != 0
+                                JOIN persons ON users.person_id = persons.id
+                                WHERE DATE(date) = '$date' AND work_real.project_id = $project_id
                                 ORDER BY num ASC");
         $ope .= '<tr><td style="height: 11px;border-top: 2px solid black;"></td></tr><tr><td style="height: 11px;"></td></tr>';
         $times = array();
@@ -596,7 +572,7 @@ switch ($action) {
                                                                ROUND((((SUM(TIME_TO_SEC(end_break))-SUM(TIME_TO_SEC(start_break)))) * 100 / $my_req[timeout]),2) AS `gay`,
                                                                TIME_FORMAT(SEC_TO_TIME((TIME_TO_SEC('$my_req[dif]')-(SUM(TIME_TO_SEC(end_break))-SUM(TIME_TO_SEC(start_break))))),'%H:%i') AS `work_time`
                                                         FROM work_real_break
-                                                        WHERE work_real_id = $my_req[id] AND work_real_break.actived = 1"));
+                                                        WHERE work_real_id = $my_req[id] AND actived = 1"));
                 
                 $fff .= '<tr><td style="height: 12px;">'.$my_req[dif].'</td></tr>';
                 $ffq .= '<tr><td style="height: 12px;">'.(($dif[dif]=='')?'00:00':$dif[dif]).'</td></tr>';
@@ -618,23 +594,9 @@ switch ($action) {
                                                                 HOUR(end_break) AS `end`,work_real_break.id,work_activities.`color`
                                                         FROM `work_real_break`
                                                         JOIN work_activities ON work_real_break.work_activities_id = work_activities.id AND work_activities.actived = 1
-                                                        WHERE work_real_id = $my_req[id] AND work_real_break.actived = 1 AND (HOUR(start_break) = $n OR HOUR(end_break) = $n)"));
-                $my_end = $my_req[end];
-                $my_start = $my_req[start];
-                if($date1 == ''){
-                    if($my_req[start_half] != 0){
-                       $my_end = $my_req[start_half];
-                    }else{
-                        $my_end = $my_req[end];
-                        $my_start = $my_req[start];
-                    }
-                }else{
-                    if($my_req[end_half] == 0){
-                    $my_start = 0;
-                    $my_end = $my_req[end];
-                    }
-                }
-                if(($n >= $my_start && $n < $my_end)){
+                                                        WHERE work_real_id = $my_req[id] AND (HOUR(start_break) = $n OR HOUR(end_break) = $n) AND work_real_break.actived = 1"));
+                
+                if(($n >= $my_req[start] && $n < $my_req[end] && $n != 0)){
                     $color = 'green';
                 }elseif($my_req[start] == 0 && $my_req[end] == 0){
                     $color = 'red';
@@ -764,7 +726,7 @@ function get_page_sql($work_real_break_id){
             		                                work_real_break.start_break AS `start`,
                                         			work_real_break.end_break AS `end`
                                             FROM `work_real_break`
-                                            WHERE work_real_break.id = $work_real_break_id AND work_real_break.actived = 1"));
+                                            WHERE work_real_break.id = $work_real_break_id AND actived = 1"));
     return $res;
 }
 

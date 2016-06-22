@@ -82,17 +82,19 @@ function load_table(){
                     total_hour += parseInt($("td[vertikal='"+i+"'][horizontal='"+g+"']").attr('hour'));
                 }
                 //alert(total_hour);
-                $(".total_"+i).html(total_hour)
+                $(".total_"+i).html(toHHMMSS(total_hour))
                 total_hour = 0;
             }
             for(i = 1;i <= data.day;i++){
                 for(g = 1;g <= data.num;g++){
                 	day_hour += parseFloat($("td[vertikal='"+g+"'][horizontal='"+i+"']").attr('hour'));
                 }
-                //alert(day_hour);
-                $(".qveda_dge_"+i).html(day_hour.toFixed(2));
-                tes1 = (parseFloat($(".qveda_dge_"+i).html())-parseFloat($(".qveda_dge_geg_"+i).html())).toFixed(2)
-                $(".qveda_dge_sx_"+i).html(parseFloat(tes1));
+
+                $(".qveda_dge_"+i).html(toHHMMSS(day_hour));
+                tes1 = diff($(".qveda_dge_geg_"+i).html(),$(".qveda_dge_"+i).html());
+
+                    //(parseFloat($(".qveda_dge_"+i).html())-parseFloat($(".qveda_dge_geg_"+i).html())).toFixed(2)
+                $(".qveda_dge_sx_"+i).html(tes1);
                 if(parseInt($(".qveda_dge_sx_"+i).html()) > 0){
                 	$(".qveda_dge_sx_"+i).css('background','green');
                 }else{
@@ -117,6 +119,37 @@ function load_table(){
 			});
         }
     });
+}
+
+function toHHMMSS(time) {
+    var sec_num = parseInt(time, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes;
+    //+':'+seconds;
+}
+
+function diff(start, end) {
+    start = start.split(":");
+    end = end.split(":");
+    var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+    var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+    var diff = endDate.getTime() - startDate.getTime();
+    var hours = Math.floor(diff / 1000 / 60 / 60);
+    diff -= hours * 1000 * 60 * 60;
+    var minutes = Math.floor(diff / 1000 / 60);
+
+    if(hours < 0){
+    	return (Math.abs(hours) < 9 ? "-0" : "-") + Math.abs(hours) + ":" + (minutes < 9 ? "0" : "") + minutes;
+    }else{
+    	return (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
+    }
+    
 }
 
 $(document).on("change", "#project_id", function () {
