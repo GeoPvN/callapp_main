@@ -94,11 +94,6 @@ switch ($action) {
 		    $op_check = " AND user_id = '$operator_id'";
 		}else{
 		    $op_check = '';
-		    
-		    
-		    
-		    
-		    
 		}
 		
 		// STATUS CHECKER
@@ -169,7 +164,7 @@ switch ($action) {
                         				queue,
                         				pers_name,
                         				duration,
-                        				inc_status,
+                        				inst,
                         				file
                                 FROM 	calls
 	  	                        WHERE DATE(date) >= '$start_date' AND DATE(date) <= '$end_date' $op_check $tab_check $main_status
