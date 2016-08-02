@@ -35,9 +35,9 @@ switch ($action) {
 	                            GROUP BY week_day_graphic.cycle");
         
         $get_user = mysql_query("   SELECT  `users`.`id`,
-                    				        CONCAT(`persons`.`name`,' ',`persons`.surname) AS `name`
+                    				        `user_info`.`name` AS `name`
                                     FROM    `users`
-                                    JOIN    `persons` ON persons.id = users.person_id
+                                    JOIN    `user_info` ON user_info.user_id = users.id
                                     WHERE   `users`.`actived` = 1");
          
         $get_cycle = mysql_query("  SELECT work_cycle.id,work_cycle.`name`,GROUP_CONCAT(work_cycle_detail.work_shift_id ORDER BY work_cycle_detail.num ASC) AS `shift_id`
@@ -545,7 +545,7 @@ switch ($action) {
             }
         }
         
-        $my_res = mysql_query(" SELECT  CONCAT(persons.`name`,' ',persons.surname) AS `name`,
+        $my_res = mysql_query(" SELECT  user_info.`name` AS `name`,
                                         HOUR(work_shift.start_date) AS `start`,
                                         HOUR(work_shift.end_date) AS `end`,
         								CAST(SUBSTRING_INDEX(work_real.rigi_num, 'rigi',-1) AS UNSIGNED) as num,
@@ -555,7 +555,7 @@ switch ($action) {
                                 FROM `work_real`
                                 JOIN work_shift ON work_real.work_shift_id = work_shift.id
                                 JOIN users ON work_real.user_id = users.id
-                                JOIN persons ON users.person_id = persons.id
+                                JOIN    `user_info` ON user_info.user_id = users.id
                                 WHERE DATE(date) = '$date' AND work_real.project_id = $project_id
                                 ORDER BY num ASC");
         $ope .= '<tr><td style="height: 11px;border-top: 2px solid black;"></td></tr><tr><td style="height: 11px;"></td></tr>';
