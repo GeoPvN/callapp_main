@@ -253,7 +253,7 @@
     				            url: 'logout.php',
     				            data: param,
     				            success: function(data) {
-    				            	window.location = 'http://192.168.11.96:8080/callapp_main/index.php?pg=1';
+    				            	window.location = 'http://212.72.155.176:9110';
     				            }
     				        });
 			            }
