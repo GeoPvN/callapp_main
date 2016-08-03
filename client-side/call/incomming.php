@@ -541,6 +541,7 @@
     $(document).on("click", ".open_dialog", function () {
     	var queoue = $($(this).siblings())[0];
     	queoue = $(queoue).text();
+    	if(queoue != ''){
         $.ajax({
             url: aJaxURL,
             type: "POST",
@@ -556,7 +557,8 @@
                     }
                 }
             }
-        });        
+        });
+    	}
     });
     
     $(document).on("click", "#show_all_scenario", function () {
