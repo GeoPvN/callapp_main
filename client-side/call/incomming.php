@@ -541,7 +541,7 @@
     $(document).on("click", ".open_dialog", function () {
     	var queoue = $($(this).siblings())[0];
     	queoue = $(queoue).text();
-    	if(queoue != ''){
+    	if($(this).text() != ''){
         $.ajax({
             url: aJaxURL,
             type: "POST",
