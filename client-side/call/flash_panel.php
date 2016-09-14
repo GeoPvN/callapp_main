@@ -155,15 +155,13 @@ require_once("AsteriskManager/config.php");
             <div id="jq">
                 <table id="flesh_table">
 					<thead>
-					<tr>
-					<th>რიგი</th>
-					<th>განყოფილება</th>
-					<th>შიდა ნომერი</th>
-					<th>თანამშრომელი</th>
-					<th>მდგომარეობა</th>
-					<th>დრო</th>
-					<th>აბონენტი</th>
-					</tr>
+    					<th>რიგი</th>
+    					<th>განყოფილება</th>
+    					<th>შიდა ნომერი</th>
+    					<th>თანამშრომელი</th>
+    					<th>მდგომარეობა</th>
+    					<th>დრო</th>
+    					<th>აბონენტი</th>
 					</thead>
 					<tbody>
 					</tbody>
