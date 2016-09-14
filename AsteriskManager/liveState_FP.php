@@ -149,8 +149,7 @@ foreach($filter_queues  as $qn) {
 			}
 			}
 		if($contador>1) {
-		echo "</tbody>";
-		echo "</table><br/>\n";
+
 		}
 	}
 }
