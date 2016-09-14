@@ -153,7 +153,7 @@ require_once("AsteriskManager/config.php");
         <div id="my_selector">
             
             <div id="jq">
-                <table id='flesh_table'>
+                <table id="flesh_table">
 					<thead>
 					<tr>
 					<th>რიგი</th>
