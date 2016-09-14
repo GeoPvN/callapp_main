@@ -37,9 +37,6 @@ foreach ($queues as $key=>$val) {
   $queue[] = $key;
 }
 
-///QUEUES
-//echo "<h2>".$lang[$language]['agent_status']."</h2><br/>";
-
 $color['unavailable']="flesh_off.png";
 $color['unknown']="#dadada";
 $color['busy']="flesh_inc.png";
@@ -127,7 +124,7 @@ foreach($filter_queues  as $qn) {
 			}
 			}
 		if($contador>1) {
-		//echo "</table><br/>\n";
+		
 		}
 	}
 }
