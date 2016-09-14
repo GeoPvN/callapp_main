@@ -153,21 +153,21 @@ require_once("AsteriskManager/config.php");
         <div id="my_selector">
             
             <div id="jq">
-                <table id="flesh_table">
+            <table id='flesh_table'>
 					<thead>
-    					<tr>
-        					<th>რიგი</th>
-        					<th>განყოფილება</th>
-        					<th>შიდა ნომერი</th>
-        					<th>თანამშრომელი</th>
-        					<th>მდგომარეობა</th>
-        					<th>დრო</th>
-        					<th>აბონენტი</th>
-    					</tr>
+					<tr>
+					<th>რიგი</th>
+					<th>განყოფილება</th>
+					<th>შიდა ნომერი</th>
+					<th>თანამშრომელი</th>
+					<th>მდგომარეობა</th>
+					<th>დრო</th>
+					<th>აბონენტი</th>
+					</tr>
 					</thead>
 					<tbody>
 					</tbody>
-    			</table>
+					</table>
             </div>
         </div> 
     </div>
