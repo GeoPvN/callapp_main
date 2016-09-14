@@ -35,7 +35,7 @@ require_once("AsteriskManager/config.php");
 			    beforeSend: false,
 	            complete: false,
 		        success: function(data) {
-					$("#flesh_table tbody").append(data);
+					$("#flesh_table").append(data);
 					if($("#queue").val() != 0){
 						$("tbody tr").css('display','none');
 					    $("tbody tr[queue="+$("#queue").val()+"]").css('display','');
@@ -155,13 +155,15 @@ require_once("AsteriskManager/config.php");
             <div id="jq">
                 <table id="flesh_table">
 					<thead>
-    					<th>რიგი</th>
-    					<th>განყოფილება</th>
-    					<th>შიდა ნომერი</th>
-    					<th>თანამშრომელი</th>
-    					<th>მდგომარეობა</th>
-    					<th>დრო</th>
-    					<th>აბონენტი</th>
+    					<tr>
+        					<th>რიგი</th>
+        					<th>განყოფილება</th>
+        					<th>შიდა ნომერი</th>
+        					<th>თანამშრომელი</th>
+        					<th>მდგომარეობა</th>
+        					<th>დრო</th>
+        					<th>აბონენტი</th>
+    					</tr>
 					</thead>
 					<tbody>
 					</tbody>
