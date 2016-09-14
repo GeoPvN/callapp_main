@@ -98,18 +98,7 @@ foreach($filter_queues  as $qn) {
 			} else {
 				if($contador==1) {
 				    ////////////////////////////---------------------------------------------------------------------
-					echo "<table id='flesh_table'>\n";
-					echo "<thead>";
-					echo "<tr>";
-					echo "<th>რიგი</th>";
-					echo "<th>განყოფილება</th>";
-					echo "<th>შიდა ნომერი</th>";
-					echo "<th>თანამშრომელი</th>";
-					echo "<th>მდგომარეობა</th>";
-					echo "<th>დრო</th>";
-					echo "<th>აბონენტი</th>";
-					echo "</tr>\n";
-					echo "</thead><tbody>\n";
+
 				}
 
 				if($contador%2) {
