@@ -35,7 +35,7 @@ require_once("AsteriskManager/config.php");
 			    beforeSend: false,
 	            complete: false,
 		        success: function(data) {
-					$("#flesh_table tbody").html(data);
+					$("#jq table tbody").html(data);
 					if($("#queue").val() != 0){
 						$("tbody tr").css('display','none');
 					    $("tbody tr[queue="+$("#queue").val()+"]").css('display','');
