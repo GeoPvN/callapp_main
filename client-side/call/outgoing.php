@@ -6,6 +6,9 @@
     var aJaxURL           = "server-side/call/outgoing/outgoing_tab0.action.php";
     var aJusURL_Actived   = "server-side/call/outgoing/outgoing_actived.action.php";
     var aJusURL_Task      = "server-side/call/outgoing/outgoing_task.action.php";
+    var aJaxURL_contact_info = "server-side/call/outgoing/contact_info.action.php";
+    var aJaxURL_contact_info_phone = "server-side/call/outgoing/contact_info_phone.action.php";
+    var aJaxURL_contact_info_mail = "server-side/call/outgoing/contact_info_mail.action.php";
     var aJaxURL_getmail	  = "includes/phpmailer/smtp.php";
     var aJusURL_mail      = "server-side/call/Email_sender.action.php";
     var aJaxURL_send_sms  = "includes/sendsms.php";
@@ -75,7 +78,12 @@ if(fName=='add-edit-form'){
 		    };
         GetDialog(fName, 585, "auto", buttons, 'left+43 top');
         LoadTable('sms',5,'get_list',"<'F'lip>",'',aJaxURL);
+        LoadTable('contact_info',5,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
+        SetEvents("add_contact_info", "delete_contact_info", "check-all-contact_info", tName+'contact_info', 'add-edit-form-contact_info', aJaxURL_contact_info);
         LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
+        $('#table_contact_info_length').css('top','2px');
+        $('select[name="table_contact_info_length"]').css('height','19px');
+        GetButtons("add_contact_info","delete_contact_info");
         $("#client_checker,#add_sms,#add_mail,#show_all_scenario").button();
         GetDate2("date_input");
         GetDateTimes("task_end_date");
@@ -87,6 +95,64 @@ if(fName=='add-edit-form'){
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
 		
+}
+if(fName=='add-edit-form-contact_info'){
+	var buttons = {
+			"save": {
+	            text: "შენახვა",
+	            id: "save-dialog-contact_info"
+	        },
+        	"cancel": {
+	            text: "დახურვა",
+	            id: "cancel-dialog",
+	            click: function () {
+	            	$(this).dialog("close");
+	            }
+	        }
+	    };
+	GetDialog(fName, 1000, "auto", buttons, 'left+43 top');
+	LoadTable('contact_info_phone',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_phone);
+    SetEvents("add_contact_info_phone", "delete_contact_info_phone", "check-all-contact_info_phone", tName+'contact_info_phone', 'add-edit-form-contact_info_phone', aJaxURL_contact_info_phone);
+    LoadTable('contact_info_mail',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_mail);
+    SetEvents("add_contact_info_mail", "delete_contact_info_mail", "check-all-contact_info_mail", tName+'contact_info_mail', 'add-edit-form-contact_info_mail', aJaxURL_contact_info_mail);
+    GetButtons("add_contact_info_phone","delete_contact_info_phone");
+    GetButtons("add_contact_info_mail","delete_contact_info_mail");
+    $('#table_contact_info_phone_length,#table_contact_info_mail_length').css('top','2px');
+    $('select[name="table_contact_info_phone_length"],select[name="table_contact_info_mail_length"]').css('height','19px');
+}
+if(fName=='add-edit-form-contact_info_phone'){
+	var buttons = {
+			"save": {
+	            text: "შენახვა",
+	            id: "save-dialog-contact_info-phone"
+	        },
+        	"cancel": {
+	            text: "დახურვა",
+	            id: "cancel-dialog",
+	            click: function () {
+	            	$(this).dialog("close");
+	            }
+	        }
+	    };
+	GetDialog(fName, 230, "auto", buttons, 'left+43 top');
+
+}
+if(fName=='add-edit-form-contact_info_mail'){
+	var buttons = {
+			"save": {
+	            text: "შენახვა",
+	            id: "save-dialog-contact_info-mail"
+	        },
+        	"cancel": {
+	            text: "დახურვა",
+	            id: "cancel-dialog",
+	            click: function () {
+	            	$(this).dialog("close");
+	            }
+	        }
+	    };
+	GetDialog(fName, 230, "auto", buttons, 'left+43 top');
+
 }
 if(fName=='add-edit-form-actived'){
 	var buttons = {
@@ -258,7 +324,80 @@ if(fName=='add-edit-form-task'){
         	$('#table_index_wrapper').css('display','none');
         }
     });
+
+    $(document).on("click", "input[name='person']", function () {
+        if($(this).val() == 2){
+        	$('#iuridiuli').css('display','table');
+        }else{
+        	$('#iuridiuli').css('display','none');
+        }
+    });
     
+    $(document).on("click", "#save-dialog-contact_info", function () {
+    	param 			                   = new Object();
+		param.act		                   = "save_contact_info";
+		param.outgoing_campaign_detail_contact_id = $("#outgoing_campaign_detail_contact_id").val();
+		param.outgoing_campaign_detail_id  = $("#incomming_id").val();
+		param.type                         = $('input[name=person]:checked').val();
+		param.fname                        = $('#fname').val();
+		param.lname                        = $('#lname').val();
+		param.person_number                = $('#person_number').val();
+		param.city_id                      = $('#city_id').val();
+		param.addres                       = $('#addres').val();
+		param.client_comment               = $('#client_comment').val();
+		param.client_title                 = $('#client_title').val();
+		param.client_number                = $('#add-edit-form-contact_info #client_number').val();
+
+		$.ajax({
+            url: aJaxURL_contact_info,
+            data: param,
+            success: function(data) {
+                LoadTable('contact_info',5,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
+            	$('#add-edit-form-contact_info').dialog('close');
+            	$('#table_contact_info_length').css('top','2px');
+                $('select[name="table_contact_info_length"]').css('height','19px');
+            }
+        });
+    });
+
+    $(document).on("click", "#save-dialog-contact_info-phone", function () {
+    	param 			                   = new Object();
+		param.act		                   = "save_contact_info_phone";
+		param.outgoing_campaign_detail_contact_id = $("#outgoing_campaign_detail_contact_id").val();
+		param.outgoing_campaign_detail_contact_detail_id  = $("#outgoing_campaign_detail_contact_detail_id").val();
+		param.contact_info_phone           = $('#contact_info_phone').val();
+
+		$.ajax({
+            url: aJaxURL_contact_info_phone,
+            data: param,
+            success: function(data) {
+            	LoadTable('contact_info_phone',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_phone);
+                $('#add-edit-form-contact_info_phone').dialog('close');
+            	$('#table_contact_info_phone_length').css('top','2px');
+                $('select[name="table_contact_info_phone_length"]').css('height','19px');
+            }
+        });
+    });
+
+    $(document).on("click", "#save-dialog-contact_info-mail", function () {
+    	param 			                   = new Object();
+		param.act		                   = "save_contact_info_mail";
+		param.outgoing_campaign_detail_contact_id = $("#outgoing_campaign_detail_contact_id").val();
+		param.outgoing_campaign_detail_contact_detail_id  = $("#outgoing_campaign_detail_contact_detail_id").val();
+		param.contact_info_mail            = $('#contact_info_mail').val();
+
+		$.ajax({
+            url: aJaxURL_contact_info_mail,
+            data: param,
+            success: function(data) {
+            	LoadTable('contact_info_mail',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_mail);
+                $('#add-edit-form-contact_info_mail').dialog('close');
+            	$('#table_contact_info_mail_length').css('top','2px');
+                $('select[name="table_contact_info_mail_length"]').css('height','19px');
+            }
+        });
+    });
+
     $(document).on("click", "#task-btn", function () {
     	param 			     = new Object();
 		param.act		     = "save_task";
@@ -1529,6 +1668,15 @@ if(fName=='add-edit-form-task'){
 </div>
 <!-- jQuery Dialog -->
 <div  id="add-edit-form-task" class="form-dialog" title="დავალება">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-contact_info" class="form-dialog" title="საკონტაქტო ინფორმაცია">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-contact_info_phone" class="form-dialog" title="ტელეფონი">
+</div>
+<!-- jQuery Dialog -->
+<div  id="add-edit-form-contact_info_mail" class="form-dialog" title="ელ-ფოსტა">
 </div>
 
 </body>
