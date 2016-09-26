@@ -91,6 +91,7 @@ switch ($action) {
                         				CONCAT(phone_base_detail.`firstname`,' ',phone_base_detail.`lastname`),
                         				phone_base_detail.`pid`,
 	  	                                scenario.`name`,
+	  	                                phone_base_detail.note,
 	  	                                user_info.`name`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
