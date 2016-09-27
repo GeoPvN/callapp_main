@@ -54,6 +54,7 @@ function AddImport($last_id, $scenario_id){
     
 	$user   = $_SESSION['USERID'];
 	$c_date	= date('Y-m-d H:i:s');
+	$note   = $_REQUEST['note'];
 
 	mysql_query("INSERT INTO `outgoing_campaign`
         	    (`user_id`, `create_date`, `project_id`, `scenario_id`)
@@ -62,7 +63,7 @@ function AddImport($last_id, $scenario_id){
 	$camping_id = mysql_fetch_array(mysql_query("SELECT id FROM outgoing_campaign ORDER BY id DESC LIMIT 1"));
 	
 	$res = mysql_query("  SELECT id FROM phone_base_detail
-                          WHERE (id % 1) = floor(rand() * 1)
+                          WHERE note = '$note'
                           ORDER BY rand()
                           LIMIT $_REQUEST[actived_number]");
 	
@@ -96,6 +97,20 @@ function GetScenario($id){
     return $data;
 }
 
+function GetNote(){
+    $data = '';
+    $req = mysql_query("SELECT note
+                        FROM phone_base_detail
+                        where actived = 1
+                        GROUP BY note");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['note'] . '">' . $res['note'] . '</option>';
+    }
+    return $data;
+}
+
 function GetPage(){
 
 	$data  .= '
@@ -105,6 +120,8 @@ function GetPage(){
 	       <legend>ძირითადი ინფორმაცია</legend>
 		   <label for="actived_number">რაოდენობა</label>
 	       <input type="number" id="actived_number" min="1">
+	       <label for="note">შენიშვნა</label>
+	       <select id="note">'.GetNote().'</select>
 	       <label for="actived_number" style="margin:5px 0">სცენარი</label>
 	       <select id="scenario_id">'.GetScenario().'</select>
 		</fieldset>	    

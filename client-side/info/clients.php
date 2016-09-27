@@ -193,6 +193,7 @@
 				        }
 				    };
 		        GetDialog("add-edit-form-import-actived", 450, "auto", buttons, 'left+43 top');
+		        $('#note,#scenario_id').chosen({ search_contains: true });
 		   break;
 		   case "add-edit-form-client":
 		    	var buttons = {
@@ -390,6 +391,7 @@
 	    param.project_hidden_id = $("#project_hidden_id").val();
 	    param.actived_number    = $("#actived_number").val();
 	    param.scenario_id       = $("#scenario_id").val();
+	    param.note              = $("#note").val();
 	   
 	   
 	    $.ajax({
