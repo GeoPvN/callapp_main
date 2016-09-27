@@ -54,7 +54,11 @@ function AddImport($last_id, $scenario_id){
     
 	$user   = $_SESSION['USERID'];
 	$c_date	= date('Y-m-d H:i:s');
-	$note   = $_REQUEST['note'];
+	if($_REQUEST['note'] == ''){
+	    $note = '';
+	}else {
+	    $note = "AND note = '$_REQUEST[note]'";
+	}
 
 	mysql_query("INSERT INTO `outgoing_campaign`
         	    (`user_id`, `create_date`, `project_id`, `scenario_id`)
@@ -63,14 +67,16 @@ function AddImport($last_id, $scenario_id){
 	$camping_id = mysql_fetch_array(mysql_query("SELECT id FROM outgoing_campaign ORDER BY id DESC LIMIT 1"));
 	
 	$res = mysql_query("  SELECT id FROM phone_base_detail
-                          WHERE note = '$note'
-                          ORDER BY rand()
+                          WHERE status = 1  $note
                           LIMIT $_REQUEST[actived_number]");
-	
+	$upId = '';
 	while ($req = mysql_fetch_array($res)){
 	    $base_id .= "('$user', '$camping_id[0]', '$req[0]'),";
+	    $upId .= $req[0].',';
 	}
+	$upId = substr($upId, 0, -1);
 	$base_id_last = substr($base_id, 0, -1);
+	mysql_query("UPDATE `phone_base_detail` SET `status`='2' WHERE `id` IN($upId);");
 	mysql_query("INSERT INTO `outgoing_campaign_detail`
                     ( `user_id`, `outgoing_campaign_id`, `phone_base_detail_id`)
                     VALUES
@@ -119,7 +125,7 @@ function GetPage(){
 	    <fieldset style="width: 90%;">
 	       <legend>ძირითადი ინფორმაცია</legend>
 		   <label for="actived_number">რაოდენობა</label>
-	       <input type="number" id="actived_number" min="1">
+	       <input type="number" id="actived_number" min="1" value="1">
 	       <label for="note">შენიშვნა</label>
 	       <select id="note_actived" style="width:173px;">'.GetNote().'</select>
 	       <label for="actived_number" style="margin:5px 0;width:173px;">სცენარი</label>
