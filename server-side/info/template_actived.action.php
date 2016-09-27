@@ -116,7 +116,7 @@ function GetPage(){
 	$data  .= '
 	
 	<div id="dialog-form">
-	    <fieldset style="width: 340px;">
+	    <fieldset style="width: 100%;">
 	       <legend>ძირითადი ინფორმაცია</legend>
 		   <label for="actived_number">რაოდენობა</label>
 	       <input type="number" id="actived_number" min="1">
