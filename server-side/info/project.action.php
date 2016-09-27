@@ -1045,6 +1045,7 @@ function GetPage($res,$increment){
                             <th style="width: 70px;">პირადი ნომერი</th>
                             <th style="width: 95px;">ტელეფონი 1</th>
                             <th style="width: 95px;">ტელეფონი 2</th>
+                	        <th style="width: 95px;">შენიშვნა</th>
 							<th style="width: 11px;" class="check">&nbsp;</th>
 						</tr>
                     </thead>
@@ -1060,6 +1061,9 @@ function GetPage($res,$increment){
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
                             <th>
+                                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                            </th>
+                	        <th>
                                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                             </th>
                             <th>

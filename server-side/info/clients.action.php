@@ -200,11 +200,12 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
         $hidden = 		$_REQUEST['hidden'];
         $rResult = mysql_query("SELECT 	outgoing_campaign_detail.`id`,
-                        				phone_base_detail.`firstname`,
+                        				IF(phone_base_detail.`firstname`='',phone_base_detail.`client_name`,phone_base_detail.`firstname`),
                         				phone_base_detail.`lastname`,
                         				phone_base_detail.`pid`,
                         				phone_base_detail.`phone1`,
-                        				phone_base_detail.`phone2`
+                        				phone_base_detail.`phone2`,
+                                        phone_base_detail.`note`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id

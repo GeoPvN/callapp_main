@@ -96,7 +96,7 @@
 		        LoadTable('import',6,'get_list_import',"<'F'lip>");
 		        SetEvents("add_import", "delete_import", "check-all-import", tName+'import', "add-edit-form-import", aJaxURL_template,'',tName+'import',colum_number,'get_list_import',change_colum_main);
 
-		        LoadTable('import_actived',6,'get_list_import_actived',"<'F'lip>");
+		        LoadTable('import_actived',7,'get_list_import_actived',"<'F'lip>");
 		        SetEvents("add_import_actived", "delete_import_actived", "check-all-import-actived", tName+'import_actived', "add-edit-form-import-actived", aJaxURL_template_actived);
 		        if($('#scenario_id').val() != 0){
 		            $('#choose_button1,#add_import').css('display','inline-block');
@@ -403,7 +403,7 @@
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						LoadTable('import_actived',6,'get_list_import_actived',"<'F'lip>");
+						LoadTable('import_actived',7,'get_list_import_actived',"<'F'lip>");
 						$("#add-edit-form-import-actived").dialog("close");
 					}
 				}
