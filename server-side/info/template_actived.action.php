@@ -116,13 +116,13 @@ function GetPage(){
 	$data  .= '
 	
 	<div id="dialog-form">
-	    <fieldset style="width: 400px;">
+	    <fieldset style="width: 340px;">
 	       <legend>ძირითადი ინფორმაცია</legend>
 		   <label for="actived_number">რაოდენობა</label>
 	       <input type="number" id="actived_number" min="1">
 	       <label for="note">შენიშვნა</label>
-	       <select id="note_actived" style="width:200px;">'.GetNote().'</select>
-	       <label for="actived_number" style="margin:5px 0;width:200px;">სცენარი</label>
+	       <select id="note_actived" style="width:173px;">'.GetNote().'</select>
+	       <label for="actived_number" style="margin:5px 0;width:173px;">სცენარი</label>
 	       <select id="scenario_id">'.GetScenario().'</select>
 		</fieldset>	    
 	</div>';
