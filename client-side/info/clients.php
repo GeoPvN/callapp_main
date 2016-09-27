@@ -391,7 +391,7 @@
 	    param.project_hidden_id = $("#project_hidden_id").val();
 	    param.actived_number    = $("#actived_number").val();
 	    param.scenario_id       = $("#scenario_id").val();
-	    param.note              = $("#note").val();
+	    param.note              = $("#note_actived").val();
 	   
 	   
 	    $.ajax({
