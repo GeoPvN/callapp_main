@@ -121,7 +121,7 @@ function GetPage(){
 		   <label for="actived_number">რაოდენობა</label>
 	       <input type="number" id="actived_number" min="1">
 	       <label for="note">შენიშვნა</label>
-	       <select id="note">'.GetNote().'</select>
+	       <select id="note_actived">'.GetNote().'</select>
 	       <label for="actived_number" style="margin:5px 0">სცენარი</label>
 	       <select id="scenario_id">'.GetScenario().'</select>
 		</fieldset>	    
