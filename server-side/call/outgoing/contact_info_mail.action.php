@@ -31,6 +31,12 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
+	case 'disable':
+	    mysql_query("UPDATE `outgoing_campaign_detail_contact_detail` SET
+            	            `actived`=0
+            	     WHERE  `id`='$_REQUEST[id]';");
+	
+	    break;
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
