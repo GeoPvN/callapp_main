@@ -41,11 +41,11 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
 
-	  	$rResult = mysql_query("SELECT  `id`,
-                                        IF(type=2,client_title,CONCAT(fname,' ',lname)) AS `cl_name`,
-                                        IF(type=2,client_number,person_number) AS `cl_number`,
-                                        `addres`,
-                                        `comment`
+	  	$rResult = mysql_query("SELECT  outgoing_campaign_detail_contact.`id`,
+                                        IF(outgoing_campaign_detail_contact.type=2,client_title,CONCAT(fname,' ',lname)) AS `cl_name`,
+                                        `person_position`,
+                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 1),
+                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 2)
                                 FROM `outgoing_campaign_detail_contact`
                                 WHERE outgoing_campaign_detail_id = $_REQUEST[outgoing_campaign_detail_id] AND actived = 1");
 		
@@ -74,9 +74,9 @@ switch ($action) {
     case 'save_contact_info':
         if($_REQUEST['outgoing_campaign_detail_contact_id'] == ''){
             mysql_query("INSERT INTO `outgoing_campaign_detail_contact`
-                        (`outgoing_campaign_detail_id`, `date`, `user_id`, `type`, `fname`, `lname`, `person_number`, `city_id`, `addres`, `comment`, `client_title`, `client_number`)
+                        (`outgoing_campaign_detail_id`, `date`, `user_id`, `type`, `fname`, `lname`, `person_number`, `city_id`, `addres`, `comment`, `client_title`, `client_number`,`person_position`,`person_gmpiri`)
                         VALUES
-                        ('$_REQUEST[outgoing_campaign_detail_id]', NOW(), '$_SESSION[USERID]', '$_REQUEST[type]', '$_REQUEST[fname]', '$_REQUEST[lname]', '$_REQUEST[person_number]', '$_REQUEST[city_id]', '$_REQUEST[addres]', '$_REQUEST[comment]', '$_REQUEST[client_title]', '$_REQUEST[client_number]');");
+                        ('$_REQUEST[outgoing_campaign_detail_id]', NOW(), '$_SESSION[USERID]', '$_REQUEST[type]', '$_REQUEST[fname]', '$_REQUEST[lname]', '$_REQUEST[person_number]', '$_REQUEST[city_id]', '$_REQUEST[addres]', '$_REQUEST[client_comment]', '$_REQUEST[client_title]', '$_REQUEST[client_number]', '$_REQUEST[person_position]', '$_REQUEST[person_gmpiri]');");
         }else{
             mysql_query("UPDATE `outgoing_campaign_detail_contact` SET
                                 `date`=NOW(),
@@ -89,7 +89,9 @@ switch ($action) {
                                 `addres`='$_REQUEST[addres]',
                                 `comment`='$_REQUEST[client_comment]',
                                 `client_title`='$_REQUEST[client_title]',
-                                `client_number`='$_REQUEST[client_number]'
+                                `client_number`='$_REQUEST[client_number]',
+                                `person_position`='$_REQUEST[person_position]',
+                                `person_gmpiri`='$_REQUEST[person_gmpiri]'
                          WHERE  `id`='$_REQUEST[outgoing_campaign_detail_contact_id]';");
         }
 
@@ -138,7 +140,9 @@ function Getincomming($id)
                                                     addres,
                                                     `comment`,
                                                     client_number,
-                                                    client_title
+                                                    client_title,
+                                            	    person_position,
+                                            	    person_gmpiri
                                             FROM `outgoing_campaign_detail_contact`
                                             WHERE id = $id"));
 	return $res;
@@ -150,6 +154,9 @@ function GetPage($res)
     $juridical_status2 = '';
     $juridical_status3 = '';
     
+    if($res['person_gmpiri'] == 1){
+        $ju1 = 'checked';
+    }
     if($res['type'] == 1){
         $juridical_status1 = 'checked';
     }else if($res['type'] == 2){
@@ -165,7 +172,7 @@ function GetPage($res)
 	       <legend>ძირითადი ინფორმაცია</legend>
 	            <input id="outgoing_campaign_detail_contact_id" type="hidden" value="'.$res[id].'" />
         	    <div id="pers" style="float:left;height: 477px;">
-	            <div style="overflow: hidden;width: 60%; margin:auto;"><input '.$juridical_status1.' type="radio" name="person" id="person1" class="left" value="1"><label for="person1" class="left" style="margin-top: 7px;">ფიზიკური</label><input '.$juridical_status2.' id="person2" type="radio" name="person" class="left" value="2"><label for="person2" class="left" style="margin-top: 7px;">იურიდიული</label><input '.$juridical_status3.' id="person3" type="radio" name="person" class="left" value="3"><label for="person3" class="left" style="margin-top: 7px;">დიპლომატი</label></div>
+	            <div style="overflow: hidden;width: 60%; margin:auto;display:none;"><input '.$juridical_status1.' type="radio" name="person" id="person1" class="left" value="1"><label for="person1" class="left" style="margin-top: 7px;">ფიზიკური</label><input '.$juridical_status2.' id="person2" type="radio" name="person" class="left" value="2"><label for="person2" class="left" style="margin-top: 7px;">იურიდიული</label><input '.$juridical_status3.' id="person3" type="radio" name="person" class="left" value="3"><label for="person3" class="left" style="margin-top: 7px;">დიპლომატი</label></div>
                    <table id="iuridiuli" '.(($res['type']==2)?'':'style="display:none;"').'>
                    <tr>
 	                   <td style="width: 250px;" ><label for="client_title">დასახელება</label></td>
@@ -186,18 +193,12 @@ function GetPage($res)
 	                       <td><input id="lname" type="text" value="'.$res[lname].'"></td>
     	               </tr>
 	                   <tr>
-    	                   <td style="width: 250px;" ><label for="personal_number">პირადი ნომერი</label></td>
-	                       <td><label for="city_id">ქალაქი</label></td>
+    	                   <td style="width: 250px;" ><label for="person_position">თანამდებობა</label></td>
+	                       <td><label for="person_gmpiri">გ.მ. პირი</label></td>
     	               </tr>
     	               <tr>
-    	                   <td><input id="person_number" type="text" value="'.$res[person_number].'"></td>
-	                       <td><select id="city_id" style="width: 174px;">'.city($res[city_id]).'</select></td>
-    	               </tr>
-	                   <tr>
-    	                   <td style="width: 250px;" ><label for="address">მისამართი</label></td>
-    	               </tr>
-    	               <tr>
-    	                   <td><input id="addres" type="text" value="'.$res[addres].'"></td>
+    	                   <td><input id="person_position" type="text" value="'.$res[person_position].'"></td>
+	                       <td><input id="person_gmpiri" name="person_gmpiri" '.$ju1.' type="checkbox" value="1"></td>
     	               </tr>
 	                   <tr>
     	                   <td colspan="2"><label for="client_comment">კომენტარი</label></td>

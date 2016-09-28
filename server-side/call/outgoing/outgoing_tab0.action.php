@@ -283,7 +283,8 @@ switch ($action) {
                             `address2`='$_REQUEST[client_person_addres2]',
                             `id_code`='$_REQUEST[client_number]',
                             `client_name`='$_REQUEST[client_name]',
-                            `note`='$_REQUEST[client_person_note]'
+                            `note`='$_REQUEST[client_person_note]',
+		                    `info1`='$_REQUEST[info1]'
                      WHERE  `id`='$base[0]';");
         break;
 	default:
@@ -509,6 +510,97 @@ function Getincomming($hidden_id)
 
 function GetPage($res)
 {
+    if($res['client_name'] == ''){
+        $display = 'display:none;';
+        $table = '<table class="margin_top_10">
+                       <tr>
+                           <td '.(($res['pid'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_number">პირადი ნომერი</label></td>
+                           <td '.(($res['id_code'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_number">საიდენტ. ნომერი</label></td>
+                           <td '.(($res['firstname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_lname">სახელი</label></td>
+                           <td '.(($res['lastname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_fname">გვარი</label></td>
+                       </tr>
+                       <tr>
+                           <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
+                           <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
+                           <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
+                           <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
+                        </tr>
+                        <tr>
+                            <td '.(($res['phone1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_phone1">ტელეფონი 1</label></td>
+    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_phone2">ტელეფონი 2</label></td>
+                            <td '.(($res['mail1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+    	                </tr>
+	                    <tr>
+                            <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
+    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
+                            <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
+    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
+    	                </tr>
+                        <tr>
+                            <td '.(($res['address1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_addres1">მისამართი 1</label></td>
+    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_addres2">მისამართი 2</label></td>
+                            <td '.(($res['note'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_note">შენიშვნა</label></td>
+    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_name">კლიენტის დასახელება</label></td>
+    	                </tr>
+	                    <tr>
+                            <td '.(($res['address1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
+    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
+                            <td '.(($res['note'] == '')?'style="display:none;"':'').'><textarea id="client_person_note" style="resize: vertical;width: 185px;">'.$res['note'].'</textarea></td>
+    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
+    	                </tr>
+	                </table>';
+    }else{
+        $display = '';
+        $table = '<table class="margin_top_10">
+            <tr>
+            <td><label for="client_name">დასახელება</label></td>
+            <td><label for="client_person_note">საქმიანობის სფერო</label></td>
+            </tr>
+            <tr>
+            <td><input style="width: 185px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
+            <td colspan="2"><textarea id="client_person_note" style="resize: vertical;width: 380px;">'.$res['note'].'</textarea></td>
+            </tr>
+            <tr>
+            <td><label for="client_person_phone1">ტელეფონი 1</label></td>
+            <td><label for="client_person_phone2">ტელეფონი 2</label></td>
+            <td><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
+            </tr>
+            <tr>
+            <td><input style="width: 185px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
+            <td><input style="width: 185px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
+            <td><input style="width: 185px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
+            </tr>
+            <tr>
+            <td><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
+            <td><label for="client_person_addres1">მისამართი 1</label></td>
+    	    <td><label for="client_person_addres2">მისამართი 2</label></td>
+            </tr>
+            <tr>
+            <td><input style="width: 185px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
+            <td><input style="width: 185px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
+            <td><input style="width: 185px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
+            </tr>
+            <tr>
+            <td colspan="3"><label for="info1">www</label></td>
+            </tr>
+            <tr>
+            <td colspan="3"><input style="width: 572px;" id="info1" type="text" value="'.$res['info1'].'"></td>
+            </tr>
+                       <tr>
+                           <td '.(($res['pid'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_number">პირადი ნომერი</label></td>
+                           <td '.(($res['id_code'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_number">საიდენტ. ნომერი</label></td>
+                           <td '.(($res['firstname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_lname">სახელი</label></td>
+                           <td '.(($res['lastname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_fname">გვარი</label></td>
+                       </tr>
+                       <tr>
+                           <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
+                           <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
+                           <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
+                           <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
+                        </tr>
+	                </table>';
+    }
 	$data  .= '
 	<div id="dialog-form">
 	    <fieldset style="width: 430px;  float: left;">
@@ -558,8 +650,8 @@ function GetPage($res)
 	    </fieldset>
 	    
         <div id="side_menu" style="float: left;height: 485px;width: 80px;margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
-	       <spam class="scenar" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'scenar\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/scenar.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სცენარი</div></spam>
 	       <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ინფო</div></spam>
+	       <spam class="scenar" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'scenar\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/scenar.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">სცენარი</div></spam>
 	       <spam class="task" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'task\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/task.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დავალება</div></spam>
 	       <spam class="sms" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'sms\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/sms.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">SMS</div></spam>
 	       <spam class="mail" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'mail\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/mail.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">E-mail</div></spam>
@@ -574,46 +666,9 @@ function GetPage($res)
                 
 	    
         	    <div id="pers">
-	               <table class="margin_top_10">
-                       <tr>
-                           <td '.(($res['pid'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_number">პირადი ნომერი</label></td>
-                           <td '.(($res['id_code'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_number">საიდენტ. ნომერი</label></td>
-                           <td '.(($res['firstname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_lname">სახელი</label></td>
-                           <td '.(($res['lastname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_fname">გვარი</label></td>
-                       </tr>
-                       <tr>
-                           <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
-                           <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
-                           <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
-                           <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
-                        </tr>
-                        <tr>
-                            <td '.(($res['phone1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_phone1">ტელეფონი 1</label></td>
-    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_phone2">ტელეფონი 2</label></td>
-                            <td '.(($res['mail1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_mail1">ელ-ფოსტა 1</label></td>
-    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
-    	                </tr>
-	                    <tr>
-                            <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
-    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
-                            <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
-    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
-    	                </tr>
-                        <tr>
-                            <td '.(($res['address1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_addres1">მისამართი 1</label></td>
-    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_addres2">მისამართი 2</label></td>
-                            <td '.(($res['note'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_note">შენიშვნა</label></td>
-    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_name">კლიენტის დასახელება</label></td>
-    	                </tr>
-	                    <tr>
-                            <td '.(($res['address1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
-    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
-                            <td '.(($res['note'] == '')?'style="display:none;"':'').'><textarea id="client_person_note" style="resize: vertical;width: 185px;">'.$res['note'].'</textarea></td>
-    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
-    	                </tr>
-	                </table>
+	               '.$table.'
         	    </div>
-	            <div style="margin-top: 20px;">
+	            <div style="margin-top: 20px;'.$display.'">
     	           <div id="button_area">
                         <button id="add_contact_info">დამატება</button>
     	                <button id="delete_contact_info">წაშლა</button>
@@ -622,10 +677,10 @@ function GetPage($res)
                         <thead>
                             <tr id="datatable_header">
                                 <th>ID</th>
-                                <th style="width: 100%;">სახელი</th>
-                                <th style="width: 100%;">კლიენტის №</th>
-                                <th style="width: 100%;">მისამართი</th>
-                                <th style="width: 100%;">კომენტარი</th>
+                                <th style="width: 100%;">სახელი გვარი</th>
+                                <th style="width: 100%;">თანამდებობა</th>
+                                <th style="width: 100%;">ტელეფონი</th>
+                                <th style="width: 100%;">ელ-ფოსტა</th>
     	                        <th class="check" style="width: 30px;">&nbsp;</th>
                             </tr>
                         </thead>

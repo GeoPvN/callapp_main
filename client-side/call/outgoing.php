@@ -94,7 +94,7 @@ if(fName=='add-edit-form'){
 		$('#next_quest').attr('next_id',$('.1').attr('id'));
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
-		
+		$('.info').click();
 }
 if(fName=='add-edit-form-contact_info'){
 	var buttons = {
@@ -339,13 +339,15 @@ if(fName=='add-edit-form-task'){
 		param.outgoing_campaign_detail_contact_id = $("#outgoing_campaign_detail_contact_id").val();
 		param.outgoing_campaign_detail_id  = $("#incomming_id").val();
 		param.type                         = $('input[name=person]:checked').val();
-		param.fname                        = $('#fname').val();
-		param.lname                        = $('#lname').val();
-		param.person_number                = $('#person_number').val();
-		param.city_id                      = $('#city_id').val();
-		param.addres                       = $('#addres').val();
-		param.client_comment               = $('#client_comment').val();
-		param.client_title                 = $('#client_title').val();
+		param.person_gmpiri                = $('input[name=person_gmpiri]:checked').val();
+		param.person_position              = $('#add-edit-form-contact_info #person_position').val();
+		param.fname                        = $('#add-edit-form-contact_info #fname').val();
+		param.lname                        = $('#add-edit-form-contact_info #lname').val();
+		param.person_number                = $('#add-edit-form-contact_info #person_number').val();
+		param.city_id                      = $('#add-edit-form-contact_info #city_id').val();
+		param.addres                       = $('#add-edit-form-contact_info #addres').val();
+		param.client_comment               = $('#add-edit-form-contact_info #client_comment').val();
+		param.client_title                 = $('#add-edit-form-contact_info #client_title').val();
 		param.client_number                = $('#add-edit-form-contact_info #client_number').val();
 
 		$.ajax({
@@ -1276,6 +1278,7 @@ if(fName=='add-edit-form-task'){
 		param.client_mail1	        = $("#add-edit-form #client_mail1").val();
 		param.client_mail2			= $("#add-edit-form #client_mail2").val();
 		param.client_note			= $("#add-edit-form #client_note").val();
+		param.info1			        = $("#add-edit-form #info1").val();
 
 		param.task_type_id			= $("#add-edit-form #task_type_id").val();
 		param.task_start_date		= $("#add-edit-form #task_start_date").val();
