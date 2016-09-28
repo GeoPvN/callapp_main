@@ -255,7 +255,7 @@ switch ($action) {
 		        VALUES
 		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
-        
+         
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
