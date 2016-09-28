@@ -6,7 +6,7 @@ $time = $time[1] + $time[0];
 $begintime = $time;
 $inuse      = Array();
 $dict_queue = Array();
-$filter_queues = array("2473232","2182414");
+$filter_queues = array("2473232","2500055");
 require_once '../includes/classes/core.php';
       $qv=mysql_query("SELECT persons.`name`,
         			          last_extension
