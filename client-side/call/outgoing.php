@@ -1132,7 +1132,7 @@ if(fName=='add-edit-form-task'){
             $(this).attr('who',1);
             $('#show_all_scenario span').text('სცენარის მიხედვით');
             $('#back_quest,#next_quest').css('display','none');
-            $('.quest_body').attr('style','height: 130px;border: 1px solid #CCCCCC;padding: 0 10px;float: left;margin-right: 5px;width: 260px;margin-top: 5px;');
+            $('.quest_body').attr('style','min-height: 170px;border: 1px solid #CCCCCC;padding: 0 10px;float: left;margin-right: 5px;width: 260px;margin-top: 5px;');
             $('.myhr,.last_quest').css('display','none');
             }else{
             	$('#next_quest').attr('next_id',$('.1').attr('id'));

@@ -566,10 +566,10 @@ function GetPage($res)
                            <td '.(($res['lastname'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_fname">გვარი</label></td>
                        </tr>
                        <tr>
-                           <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
-                           <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
-                           <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
-                           <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
+                           <td '.(($res['pid'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_number" type="text" value="'.$res['pid'].'"></td>
+                           <td '.(($res['id_code'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_number" type="text" value="'.$res['id_code'].'"></td>
+                           <td '.(($res['firstname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_lname" type="text" value="'.$res['firstname'].'"></td>
+                           <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
                         </tr>
                         <tr>
                             <td '.(($res['phone1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_phone1">ტელეფონი 1</label></td>
@@ -578,10 +578,10 @@ function GetPage($res)
     	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_mail2">ელ-ფოსტა 2</label></td>
     	                </tr>
 	                    <tr>
-                            <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
-    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
-                            <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
-    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
+                            <td '.(($res['phone1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone1" type="text" value="'.$res['phone1'].'"></td>
+    	                    <td '.(($res['phone2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_phone2" type="text" value="'.$res['phone2'].'"></td>
+                            <td '.(($res['mail1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail1" type="text" value="'.$res['mail1'].'"></td>
+    	                    <td '.(($res['mail2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_mail2" type="text" value="'.$res['mail2'].'"></td>
     	                </tr>
                         <tr>
                             <td '.(($res['address1'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_person_addres1">მისამართი 1</label></td>
@@ -590,10 +590,10 @@ function GetPage($res)
     	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'style="width: 290px;"').'><label for="client_name">კლიენტის დასახელება</label></td>
     	                </tr>
 	                    <tr>
-                            <td '.(($res['address1'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
-    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
-                            <td '.(($res['note'] == '')?'style="display:none;"':'').'><textarea id="client_person_note" style="resize: vertical;width: 250px;">'.$res['note'].'</textarea></td>
-    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 250px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
+                            <td '.(($res['address1'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres1" type="text" value="'.$res['address1'].'"></td>
+    	                    <td '.(($res['address2'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_addres2" type="text" value="'.$res['address2'].'"></td>
+                            <td '.(($res['note'] == '')?'style="display:none;"':'').'><textarea id="client_person_note" style="resize: vertical;width: 185px;">'.$res['note'].'</textarea></td>
+    	                    <td '.(($res['client_name'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_name" type="text" value="'.$res['client_name'].'"></td>
     	                </tr>
 	                </table>
         	    </div>
@@ -642,7 +642,7 @@ function GetPage($res)
     	        </div>
             </fieldset>
         	                        
-        	<fieldset style="display:none;height: 465px;" id="scenar">
+        	<fieldset style="display:none;height: 465px;overflow: scroll;overflow-x: hidden;" id="scenar">
                 <legend>სცენარი</legend>
 	            <span class="hide_said_menu">x</span>';
 	$my_scenario = $res[scenario_id];
@@ -681,7 +681,7 @@ function GetPage($res)
                     	        WHERE question_detail.quest_id = $row[0]");
 	
 	    $data .= '<div style="" class="quest_body '.$row[5].'" id="'.$row[0].'">
-		            <table class="dialog-form-table">
+		            <table class="dialog-form-table" style="width: 255px !important;table-layout: fixed;">
 		    		<tr>
 						<td style="font-weight:bold;">'.$row[5].'. '. $row[1] .' <img onclick="imnote(\''.$row[5].'\')" style="border: none;padding: 0;margin-left: 8px;margin-top: -7px;cursor: pointer;" src="media/images/icons/kitxva.png" alt="14 ICON" height="24" width="24"></td>
 		                </tr><tr style="display:none;" id="imnote_'. $row[5] .'" ><td>'.$row[2].'</td></tr>
