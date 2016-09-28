@@ -269,6 +269,22 @@ switch ($action) {
             		    ('$user_id', '$incomming_id', '$task_recipient_id', '$task_controler_id', NOW(), '$task_start_date', '$task_end_date', '$task_departament_id', '$task_type_id', '$task_priority_id', '$task_description', '$task_note', '$task_status_id');");
 		}
 		
+		
+		$base = mysql_fetch_array(mysql_query("SELECT phone_base_detail_id FROM `outgoing_campaign_detail` WHERE id = $incomming_id"));
+		mysql_query("UPDATE `phone_base_detail` SET
+                            `firstname`='$_REQUEST[client_person_fname]',
+                            `lastname`='$_REQUEST[client_person_lname]',
+                            `pid`='$_REQUEST[client_person_number]',
+                            `phone1`='$_REQUEST[client_person_phone1]',
+                            `phone2`='$_REQUEST[client_person_phone2]',
+                            `mail1`='$_REQUEST[client_person_mail1]',
+                            `mail2`='$_REQUEST[client_person_mail2]',
+                            `address1`='$_REQUEST[client_person_addres1]',
+                            `address2`='$_REQUEST[client_person_addres2]',
+                            `id_code`='$_REQUEST[client_number]',
+                            `client_name`='$_REQUEST[client_name]',
+                            `note`='$_REQUEST[client_person_note]'
+                     WHERE  `id`='$base[0]';");
         break;
 	default:
 		$error = 'Action is Null';
