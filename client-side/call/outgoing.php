@@ -638,12 +638,18 @@ if(fName=='add-edit-form-task'){
     });
     $(document).on("click", "#delete_contact_info_phone", function () {
         LoadTable('contact_info_phone',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_phone);
+        $('#table_contact_info_phone_length,#table_contact_info_mail_length').css('top','2px');
+        $('select[name="table_contact_info_phone_length"],select[name="table_contact_info_mail_length"]').css('height','19px');
     });
     $(document).on("click", "#delete_contact_info_mail", function () {
         LoadTable('contact_info_mail',2,'get_list',"<'F'lip>",'outgoing_campaign_detail_contact_id='+$('#outgoing_campaign_detail_contact_id').val(),aJaxURL_contact_info_mail);
+        $('#table_contact_info_phone_length,#table_contact_info_mail_length').css('top','2px');
+        $('select[name="table_contact_info_phone_length"],select[name="table_contact_info_mail_length"]').css('height','19px');
     });
     $(document).on("click", "#delete_contact_info", function () {
     	LoadTable('contact_info',5,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
+    	$('#table_contact_info_phone_length,#table_contact_info_mail_length').css('top','2px');
+        $('select[name="table_contact_info_phone_length"],select[name="table_contact_info_mail_length"]').css('height','19px');
     });
     $(document).on("click", "#add_sms", function () {
     	param 			= new Object();
