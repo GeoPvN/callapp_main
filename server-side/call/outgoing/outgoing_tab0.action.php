@@ -259,7 +259,8 @@ switch ($action) {
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
-                				`call_comment`='$call_comment'
+                				`call_comment`='$call_comment',
+		                        `call_res`='$_REQUEST[call_res]'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -469,6 +470,7 @@ function Getincomming($hidden_id)
 	                                                `outgoing_campaign_detail`.`update_date`,
 	                                                `outgoing_campaign_detail`.`status`,
 	                                                `outgoing_campaign_detail`.`call_comment`,
+	                                                `outgoing_campaign_detail`.`call_res`,
                                                     `outgoing_campaign`.`project_id`,
                                                     `outgoing_campaign`.`scenario_id`,
                                                     `outgoing_campaign`.`create_date`,
@@ -645,6 +647,12 @@ function GetPage($res)
     	       </tr>
 	           <tr>
 	               <td><textarea style="width: 407px; margin:0;resize:vertical;" id="call_comment" >'.$res['call_comment'].'</textarea></td>
+	           </tr>
+	           <tr>
+	               <td style="width: 150px;"><label for="incomming_id">დარეკვის შედეგი</label></td>
+    	       </tr>
+	           <tr>
+	               <td><textarea style="width: 407px; margin:0;resize:vertical;" id="call_res" >'.$res['call_res'].'</textarea></td>
 	           </tr>
 	       </table>
 	    </fieldset>

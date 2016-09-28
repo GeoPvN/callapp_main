@@ -44,8 +44,8 @@ switch ($action) {
 	  	$rResult = mysql_query("SELECT  outgoing_campaign_detail_contact.`id`,
                                         IF(outgoing_campaign_detail_contact.type=2,client_title,CONCAT(fname,' ',lname)) AS `cl_name`,
                                         `person_position`,
-                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 1),
-                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 2)
+                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.actived = 1 AND outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 1),
+                                        (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.actived = 1 AND outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 2)
                                 FROM `outgoing_campaign_detail_contact`
                                 WHERE outgoing_campaign_detail_id = $_REQUEST[outgoing_campaign_detail_id] AND actived = 1");
 		
