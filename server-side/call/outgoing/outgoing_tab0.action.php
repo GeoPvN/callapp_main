@@ -85,21 +85,20 @@ switch ($action) {
 		
 		if($status != 1){
 	  	$rResult = mysql_query("SELECT  outgoing_campaign_detail.`id`,
-	  	                                outgoing_campaign_detail.`id`,
-	  	                                outgoing_campaign.create_date,
-	  	                                phone_base_detail.`phone1`,
-                        				phone_base_detail.`phone2`,
-                        				CONCAT(phone_base_detail.`firstname`,' ',phone_base_detail.`lastname`),
-                        				phone_base_detail.`pid`,
-	  	                                scenario.`name`,
-	  	                                phone_base_detail.note,
-	  	                                user_info.`name`
+                                        outgoing_campaign_detail.`id`,
+                                        outgoing_campaign_detail.update_date,
+                                        phone_base_detail.`note`,
+                                        phone_base_detail.`client_name`,
+                                        CONCAT(outgoing_campaign_detail_contact.fname,' ',outgoing_campaign_detail_contact.lname),
+                                        outgoing_campaign_detail_contact.`person_position`,
+                                        outgoing_campaign_detail.`call_res`,
+                                        outgoing_campaign_detail.call_comment,
+                                        CONCAT('<p style=\"padding: 3px 0;\" onclick=\"play(',DATE_FORMAT(asterisk_outgoing.call_datetime,'%Y/%m/%d/'),asterisk_outgoing.file_name,')\">მოსმენა</p>') AS `file`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+                                LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
-	  	                        JOIN scenario ON outgoing_campaign.scenario_id = scenario.id
-	  	                        LEFT JOIN users ON outgoing_campaign_detail.responsible_person_id = users.id
-                                LEFT JOIN user_info ON users.id = user_info.user_id
+                                LEFT JOIN asterisk_outgoing ON phone_base_detail.phone1 = asterisk_outgoing.phone
                                 WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter");
 		}else{
 		    $rResult = mysql_query("SELECT 	project.`id`,
