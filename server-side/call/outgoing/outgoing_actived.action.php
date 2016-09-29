@@ -25,8 +25,8 @@ switch ($action) {
 	  	                                outgoing_campaign.create_date,
 	  	                                phone_base_detail.`phone1`,
                         				phone_base_detail.`phone2`,
-                        				CONCAT(phone_base_detail.`firstname`,' ',phone_base_detail.`lastname`),
-                        				phone_base_detail.`pid`
+                        				phone_base_detail.`note`,
+                        				phone_base_detail.`client_name`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
@@ -143,8 +143,8 @@ function getpage(){
                                 <th style="width: 100%;">თარიღი</th>
                                 <th style="width: 100%;">ტელეფონი 1</th>
                                 <th style="width: 100%;">ტელეფონი 2</th>
-                                <th style="width: 100%;">სახელი გვარი</th>
-                                <th style="width: 100%;">პირადი ნომერი</th>
+                                <th style="width: 100%;">შენიშვნა</th>
+                                <th style="width: 100%;">დასახელება</th>
                                 <th class="check" style="width: 20px;">#</th>
                             </tr>
                         </thead>
