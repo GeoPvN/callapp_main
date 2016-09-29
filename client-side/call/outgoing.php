@@ -95,6 +95,7 @@ if(fName=='add-edit-form'){
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
 		$('.info').click();
+		$('#outgoing_status').chosen({ search_contains: true });
 }
 if(fName=='add-edit-form-contact_info'){
 	var buttons = {
