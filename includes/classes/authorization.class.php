@@ -7,6 +7,7 @@ class Authorization {
 	private  $password;
 	
 	private  $user_id;
+	private  $grup_id;
 	private  $sess_id;
 	
 	private  $date;
@@ -41,13 +42,14 @@ class Authorization {
 	 */
 	function checklogin() {
 		if ($this->username != '' && $this->password != '' ) {
-			$result = mysql_query("SELECT 	`id`
+			$result = mysql_query("SELECT 	`id`,`group_id`
 								   FROM	    `users`
 								   WHERE	`password` = '$this->password' AND username = '$this->username' AND `actived` = 1");	
 			if (mysql_num_rows($result) == 1) {
 				
 				 	$uid = mysql_fetch_assoc($result);
 				 	$this->user_id = $uid['id'];
+				 	$this->grup_id = $uid['group_id'];
 				 	
 					return true;
 			}else{
@@ -190,6 +192,7 @@ class Authorization {
 	function savelogin() {
 						
 		$_SESSION['USERID']   = $this->user_id;
+		$_SESSION['USERGR']   = $this->grup_id;
 		
 		$_SESSION['lifetime'] = time();
 

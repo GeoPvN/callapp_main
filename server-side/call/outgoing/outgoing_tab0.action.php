@@ -76,7 +76,8 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
 		$operator = $_REQUEST['operator'];
-		if($operator == 0 || $operator == ''){
+		$gr = $_SESSION['USERGR'];
+		if($operator == 0 || $operator == '' || $gr == 1){
 		    $operator_fillter = '';
 		}else{
 		    $operator_fillter = "AND outgoing_campaign_detail.responsible_person_id = $operator";
@@ -255,7 +256,7 @@ switch ($action) {
 		        VALUES
 		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
-         
+
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
