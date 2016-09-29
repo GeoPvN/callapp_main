@@ -384,17 +384,23 @@ function GetPage($out_id, $res){
 }
 
 function GetShablon() {
-    $res = mysql_query("SELECT 	`id`,
-                				`subject`,
-                				`body`
+    $res = mysql_query("SELECT 	mail.`id`,
+                                mail.`subject`,
+                                mail.`body`,
+                                file.id AS `file_id`,
+                                file.file_date,
+                                file.`name`,
+                                file.rand_name
                         FROM    `mail`
-                        WHERE 	`actived` = 1");
+                        LEFT JOIN file ON mail.id = file.mail_id
+                        WHERE 	mail.`actived` = 1
+                        LIMIT 1");
     
     while ($req = mysql_fetch_array($res)){
         $tbody .= '<tr>
                     <td>'.$req[0].'</td>
                     <td>'.$req[1].'</td>
-                    <td><span onclick="pase_body(\'body_'.$req[0].'\',\''.$req[1].'\',\''.$req[0].'\')">არჩევა</span> <div id="body_'.$req[0].'" style="display:none;">'.$req[2].'</div></td>
+                    <td><span onclick="pase_body(\'body_'.$req[0].'\',\''.$req[1].'\',\''.$req[0].'\',\''.$req[3].'\',\''.$req[4].'\',\''.$req[5].'\',\''.$req[6].'\')">არჩევა</span> <div id="body_'.$req[0].'" style="display:none;">'.$req[2].'</div></td>
                    </tr>';
     }
     $data = '<div id="dialog-form">
