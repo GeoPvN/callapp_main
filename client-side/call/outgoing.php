@@ -1729,5 +1729,8 @@ if(fName=='add-edit-form-task'){
 <!-- jQuery Dialog -->
 <div  id="add-edit-form-contact_info_mail" class="form-dialog" title="ელ-ფოსტა">
 </div>
+<!-- jQuery Dialog -->
+<div  id="play_audio" class="form-dialog" title="ელ-ფოსტა">
+</div>
 
 </body>
