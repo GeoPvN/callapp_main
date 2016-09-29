@@ -24,14 +24,8 @@ $res  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `ra
                     WHERE	send_mail_detail.sent_mail_id = $sent_mail_id AND status=1");
                     
 $res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `rand_name`
-                    FROM 	`file`
-                    WHERE	mail_id = $mail_shabl_id");
-
-if($user == 7){
-    $user_mail = "akaki@carekids.ge";
-}elseif($user == 8){
-    $user_mail = "natia@carekids.ge";
-}
+                      FROM 	`file`
+                      WHERE	mail_id = $mail_shabl_id");
 
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
@@ -47,19 +41,19 @@ $mail->SMTPDebug = 0;
 //Ask for HTML-friendly debug output
 $mail->Debugoutput = 'html';
 //Set the hostname of the mail server
-$mail->Host = "mail.carekids.ge";
+$mail->Host = "mail.tdgroup.ge";
 //Set the SMTP port number - likely to be 25, 465 or 587
 $mail->Port = 25;
 //Whether to use SMTP authentication
 $mail->SMTPAuth = true;
 //Username to use for SMTP authentication
-$mail->Username = "a_meparishvili@carekids.ge";
+$mail->Username = "service@tdgroup.ge";
 //Password to use for SMTP authentication
-$mail->Password = "123456789";
+$mail->Password = "12348765";
 //Set who the message is to be sent from
-$mail->setFrom('a_meparishvili@carekids.ge', 'Care Kids');
+$mail->setFrom('service@tdgroup.ge', 'TDGroup');
 //Set an alternative reply-to address
-$mail->addReplyTo('a_meparishvili@carekids.ge', 'Care Kids');
+$mail->addReplyTo('service@tdgroup.ge', 'TDGroup');
 // //Set who the message is to be sent to
 // $mail->addAddress('papalashvilidato@gmail.com', 'John Doe');
 // //Set the subject line
@@ -97,7 +91,6 @@ while ($row1 = mysql_fetch_assoc($res1)) {
 
 }
 
-//send the message, check for errors
 //send the message, check for errors
 if (!$mail->send()) {
     //echo "Mailer Error: " . $mail->ErrorInfo;
