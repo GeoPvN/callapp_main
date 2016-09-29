@@ -177,7 +177,7 @@ if(fName=='add-edit-form-actived'){
         data: "act=get_user",
         success: function(data) {
             $("#user_id").html(data.user);
-            $('#chose_actived_form,#user_id').chosen({ search_contains: true });
+            $('#chose_actived_form,#user_id,#actived_note').chosen({ search_contains: true });
         }
     });
     LoadTable('actived_in',7,main_act,"<'F'lip>",'id='+$('#hidden_id').val(),aJusURL_Actived);
@@ -542,6 +542,7 @@ if(fName=='add-edit-form-task'){
     		param.act		     = "save_actived";
     		param.actived_number = $("#actived_number").val();
     		param.user_id		 = $("#user_id").val();
+    		param.actived_note	 = $("#actived_note").val();
     		
             $.ajax({
                 url: aJusURL_Actived,
@@ -561,6 +562,7 @@ if(fName=='add-edit-form-task'){
     		param 			= new Object();
     		param.act		= "save_actived_select";
     		param.user_id	= $("#user_id").val();
+    		param.actived_note	 = $("#actived_note").val();
     		param.id        = ids.slice(0,-1);
             $.ajax({
                 url: aJusURL_Actived,

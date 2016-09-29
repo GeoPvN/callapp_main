@@ -10,6 +10,7 @@ $user_id	                = $_SESSION['USERID'];
 $actived_number             = $_REQUEST['actived_number'];
 $operator                   = $_REQUEST['user_id'];
 $ids                        = $_REQUEST['id'];
+$actived_note               = $_REQUEST['actived_note'];
 
 switch ($action) {
     case 'get_edit_page':
@@ -56,11 +57,11 @@ switch ($action) {
 	    break;
     
     case 'save_actived':
-        ActivedUsers($user_id,$actived_number,$operator);
+        ActivedUsers($user_id,$actived_number,$operator,$actived_note);
         
         break;
     case 'save_actived_select':
-        ActivedUsersSelect($user_id,$operator,$ids);
+        ActivedUsersSelect($user_id,$operator,$ids,$actived_note);
         
         break;
     case 'get_user':
@@ -96,16 +97,18 @@ function GetUsers(){
     return $data;
 }
 
-function ActivedUsers($user_id,$actived_number,$operator){
-    mysql_query("UPDATE `outgoing_campaign_detail` SET
-                        `user_id`='$user_id',
-                        `responsible_person_id`='$operator',
-                        `status`='2'
-                WHERE   `status`='1'
+function ActivedUsers($user_id,$actived_number,$operator,$actived_note){
+    mysql_query("UPDATE `outgoing_campaign_detail`
+                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id AND phone_base_detail.note = '$actived_note'
+                 SET
+                        outgoing_campaign_detail.`user_id`='$user_id',
+                        outgoing_campaign_detail.`responsible_person_id`='$operator',
+                        outgoing_campaign_detail.`status`='2'
+                WHERE   outgoing_campaign_detail.`status`='1'
                 LIMIT   $actived_number");
 }
 
-function ActivedUsersSelect($user_id,$operator,$ids) {
+function ActivedUsersSelect($user_id,$operator,$ids,$actived_note) {
     mysql_query("UPDATE `outgoing_campaign_detail` SET
                         `user_id`='$user_id',
                         `responsible_person_id`='$operator',
@@ -113,25 +116,45 @@ function ActivedUsersSelect($user_id,$operator,$ids) {
                 WHERE   `status`='1' AND id IN($ids)");
 }
 
+function GetNote($id){
+    $data = '';
+    $req = mysql_query("SELECT  phone_base_detail.`note`
+                        FROM `outgoing_campaign`
+                        JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+                        JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+                        WHERE outgoing_campaign_detail.actived = 1 AND outgoing_campaign.project_id = $id AND outgoing_campaign_detail.`status` = 1
+                        GROUP BY phone_base_detail.`note`");
+    $data .= '<option value="0">----</option>';
+    while ($res = mysql_fetch_array($req)) {
+        $data .= '<option value="' . $res[0] . '">' . $res[0] . '</option>';
+    }
+    return $data;
+}
+
 function getpage(){
     $data = '<div id="dialog-form">
                 <fieldset>
                    <legend>ძირითადი ინფორმაცია</legend>
         <div style="float:left;margin-left: 5px;">
-                   <label for="actived_number" style="margin-top: 5px;">ფორმირების ტიპი</label>
+                   <label for="chose_actived_form" style="margin-top: 5px;">ფორმირების ტიპი</label>
                    <select id="chose_actived_form" style="width: 173px;">
                    <option value="1">რაოდენობრივი</option>
                    <option value="2">კონკრეტული</option>
                    </select>
         </div>
         <div style="float:left;margin-left: 5px;">
-                   <label for="actived_number" style="margin-top: 5px;">ოპერატორი</label>
+                   <label for="user_id" style="margin-top: 5px;">ოპერატორი</label>
                    <select id="user_id" style="width: 173px;"></select>
+                   
+        </div>
+        <div style="float:left;margin-left: 5px;">
+                   <label for="actived_note" style="margin-top: 5px;">შენიშვნა</label>
+                   <select id="actived_note" style="width: 173px;">'.GetNote($_REQUEST[id]).'</select>
                    
         </div>
         <div style="float:left;margin-left: 5px;" id="raodenoba">
             	   <label for="actived_number" style="margin-top: 5px;">რაოდენობა</label>
-                   <input type="number" id="actived_number" min="1" />
+                   <input style="width: 150px;" type="number" id="actived_number" min="1" />
         </div>
                    
                    <div id="select_number" style="margin-top: 55px;">
