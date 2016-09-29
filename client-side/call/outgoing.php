@@ -1274,6 +1274,7 @@ if(fName=='add-edit-form-task'){
     	param.client_person_addres1	= $("#add-edit-form #client_person_addres1").val();
 		param.client_person_addres2	= $("#add-edit-form #client_person_addres2").val();
 		param.client_person_note	= $("#add-edit-form #client_person_note").val();
+		param.call_back             = $("#add-edit-form #call_back").val();
 		
 		param.client_number			= $("#add-edit-form #client_number").val();
 		param.client_name	        = $("#add-edit-form #client_name").val();

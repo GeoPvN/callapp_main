@@ -260,7 +260,8 @@ switch ($action) {
                 				`status`='$outgoing_status',
                 				`update_date`='$incomming_date_up',
                 				`call_comment`='$call_comment',
-		                        `call_res`='$_REQUEST[call_res]'
+		                        `call_res`='$_REQUEST[call_res]',
+		                        `call_back`='$_REQUEST[call_back]'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -471,6 +472,7 @@ function Getincomming($hidden_id)
 	                                                `outgoing_campaign_detail`.`status`,
 	                                                `outgoing_campaign_detail`.`call_comment`,
 	                                                `outgoing_campaign_detail`.`call_res`,
+	                                                `outgoing_campaign_detail`.`call_back`,
                                                     `outgoing_campaign`.`project_id`,
                                                     `outgoing_campaign`.`scenario_id`,
                                                     `outgoing_campaign`.`create_date`,
@@ -637,22 +639,24 @@ function GetPage($res)
 	       </table> 
 	       <table class="dialog-form-table">
 	           <tr>
-	               <td style="width: 150px;"><label for="outgoing_status">სტატუსი</label></td>
+	               <td style="width: 250px;"><label for="outgoing_status">სტატუსი</label></td>
+	               <td><label for="call_back">გადასარეკია უკან</label></td>
     	       </tr>
 	           <tr>
 	               <td><select id="outgoing_status" style="width: 100%;">'.getStatusOut($res['status']).'</select></td>
+	               <td><input style="width: 156px;" id="call_back" type="text" value="'.$res['call_back'].'" ></td>
 	           </tr>	           
     	       <tr>
-	               <td style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
+	               <td colspan="2" style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
     	       </tr>
 	           <tr>
-	               <td><textarea style="width: 407px; margin:0;resize:vertical;" id="call_comment" >'.$res['call_comment'].'</textarea></td>
+	               <td colspan="2"><textarea style="width: 407px; margin:0;resize:vertical;" id="call_comment" >'.$res['call_comment'].'</textarea></td>
 	           </tr>
 	           <tr>
-	               <td style="width: 150px;"><label for="incomming_id">დარეკვის შედეგი</label></td>
+	               <td colspan="2" style="width: 150px;"><label for="incomming_id">დარეკვის შედეგი</label></td>
     	       </tr>
 	           <tr>
-	               <td><textarea style="width: 407px; margin:0;resize:vertical;" id="call_res" >'.$res['call_res'].'</textarea></td>
+	               <td colspan="2"><textarea style="width: 407px; margin:0;resize:vertical;" id="call_res" >'.$res['call_res'].'</textarea></td>
 	           </tr>
 	       </table>
 	    </fieldset>
