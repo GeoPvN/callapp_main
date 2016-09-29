@@ -54,7 +54,7 @@ function AddImport($last_id, $scenario_id){
     
 	$user   = $_SESSION['USERID'];
 	$c_date	= date('Y-m-d H:i:s');
-	if($_REQUEST['note'] == ''){
+	if($_REQUEST['note'] == '' || $_REQUEST['note'] == 0){
 	    $note = '';
 	}else {
 	    $note = "AND note = '$_REQUEST[note]'";
