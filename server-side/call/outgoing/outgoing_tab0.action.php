@@ -93,7 +93,7 @@ switch ($action) {
                                         outgoing_campaign_detail_contact.`person_position`,
                                         outgoing_campaign_detail.`call_res`,
                                         outgoing_campaign_detail.call_comment,
-                                        CONCAT('<p style=\"padding: 3px 0;\" onclick=\"play(',DATE_FORMAT(asterisk_outgoing.call_datetime,'%Y/%m/%d/'),asterisk_outgoing.file_name,')\">მოსმენა</p>') AS `file`
+                                        CONCAT('<p style=\"padding: 3px 0;\" onclick=\"play(\'',DATE_FORMAT(asterisk_outgoing.call_datetime,'%Y/%m/%d/'),asterisk_outgoing.file_name,'\')\">მოსმენა</p>') AS `file`
                                 FROM `outgoing_campaign`
                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
                                 LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
