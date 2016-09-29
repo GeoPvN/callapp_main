@@ -817,7 +817,7 @@ if(fName=='add-edit-form-task'){
         $("#mail_shabl_id").val(real_id);
     	$("iframe").contents().find("body").html($('#'+id).html());
     	$('#add-edit-form-mail-shablon').dialog('close');
-    	$("#paste_files1").html('<div id="first_div">'+file_date+'</div><div id="two_div">+file_real_name+</div><div id="tree_div" onclick="download_file(\''+file_rand_name+'\',\''+file_real_name+'\')">ჩამოტვირთვა</div><div id="for_div" onclick="delete_file1(\''+file_id+'\')">-</div>');
+    	$("#paste_files1").html('<div id="first_div">'+file_date+'</div><div id="two_div">'+file_real_name+'</div><div id="tree_div" onclick="download_file(\''+file_rand_name+'\',\''+file_real_name+'\')">ჩამოტვირთვა</div><div id="for_div" onclick="delete_file1(\''+file_id+'\')">-</div>');
     }
 
     $(document).on("click", "#send_email", function () {
