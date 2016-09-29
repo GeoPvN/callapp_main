@@ -1338,6 +1338,29 @@ if(fName=='add-edit-form-task'){
         setTimeout(runAjax, 1000);
         });
 	}
+    function play(str){
+    	$('audio').each(function(){
+    	    this.pause(); // Stop playing
+    	    this.currentTime = 0; // Reset time
+    	});
+    	var buttons = {
+            	"cancel": {
+    	            text: "დახურვა",
+    	            id: "cancel-dialog",
+    	            click: function () {
+    	            	$('audio').each(function(){
+    	            	    this.pause(); // Stop playing
+    	            	    this.currentTime = 0; // Reset time
+    	            	}); 
+    	            	$(this).dialog("close");
+    	            }
+    	        }
+    	    };
+    	GetDialog("play_audio", 325, "auto", buttons);
+
+    	$('#play_audio audio source').attr('src','http://212.72.155.176:8000/'+str);
+    	$('#play_audio audio').load();
+    }
 </script>
 <style type="text/css">
 .callapp_refresh{
