@@ -1508,13 +1508,13 @@ if(fName=='add-edit-form-task'){
             <th>ID</th>
             <th style="width: 30px;" id="first_th">№</th>
             <th style="width: 100%;">თარიღი</th>
-            <th style="width: 100%;">ტელეფონი 1</th>
-            <th style="width: 100%;">ტელეფონი 2</th>
-            <th style="width: 100%;">სახელი გვარი</th>
-            <th style="width: 100%;">პირადი ნომერი</th>
-            <th style="width: 100%;">სცენარი</th>
-            <th style="width: 100%;">შენიშვნა</th>
-            <th style="width: 100%;">პასუხისმგებელი პირი</th>
+            <th style="width: 100%;">საქმიანობის სფერო</th>
+            <th style="width: 100%;">დასახელება</th>
+            <th style="width: 100%;">კომპ პირი</th>
+            <th style="width: 100%;">თანამდებობა</th>
+            <th style="width: 100%;">დარეკვის შედეგი</th>
+            <th style="width: 100%;">კომენტარი</th>
+            <th style="width: 100%;">მოსმენა</th>
             <th class="check" style="width: 30px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
