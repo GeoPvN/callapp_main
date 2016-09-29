@@ -1730,7 +1730,10 @@ if(fName=='add-edit-form-task'){
 <div  id="add-edit-form-contact_info_mail" class="form-dialog" title="ელ-ფოსტა">
 </div>
 <!-- jQuery Dialog -->
-<div  id="play_audio" class="form-dialog" title="ელ-ფოსტა">
+<div  id="play_audio" class="form-dialog" title="მოსმენა">
+    <audio controls autoplay>
+      <source src="" type="audio/wav">
+    </audio>
 </div>
 
 </body>
