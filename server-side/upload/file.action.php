@@ -6,6 +6,7 @@ $action = $_REQUEST['act'];
 $error	= '';
 $data	= '';
 $user   = $_SESSION['USERID'];
+$cp     = $_REQUEST['cp'];
 
 switch ($action) {
 	case 'file_upload':
@@ -155,21 +156,40 @@ switch ($action) {
                                                 WHERE actived = 1
                                                 ORDER BY id DESC
                                                 LIMIT 1"));
-        while (1!=$r){
-            mysql_query("INSERT INTO `phone_base_detail`
-                        (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `activities`, `firstname`, `lastname`, `pid`, `born_date`, `sex`,  `mail1`, `mail2`, `address1`, `address2`, `info1`, `info2`, `info3`, `note`)
-                        VALUES
-                        ('".$_SESSION['USERID']."', '$req[0]',
-                             '".mysql_real_escape_string($data->val($r,'A'))."', '".mysql_real_escape_string($data->val($r,'B'))."',
-						 	 '".mysql_real_escape_string($data->val($r,'C'))."', '".mysql_real_escape_string($data->val($r,'D'))."',
-						 	 '".mysql_real_escape_string($data->val($r,'E'))."', '".mysql_real_escape_string($data->val($r,'F'))."',
-						 	 '".mysql_real_escape_string($data->val($r,'G'))."', '".mysql_real_escape_string($data->val($r,'H'))."',
-						 	 '".mysql_real_escape_string($data->val($r,'I'))."', '".mysql_real_escape_string($data->val($r,'J'))."',
-                             '".mysql_real_escape_string($data->val($r,'K'))."', '".mysql_real_escape_string($data->val($r,'L'))."',
-                             '".mysql_real_escape_string($data->val($r,'M'))."', '".mysql_real_escape_string($data->val($r,'N'))."',
-                             '".mysql_real_escape_string($data->val($r,'O'))."', '".mysql_real_escape_string($data->val($r,'P'))."',
-                             '".mysql_real_escape_string($data->val($r,'Q'))."', '".mysql_real_escape_string($data->val($r,'R'))."')") or die (err);
-            $r--;
+        if($cp == 1){
+            while (1!=$r){
+                if(mysql_real_escape_string($data->val($r,'A')) != '' && mysql_real_escape_string($data->val($r,'B')) != ''){
+                mysql_query("INSERT INTO `phone_base_detail`
+                            (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `mail1`, `mail2`, `address1`, `address2`, `info1`, `note`)
+                            VALUES
+                            ('".$_SESSION['USERID']."', '$req[0]',
+                    '".mysql_real_escape_string($data->val($r,'A'))."', '".mysql_real_escape_string($data->val($r,'B'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'C'))."', '".mysql_real_escape_string($data->val($r,'D'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'E'))."', '".mysql_real_escape_string($data->val($r,'F'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'G'))."', '".mysql_real_escape_string($data->val($r,'H'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'I'))."', '".mysql_real_escape_string($data->val($r,'J'))."')") or die (err);
+                }
+                $r--;
+            }
+        }else{
+            while (1!=$r){
+                if(mysql_real_escape_string($data->val($r,'A')) != '' && mysql_real_escape_string($data->val($r,'B')) != ''){
+                mysql_query("INSERT INTO `phone_base_detail`
+                            (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `activities`, `firstname`, `lastname`, `pid`, `born_date`, `sex`,  `mail1`, `mail2`, `address1`, `address2`, `info1`, `info2`, `info3`, `note`)
+                            VALUES
+                            ('".$_SESSION['USERID']."', '$req[0]',
+                                 '".mysql_real_escape_string($data->val($r,'A'))."', '".mysql_real_escape_string($data->val($r,'B'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'C'))."', '".mysql_real_escape_string($data->val($r,'D'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'E'))."', '".mysql_real_escape_string($data->val($r,'F'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'G'))."', '".mysql_real_escape_string($data->val($r,'H'))."',
+    						 	 '".mysql_real_escape_string($data->val($r,'I'))."', '".mysql_real_escape_string($data->val($r,'J'))."',
+                                 '".mysql_real_escape_string($data->val($r,'K'))."', '".mysql_real_escape_string($data->val($r,'L'))."',
+                                 '".mysql_real_escape_string($data->val($r,'M'))."', '".mysql_real_escape_string($data->val($r,'N'))."',
+                                 '".mysql_real_escape_string($data->val($r,'O'))."', '".mysql_real_escape_string($data->val($r,'P'))."',
+                                 '".mysql_real_escape_string($data->val($r,'Q'))."', '".mysql_real_escape_string($data->val($r,'R'))."')") or die (err);
+                }
+                $r--;
+            }
         }
         
         echo "xls File has been successfully Imported";

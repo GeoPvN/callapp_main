@@ -107,12 +107,15 @@ function GetNote(){
     $data = '';
     $req = mysql_query("SELECT note
                         FROM phone_base_detail
-                        where actived = 1
+                        where actived = 1 AND `status` = 1
                         GROUP BY note");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         $data .= '<option value="' . $res['note'] . '">' . $res['note'] . '</option>';
+    }
+    if(mysql_num_rows($req) == 0){
+        $data .= '<option value="ყველა კატეგოერია დაფორმირებულია">ყველა კატეგოერია დაფორმირებულია</option>';
     }
     return $data;
 }
