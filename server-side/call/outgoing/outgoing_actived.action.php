@@ -98,14 +98,21 @@ function GetUsers(){
 }
 
 function ActivedUsers($user_id,$actived_number,$operator,$actived_note){
+    $rr = mysql_query(" SELECT outgoing_campaign_detail.id
+                        FROM outgoing_campaign_detail
+                        JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id AND phone_base_detail.note = '$actived_note'
+                        WHERE   outgoing_campaign_detail.`status`='1'
+                        LIMIT $actived_number");
+    while ($rrr = mysql_fetch_array($rr)){
+        $mass_id .= $rrr[0].',';
+    }
+    $mass_id .= '0';
     mysql_query("UPDATE `outgoing_campaign_detail`
-                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id AND phone_base_detail.note = '$actived_note'
                  SET
                         outgoing_campaign_detail.`user_id`='$user_id',
                         outgoing_campaign_detail.`responsible_person_id`='$operator',
                         outgoing_campaign_detail.`status`='2'
-                WHERE   outgoing_campaign_detail.`status`='1'
-                LIMIT   $actived_number");
+                WHERE   outgoing_campaign_detail.`id` in($mass_id)");
 }
 
 function ActivedUsersSelect($user_id,$operator,$ids,$actived_note) {
