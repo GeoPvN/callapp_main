@@ -78,7 +78,7 @@ if(fName=='add-edit-form'){
 		    };
         GetDialog(fName, 585, "auto", buttons, 'left+43 top');
         LoadTable('sms',5,'get_list',"<'F'lip>",'',aJaxURL);
-        LoadTable('contact_info',5,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
+        LoadTable('contact_info',6,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
         SetEvents("add_contact_info", "delete_contact_info", "check-all-contact_info", tName+'contact_info', 'add-edit-form-contact_info', aJaxURL_contact_info);
         LoadTable('mail',5,'get_list_mail',"<'F'lip>",'out_id='+$('#incomming_id').val(),aJaxURL);
         $('#table_contact_info_length').css('top','2px');
@@ -356,7 +356,7 @@ if(fName=='add-edit-form-task'){
             url: aJaxURL_contact_info,
             data: param,
             success: function(data) {
-                LoadTable('contact_info',5,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
+                LoadTable('contact_info',6,'get_list',"<'F'lip>",'outgoing_campaign_detail_id='+$('#incomming_id').val(),aJaxURL_contact_info);
             	$('#add-edit-form-contact_info').dialog('close');
             	$('#table_contact_info_length').css('top','2px');
                 $('select[name="table_contact_info_length"]').css('height','19px');
