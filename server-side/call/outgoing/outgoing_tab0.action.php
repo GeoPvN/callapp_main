@@ -693,6 +693,7 @@ function GetPage($res)
                                 <th style="width: 100%;">თანამდებობა</th>
                                 <th style="width: 100%;">ტელეფონი</th>
                                 <th style="width: 100%;">ელ-ფოსტა</th>
+	                            <th style="width: 100%;">გ.მ. პირი</th>
     	                        <th class="check" style="width: 30px;">&nbsp;</th>
                             </tr>
                         </thead>
@@ -708,6 +709,9 @@ function GetPage($res)
                                     <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                                 </th>
                                 <th>
+                                    <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                                </th>
+	                            <th>
                                     <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                                 </th>
                                 <th>

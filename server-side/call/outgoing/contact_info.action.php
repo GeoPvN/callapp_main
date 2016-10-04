@@ -46,7 +46,7 @@ switch ($action) {
                                         `person_position`,
                                         (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.actived = 1 AND outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 1),
                                         (SELECT GROUP_CONCAT(`name`) FROM outgoing_campaign_detail_contact_detail WHERE outgoing_campaign_detail_contact_detail.actived = 1 AND outgoing_campaign_detail_contact_detail.outgoing_campaign_detail_contact_id = outgoing_campaign_detail_contact.id AND outgoing_campaign_detail_contact_detail.type = 2),
-	  	                                IF(person_gmpiri = 1,'გ.მ. პირი','')
+	  	                                IF(person_gmpiri = 1,'კი','არა')
                                 FROM `outgoing_campaign_detail_contact`
                                 WHERE outgoing_campaign_detail_id = $_REQUEST[outgoing_campaign_detail_id] AND actived = 1");
 		
