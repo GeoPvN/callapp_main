@@ -129,7 +129,7 @@ function GetPage(){
 	       <legend>ძირითადი ინფორმაცია</legend>
 		   <label for="actived_number">რაოდენობა</label>
 	       <input type="number" id="actived_number" min="1" value="1">
-	       <label for="note">შენიშვნა</label>
+	       <label for="note">საქმიანობის სფერო</label>
 	       <select id="note_actived" style="width:173px;">'.GetNote().'</select>
 	       <label for="actived_number" style="margin:5px 0;width:173px;">სცენარი</label>
 	       <select id="scenario_id">'.GetScenario().'</select>
