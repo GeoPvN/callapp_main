@@ -158,7 +158,7 @@ switch ($action) {
                                                 LIMIT 1"));
         if($cp == 1){
             while (1!=$r){
-                if(mysql_real_escape_string($data->val($r,'A')) != '' && mysql_real_escape_string($data->val($r,'B')) != ''){
+                if(mysql_real_escape_string($data->val($r,'A')) != '' || mysql_real_escape_string($data->val($r,'B')) != ''){
                 mysql_query("INSERT INTO `phone_base_detail`
                             (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `mail1`, `mail2`, `address1`, `address2`, `info1`, `note`)
                             VALUES
@@ -173,7 +173,7 @@ switch ($action) {
             }
         }else{
             while (1!=$r){
-                if(mysql_real_escape_string($data->val($r,'A')) != '' && mysql_real_escape_string($data->val($r,'B')) != ''){
+                if(mysql_real_escape_string($data->val($r,'A')) != '' || mysql_real_escape_string($data->val($r,'B')) != ''){
                 mysql_query("INSERT INTO `phone_base_detail`
                             (`user_id`, `phone_base_id`, `phone1`, `phone2`, `id_code`, `client_name`, `activities`, `firstname`, `lastname`, `pid`, `born_date`, `sex`,  `mail1`, `mail2`, `address1`, `address2`, `info1`, `info2`, `info3`, `note`)
                             VALUES
