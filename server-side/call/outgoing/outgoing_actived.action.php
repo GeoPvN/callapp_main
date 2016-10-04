@@ -166,7 +166,7 @@ function getpage(){
                                 <th style="width: 100%;">თარიღი</th>
                                 <th style="width: 100%;">ტელეფონი 1</th>
                                 <th style="width: 100%;">ტელეფონი 2</th>
-                                <th style="width: 100%;">შენიშვნა</th>
+                                <th style="width: 100%;">საქმიანობის სფერო</th>
                                 <th style="width: 100%;">დასახელება</th>
                                 <th class="check" style="width: 20px;">#</th>
                             </tr>
