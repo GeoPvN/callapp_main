@@ -30,7 +30,7 @@ class page {
 		echo '</div>
 		    <div style="z-index: 99; background: #FFF; width: 100%; height: 40px; position: fixed; bottom: 0; box-shadow: 0px -2px 10px #888888;">
 		    <a href="http://callapp.ge/" target="_blank"><img style="margin-left: 10px;" src="media/images/CA-1.png" alt="footer" height="40" width="100"></a>
-		    <div style="float: right;background-color: #F7F7F7;padding: 10px;margin-top: 4px; margin-right: 90px;">
+		    <!--div style="float: right;background-color: #F7F7F7;padding: 10px;margin-top: 4px; margin-right: 90px;">
 		    <span style="margin-right: 5px;">Mobile</span>
 		    <span style="margin-right: 5px;">Shortcout</span>
 		    <span style="margin-right: 5px;">Tour</span>
@@ -38,7 +38,7 @@ class page {
 		    <span style="margin-right: 5px;">Help</span>
 		    <span style="margin-right: 5px;">Support</span>
 		    </div>
-            </div>';
+            </div-->';
 		
 	}
 	
