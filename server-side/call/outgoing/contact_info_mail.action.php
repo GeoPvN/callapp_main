@@ -130,4 +130,13 @@ function GetPage($res)
 	return $data;
 }
 
+function increment($table){
+
+    $result   		= mysql_query("SHOW TABLE STATUS LIKE '$table'");
+    $row   			= mysql_fetch_array($result);
+    $increment   	= $row['Auto_increment'];
+
+    return $increment;
+}
+
 ?>
