@@ -280,7 +280,7 @@ $(document).on("change", ".cycle", function () {
 		            }
 		        }
 		    };
-		GetDialog1("start_date", 250, "auto", buttons, 'center top');
+		GetDialog("start_date", 250, "auto", buttons, 'center top');
 		
 	}
 });
@@ -311,7 +311,7 @@ function openhour(date,date1,id){
                         }
                     }
             };
-            GetDialog1("wfm_hour", 1130, "auto", buttons, 'center top');
+            GetDialog("wfm_hour", 1130, "auto", buttons, 'center top');
             $('#wfm_hour').html(data.page);
             $('#select_viwe').chosen({ search_contains: true });
         }
@@ -369,7 +369,7 @@ $(document).on("click", ".user_break", function () {
 	            }
 	        }
 	    };
-	GetDialog1("add_break", 690, "auto", buttons, 'center top');
+	GetDialog("add_break", 690, "auto", buttons, 'center top');
 
 	param 			         = new Object();
 	param.act		         = "get_user_break";
@@ -427,7 +427,7 @@ function LoadDialog(fname){
 	            }
 	        }
 	    };
-	GetDialog1(fname, 230, "auto", buttons, 'center top');
+	GetDialog(fname, 230, "auto", buttons, 'center top');
 	$('#start_break, #end_break').timepicker({
     	hourMax: 23,
 		hourMin: 00,
