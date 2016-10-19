@@ -207,7 +207,7 @@ function opendialog(work_shift,color,date,rigi_num,work_real_id){
 		            }
 		        }
 		    };
-        GetDialog1("add-edit-form", 735, "auto", buttons, 'center top');
+        GetDialog("add-edit-form", 735, "auto", buttons, 'center top');
         param 			    = new Object();
     	param.act		    = "get_shift";
     	param.project_id	= $("#project_id").val();
