@@ -82,18 +82,18 @@ function load_table(){
                     total_hour += parseInt($("td[vertikal='"+i+"'][horizontal='"+g+"']").attr('hour'));
                 }
                 //alert(total_hour);
-                $(".total_"+i).html(toHHMMSS(total_hour))
+                $(".total_"+i).html(toHHMMSS(total_hour));
                 total_hour = 0;
             }
             for(i = 1;i <= data.day;i++){
                 for(g = 1;g <= data.num;g++){
                 	day_hour += parseFloat($("td[vertikal='"+g+"'][horizontal='"+i+"']").attr('hour'));
                 }
-
+                //alert(day_hour);
                 $(".qveda_dge_"+i).html(toHHMMSS(day_hour));
                 tes1 = diff($(".qveda_dge_geg_"+i).html(),$(".qveda_dge_"+i).html());
 
-                    //(parseFloat($(".qveda_dge_"+i).html())-parseFloat($(".qveda_dge_geg_"+i).html())).toFixed(2)
+                
                 $(".qveda_dge_sx_"+i).html(tes1);
                 if(parseInt($(".qveda_dge_sx_"+i).html()) > 0){
                 	$(".qveda_dge_sx_"+i).css('background','green');
@@ -175,7 +175,7 @@ $(document).on("change", "#year_month", function () {
 	load_table();
 });
 
-function opendialog(work_shift,color,date,rigi_num){
+function opendialog(work_shift,color,date,rigi_num,work_real_id){
 	if(color != 'red'){
 		var buttons = {
 				"save": {
@@ -207,7 +207,7 @@ function opendialog(work_shift,color,date,rigi_num){
 		            }
 		        }
 		    };
-        GetDialog("add-edit-form", 235, "auto", buttons, 'center top');
+        GetDialog1("add-edit-form", 735, "auto", buttons, 'center top');
         param 			    = new Object();
     	param.act		    = "get_shift";
     	param.project_id	= $("#project_id").val();
@@ -219,6 +219,7 @@ function opendialog(work_shift,color,date,rigi_num){
                 $("#shift_id").html(data.shift);
             }
         });
+        GetDataTable('table_hist', aJaxURL, "get_list_hist", 6, "work_real_id="+work_real_id, 0, "", 1, "desc", "", "<'dataTable_buttons'T><'F'Cfipl>");
 	}
 }
 
@@ -247,7 +248,7 @@ $(document).on("change", ".cycle", function () {
 
 		            	$( "td[rigi_num='"+user_num+"'][holy='none']" ).each(function( index ) {
 		        			if(parseInt($(this).attr('horizontal')) > (parseInt($("#cycle_start_date").val())-1)){
-		        		    insert += "('"+user_id+"', '"+$(this).attr('tarigi')+"', '"+res[m]+"', '"+user_num+"', '"+$('#project_id').val()+"', '"+cycle_id+"'),";
+		        		    insert += "('"+user_id+"', '"+$(this).attr('tarigi')+"', '"+res[m]+"', '"+user_num+"', '"+$('#project_id').val()+"', '"+cycle_id+"', '"+<?php echo $_SESSION['USERID'];?>+"'),";
 		        		    if(m == (total-1)){
 		        		        m = 0;
 		        		    }else{
@@ -279,17 +280,22 @@ $(document).on("change", ".cycle", function () {
 		            }
 		        }
 		    };
-		GetDialog("start_date", 250, "auto", buttons, 'center top');
+		GetDialog1("start_date", 250, "auto", buttons, 'center top');
 		
 	}
 });
 
-function openhour(date,date1){
+function openhour(date,date1,id){
+	if(id == undefined){
+		id = 1;
+	}
 	param 			    = new Object();
 	param.act		    = "get_24_hour";
 	param.project_id	= $("#project_id").val();
 	param.date	        = date;
-	param.date1         = $("td[tarigi1='"+date1+"']").attr('tarigi_back');
+	param.date1         = $("td[tarigi1='"+date+"']").attr('tarigi_back');
+	param.new_viwe      = id;
+	
     $.ajax({
         url: aJaxURL,
         data: param,
@@ -305,16 +311,52 @@ function openhour(date,date1){
                         }
                     }
             };
-            GetDialog("wfm_hour", 1130, "auto", buttons, 'center top');
+            GetDialog1("wfm_hour", 1130, "auto", buttons, 'center top');
             $('#wfm_hour').html(data.page);
+            $('#select_viwe').chosen({ search_contains: true });
         }
     });
 }
+
+$(document).on("change", "#select_viwe", function () {
+	openhour($('#load_date').val(),'',$(this).val());
+	
+});
 function LoadTable(tbl,col_num,act,change_colum,custom_param,URL){
 	GetDataTable('table_'+tbl, URL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
 
 	$('.display').css('width','100%');
 }
+
+$(document).on("change", "#work_activities_id", function () {
+	param 			         = new Object();
+	param.act		         = "get_work_activities_detail";
+	param.work_activities_id = $(this).val();
+
+    $.ajax({
+        url: aJaxURL,
+        data: param,
+        success: function(data) {
+            $('#work_activities_detail_id').html(data.selector);
+        }
+    });
+});
+
+$(document).on("change", "#work_activities_detail_id", function () {
+	param 			         = new Object();
+	param.act		         = "paste_date";
+	param.work_activities_detail_id = $(this).val();
+
+    $.ajax({
+        url: aJaxURL,
+        data: param,
+        success: function(data) {
+            $('#start_break').val(data.paste.start);
+            $('#end_break').val(data.paste.end);
+        }
+    });
+});
+
 $(document).on("click", ".user_break", function () {
     var user_name = $(this).html()
 	var buttons = {
@@ -327,7 +369,7 @@ $(document).on("click", ".user_break", function () {
 	            }
 	        }
 	    };
-	GetDialog("add_break", 690, "auto", buttons, 'center top');
+	GetDialog1("add_break", 690, "auto", buttons, 'center top');
 
 	param 			         = new Object();
 	param.act		         = "get_user_break";
@@ -370,7 +412,7 @@ function LoadDialog(fname){
 		                    	LoadTable('index',4,'get_index',"<'F'lip>",'work_real_id='+$('#r_id').val(),aJaxURL);
 		                    	$("#"+fname).dialog("close");
 		                    }else{
-		                        alert('მიუთითეთ კორექტული საათი!');
+		                        alert('შუალედი ცდება მიმდინარე სამუშაო გრაფიკსი, მიუთითეთ კორექტული შუალედი!');
 		                    }
 	                    }
 	                });
@@ -385,7 +427,7 @@ function LoadDialog(fname){
 	            }
 	        }
 	    };
-	GetDialog(fname, 230, "auto", buttons, 'center top');
+	GetDialog1(fname, 230, "auto", buttons, 'center top');
 	$('#start_break, #end_break').timepicker({
     	hourMax: 23,
 		hourMin: 00,
@@ -421,7 +463,7 @@ $(document).on("change", "#cheker", function () {
             		$('#cvlis_nomeri').prop('disabled', true);
             	}
             }else{
-                alert('მიუთითეთ კორექტული საათი!')
+                alert('შუალედი ცდება მიმდინარე სამუშაო გრაფიკსი, მიუთითეთ კორექტული შუალედი!')
             }
         }
     });
@@ -480,6 +522,15 @@ $(document).on("change", "#cheker", function () {
 #time_line td {
 	font-size: 12px;
 }
+td {position: relative;}
+.comment1:after{
+	content: "";
+    position: absolute;
+    left: calc(100% - 0.5em);
+    top: 0;
+    border-left: 0.5em solid transparent;
+    border-top: 0.9em solid #000;
+}
 </style>
 </head>
 <body>
@@ -514,7 +565,41 @@ $(document).on("change", "#cheker", function () {
 <div id="dialog-form">
     <fieldset>
         <legend>ცვლა</legend>
-        <select style="width: 190px;" id="shift_id"></select>
+        <select style="width: 190px;margin-bottom: 25px;" id="shift_id"></select>
+        <table class="display" id="table_hist">
+        <thead>
+            <tr id="datatable_header">
+                <th>ID</th>
+                <th style="width: 50%;">ცვლილების თარიღი</th>
+                <th style="width: 50%;">ცვლილების სტატუსი</th>
+                <th style="width: 50%;">ცვლილების ავტორი</th>
+                <th style="width: 50%;">ცვლილებამდე</th>
+                <th style="width: 50%;">ცვლილების შემდეგ</th>
+            </tr>
+        </thead>
+        <thead>
+            <tr class="search_header">
+                <th class="colum_hidden">
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+            </tr>
+        </thead>
+    </table>
     </fieldset>
 </div>
 </div>
