@@ -12,12 +12,11 @@ switch ($action) {
         $rResult = mysql_query("SELECT  work_real_log.id,
                                         work_real_log.add_date,
                                         IF(work_real_log.checker = 1,'დაემატა','განახლდა'),
-                                        persons.`name`,
+                                        user_info.`name`,
                                         old_w.`name`,
                                         new_w.`name`
                                 FROM    `work_real_log`
-                                JOIN	users ON work_real_log.change_user_id = users.id
-                                JOIN	persons ON persons.id = users.person_id
+                                JOIN	user_info ON work_real_log.change_user_id = user_info.user_id
                                 JOIN    work_shift AS new_w ON work_real_log.work_shift_id = new_w.id
                                 JOIN    work_shift AS old_w ON work_real_log.old_work_shift_id = old_w.id
                                 WHERE   work_real_log.work_real_id = $_REQUEST[work_real_id]");
@@ -68,9 +67,9 @@ switch ($action) {
 	                            GROUP BY week_day_graphic.cycle");
         
         $get_user = mysql_query("   SELECT  `users`.`id`,
-                    				        `persons`.`name`
+                    				        `user_info`.`name`
                                     FROM    `users`
-                                    JOIN    `persons` ON persons.id = users.person_id
+                                    JOIN    `user_info` ON user_info.user_id = users.id
                                     WHERE   `users`.`actived` = 1");
          
         $get_cycle = mysql_query("  SELECT work_cycle.id,work_cycle.`name`,GROUP_CONCAT(work_cycle_detail.work_shift_id ORDER BY work_cycle_detail.num ASC) AS `shift_id`
@@ -638,7 +637,7 @@ switch ($action) {
         }
         }
         
-        $my_res = mysql_query(" SELECT  persons.`name`,
+        $my_res = mysql_query(" SELECT  user_info.`name`,
                                         HOUR(work_shift.start_date) AS `start`,
                                         HOUR(work_shift.end_date) AS `end`,
         								CAST(SUBSTRING_INDEX(work_real.rigi_num, 'rigi',-1) AS UNSIGNED) as num,
@@ -649,11 +648,10 @@ switch ($action) {
 				                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),0,HOUR(work_shift.end_date)) AS `end_half`
                                 FROM `work_real`
                                 JOIN work_shift ON work_real.work_shift_id = work_shift.id
-                                JOIN users ON work_real.user_id = users.id
-                                JOIN persons ON users.person_id = persons.id
+                                JOIN user_info ON work_real.user_id = user_info.user_id
                                 WHERE DATE(date) = '$date' AND work_real.project_id = $project_id AND HOUR(work_shift.start_date) != 0
                                 UNION ALL
-                                SELECT  persons.`name`,
+                                SELECT  user_info.`name`,
                                         HOUR(work_shift.start_date) AS `start`,
                                         HOUR(work_shift.end_date) AS `end`,
         								CAST(SUBSTRING_INDEX(work_real.rigi_num, 'rigi',-1) AS UNSIGNED) as num,
@@ -664,8 +662,7 @@ switch ($action) {
 				                        IF(HOUR(work_shift.start_date) > HOUR(work_shift.end_date),0,HOUR(work_shift.end_date)) AS `end_half`
                                 FROM `work_real`
                                 JOIN work_shift ON work_real.work_shift_id = work_shift.id
-                                JOIN users ON work_real.user_id = users.id
-                                JOIN persons ON users.person_id = persons.id
+                                JOIN user_info ON work_real.user_id = user_info.user_id
                                 WHERE DATE(date) = '$date1' AND work_real.project_id = $project_id AND HOUR(work_shift.start_date) != 0
                                 ORDER BY num ASC");
         $ope .= '<tr><td style="height: 11px;border-top: 2px solid black;"></td></tr><tr><td style="height: 11px;"></td></tr>';
