@@ -14,7 +14,7 @@
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 10;
+    var colum_number      = 12;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 
@@ -38,6 +38,7 @@
      	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
      	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
     	}else{
+    		$('#table_index_div').css('display','block');
     		$('#table_actived').css('display','none');
     		LoadTable('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
@@ -58,7 +59,7 @@
     	setTimeout(function(){
 	    	$('.ColVis, .dataTable_buttons').css('display','none');
 	    	}, 120);
-    	$('.display').css('width','100%');
+    	//$('.display').css('width','100%');
     }
     
     function LoadDialog(fName){
@@ -220,7 +221,7 @@ if(fName=='add-edit-form-task'){
             	start_date  = $('#start_date').val();
             	end_date    = $('#end_date').val();
             	if($("#task_type").val() == 2){
-                	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
+                	$("#table_index,#table_index_div,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
                 	$("#table_task").css('display','table');
                 	$('#add_button_task,#delete_button_task').css('display','block');
             		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
@@ -230,12 +231,13 @@ if(fName=='add-edit-form-task'){
             		$('#add_button_task,#delete_button_task').css('display','none');
             		$("#table_task,#table_task_wrapper").css('display','none');
                 	if($("#tab_id").val() == 1){
-                    	$('#table_index,#table_index_wrapper').css('display','none');
+                    	$('#table_index,#table_index_div,#table_index_wrapper').css('display','none');
                     	$('#table_actived,#table_actived_wrapper').css('display','table');
                  	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
                  	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
                 	}else{
                 		$('#table_index,#table_index_wrapper').css('display','table');
+                		$('#table_index_div').css('display','block');
                 		$('#table_actived,#table_actived_wrapper').css('display','none');
                 		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
                     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
@@ -252,7 +254,7 @@ if(fName=='add-edit-form-task'){
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
     	if($("#task_type").val() == 2){
-        	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
+        	$("#table_index,#table_index_div,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
         	$("#table_task").css('display','table');
         	$('#add_button_task,#delete_button_task').css('display','block');
     		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
@@ -260,12 +262,13 @@ if(fName=='add-edit-form-task'){
       	
     	}else{
         	if($("#tab_id").val() == 1){
-            	$('#table_index,#table_index_wrapper').css('display','none');
+            	$('#table_index,#table_index_div,#table_index_wrapper').css('display','none');
             	$('#table_actived,#table_actived_wrapper').css('display','table');
          	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
          	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
         	}else{
         		$('#table_index,#table_index_wrapper').css('display','table');
+        		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
         		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
@@ -285,7 +288,7 @@ if(fName=='add-edit-form-task'){
     	end_date    = $('#end_date').val();
     	$('#operator_id,#tab_id').trigger("chosen:updated");
     	if($("#task_type").val() == 2){
-        	$("#table_index,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
+        	$("#table_index,#table_index_div,#table_actived,#table_actived_wrapper,#table_index_wrapper").css('display','none');
         	$("#table_task").css('display','table');
         	$('#add_button_task,#delete_button_task').css('display','block');
     		LoadTable('task',12,main_act,change_colum_main,'task_status_id='+$("#tab_id").val(),aJusURL_Task);
@@ -295,12 +298,13 @@ if(fName=='add-edit-form-task'){
     		$('#add_button_task,#delete_button_task').css('display','none');
     		$("#table_task,#table_task_wrapper").css('display','none');
         	if($("#tab_id").val() == 1){
-            	$('#table_index,#table_index_wrapper').css('display','none');
+            	$('#table_index,#table_index_div,#table_index_wrapper').css('display','none');
             	$('#table_actived,#table_actived_wrapper').css('display','table');
          	   LoadTable('actived',4,main_act,change_colum_main,'status=1',aJaxURL);
          	   SetEvents("add_button", "delete_button", "check-all", tName+'actived', 'add-edit-form-actived', aJusURL_Actived);
         	}else{
         		$('#table_index,#table_index_wrapper').css('display','table');
+        		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
         		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
@@ -1454,6 +1458,9 @@ if(fName=='add-edit-form-task'){
 	color: #FFF;
 	background: #2681DC;
 }
+#table_index_wrapper{
+	width: 1500px;
+}
 </style>
 </head>
 
@@ -1506,14 +1513,16 @@ if(fName=='add-edit-form-task'){
 </td>
 </tr>
 </table>
-
-<table class="display" id="table_index">
+<div id="table_index_div" style="display:none;width: 1050px; overflow-x: scroll;">
+<table class="display" id="table_index" style="width: 1500px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
             <th style="width: 30px;" id="first_th">№</th>
             <th style="width: 100%;">თარიღი</th>
             <th style="width: 100%;">საქმიანობის სფერო</th>
+            <th style="width: 100%;">ტელეფონი 1</th>
+            <th style="width: 100%;">ვებ მისამართი</th>
             <th style="width: 100%;">დასახელება</th>
             <th style="width: 100%;">კომპ პირი</th>
             <th style="width: 100%;">თანამდებობა</th>
@@ -1545,6 +1554,12 @@ if(fName=='add-edit-form-task'){
             </th>
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>                         
             <th>
                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
@@ -1564,6 +1579,7 @@ if(fName=='add-edit-form-task'){
         </tr>
     </thead>
 </table>
+</div>
 <table class="display" id="table_actived" >
     <thead>
         <tr id="datatable_header">

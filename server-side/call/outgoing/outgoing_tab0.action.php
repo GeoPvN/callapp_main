@@ -88,6 +88,8 @@ switch ($action) {
                                         outgoing_campaign_detail.`id`,
                                         outgoing_campaign_detail.update_date,
                                         phone_base_detail.`note`,
+	  	                                phone_base_detail.phone1,
+	  	                                phone_base_detail.info1,
                                         phone_base_detail.`client_name`,
                                         CONCAT(outgoing_campaign_detail_contact.fname,' ',outgoing_campaign_detail_contact.lname),
                                         outgoing_campaign_detail_contact.`person_position`,
