@@ -164,7 +164,7 @@ switch ($action) {
                         				source,
                         				pers_name,
                         				duration,
-                        				inst,
+                        				inc_status,
                         				file
                                 FROM 	calls
 	  	                        WHERE DATE(date) >= '$start_date' AND DATE(date) <= '$end_date' $op_check $tab_check $main_status
