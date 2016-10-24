@@ -656,7 +656,7 @@ function live_operators(){
 	$.ajax({
     	async: false,
     	dataType: "JSON",
-        url: 'AsteriskManager/liveStatemini.php',
+        url: 'AsteriskManager/liveStatemini_main.php',
 	    data: 'sesvar=hideloggedoff&value=true&stst=1&qu='+$('#select_main').val(),
         success: function(data) {
 
