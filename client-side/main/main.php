@@ -401,7 +401,7 @@ function get_options(){
 function incomming_call(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=incomming_call',
+        data: 'act=incomming_call&qu='+$('#select_main').val(),
         success: function(data) {
         	$("#incomming_call_today").html(data.incomming_call_day_now);
         	$('#incomming_call').highcharts({
@@ -459,7 +459,7 @@ function incomming_call(){
 function outgoing_call(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=outgoing_call',
+        data: 'act=outgoing_call&qu='+$('#select_main').val(),
         success: function(data) {
         	$("#outgoing_call_day").html(data.outgoing_call_day_now);
         	$('#outgoing_call').highcharts({
@@ -517,7 +517,7 @@ function outgoing_call(){
 function inner_call(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=inner_call',
+        data: 'act=inner_call&qu='+$('#select_main').val(),
         success: function(data) {
         	$("#inner_call_day").html(data.inner_call_day_now);
         	$('#inner_call').highcharts({
@@ -575,7 +575,7 @@ function inner_call(){
 function answer_unanswer(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=answer_unanswer',
+        data: 'act=answer_unanswer&qu='+$('#select_main').val(),
         success: function(data) {
         	$("#answer").html(data.answer_unanswer_today.ans);
         	$("#unanswer").html(data.answer_unanswer_today.unans);
@@ -630,7 +630,7 @@ function answer_unanswer(){
 function sl(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=sl',
+        data: 'act=sl&qu='+$('#select_main').val(),
         success: function(data) {
         	str = parseInt(data.sl.percent);
             str1 = parseInt(data.sl.sl_procent);
@@ -656,7 +656,7 @@ function live_operators(){
     	async: false,
     	dataType: "JSON",
         url: 'AsteriskManager/liveStatemini.php',
-	    data: 'sesvar=hideloggedoff&value=true&stst=1',
+	    data: 'sesvar=hideloggedoff&value=true&stst=1&qu='+$('#select_main').val(),
         success: function(data) {
 
 		
@@ -718,7 +718,7 @@ function live_operators(){
 function live_calls(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=live_calls',
+        data: 'act=live_calls&qu='+$('#select_main').val(),
         success: function(data) {
             $('.phone_progres .red').html(data.live_calls.in_talk);
             $('.phone_progres .yellow').html(data.live_calls.in_queue);
@@ -731,7 +731,7 @@ function live_calls(){
 function operator_answer(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=operator_answer',
+        data: 'act=operator_answer&qu='+$('#select_main').val(),
         success: function(data) {
             $('#operator_answer_content').html(data.operator_answer);
         }
@@ -741,7 +741,7 @@ function operator_answer(){
 function operator_answer_dur(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=operator_answer_dur',
+        data: 'act=operator_answer_dur&qu='+$('#select_main').val(),
         success: function(data) {
             $('#operator_answer_dur').html(data.operator_answer_dur);
         }
@@ -751,7 +751,7 @@ function operator_answer_dur(){
 function hold_avg_time(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=hold_avg_time',
+        data: 'act=hold_avg_time&qu='+$('#select_main').val(),
         success: function(data) {
             $('#duration .total_duration').html(data.hold_avg_time.wait_time_avg);
             $('#duration .min_value').html(data.hold_avg_time.wait_time_min);
@@ -763,7 +763,7 @@ function hold_avg_time(){
 function asa(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=asa',
+        data: 'act=asa&qu='+$('#select_main').val(),
         success: function(data) {
             $('#asa .total_duration').html(data.asa.wait_time_avg);
             $('#asa .min_value').html(data.asa.wait_time_min);

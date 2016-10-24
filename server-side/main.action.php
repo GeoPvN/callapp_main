@@ -3,6 +3,11 @@ require_once('../includes/classes/core.php');
 $action = $_REQUEST['act'];
 $error	= '';
 $data	= '';
+$qu     = $_REQUEST['qu'];
+$get_out_ext = mysql_fetch_array(mysql_query("  SELECT GROUP_CONCAT(ext_number) AS `ext`
+                                                FROM queue
+                                                JOIN queue_detail ON queue.id = queue_detail.queue_id
+                                                WHERE queue.number = '$qu'"));
 
 switch ($action) {
 	case 'incomming_call':
@@ -12,6 +17,7 @@ switch ($action) {
                                             WHERE  DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
                                             AND    DATE(`call_datetime`) <= DATE(NOW())
                                             AND    disconnect_cause != 'ABANDON'
+            AND dst_queue = '$qu'
                                             GROUP BY DATE(call_datetime)
                                             ORDER BY DATE(call_datetime) ASC");
         
@@ -25,6 +31,7 @@ switch ($action) {
                                                                             DATE(call_datetime) AS `day`
                                                                     FROM 	`asterisk_incomming`
                                                                     WHERE  DATE(`call_datetime`) = DATE(NOW())
+            AND dst_queue = '$qu'
                                                                     AND    disconnect_cause != 'ABANDON'"));
         if($incomming_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $incomming_call_day_now[0];}
         $data['incomming_call_day_now'][] = $day_now;
@@ -37,6 +44,7 @@ switch ($action) {
                                             FROM 	`asterisk_outgoing`
                                             WHERE   DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
                                             AND 	DATE(`call_datetime`) <= DATE(NOW()) AND LENGTH(phone) != 3
+            AND extension IN($get_out_ext[0])
                                             GROUP BY DATE(call_datetime)
                                             ORDER BY DATE(call_datetime) ASC");
         
@@ -49,6 +57,7 @@ switch ($action) {
                                                                             DATE(call_datetime) AS `day`
                                                                     FROM 	`asterisk_outgoing`
                                                                     WHERE   DATE(`call_datetime`) = DATE(NOW())
+            AND extension IN($get_out_ext[0])
                                                                     AND LENGTH(phone) != 3"));
         if($outgoing_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $outgoing_call_day_now[0];}
         $data['outgoing_call_day_now'][] = $day_now;
@@ -61,6 +70,7 @@ switch ($action) {
                                         FROM 	`asterisk_outgoing`
                                         WHERE   DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
                                         AND 	DATE(`call_datetime`) <= DATE(NOW()) AND LENGTH(phone) = 3
+ 	        AND extension IN($get_out_ext[0])
                                         GROUP BY DATE(call_datetime)
                                         ORDER BY DATE(call_datetime) ASC");
  	    
@@ -73,6 +83,7 @@ switch ($action) {
                                                             			DATE(call_datetime) AS `day`
                                                                 FROM 	`asterisk_outgoing`
                                                                 WHERE   DATE(`call_datetime`) = DATE(NOW())
+ 	        AND extension IN($get_out_ext[0])
                                                                 AND LENGTH(phone) = 3"));
  	    if($inner_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $inner_call_day_now[0];}
  	    $data['inner_call_day_now'][] = $day_now;
@@ -85,10 +96,12 @@ switch ($action) {
                                         WHERE disconnect_cause != 'ABANDON'
                                         AND   NOT ISNULL(disconnect_cause)
                                         AND   DATE(`call_datetime`) = DATE(NOW())
+            AND dst_queue = '$qu'
                                         UNION ALL
                                         SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
                                         FROM `asterisk_incomming`
                                         WHERE disconnect_cause = 'ABANDON'
+                                        AND dst_queue = '$qu'
                                         AND   DATE(`call_datetime`) = DATE(NOW())");
         while($res = mysql_fetch_assoc($answer_unanswer)){
             $count[] = intval($res[answer_count]);
@@ -99,10 +112,12 @@ switch ($action) {
                                                 WHERE disconnect_cause != 'ABANDON'
                                                 AND    NOT ISNULL(disconnect_cause)
                                                 AND   DATE(`call_datetime`) = DATE(NOW())
+            AND dst_queue = '$qu'
                                                 UNION ALL
                                                 SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
                                                 FROM `asterisk_incomming`
                                                 WHERE disconnect_cause = 'ABANDON'
+            AND dst_queue = '$qu'
                                                 AND   DATE(`call_datetime`) = DATE(NOW())");
         while($res_today = mysql_fetch_assoc($answer_unanswer_today)){
             $count_today[] = intval($res_today[answer_count]);
@@ -118,7 +133,7 @@ switch ($action) {
                                     					IF(ISNULL(ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100)),0,ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100)) AS `percent`,
                                     					COUNT(asterisk_incomming.wait_time ) AS `num`
                                              FROM       `asterisk_incomming`
-                                             WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause != 'ABANDON'"));
+                                             WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause != 'ABANDON' AND dst_queue = '$qu'"));
         $data['sl']['min'] = $sl_content['sl_min'];
         $data['sl']['percent'] = $sl['percent'];
         $data['sl']['sl_procent'] = $sl_content['sl_procent'];
@@ -129,6 +144,7 @@ switch ($action) {
                                                         IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_max`
                                                 FROM    `asterisk_incomming`
                                                 WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())
+            AND dst_queue = '$qu'
                                                 AND     asterisk_incomming.duration > 0"));
         $data['asa']['wait_time_avg'] = $asa['wait_time_avg'];
         $data['asa']['wait_time_min'] = $asa['wait_time_min'];
@@ -139,7 +155,7 @@ switch ($action) {
                                                             IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_min`,
                                                             IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_max`
                                                     FROM    `asterisk_incomming`
-                                                    WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())"));
+                                                    WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW()) AND dst_queue = '$qu'"));
         $data['hold_avg_time']['wait_time_avg'] = $hold_avg['wait_time_avg'];
         $data['hold_avg_time']['wait_time_min'] = $hold_avg['wait_time_min'];
         $data['hold_avg_time']['wait_time_max'] = $hold_avg['wait_time_max'];
@@ -149,6 +165,7 @@ switch ($action) {
                                                     FROM `asterisk_incomming`
                                                     WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
                                                     AND asterisk_incomming.disconnect_cause = 1
+            AND dst_queue = '$qu'
                                                     AND NOT ISNULL(dst_extension)"));
         $data['live_operators'][] = array('name'=>'თავის','data'=>array((4-intval($in_busy[in_busy]))));
         $data['live_operators'][] = array('name'=>'დაკავ','data'=>array(intval($in_busy[in_busy])));
@@ -164,6 +181,7 @@ switch ($action) {
                                                     FROM `asterisk_incomming`
                                                     WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
                                                     AND ISNULL(asterisk_incomming.disconnect_cause)
+            AND dst_queue = '$qu'
                                                     AND ISNULL(dst_extension)"));
         
         $data['live_calls']['in_talk'] = $in_talk['in_talk'];
@@ -175,6 +193,7 @@ switch ($action) {
                                             COUNT(*) AS `ans`
                                     FROM `asterisk_incomming`
                                     WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+            AND dst_queue = '$qu'
                                     AND asterisk_incomming.duration > 0
                                     GROUP BY asterisk_incomming.dst_extension");
         $ope = '<div class="row header">
@@ -205,6 +224,7 @@ switch ($action) {
     				                            SEC_TO_TIME(AVG(asterisk_incomming.duration)) AS `duration_avg`
                                         FROM `asterisk_incomming`
                                         WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+            AND dst_queue = '$qu'
                                         AND asterisk_incomming.duration > 0
                                         GROUP BY asterisk_incomming.dst_extension");
         $ope_avg = '<div class="row header">

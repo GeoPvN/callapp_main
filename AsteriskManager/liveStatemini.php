@@ -6,7 +6,8 @@ $time = $time[1] + $time[0];
 $begintime = $time;
 $inuse      = Array();
 $dict_queue = Array();
-$filter_queues = array("2182414");
+$qu = $_REQUEST['qu'];
+$filter_queues = array($qu);
 
 require("config.php");
 require("asmanager.php");
@@ -81,4 +82,3 @@ foreach($filter_queues  as $qn) {
 $data = array('off'=>$off,'free'=>$free,'use'=>$use);
 echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 ?>
-
