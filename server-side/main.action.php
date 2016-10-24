@@ -1,88 +1,238 @@
 <?php
-/* ******************************
- *	Request aJax actions
- * ******************************
-*/
-
 require_once('../includes/classes/core.php');
 $action = $_REQUEST['act'];
 $error	= '';
 $data	= '';
-$id=$_REQUEST['id'];
 
 switch ($action) {
-	case 'get_add_page':
-		$number		= $_REQUEST['number'];
-		$page		= GetPage($res='', $number);
-		$data		= array('page'	=> $page);
-		
-        break;
-	case 'disable':
-		mysql_query("DELETE FROM `request`
-						WHERE id=$id");
-break;
-    case 'get_edit_page':
-	    $req_id		= $_REQUEST['id'];
-		$page		= GetPage(GetRequest($req_id));
+	case 'incomming_call':
+        $incomming_call_day = mysql_query(" SELECT 	COUNT(*) AS `day_count`,
+                                                    DATE(call_datetime) AS `day`
+                                            FROM 	`asterisk_incomming`
+                                            WHERE  DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
+                                            AND    DATE(`call_datetime`) <= DATE(NOW())
+                                            AND    disconnect_cause in (2,3,4)
+                                            GROUP BY DATE(call_datetime)
+                                            ORDER BY DATE(call_datetime) ASC");
         
-        $data		= array('page'	=> $page);
+        while ($incomming_call_day_res = mysql_fetch_assoc($incomming_call_day)){
+            $record[] = intval($incomming_call_day_res[day_count]);
+            $data['incomming_call_day_date'][] = $incomming_call_day_res[day];
+        }
         
+        
+        $incomming_call_day_now = mysql_fetch_array(mysql_query("  SELECT 	COUNT(*) AS `day_count`,
+                                                                            DATE(call_datetime) AS `day`
+                                                                    FROM 	`asterisk_incomming`
+                                                                    WHERE  DATE(`call_datetime`) = DATE(NOW())
+                                                                    AND    disconnect_cause in (2,3,4)"));
+        if($incomming_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $incomming_call_day_now[0];}
+        $data['incomming_call_day_now'][] = $day_now;
+        $data['incomming_call_day'][] = (object)array('name'=>'');
+        $data['incomming_call_day'][] = (object)array('data'=>$record);
         break;
- 	case 'get_list' :
-		$count = 		$_REQUEST['count'];
-	    $hidden = 		$_REQUEST['hidden'];
-	    
-	    mysql_query("SET @i = 0;");
-	    $rResult = mysql_query("SELECT `id`,
-							  			@i := @i + 1 AS `iterator`,
-                                       `date`,
-                                       `phone`,
-										CASE	WHEN `info_category` = '0'  THEN  'ინფორმაცია'
-										WHEN `info_category` = '1'  THEN  'პრეტენზია'
-										WHEN `info_category` = '2'  THEN  'სხვა'
-								END 	AS requester
-							    FROM   `request`");
-
-		$data = array(
-			"aaData"	=> array()
-		);
-		
-		while ( $aRow = mysql_fetch_array( $rResult ) )
-		{
-			$row = array();
-			for ( $i = 0 ; $i < $count ; $i++ )
-			{
-				/* General output */
-				$row[] = $aRow[$i];
-				if($i == ($count - 1)){
-					$row[] = '<input type="checkbox" name="check_' . $aRow[$hidden] . '" class="check" value="' . $aRow[$hidden] . '" />';
-				}
-			}
-			$data['aaData'][] = $row;
-		}
-
+    case 'outgoing_call':
+        $outgoing_call_day = mysql_query("  SELECT 	COUNT(*) AS `day_count`,
+                                                    DATE(call_datetime) AS `day`
+                                            FROM 	`asterisk_outgoing`
+                                            WHERE   DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
+                                            AND 	DATE(`call_datetime`) <= DATE(NOW()) AND LENGTH(phone) != 3
+                                            GROUP BY DATE(call_datetime)
+                                            ORDER BY DATE(call_datetime) ASC");
+        
+        while ($outgoing_call_day_res = mysql_fetch_assoc($outgoing_call_day)){
+            $record[] = intval($outgoing_call_day_res[day_count]);
+            $data['outgoing_call_day_date'][] = $outgoing_call_day_res[day];
+        }
+        
+        $outgoing_call_day_now = mysql_fetch_array(mysql_query("  SELECT 	COUNT(*) AS `day_count`,
+                                                        DATE(call_datetime) AS `day`
+                                                FROM 	`asterisk_outgoing`
+                                                WHERE   DATE(`call_datetime`) = DATE(NOW())
+                                                AND LENGTH(phone) != 3"));
+        if($outgoing_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $outgoing_call_day_now[0];}
+        $data['outgoing_call_day_now'][] = $day_now;
+        $data['outgoing_call_day'][] = (object)array('name'=>'');
+        $data['outgoing_call_day'][] = (object)array('data'=>$record);
         break;
-    case 'save_request':
-    	
-		$req_id 		= $_REQUEST['id'];
-		
-		$arr = array(
-				"req_num"			=> $_REQUEST['req_num'],	
-				"req_data"			=> $_REQUEST['req_data'],
-				"req_phone"			=> $_REQUEST['req_phone'],
-				"info_category"		=> $_REQUEST['info_category'],
-				"first_name"		=> $_REQUEST['first_name'], 
-				"last_name"			=> $_REQUEST['last_name'], 
-				"phone"				=> $_REQUEST['phone'],
-				"content"			=> $_REQUEST['content']
-		);
-		
-		
-		if($req_id == ''){
-			AddRequest($arr);
-		}else {
-			SaveRequest($req_id, $arr);
-		}
+ 	case 'inner_call' :
+ 	    $inner_call_day = mysql_query(" SELECT 	COUNT(*) AS `day_count`,
+                                    			DATE(call_datetime) AS `day`
+                                        FROM 	`asterisk_outgoing`
+                                        WHERE   DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
+                                        AND 	DATE(`call_datetime`) <= DATE(NOW()) AND LENGTH(phone) = 3
+                                        GROUP BY DATE(call_datetime)
+                                        ORDER BY DATE(call_datetime) ASC");
+ 	    
+ 	    while ($inner_call_day_res = mysql_fetch_assoc($inner_call_day)){
+ 	        $record[] = intval($inner_call_day_res[day_count]);
+ 	        $data['inner_call_day_date'][] = $inner_call_day_res[day];
+ 	    }
+ 	    
+ 	    $inner_call_day_now = mysql_fetch_array(mysql_query(" SELECT 	COUNT(*) AS `day_count`,
+                                    			DATE(call_datetime) AS `day`
+                                        FROM 	`asterisk_outgoing`
+                                        WHERE   DATE(`call_datetime`) = DATE(NOW())
+                                        AND LENGTH(phone) = 3"));
+ 	    if($inner_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $inner_call_day_now[0];}
+ 	    $data['inner_call_day_now'][] = $day_now;
+ 	    $data['inner_call_day'][] = (object)array('name'=>'');
+ 	    $data['inner_call_day'][] = (object)array('data'=>$record);
+        break;
+    case 'answer_unanswer':
+        $answer_unanswer = mysql_query("  SELECT 'ნაპასუხები' AS `answer`,COUNT(*) AS `answer_count`
+                                                            FROM `asterisk_incomming`
+                                                            WHERE disconnect_cause in (3,4)
+                                                            AND   NOT ISNULL(disconnect_cause)
+                                                            AND   DATE(`call_datetime`) = DATE(NOW())
+                                                            UNION ALL
+                                                            SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
+                                                            FROM `asterisk_incomming`
+                                                            WHERE disconnect_cause = 2
+                                                            
+                                                            AND   DATE(`call_datetime`) = DATE(NOW())");
+        while($res = mysql_fetch_assoc($answer_unanswer)){
+            $count[] = intval($res[answer_count]);
+        }
+        
+        $answer_unanswer_today = mysql_query("  SELECT 'ნაპასუხები' AS `answer`,COUNT(*) AS `answer_count`
+                                                FROM `asterisk_incomming`
+                                                WHERE disconnect_cause in (3,4)
+                                                AND    NOT ISNULL(disconnect_cause)
+                                                AND   DATE(`call_datetime`) = DATE(NOW())
+                                                UNION ALL
+                                                SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
+                                                FROM `asterisk_incomming`
+                                                WHERE disconnect_cause = 2
+                                                AND   DATE(`call_datetime`) = DATE(NOW())");
+        while($res_today = mysql_fetch_assoc($answer_unanswer_today)){
+            $count_today[] = intval($res_today[answer_count]);
+        }
+        $data['answer_unanswer'][] = array('name'=>'ზარი','data'=>array(array('ნაპასუხები', $count[0]),array('უპასუხო', $count[1])));
+        $data['answer_unanswer_today'] = array('ans'=>$count_today[0],'unans'=>$count_today[1]);
+        break;
+    case 'sl':
+        $sl_content = mysql_fetch_assoc(mysql_query("SELECT 	`sl_min`,
+                                                				`sl_procent`
+                                                     FROM 		`sl_content`"));
+        $sl = mysql_fetch_assoc(mysql_query("SELECT     
+                                    					ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100) AS `percent`,
+                                    					COUNT(asterisk_incomming.wait_time ) AS `num`
+                                             FROM       `asterisk_incomming`
+                                             WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause in (3,4)"));
+        $data['sl']['min'] = $sl_content['sl_min'];
+        $data['sl']['percent'] = $sl['percent'];
+        $data['sl']['sl_procent'] = $sl_content['sl_procent'];
+        break;
+    case 'asa':
+        $asa = mysql_fetch_assoc(mysql_query("  SELECT  TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_avg`,
+                                        				TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_min`,
+                                        				TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_max`
+                                                FROM    `asterisk_incomming`
+                                                WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                                AND     asterisk_incomming.duration > 0"));
+        $data['asa']['wait_time_avg'] = $asa['wait_time_avg'];
+        $data['asa']['wait_time_min'] = $asa['wait_time_min'];
+        $data['asa']['wait_time_max'] = $asa['wait_time_max'];
+        break;
+    case 'hold_avg_time':
+        $hold_avg = mysql_fetch_assoc(mysql_query(" SELECT  TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_avg`,
+                                            				TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_min`,
+                                            				TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_max`
+                                                    FROM    `asterisk_incomming`
+                                                    WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())"));
+        $data['hold_avg_time']['wait_time_avg'] = $hold_avg['wait_time_avg'];
+        $data['hold_avg_time']['wait_time_min'] = $hold_avg['wait_time_min'];
+        $data['hold_avg_time']['wait_time_max'] = $hold_avg['wait_time_max'];
+        break;
+    case 'live_operators':
+        $in_busy = mysql_fetch_assoc(mysql_query("  SELECT COUNT(*) AS `in_busy`
+                                                    FROM `asterisk_incomming`
+                                                    WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                                    AND asterisk_incomming.disconnect_cause = 1
+                                                    AND NOT ISNULL(dst_extension)"));
+        $data['live_operators'][] = array('name'=>'თავის','data'=>array((4-intval($in_busy[in_busy]))));
+        $data['live_operators'][] = array('name'=>'დაკავ','data'=>array(intval($in_busy[in_busy])));
+        $data['live_operators'][] = array('name'=>'გამორთ','data'=>array(0));
+        break;
+    case 'live_calls':
+        $in_talk = mysql_fetch_assoc(mysql_query("  SELECT COUNT(*) AS `in_talk`
+                                                    FROM `asterisk_incomming`
+                                                    WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                                    AND asterisk_incomming.disconnect_cause = 1
+                                                    AND NOT ISNULL(dst_extension)"));
+        $in_queue = mysql_fetch_assoc(mysql_query(" SELECT COUNT(*) AS `in_queue`
+                                                    FROM `asterisk_incomming`
+                                                    WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                                    AND ISNULL(asterisk_incomming.disconnect_cause)
+                                                    AND ISNULL(dst_extension)"));
+        
+        $data['live_calls']['in_talk'] = $in_talk['in_talk'];
+        $data['live_calls']['in_queue'] = $in_queue['in_queue'];
+        break;
+    case 'operator_answer':
+        $operator = mysql_query("   SELECT  asterisk_incomming.dst_extension AS `name`,
+                                            '0.jpg' AS `image`,
+                                            COUNT(*) AS `ans`
+                                    FROM `asterisk_incomming`
+                                    WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                    AND asterisk_incomming.duration > 0
+                                    GROUP BY asterisk_incomming.dst_extension");
+        $ope = '<div class="row header">
+                  <div class="cell">
+                    ოპერატორი
+                  </div>
+                  <div class="cell" style="width: 95px;">
+                    ნაპასუხები ზარი
+                  </div>
+                  
+                </div>';
+        while ($operator_res = mysql_fetch_assoc($operator)){
+            $ope.='<div class="row">
+                            <div class="cell">
+                            <div style="width: 24px; height: 24px; background: url(\'media/uploads/file/'.$operator_res[image].'\');background-size: 24px 24px; background-repeat: no-repeat; float: left;"></div> <div style="margin-top: 5px; margin-left: 5px; float: left;">'.$operator_res[name].'</div>
+                            </div>
+                            <div class="cell align_right">
+                            '.$operator_res[ans].'
+                            </div>
+                            </div>';
+        }
+        $data['operator_answer']=$ope;
+        break;
+    case 'operator_answer_dur':
+        $operator_avg = mysql_query("   SELECT  asterisk_incomming.dst_extension AS `name`,
+                                                '0.jpg' AS `image`,
+                                                SEC_TO_TIME(SUM(asterisk_incomming.duration)) AS `total_duration`,
+    				                            SEC_TO_TIME(AVG(asterisk_incomming.duration)) AS `duration_avg`
+                                        FROM `asterisk_incomming`
+                                        WHERE DATE(asterisk_incomming.datetime) = DATE(NOW())
+                                        AND asterisk_incomming.duration > 0
+                                        GROUP BY asterisk_incomming.dst_extension");
+        $ope_avg = '<div class="row header">
+                      <div class="cell">
+                        ოპერატორი
+                      </div>
+                      <div class="cell" style="width: 75px;">
+                        საუბ. ხ-ბა.
+                      </div>
+                      <div class="cell" style="width: 81px;">
+                        საუბ. საშ. ხ-ბა
+                      </div>
+                    </div>';
+        while ($operator_avg_res = mysql_fetch_assoc($operator_avg)){
+            $ope_avg.='<div class="row">
+                            <div class="cell">
+                            <div style="width: 24px; height: 24px; background: url(\'media/uploads/file/'.$operator_avg_res[image].'\');background-size: 24px 24px; background-repeat: no-repeat; float: left;"></div> <div style="margin-top: 5px; margin-left: 5px; float: left;">'.$operator_avg_res[name].'</div>
+                            </div>
+                            <div class="cell align_right">
+                            '.$operator_avg_res[total_duration].'
+                            </div>
+                            <div class="cell align_right">
+                            '.$operator_avg_res[duration_avg].'
+                            </div>
+                            </div>';
+        }
+        $data['operator_answer_dur']=$ope_avg;
         break;
     default:
        $error = 'Action is Null';
@@ -90,214 +240,6 @@ break;
 
 $data['error'] = $error;
 
-echo json_encode($data);
-
-
-/* ******************************
- *	Request Functions
- * ******************************
- */
-
-function AddRequest($arr)
-
-{
-	mysql_query("INSERT INTO `request`
-						(`request_number`,
-						 `date`, `phone`,
-						 `info_category`,
-						 `first_name`,
-						 `last_name`,
-						 `u_phone`,
-						 `content`) 
-				 VALUES
-						 ('$arr[req_num]',
-						  '$arr[req_data]',
-						  '$arr[req_phone]',
-						  '$arr[info_category]',
-						  '$arr[first_name]',
-						  '$arr[last_name]',
-						  '$arr[phone]',
-						  '$arr[content]')");
-
-}
-
-function SaveRequest($req_id, $arr)
-{
-
-	mysql_query("	UPDATE	`request`
-					SET		`info_category`		=  $arr[info_category],
-							`first_name`		= '$arr[first_name]',
-							`last_name`			= '$arr[last_name]',
-							`phone`				= '$arr[req_phone]',
-							`u_phone`			= '$arr[phone]',
-							`content`			= '$arr[content]'
-					WHERE	`id` = $req_id");
-
-}
-
-function GetRequest($req_id) 
-{
-    $res = mysql_fetch_assoc(mysql_query("SELECT `id`,
-												 `request_number`,
-												 `date`,
-												 `phone`,
-												 `info_category`,
-												 `first_name`,
-												 `last_name`,
-    											 `u_phone`,
-												 `content`
-									      FROM   `request`
-									      WHERE  `id` = $req_id" ));
-	
-	return $res;
-}
-
-function GetPage($res = '', $number)
-{
-	if (empty($res)) {
-		$req_number = time();
-		$c_date		= date("Y-m-d");
-		$male		= 'checked';
-		$famale		= '';
-		
-		$physicall	= 'checked';
-		$legall		= '';
-		
-		$information= 'checked';
-		$claim		= '';
-		$other		= '';
-	}else{
-		$req_number = $res['request_number'];
-		$c_date		= $res['date'];
-		
-		if($res['gender'] == 0){
-			$male	= 'checked';
-			$famale = '';			
-		}else{
-			$male	= '';
-			$famale = 'checked';			
-		}
-		
-		if($res['requester'] == 0){
-			$physicall	= 'checked';
-			$legall		= '';		
-		}else{
-			$physicall	= '';
-			$legall		= 'checked';				
-		}
-		
-		if($res['info_category'] ==0){
-			$information= 'checked';
-			$claim		= '';
-			$other		= '';
-		}else if($res['info_category'] == 1){
-			$information= '';
-			$claim		= 'checked';
-			$other		= '';
-		}else{
-			$information= '';
-			$claim		= '';
-			$other		= 'checked';
-		}
-	}
-	
-	$data  = '
-	<!-- jQuery Dialog -->
-    <div id="add-edit-goods-form" title="საქონელი">
-    	<!-- aJax -->
-	</div>
-	<div id="dialog-form">
-		<fieldset style="margin-top: 5px;">
-	    	<legend>ძირითადი ინფორმაცია</legend>
-
-	    	<table width="80%" class="dialog-form-table">
-				<tr>
-					<td style="width: 120px;"><label for="req_num">მომართვა №</label></td>
-					<td style="width: 120px;"><label for="req_data">თარიღი</label></td>
-					<td style="width: 170px;"><label for="req_phone">ტელეფონი</label></td>
-				</tr>
-				<tr>
-					<td>
-						<input type="text" id="req_num" class="idle user_id" onblur="this.className=\'idle user_id\'" onfocus="this.className=\'activeField user_id\'" value="' . $req_number . '" disabled="disabled" />
-					</td>
-					<td>
-						<input type="text" id="req_data" class="idle date" onblur="this.className=\'idle date\'" onfocus="this.className=\'activeField date\'" value="' . $c_date . '" disabled="disabled" />
-					</td>';
-	
-					$num = 0;
-					if($res[phone]==""){
-						$num=$number;
-					} else { $num=$res[phone]; }
-					
-					$data.='
-							
-					<td>
-						<input type="text" id="req_phone" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $num . '" />
-					</td>
-				</tr>
-			</table>
-        </fieldset>
-		<fieldset style="margin-top: 14px; width: 49%; float: right;">
-			<legend>ინფორმაციის კატეგორია</legend>
-			
-			<table class="dialog-form-table">
-				<tr>
-					<td><input id="information" type="radio" name="info_category" value="0" ' . $information . '></td>
-					<td style="width: 100px;"><label for="information">ინფორმაცია</label></td>
-					<td><input id="claim" type="radio" name="info_category" value="1" ' . $claim . '></td>
-					<td style="width: 100px;"><label for="claim">პრეტენზია</label></td>
-					<td><input id="other" type="radio" name="info_category" value="2" ' . $other . '></td>
-					<td style="width: 100px;"><label for="other">სხვა</label></td>
-				</tr>
-			</table>
-		</fieldset>
-		<fieldset style="margin-top: 14px; width: 40%; float: left;">
-	    	<legend>ფიზიკური პირი</legend>
-
-	    	<table class="dialog-form-table">
-	    		<tr>
-					<td style="width: 170px;"><label for="first_name">სახელი</label></td>
-					<td>
-						<input type="text" id="first_name" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['first_name'] . '" />
-					</td>
-				</tr>
-				<tr>
-					<td style="width: 170px;"><label for="last_name">გვარი</label></td>
-					<td>
-						<input type="text" id="last_name" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['last_name'] . '" />
-					</td>
-				</tr>
-				
-				<tr>
-					<td style="width: 170px;"><label for="phone">ტელეფონი</label></td>
-					<td>
-						<input type="text" id="phone" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="' . $res['u_phone'] . '" />
-					</td>
-				</tr>
-				
-			</table>
-        </fieldset>
-								
-		<fieldset style="margin-top: 14px; width: 49%; float: right;">
-	    	<legend>დამატებითი ინფორმაცია</legend>
-
-	    	<table class="dialog-form-table">
-	    		<tr>
-					<td style="width: 150px;"><label for="content">საუბრის შინაარსი</label></td>
-					<td>
-						<textarea id="content" class="idle large" name="content" cols="40" rows="4">' . $res['content'] . '</textarea>
-					</td>
-				</tr>
-			</table>
-        </fieldset>';
-	$data .= '
-		<!-- ID -->
-		<input type="hidden" id="req_id" value="' . $res['id'] . '" />
-    </div>';
-    
-	return $data;
-}
-
-
+echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
 ?>

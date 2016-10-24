@@ -1,4 +1,4 @@
-<?
+<?php
 
 $dayp[0] = "Sunday";
 $dayp[1] = "Monday";
