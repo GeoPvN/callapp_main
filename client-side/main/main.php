@@ -10,6 +10,7 @@
 	width: 250px;
 	float: left;
     margin-right: 25px;
+	margin-bottom: 15px;
 }
 .box_head{
 	width: 100%;
@@ -297,9 +298,17 @@
     display: block;
   }
 }
+#status_id_2,#status_id_3,#status_id_4,#status_id_5,#status_id_6,#status_id_9,#status_id_14,#status_id_15{
+	font-size: 45px;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 45px;
+}
 </style>
 <script type="text/javascript">
 $(document).ready(function () {
+	get_options();
+	get_project();
 	incomming_call();
 	outgoing_call();
 	inner_call();
@@ -313,12 +322,81 @@ $(document).ready(function () {
 	asa();
 });
 
+$(document).on("change", "#select_tab", function () {
+	if($(this).val()==1){
+		$('.showme1').css('display','block');
+		$('.showme2').css('display','none');
+	}else{
+		$('.showme1').css('display','none');
+		$('.showme2').css('display','block');
+	}
+});
+
 $(document).on("click", ".box_tab_table td", function () {
     if($(this).hasClass('gray_blue') == true){
     	$(this).removeClass();
     	$($(this).siblings('td')[0]).addClass('gray_blue');
     }
 });
+
+$(document).on("change", "#select_main", function () {
+	incomming_call();
+	outgoing_call();
+	inner_call();
+	answer_unanswer();
+	sl();
+	live_operators();
+	live_calls();
+	operator_answer();
+	operator_answer_dur();
+	hold_avg_time();
+	asa();
+});
+
+function get_project(){
+	$.ajax({
+        url: "server-side/main.action.php",
+        data: 'act=get_project',
+        success: function(data) {
+        	$("#project_id").html(data.option);
+        	$('#project_id').chosen({ search_contains: true, width: "250px" });
+        	GetDate('start_date');
+        	GetDate('end_date');
+        	get_status_content();
+        }
+    });
+}
+
+function get_status_content(){
+	$.ajax({
+        url: "server-side/main.action.php",
+        data: 'act=get_status&project_id='+$('#project_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val(),
+        success: function(data) {
+        	$('#status_id_2').html(data.s2);
+        	$('#status_id_3').html(data.s3);
+        	$('#status_id_4').html(data.s4);
+        	$('#status_id_5').html(data.s5);
+        	$('#status_id_6').html(data.s6);
+        	$('#status_id_9').html(data.s9);
+        	$('#status_id_14').html(data.s14);
+        	$('#status_id_15').html(data.s15);
+        }
+    });
+}
+
+$(document).on("change", "#start_date,#end_date,#project_id", function () {
+	get_status_content();
+});
+
+function get_options(){
+	$.ajax({
+        url: "server-side/main.action.php",
+        data: 'act=get_options',
+        success: function(data) {
+        	$("#select_main").html(data.option);
+        }
+    });
+}
 
 function incomming_call(){
 	$.ajax({
@@ -700,8 +778,8 @@ function go_sl(){
 </head>
 <body onselectstart='return false;'>
 <div id="tabs" style="width: 98%;margin-bottom: 60px;height: 710px;">
-<div class="callapp_head">მთავარი<hr class="callapp_head_hr"></div>
-    <div id="box_content">
+<div class="callapp_head"><select id="select_main" style="margin-right: 10px;"></select><select id="select_tab"><option value="1">მთავარი</option><option value="2">გამავალი</option></select><hr class="callapp_head_hr"></div>
+    <div id="box_content" class="showme1">
         <div class="mini_boxs">
         <div class="box_main">
             <div class="box_head">ოპერატორები LIVE</div>
@@ -749,7 +827,7 @@ function go_sl(){
             </div>
         </div>
         
-        <div class="box_main top_margin_25">
+        <div class="box_main ">
             <div class="box_head">ზარები LIVE</div>
             <div class="box_body">
                 <div>
@@ -777,7 +855,7 @@ function go_sl(){
             </div>
         </div>
         
-        <div class="box_main top_margin_25">
+        <div class="box_main ">
             <div class="box_head">გამავალი ზარები</div>
             <div class="box_body">
                 <div>
@@ -795,7 +873,7 @@ function go_sl(){
             </div>
         </div>
         
-        <div class="box_main top_margin_25">
+        <div class="box_main ">
             <div class="box_head">ASA</div>
             <div class="box_body">
                 <div id="asa">
@@ -805,7 +883,7 @@ function go_sl(){
         </div>
         
 
-        <div class="box_main top_margin_25" onclick="go_sl()">
+        <div class="box_main " onclick="go_sl()">
             <div class="box_head">SL</div>
             <div class="box_body">
                 <div>
@@ -817,7 +895,7 @@ function go_sl(){
             </div>
         </div>
         
-        <div class="box_main top_margin_25">
+        <div class="box_main ">
             <div class="box_head">შიდა ზარები</div>
             <div class="box_body">
                 <div>
@@ -835,7 +913,7 @@ function go_sl(){
             </div>
         </div>
         
-        <div class="box_main top_margin_25">
+        <div class="box_main ">
             <div class="box_head">ლოდინის საშ ხან-ბა გათიშვამდე</div>
             <div class="box_body">
                 <div id="duration">
@@ -851,6 +929,79 @@ function go_sl(){
              <div class="table" id="operator_answer_dur"></div>
         </div>
     
+    </div>
+    
+    <div id="box_content" class="showme2" style="display: none;">
+    <div style="margin-bottom: 15px;">
+    <select id="project_id" style="width: 150px;"></select>
+    <input type="text" id="start_date">-დან
+    <input type="text" id="end_date">-მდე
+    </div>
+        <div class="box_main">
+            <div class="box_head">პირველადი</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_2" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">მიმდინარე</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_3" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">არ დაინტერესდა</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_4" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">პოტენციური კლიენტები</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_5" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">კლიენტები</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_6" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">გაუქმებული</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_9" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">გადასარეკია უკან</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_14" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">დანიშნულია შეხვედრა</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_15" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </body>

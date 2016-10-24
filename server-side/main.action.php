@@ -233,6 +233,111 @@ switch ($action) {
         }
         $data['operator_answer_dur']=$ope_avg;
         break;
+    case 'get_options':
+        $req = mysql_query("    SELECT 	`name`,
+                                        `number`
+                                FROM    `queue`
+                                WHERE 	`actived` = 1");
+        
+        while ($res = mysql_fetch_assoc($req)){
+            $option.='<option value="'.$res[number].'">'.$res[name].'</option>';
+        }
+        $data['option'] = $option;
+        break;
+    case 'get_project':
+        $req = mysql_query("SELECT  `id`,
+                                    `name`
+                            FROM 	`project`
+                            WHERE   `type_id` = 2 AND `actived` = 1");
+    
+        while ($res = mysql_fetch_assoc($req)){
+            $option.='<option value="'.$res[id].'">'.$res[name].'</option>';
+        }
+        $data['option'] = $option;
+        break;
+    case 'get_status':
+        $pirveladi = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                            `task_status`.`name`
+                                                    FROM `outgoing_campaign`
+                                                    JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                    JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                    WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                    AND `outgoing_campaign_detail`.`status` = 2
+                                                    AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                    AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $mimdinare = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                            `task_status`.`name`
+                                                    FROM `outgoing_campaign`
+                                                    JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                    JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                    WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                    AND `outgoing_campaign_detail`.`status` = 3
+                                                    AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                    AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $ardainteresda = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                `task_status`.`name`
+                                                        FROM `outgoing_campaign`
+                                                        JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                        JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                        WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                        AND `outgoing_campaign_detail`.`status` = 4
+                                                        AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                        AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $potenciuriklienti = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                    `task_status`.`name`
+                                                            FROM `outgoing_campaign`
+                                                            JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                            JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                            WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                            AND `outgoing_campaign_detail`.`status` = 5
+                                                            AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                            AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $klientebi = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                            `task_status`.`name`
+                                                    FROM `outgoing_campaign`
+                                                    JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                    JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                    WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                    AND `outgoing_campaign_detail`.`status` = 6
+                                                    AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                    AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $gauqmebuli = mysql_fetch_array(mysql_query("   SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                `task_status`.`name`
+                                                        FROM `outgoing_campaign`
+                                                        JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                        JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                        WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                        AND `outgoing_campaign_detail`.`status` = 9
+                                                        AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                        AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $gadasarekiaukan = mysql_fetch_array(mysql_query("  SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                    `task_status`.`name`
+                                                            FROM `outgoing_campaign`
+                                                            JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                            JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                            WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                            AND `outgoing_campaign_detail`.`status` = 14
+                                                            AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                            AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        $danishnuliashexvedra = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                        `task_status`.`name`
+                                                                FROM `outgoing_campaign`
+                                                                JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                                JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                                WHERE `outgoing_campaign`.`project_id` = $_REQUEST[project_id]
+                                                                AND `outgoing_campaign_detail`.`status` = 15
+                                                                AND `outgoing_campaign`.`create_date` >= '$_REQUEST[start_date]'
+                                                                AND `outgoing_campaign`.`create_date` <= '$_REQUEST[end_date]'"));
+        
+        $data['s2'] = $pirveladi[0];
+        $data['s3'] = $mimdinare[0];
+        $data['s4'] = $ardainteresda[0];
+        $data['s5'] = $potenciuriklienti[0];
+        $data['s6'] = $klientebi[0];
+        $data['s9'] = $gauqmebuli[0];
+        $data['s14'] = $gadasarekiaukan[0];
+        $data['s15'] = $danishnuliashexvedra[0];
+        break;
     default:
        $error = 'Action is Null';
 }
