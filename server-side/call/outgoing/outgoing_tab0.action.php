@@ -135,7 +135,7 @@ switch ($action) {
 	  	    'user' => 'root',
 	  	    'pass' => 'Gl-1114',
 	  	    'db'   => 'callapp_1_0',
-	  	    'host' => '212.72.155.176'
+	  	    'host' => 'localhost'
 	  	);
 	  	
 	  	
