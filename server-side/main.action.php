@@ -11,7 +11,7 @@ switch ($action) {
                                             FROM 	`asterisk_incomming`
                                             WHERE  DATE(`call_datetime`) > DATE_ADD(DATE(NOW()), INTERVAL -7 DAY)
                                             AND    DATE(`call_datetime`) <= DATE(NOW())
-                                            AND    disconnect_cause in (2,3,4)
+                                            AND    disconnect_cause != 'ABANDON'
                                             GROUP BY DATE(call_datetime)
                                             ORDER BY DATE(call_datetime) ASC");
         
@@ -25,7 +25,7 @@ switch ($action) {
                                                                             DATE(call_datetime) AS `day`
                                                                     FROM 	`asterisk_incomming`
                                                                     WHERE  DATE(`call_datetime`) = DATE(NOW())
-                                                                    AND    disconnect_cause in (2,3,4)"));
+                                                                    AND    disconnect_cause != 'ABANDON'"));
         if($incomming_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $incomming_call_day_now[0];}
         $data['incomming_call_day_now'][] = $day_now;
         $data['incomming_call_day'][] = (object)array('name'=>'');
@@ -45,11 +45,11 @@ switch ($action) {
             $data['outgoing_call_day_date'][] = $outgoing_call_day_res[day];
         }
         
-        $outgoing_call_day_now = mysql_fetch_array(mysql_query("  SELECT 	COUNT(*) AS `day_count`,
-                                                        DATE(call_datetime) AS `day`
-                                                FROM 	`asterisk_outgoing`
-                                                WHERE   DATE(`call_datetime`) = DATE(NOW())
-                                                AND LENGTH(phone) != 3"));
+        $outgoing_call_day_now = mysql_fetch_array(mysql_query("    SELECT 	COUNT(*) AS `day_count`,
+                                                                            DATE(call_datetime) AS `day`
+                                                                    FROM 	`asterisk_outgoing`
+                                                                    WHERE   DATE(`call_datetime`) = DATE(NOW())
+                                                                    AND LENGTH(phone) != 3"));
         if($outgoing_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $outgoing_call_day_now[0];}
         $data['outgoing_call_day_now'][] = $day_now;
         $data['outgoing_call_day'][] = (object)array('name'=>'');
@@ -69,41 +69,40 @@ switch ($action) {
  	        $data['inner_call_day_date'][] = $inner_call_day_res[day];
  	    }
  	    
- 	    $inner_call_day_now = mysql_fetch_array(mysql_query(" SELECT 	COUNT(*) AS `day_count`,
-                                    			DATE(call_datetime) AS `day`
-                                        FROM 	`asterisk_outgoing`
-                                        WHERE   DATE(`call_datetime`) = DATE(NOW())
-                                        AND LENGTH(phone) = 3"));
+ 	    $inner_call_day_now = mysql_fetch_array(mysql_query("   SELECT 	COUNT(*) AS `day_count`,
+                                                            			DATE(call_datetime) AS `day`
+                                                                FROM 	`asterisk_outgoing`
+                                                                WHERE   DATE(`call_datetime`) = DATE(NOW())
+                                                                AND LENGTH(phone) = 3"));
  	    if($inner_call_day_now[0] == ''){$day_now = 0;}else{$day_now = $inner_call_day_now[0];}
  	    $data['inner_call_day_now'][] = $day_now;
  	    $data['inner_call_day'][] = (object)array('name'=>'');
  	    $data['inner_call_day'][] = (object)array('data'=>$record);
         break;
     case 'answer_unanswer':
-        $answer_unanswer = mysql_query("  SELECT 'ნაპასუხები' AS `answer`,COUNT(*) AS `answer_count`
-                                                            FROM `asterisk_incomming`
-                                                            WHERE disconnect_cause in (3,4)
-                                                            AND   NOT ISNULL(disconnect_cause)
-                                                            AND   DATE(`call_datetime`) = DATE(NOW())
-                                                            UNION ALL
-                                                            SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
-                                                            FROM `asterisk_incomming`
-                                                            WHERE disconnect_cause = 2
-                                                            
-                                                            AND   DATE(`call_datetime`) = DATE(NOW())");
+        $answer_unanswer = mysql_query("SELECT 'ნაპასუხები' AS `answer`,COUNT(*) AS `answer_count`
+                                        FROM `asterisk_incomming`
+                                        WHERE disconnect_cause != 'ABANDON'
+                                        AND   NOT ISNULL(disconnect_cause)
+                                        AND   DATE(`call_datetime`) = DATE(NOW())
+                                        UNION ALL
+                                        SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
+                                        FROM `asterisk_incomming`
+                                        WHERE disconnect_cause = 'ABANDON'
+                                        AND   DATE(`call_datetime`) = DATE(NOW())");
         while($res = mysql_fetch_assoc($answer_unanswer)){
             $count[] = intval($res[answer_count]);
         }
         
         $answer_unanswer_today = mysql_query("  SELECT 'ნაპასუხები' AS `answer`,COUNT(*) AS `answer_count`
                                                 FROM `asterisk_incomming`
-                                                WHERE disconnect_cause in (3,4)
+                                                WHERE disconnect_cause != 'ABANDON'
                                                 AND    NOT ISNULL(disconnect_cause)
                                                 AND   DATE(`call_datetime`) = DATE(NOW())
                                                 UNION ALL
                                                 SELECT 'უპასუხო' AS `unanswer`,COUNT(*) AS `answer_count`
                                                 FROM `asterisk_incomming`
-                                                WHERE disconnect_cause = 2
+                                                WHERE disconnect_cause = 'ABANDON'
                                                 AND   DATE(`call_datetime`) = DATE(NOW())");
         while($res_today = mysql_fetch_assoc($answer_unanswer_today)){
             $count_today[] = intval($res_today[answer_count]);
@@ -119,7 +118,7 @@ switch ($action) {
                                     					ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100) AS `percent`,
                                     					COUNT(asterisk_incomming.wait_time ) AS `num`
                                              FROM       `asterisk_incomming`
-                                             WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause in (3,4)"));
+                                             WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause != 'ABANDON'"));
         $data['sl']['min'] = $sl_content['sl_min'];
         $data['sl']['percent'] = $sl['percent'];
         $data['sl']['sl_procent'] = $sl_content['sl_procent'];
