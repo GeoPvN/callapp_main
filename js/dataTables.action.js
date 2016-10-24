@@ -349,6 +349,206 @@ function GetDataTableSD(tname, aJaxURL, action, count, data, hidden, length, sor
     );	
 }
 
+function GetDataTable3(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total) {
+    if (empty(data))
+        data = "";
+    
+    if (empty(tname))
+        tname = "example";
+    
+    var asInitVals = new Array();
+    
+    if (empty(sorting)) {
+        sorting = hidden;
+    }
+    
+    //"asc" or "desc"
+    if (empty(sortMeth))
+        sortMeth = "asc";
+    
+    var oTable = "";
+    
+    //Defoult Length
+    var dLength = [[15, 30, 50, -1], [15, 30, 50, "ყველა"]];
+    
+    if (!empty(length))
+        dLength = length;
+    
+    var imex = {
+		"sSwfPath": "media/swf/copy_csv_xls.swf",
+		"aButtons": [ "copy",
+		              {
+						"sExtends": "xls",
+						"sFileName": GetDateTime(1) + ".csv"
+		              },
+		              "print" ]
+	};
+    
+    oTable = $("#" + tname).dataTable({
+        "bDestroy": true, 																				//Reinicialization table
+        "bJQueryUI": true, 																				//Add jQuery ThemeRoller
+        //"bStateSave": true, 																			//state saving
+        "sDom": "<'dataTable_buttons'T><'H'lfrt><'dataTable_content't><'F'ip>",
+		"oTableTools": imex,
+        "sPaginationType": "full_numbers",
+        "bProcessing": true,
+        "aaSorting": [[sorting, sortMeth]],
+        "iDisplayLength": dLength[0][0],
+        "aLengthMenu": dLength,                                                                         //Custom Select Options
+        "sAjaxSource": aJaxURL,
+        "bAutoWidth": false,
+        "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+        	if(!empty(total)){
+        		//total[9,10]
+        		//total sum
+	        	var iTotal 	= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	        	var iPage 	= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	        	var tTime	= 0; 
+	        	var pTime	= 0;
+
+	            for ( var i = 0 ; i < total.length ; i++ )
+		        {	       
+	            	var t1		= 0;
+		        	var t2		= 0;
+		        	var t3		= 0;
+		        	var s		= 0;
+		        	var m		= 0;
+		        	var h		= 0;
+
+	            	for ( var j = 0 ; j < aaData.length ; j++ )
+	                {
+		                tTime = aaData[j][total[i]];
+						
+						if(tTime!=0 && tTime!=null){
+							t1 = parseInt(tTime.substring(0,2));
+							t2 = parseInt(tTime.substring(3,5));
+							t3 = parseInt(tTime.substring(6,8));
+							
+							s 	+= parseInt(t1*60*60 + t2*60 + t3);
+			            	m 	+=	Math.floor(s/60); 
+			            	s	=	s%60;
+			            	h 	+=	Math.floor(m/60); 
+			            	m	=	m%60;
+						}
+						
+						iTotal[i] = (h+':'+m+':'+s);
+			            console.log(iTotal);
+	                } 
+	            }
+
+			for ( var i = 0 ; i < total.length; i++ )
+				{
+					var t1		= 0;
+		        	var t2		= 0;
+		        	var t3		= 0;
+		        	var s		= 0;
+		        	var m		= 0;
+		        	var h		= 0;
+		        	
+					for ( var j = iStart; j < iEnd; j++ )
+	                {
+						pTime = aaData[ aiDisplay[j]][total[i]];
+						
+						if(pTime!=0 && pTime!=null){
+							t1 = parseInt(pTime.substring(0,2));
+							t2 = parseInt(pTime.substring(3,5));
+							t3 = parseInt(pTime.substring(6,8));
+							
+							s 	+= 	parseInt(t1*60*60 + t2*60 + t3);
+			            	m 	+=	Math.floor(s/60); 
+			            	s	=	s%60;
+			            	h 	+=	Math.floor(m/60); 
+			            	m	=	m%60;
+						}
+						iPage[i] = (h+':'+m+':'+s);
+	                }     						
+				}
+			
+	            var nCells = nRow.getElementsByTagName('th');
+	            for ( var k = 0 ; k < total.length ; k++ )
+	            {
+	            	nCells[total[k]].innerHTML = iPage[k] + '<br />' + iTotal[k] + '';
+	            }
+        	}
+		},
+        "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
+            oSettings.jqXHR = $.ajax({
+                url: sSource,
+                data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
+                success: function (data) {
+                    fnCallback(data);
+                    if (typeof (data.error) != "undefined") {
+                        if (data.error != "") {
+                            alert(data.error);
+                        } else {
+                            if ($.isFunction(window.DatatableEnd)) {
+                                //execute it
+                                DatatableEnd(tname);
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        "aoColumnDefs": [
+              { "sClass": "colum_hidden", "bSortable": false, "bSearchable": false, "aTargets": [hidden]}	//hidden collum
+            ],
+        "oLanguage": {																						//Localization
+            "sProcessing": "იტვირთება...",
+            "sLengthMenu": "_MENU_",
+            "sZeroRecords": "ჩანაწერი ვერ მოიძებნა",
+            "sInfo": "_START_-დან _END_-მდე სულ: _TOTAL_",
+            "sInfoEmpty": "0-დან 0-მდე სულ: 0",
+            "sInfoFiltered": "(გაიფილტრა _MAX_-დან _TOTAL_ ჩანაწერი)",
+            "sInfoPostFix": "",
+            "sSearch": "ძიება",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "პირველი",
+                "sPrevious": "წინა",
+                "sNext": "შემდეგი",
+                "sLast": "ბოლო"
+            }
+        }
+    });
+    
+    $("#" + tname + " thead input").keyup(function () {
+        /* Filter on the column (the index) of this element */
+        oTable.fnFilter(this.value, $("#" + tname + " thead input").index(this));
+    });
+    
+    /*
+    * Support functions to provide a little bit of 'user friendlyness' to the textboxes in 
+    * the footer
+    */
+    $("#" + tname + " thead input").each(function (i) {
+        asInitVals[i] = this.value;
+    });
+
+    $("#" + tname + " thead input").focus(function () {
+        if (this.className == "search_init") {
+            this.className = "";
+            this.value = "";
+        }
+    });
+
+    $("#" + tname + " thead input").blur(function (i) {
+        if (this.value == "") {
+            this.className = "search_init";
+            this.value = asInitVals[$("#" + tname + " thead input").index(this)];
+        }
+    });
+        
+    $(".DTTT_button").hover(
+		  function () {
+		    $(this).addClass("ui-state-hover");
+		  },
+		  function () {
+		    $(this).removeClass("ui-state-hover");
+		  }
+    );    
+}
+
 function onhovercolor(color){
 	var next_color = '';
 	$( ".display tbody tr" )

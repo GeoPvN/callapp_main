@@ -109,7 +109,43 @@ switch ($action) {
  		$data = array('page'	=> $page);
  		
  		break;
-	
+	case 'break_checker' :
+	    $logout_actions = $_REQUEST['logout_actions'];
+	    $res_pay = mysql_num_rows(mysql_query(" SELECT work_activities.id
+                                                FROM `work_activities`
+                                                WHERE work_activities.id = $logout_actions AND work_activities.pay = 2"));
+	    $date_checker = mysql_fetch_array(mysql_query(" SELECT IF(TIME(NOW()) >= start_break AND TIME(NOW()) <= end_break,1,0) AS `checker`
+                                            	        FROM `work_real`
+                                            	        JOIN work_real_break ON work_real.id = work_real_break.work_real_id AND work_real_break.work_activities_id = $logout_actions
+                                            	        JOIN work_activities ON work_real_break.work_activities_id = work_activities.id AND date_checker = 1
+                                            	        WHERE work_real.user_id = $_SESSION[USERID] AND DATE(work_real.date) = DATE(NOW())
+                                            	        ORDER BY work_real_break.id DESC
+                                                        LIMIT 1;"));
+	    if($res_pay==0){
+	        if($date_checker[0] == 1 || $date_checker[0] == ''){
+	           $data = array('checker'	=> 1);
+	        }else{
+	           $data = array('checker'	=> 0);
+	        }
+	    }else{
+    	    $break_checker_count = mysql_num_rows(mysql_query(" SELECT worker_action.id
+                                                                FROM `worker_action`
+                                                                JOIN worker_action_break ON worker_action.id = worker_action_break.worker_action_id AND ISNULL(worker_action_break.end_date)
+                                                                JOIN work_activities ON worker_action_break.work_activities_id = work_activities.id AND work_activities.pay = 2 AND (work_activities.all_limit = 1 or work_activities.id = $logout_actions)
+                                                                WHERE DATE(worker_action.start_date) = DATE(NOW())"));
+    	    $cnobar = mysql_fetch_assoc(mysql_query("SELECT `limit` FROM work_activities WHERE id = $logout_actions"));
+    	    if($break_checker_count == $cnobar[limit]){
+
+    	        $data = array('checker'	=> 0);
+    	    }else{
+    	        if($date_checker[0] == 1 || $date_checker[0] == ''){
+    	           $data = array('checker'	=> 1);
+    	        }else{
+    	           $data = array('checker'	=> 0);
+    	        }
+    	    }
+	    }
+	    break;
     default:
        $error = 'Action is Null';
 }
@@ -147,7 +183,7 @@ function WorkerEnd($person_id){
 	
 	mysql_query("UPDATE worker_action
 				SET
-				end_date = '$date',
+				end_date = TIME_FORMAT(NOW(),'%H:%i:%s'),
 				actived  = 0
 				WHERE    person_id = $person_id AND id = $res[id]");
 	
@@ -155,21 +191,31 @@ function WorkerEnd($person_id){
 }
 
 function GoTimeOut($person_id,$comment_start){
-	
-	$date = date('H:i:s');
-	
-	$res = mysql_fetch_assoc(mysql_query("  SELECT  MAX(id) AS `id`
-											FROM  worker_action
-											WHERE person_id = $person_id"));
-	
-    mysql_query("INSERT INTO `worker_action_break`
-                (`worker_action_id`, `start_date`, `end_date`, `comment_start`, `comment_end`)
-                VALUES
-                ('$res[id]', '$date', NULL, '$comment_start', '');");
-    
     $user_id        = $_SESSION['USERID'];
     $logout_actions = $_REQUEST['logout_actions'];
     $logout_comment = $_REQUEST['logout_comment'];
+	$date = date('H:i:s');
+	
+	$res_timer = mysql_fetch_assoc(mysql_query("SELECT IF(
+                                                            ISNULL(TIME_TO_SEC(TIMEDIFF(work_activities.timer,SEC_TO_TIME(SUM(worker_action_break.end_date) - SUM(worker_action_break.start_date)))))
+                                                            ,TIME_TO_SEC(work_activities.timer)
+                                                            ,TIME_TO_SEC(TIMEDIFF(work_activities.timer,SEC_TO_TIME(SUM(worker_action_break.end_date) - SUM(worker_action_break.start_date))))
+                                                        ) AS `timer`
+                                        	    FROM `worker_action`
+                                        	    JOIN worker_action_break ON worker_action.id = worker_action_break.worker_action_id AND worker_action_break.work_activities_id = $logout_actions
+                                        	    JOIN work_activities ON work_activities.id = $logout_actions
+                                        	    WHERE worker_action.person_id = $_SESSION[USERID] AND DATE(worker_action.start_date) = DATE(NOW())"));
+	$res = mysql_fetch_assoc(mysql_query("  SELECT  MAX(id) AS `id`
+											FROM  worker_action
+											WHERE person_id = $person_id"));
+	if($logout_actions != 0){
+    mysql_query("INSERT INTO `worker_action_break`
+                (`worker_action_id`, `start_date`, `end_date`, `comment_start`, `comment_end`, `work_activities_id`)
+                VALUES
+                ('$res[id]', TIME_FORMAT(NOW(),'%H:%i:%s'), NULL, '$logout_comment', '', '$logout_actions');");
+	}
+    
+    
      
     mysql_query("UPDATE `user_log` SET
                         `logout_date`= NOW(),
@@ -186,9 +232,13 @@ function GoTimeOut($person_id,$comment_start){
         
         mysql_query("UPDATE worker_action
                     SET
-                    end_date = '$date',
+                    end_date = NOW(),
                     actived  = 0
                     WHERE    person_id = $person_id AND id = $res[id]");
+        
+        mysql_query("UPDATE `users`
+                     SET	`logged` 	= 0
+                     WHERE	`id` = $_SESSION[USERID]");
         
         unset($_SESSION['USERID']);
         unset($_SESSION['lifetime']);
@@ -196,9 +246,7 @@ function GoTimeOut($person_id,$comment_start){
     }
     $data[0]=2;
     
-    $res_timer = mysql_fetch_assoc(mysql_query("SELECT TIME_TO_SEC(timer) AS `timer`
-                                                FROM work_activities
-                                                WHERE id = $logout_actions"));
+    
     $data[2]=$res_timer[timer];
     
     return $data;
@@ -253,8 +301,8 @@ function BackTimeOut($person_id,$comment_end){
                                 			WHERE person_id = $person_id"));
 	
 	mysql_query("UPDATE `worker_action_break` SET
-                        `end_date`='$date',
-	                    `comment_end`='$comment_end'
+                        `end_date`=TIME_FORMAT(NOW(),'%H:%i:%s'),
+	                    `comment_end`='$_REQUEST[logout_comment]'
                  WHERE worker_action_id = '$res[id]'
                  ORDER BY id DESC
                  LIMIT 1");
@@ -328,7 +376,7 @@ function CheckHere($person_id){
 }
 
 function gdl(){
-    $res = mysql_query("SELECT id,`name` FROM `work_activities` WHERE actived = 1");
+    $res = mysql_query("SELECT id,`name` FROM `work_activities` WHERE actived = 1 ORDER BY `order` ASC");
     $option = '<option value="0">----</option>';
     while ($req = mysql_fetch_assoc($res)){
         $option .= '<option value="'.$req[id].'">'.$req[name].'</option>';
@@ -460,12 +508,13 @@ function GetBalance(){
                                     <thead>
                                         <tr id="datatable_header">
                                             <th>ID</th>
-                                            <th style="width: 120px !important;">თარიღი</th>
-                                            <th style="width: 200px !important;">პიროვნება</th>
-                                            <th style="width: 120px !important;">სამ. გეგმ. დრო</th>
-                                            <th style="width: 120px !important;">სამ. ფაქტ. დრო</th>
-                                            <th style="width: 120px !important;">შეს  გეგმ. დრო</th>
-                						    <th style="width: 120px !important;">შეს  ფაქტ. დრო</th>
+                                            <th style="width: 85px !important;">თარიღი</th>
+                                            <th style="width: 140px !important;">პიროვნება</th>
+            			                    <th style="width: 120px !important;">ჯგუფი</th>
+                                            <th style="width: 100px !important;">სამ. გეგმ. დრო</th>
+                                            <th style="width: 100px !important;">სამ. ფაქტ. დრო</th>
+                                            <th style="width: 100px !important;">შეს  გეგმ. დრო</th>
+                						    <th style="width: 100px !important;">შეს  ფაქტ. დრო</th>
                                         </tr>
                                     </thead>
                                     <thead>
@@ -477,6 +526,9 @@ function GetBalance(){
                                             	<input type="text" name="search_number" value="ფილტრი" class="search_init" style="width: 80px !important;">
                                             </th>
                                             <th>
+                                            	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
+                                            </th>
+            			                    <th>
                                             	<input type="text" name="search_method" value="ფილტრი" class="search_init" style="width: 80px !important;">
                                             </th>
                                             <th>
@@ -497,6 +549,7 @@ function GetBalance(){
                                         <tr id="datatable_header" class="search_header">
                 							<th style="width: 150px"></th>
                 							<th style="width: 150px"></th>
+            			                    <th style="width: 150px"></th>
                 						    <th style="width: 150px; text-align: right;">ჯამი :<br>სულ :</th>
                 							<th style="width: 150px"></th>
                 							<th style="width: 150px;"></th>

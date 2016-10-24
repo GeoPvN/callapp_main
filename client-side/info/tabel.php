@@ -14,6 +14,27 @@ if($_SESSION['USERID'] == 5 || $_SESSION['USERID'] == 2 ){
         }';
 }
 ?>
+#exel_tabel{
+    width: 100%;
+}
+
+#exel_tabel th{
+    border: 2px solid;
+    font-size: 11px;
+    font-weight: normal;
+    text-align: center;
+    padding: 3px;
+    font-weight: bold;
+}
+
+#exel_tabel td{
+    border: 2px solid;
+    font-size: 11px;
+    font-weight: normal;
+    text-align: center;
+    padding: 3px;
+}
+
 </style>
 		<link href="media/css/main/header.css" rel="stylesheet" type="text/css" />
     	<link href="media/css/main/mainpage.css" rel="stylesheet" type="text/css" />
@@ -54,49 +75,11 @@ function LoadTable(start, end, person_id, password){
 	var start	    = $("#search_start").val();
 	var end		    = $("#search_end").val();
 	var person_id   = $("#user1").val();
-	total = [3,4,5,6];
+	total = [4,5,6,7];
 	/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-	GetDataTable3(tName, l_aJaxURL, "get_list", 7, "start=" + start + "&end=" + end + "&person_id=" + person_id + "&password=" + password, 0, "", 1, "desc",total);
+	GetDataTable3(tName, l_aJaxURL, "get_list", 8, "start=" + start + "&end=" + end + "&person_id=" + person_id + "&password=" + password, 0, "", 1, "desc",total);
 	$('.dataTable_buttons').css('display', 'block');
 }
-
-// $(document).on("click", "#come_in", function () {
-	
-//     $.ajax({
-//         url: aJaxURL,
-// 	    data: "act=save_act&action=" + 1,
-// 	    dataType: "json",
-//         success: function(data) {
-//             if (data.error != "") {
-//                 alert(data.error);
-//             }else {
-// 				if(data.status==1){alert('ოპერაცია წარმატებით განხორციელდა');}
-// 				$('#opper_status').html('სისტემაში შემოსული');
-// 			}
-            
-// 	    }
-//     });	
-// });
-
-
-// $(document).on("click", "#go_home", function () {
-	
-//     $.ajax({
-//         url: aJaxURL,
-// 	    data: "act=save_act&action=" + 2,
-// 	    dataType: "json",
-//         success: function(data) {
-//             if (data.error != "") {
-//                 alert(data.error);
-//             }else {
-//             	if(data.status==4){alert('ოპერაცია წარმატებით განხორციელდა');}
-//             	$('#opper_status').html('სისტემიდან გასული');
-//             }
-            
-// 	    }
-//     });	
-// });
-
 
 $(document).on("click", "#go_home", function () {
 	var button = {
@@ -106,51 +89,85 @@ $(document).on("click", "#go_home", function () {
 	            click: function () {
 	            	$.ajax({
 	                    url: aJaxURL,
-	            	    data: "act=save_act&action=" + 3 + "&logout_actions=" + $("#logout_actions").val() + "&logout_comment=" + $("#logout_comment").val(),
+	            	    data: "act=break_checker&logout_actions=" + $("#logout_actions").val(),
 	            	    dataType: "json",
 	                    success: function(data) {
-	                        if (data.error != "") {
-	                            alert(data.error);
-	                        }else {
-	                        	if(data.done==1){
-	                        		  location.reload();
-	                        	}
-	                        	if(data.status==2){
-	                        		alert('ოპერაცია წარმატებით განხორციელდა');
-	                        		$('#disable_all').css('display', 'block');
-	                        		$('#disable_all').css('z-index', 999999);
-	                        		$('#disable_all').css('background', 'rgba(54, 25, 25, .5)');
-	                        		$('#come_in').css('z-index', 9999999);
-	                        		$('.come-in-form-class').css('z-index', 9999999);
-	                        		$('#opper_status').html('შესვენებაზე გასული');
-
-	                        		$("#dis_timer").css('display','block');
-	                        		$(".timer").html('');
-	                        		$('.timer').circularCountDown({
-	                                    delayToFadeIn: 500,
-	                                    size: 400,
-	                                    fontColor: '#000',
-	                                    fontSize: 24,
-	                                    colorCircle: 'white',
-	                                    background: 'red',
-	                                    reverseLoading: false,
-	                                    duration: {
-	                                        seconds: parseInt(data.timer)
-	                                    },
-	                                    beforeStart: function() {
-	                                        $('.launcher').hide();
-	                                    },
-	                                    end: function(countdown) {
-	                                        countdown.destroy();
-	                                        $('.launcher').show();
-	                                        
-	                                    }
-	                                });
-	                        	}
-	                        }
-	            	    }
+		                    if(data.checker == 1){
+        	            	$.ajax({
+        	                    url: aJaxURL,
+        	            	    data: "act=save_act&action=" + 3 + "&logout_actions=" + $("#logout_actions").val() + "&logout_comment=" + $("#logout_comment").val(),
+        	            	    dataType: "json",
+        	                    success: function(data) {
+        	                        if (data.error != "") {
+        	                            alert(data.error);
+        	                        }else {
+        	                        	if(data.done==1){
+        	                        		  location.reload();
+        	                        	}
+        	                        	if(data.status==2){
+        	                        		
+        	                        		$('#disable_all').css('display', 'block');
+        	                        		$('#disable_all').css('z-index', 999999);
+        	                        		$('#disable_all').css('background', 'rgba(54, 25, 25, .5)');
+        	                        		$('#come_in').css('z-index', 9999999);
+        	                        		$('.come-in-form-class').css('z-index', 9999999);
+        	                        		$('#opper_status').html('შესვენებაზე გასული');
+        
+        	                        		$("#dis_timer").css('display','block');
+        	                        		$(".timer").html('');
+        	                        		$('.timer').circularCountDown({
+        	                                    delayToFadeIn: 500,
+        	                                    size: 400,
+        	                                    fontColor: '#fff',
+        	                                    fontSize: 24,
+        	                                    colorCircle: 'white',
+        	                                    background: 'red',
+        	                                    reverseLoading: false,
+        	                                    duration: {
+        	                                        seconds: parseInt(data.timer)
+        	                                    },
+        	                                    beforeStart: function() {
+        	                                        $('.launcher').hide();
+        	                                    },
+        	                                    end: function(countdown) {
+        	                                        countdown.destroy();
+        	                                        $('.launcher').show();
+        	                                        
+        	                                    }
+        	                                });
+        	                        		var button = {
+        	                        				"cancel": {
+        	                        		            text: "დახურვა",
+        	                        		            id: "cancel-dialog",
+        	                        		            click: function () {
+        	                        		                $(this).dialog("close");
+        	                        		            }
+        	                        		        }
+        	                        		};
+        	                        		GetDialog("alert_dialog", 360, "auto", button);
+        	                        		$('#alert_dialog').html('ოპერაცია წარმატებით განხორციელდა');
+        	                        		$('.alert_dialog-class').css('z-index','9999999');
+        	                        	}
+        	                        }
+        	            	    }
+        	                });
+      	            	  $("#lg_out").dialog("close");
+		                    }else{
+		                    	var button = {
+                        				"cancel": {
+                        		            text: "დახურვა",
+                        		            id: "cancel-dialog",
+                        		            click: function () {
+                        		                $(this).dialog("close");
+                        		            }
+                        		        }
+                        		};
+                        		GetDialog("alert_dialog", 360, "auto", button);
+                        		$('#alert_dialog').html('ამჟამად თქვენ ვერ შეძლებთ შესვენებაზე გასვლას, სცადეთ მოგვიანებით');
+                        		$('.alert_dialog-class').css('z-index','9999999');
+		                    }
+	                    }
 	                });
-	                $(this).dialog("close");
 	            }
 	        },
 		      "cancel": {
@@ -189,9 +206,20 @@ $(document).on("click", "#come_in", function () {
                 alert(data.error);
             }else {
             	if(data.status==3){
-            		alert('ოპერაცია წარმატებით განხორციელდა');
+            		var button = {
+            				"cancel": {
+            		            text: "დახურვა",
+            		            id: "cancel-dialog",
+            		            click: function () {
+            		                $(this).dialog("close");
+            		            }
+            		        }
+            		};
+            		GetDialog("alert_dialog", 360, "auto", button);
+            		$('#alert_dialog').html('ოპერაცია წარმატებით განხორციელდა');
+            		$('.alert_dialog-class').css('z-index','9999999');
                 	$('#disable_all').css('z-index', 0);
-            		$('#back_relax').css('z-index', 1);
+            		$('#come_in').css('z-index', 1);
             		$('#disable_all').css('background', 'none');
             		$('#opper_status').html('სისტემაში შემოსული');
             		$("#dis_timer").css('display','none');
@@ -284,47 +312,44 @@ $(document).on("click", "#balance", function () {
 });
 
 $(document).on("click", "#exel_button", function () {
-	
+
+
+	var button = {
+		      "cancel": {
+		            text: "დახურვა",
+		            id: "cancel-dialog",
+		            click: function () {
+		                $(this).dialog("close");
+		            }
+		        }
+		    };
+    GetDialog("balance-form-excel",1250, "auto", button);
+
 	param = new Object();
 	
-	param.start	    = $("#search_start").val();
-	param.end       = $("#search_end").val();
-	param.group_id  = $("#user1").val();
+	param.act	    = 'excel';
+ 	param.start	    = $("#search_start").val();
+ 	param.end       = $("#search_end").val();
+ 	param.group_id  = $("#user1").val();
 	
   	$.ajax({
-	        url: 'server-side/report/technical/tabel_exel.php',
+	        url: 'server-side/info/tabel_excel.action.php',
 		    data: param,
 	        success: function(data) {
-		        if(data == 1){
-			        alert('ჩანაწერი არ მოიძებნა');
-		        }else{
-	        		SaveToDisk('server-side/report/technical/excel.xls', 'excel.xls');
-		        }
+	            $('#balance-form-excel').html(data);
 		    }
 	    });
   	
-	});
+});
+
+
 
 function SaveToDisk(fileURL, fileName) {
-    // for non-IE
-    if (!window.ActiveXObject) {
-        var save = document.createElement('a');
-        save.href = fileURL;
-        save.target = '_blank';
-        save.download = fileName || 'unknown';
-
-        var event = document.createEvent('Event');
-        event.initEvent('click', true, true);
-        save.dispatchEvent(event);
-        (window.URL || window.webkitURL).revokeObjectURL(save.href);
-    }
-     // for IE
-    else if ( !! window.ActiveXObject && document.execCommand)     {
-        var _window = window.open(fileURL, "_blank");
-        _window.document.close();
-        _window.document.execCommand('SaveAs', true, fileName || fileURL)
-        _window.close();
-    }
+	var iframe = document.createElement("iframe"); 
+    iframe.src = fileURL; 
+    iframe.style.display = "none"; 
+    document.body.appendChild(iframe);
+    return false;
 }
 
 $(document).on("click", "#check", function () {
@@ -339,11 +364,25 @@ $(document).on("change", "#search_end", function () {
 	LoadTable();
 });
 
-</script>
-<div id="tabs" style="width: 95.5%;">
-<div class="callapp_head">ტაბელი<hr class="callapp_head_hr"></div>
+$(document).on("click", "#goexcel", function (e) {
+	var table = 'exel_tabel';
 
+	var tableToExcel = (function() {
+          var uri = 'data:application/vnd.ms-excel;base64,'
+            , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table  border="1px">{table}</table></body></html>'
+            , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+            , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+          return function(table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+            window.location.href = uri + base64(format(template, ctx))
+          }
+        })();
+	tableToExcel(table, 'excel export');
+});
+</script>
 <body onselectstart='return false;'>
+<div style="margin-top: 15px;">
 	<div style="margin-left: 298px; font-size: 17px; margin-top: -10px; color: #000;">სტატუსი:</div>
     <div id="opper_status" style="margin-left: 380px; margin-top: -15px; color: red; font-size: 15px;">
     </div>
@@ -416,6 +455,14 @@ $(document).on("change", "#search_end", function () {
 	
 	<div id="balance-form-deep" class="form-dialog" title="ბალანსი">
     	<!-- aJax -->
+	</div>
+	
+	<div id="balance-form-excel" class="form-dialog" title="ექსელში გატანა">
+
+	</div>
+	
+	<div id="alert_dialog" class="form-dialog" title="შეტყობინება">
+
 	</div>
 	
 	<div id="dis_timer" style="position: absolute; top: 35%; left: 35%;z-index: 999999;">
