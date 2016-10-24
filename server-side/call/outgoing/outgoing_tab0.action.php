@@ -260,7 +260,7 @@ switch ($action) {
 
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
-                				`update_date`='$incomming_date_up',
+                				`update_date`=NOW(),
                 				`call_comment`='$call_comment',
 		                        `call_res`='$_REQUEST[call_res]',
 		                        `call_back`='$_REQUEST[call_back]'
