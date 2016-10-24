@@ -359,7 +359,8 @@ function get_project(){
         data: 'act=get_project',
         success: function(data) {
         	$("#project_id").html(data.option);
-        	$('#project_id').chosen({ search_contains: true, width: "250px" });
+        	$('#project_id,#date_checker').chosen({ search_contains: true, width: "250px" });
+        	$('#project_id_chosen,#date_checker_chosen').css('margin-right', '21px');
         	GetDate('start_date');
         	GetDate('end_date');
         	get_status_content();
@@ -370,7 +371,7 @@ function get_project(){
 function get_status_content(){
 	$.ajax({
         url: "server-side/main.action.php",
-        data: 'act=get_status&project_id='+$('#project_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val(),
+        data: 'act=get_status&project_id='+$('#project_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val()+'&date_checker='+$('#date_checker').val(),
         success: function(data) {
         	$('#status_id_2').html(data.s2);
         	$('#status_id_3').html(data.s3);
@@ -384,7 +385,7 @@ function get_status_content(){
     });
 }
 
-$(document).on("change", "#start_date,#end_date,#project_id", function () {
+$(document).on("change", "#start_date,#end_date,#project_id,#date_checker", function () {
 	get_status_content();
 });
 
@@ -933,7 +934,8 @@ function go_sl(){
     
     <div id="box_content" class="showme2" style="display: none;">
     <div style="margin-bottom: 15px;">
-    <select id="project_id" style="width: 150px;"></select>
+    <select id="project_id" style="width: 150px;margin-right: 15px;"></select>
+    <select id="date_checker" style="width: 150px;"><option value="1">დაფორმირების თარიღი</option><option value="2">დარეკვის თარიღი</option></select>
     <input type="text" id="start_date">-დან
     <input type="text" id="end_date">-მდე
     </div>
