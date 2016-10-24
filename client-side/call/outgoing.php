@@ -40,7 +40,7 @@
     	}else{
     		$('#table_index_div').css('display','block');
     		$('#table_actived').css('display','none');
-    		LoadTable('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
+    		gg('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
     	}
     	$('#operator_id,#tab_id,#task_type').chosen({ search_contains: true });
@@ -53,6 +53,29 @@
     	    
         });
     });
+
+    function gg(tbl,col_num,act,change_colum,custom_param,URL){
+    	param 				= new Object();
+    	param.start_date=$('#start_date').val();
+    	param.end_date=$('#end_date').val();
+    	param.status=$('#tab_id').val();
+    	param.operator=<?php echo $_SESSION['USERID'];?>;
+
+    	GetDataTableSD(tName+tbl,
+    			URL,
+    			act,
+    			col_num,
+    			param,
+    	    	0,
+    	    	"",
+    	    	1,
+    	    	"desc",
+    	    	'',
+    	    	change_colum);
+    	setTimeout(function(){
+	    	$('.ColVis, .dataTable_buttons').css('display','none');
+	    	}, 110);
+    }
 
     function LoadTable(tbl,col_num,act,change_colum,custom_param,URL){
     	GetDataTable(tName+tbl, URL, act, col_num, custom_param, 0, "", 1, "asc", '', change_colum);
@@ -239,7 +262,7 @@ if(fName=='add-edit-form-task'){
                 		$('#table_index,#table_index_wrapper').css('display','table');
                 		$('#table_index_div').css('display','block');
                 		$('#table_actived,#table_actived_wrapper').css('display','none');
-                		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+                		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
                     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
                     	
                 	}
@@ -270,7 +293,7 @@ if(fName=='add-edit-form-task'){
         		$('#table_index,#table_index_wrapper').css('display','table');
         		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
-        		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
         	}
     	}
@@ -306,7 +329,7 @@ if(fName=='add-edit-form-task'){
         		$('#table_index,#table_index_wrapper').css('display','table');
         		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
-        		LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
         	}
     	}
@@ -319,7 +342,7 @@ if(fName=='add-edit-form-task'){
     	end_date    = $('#end_date').val();
     	if($('#task_type').val() == 1){
     		if(status => 1){
-    			LoadTable('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+    			gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
         	    $('#table_actived_wrapper').css('display','none');
         	}else{
         		$('#table_index_wrapper').css('display','none');
@@ -1311,7 +1334,7 @@ if(fName=='add-edit-form-task'){
 						if(data.error != ""){
 							alert(data.error);
 						}else{
-							LoadTable('index',colum_number,main_act,change_colum_main,'task_type='+$('#task_type').val()+'&status='+$('#tab_id').val()+'&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
+							gg('index',colum_number,main_act,change_colum_main,'task_type='+$('#task_type').val()+'&status='+$('#tab_id').val()+'&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
 						    CloseDialog("add-edit-form");
 						}
 					}
@@ -1529,7 +1552,6 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">დარეკვის შედეგი</th>
             <th style="width: 100%;">კომენტარი</th>
             <th style="width: 100%;">მოსმენა</th>
-            <th class="check" style="width: 30px;" id="last_th">&nbsp;</th>
         </tr>
     </thead>
     <thead>
@@ -1569,12 +1591,6 @@ if(fName=='add-edit-form-task'){
             </th>
             <th>
                 <input type="text" name="search_phone" value="ფილტრი" class="search_init" />
-            </th>
-            <th style="border-right: 1px solid #E6E6E6 !important;">
-            	<div class="callapp_checkbox">
-                    <input type="checkbox" id="check-all" name="check-all" />
-                    <label for="check-all"></label>
-                </div>
             </th>
         </tr>
     </thead>
@@ -1619,7 +1635,7 @@ if(fName=='add-edit-form-task'){
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 30px;">№</th>
+            <th style="width: 60px;">№</th>
             <th style="width: 50%;">დასაწყისი</th>
             <th style="width: 50%;">დასასრული</th>
             <th style="width: 50%;">დავალების ტიპი</th>

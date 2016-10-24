@@ -20,18 +20,12 @@ class SSP {
 
 				// Is there a formatter?
 				if ( isset( $column['formatter'] ) ) {
-					$row[ $column['dt'] ] = mysql_real_escape_string($column['formatter']( $data[$i][ $column['db'] ], $data[$i] ));
+					$row[ $column['dt'] ] = mysql_real_escape_string($column['formatter']( $data[$i][ $column['dt'] ], $data[$i] ));
 				}
 				else {
-					$row[ $column['dt'] ] = mysql_real_escape_string($data[$i][ $columns[$j]['db'] ]);
+					$row[ $column['dt'] ] = mysql_real_escape_string($data[$i][ $columns[$j]['dt'] ]);
 				}
-				if(count($columns) - 1 ){
-				    if($check == ''){
-				        $row[] = '<input type="checkbox" name="check_' . $data[$i][0] . '" class="check" value="' . $data[$i][0] . '" />';
-				    }else{
-				        $row[] = '<input type="checkbox" name="check_' . $data[$i][0] . '" class="'.$check.'" value="' . $data[$i][0] . '" />';
-				    }
-				}
+
 			}
 			
 			$out[] = $row;
@@ -120,7 +114,7 @@ class SSP {
 	 *    sql_exec() function
 	 *  @return string SQL where clause
 	 */
-	static function filter ( $request, $columns, &$bindings, $where_param )
+	static function filter ( $request, $columns, $bindings, $where_param )
 	{
 	    header('Content-Type: text/html; charset=utf-8');
 		$globalSearch = array();
@@ -223,7 +217,7 @@ class SSP {
 
 		// Total data set length
 		$resTotalLength = self::sql_exec( $db,
-			"SELECT COUNT(`{$primaryKey}`)
+			"SELECT COUNT({$primaryKey})
 			 FROM   `$table`
 			 $where_param"
 		);

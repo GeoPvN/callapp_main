@@ -183,6 +183,172 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     );	
 }
 
+function GetDataTableSD(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total, colum_change) {
+    if (empty(data))
+        data = "";
+ 
+    if (empty(tname))
+        tname = "example";
+
+    var asInitVals = new Array();
+
+    if (empty(sorting)) {
+        sorting = hidden;
+    }
+
+    //"asc" or "desc"
+    if (empty(sortMeth))
+        sortMeth = "asc";
+
+    var oTable = "";
+
+    //Defoult Length
+    var dLength = [[10, 30, 50, 100, 500, 1000], [10, 30, 50, 100, 500, 1000]];
+
+    if (!empty(length))
+        dLength = length;
+
+    var imex = {
+		"sSwfPath": "media/swf/copy_csv_xls.swf",
+		"aButtons": [ "copy",
+		              {
+						"sExtends": "xls",
+						"sFileName": GetDateTime(1) + ".csv"
+		              },
+		              "print" ]
+	};
+
+    oTable = $("#" + tname).dataTable({
+        "bDestroy": true, 																				//Reinicialization table
+        "bJQueryUI": true, 																				//Add jQuery ThemeRoller
+        //"bStateSave": true, 																			//state saving
+        //"bFilter": true,
+        "sDom": colum_change,  
+		"oTableTools": imex,
+        "sPaginationType": "full_numbers",
+        "bProcessing": true,
+        "aaSorting": [[sorting, sortMeth]],
+        "iDisplayLength": dLength[0][0],
+        "aLengthMenu": dLength,                                                                         //Custom Select Options
+        "processing": true,
+		"serverSide": true,
+		"ajax": {
+            "url": aJaxURL,
+            "data": function ( d ) {
+            	d.act = action;
+				d.start_date = data.start_date;
+				d.end_date = data.end_date;
+				d.status = data.status;
+				d.operator = data.operator;
+
+				$("#table_index tbody").html("<tr><td colspan=11 style=\"font-size:16px;color: red;font-weight:bold;\">იტვირთება......</td></tr>");
+        	}
+		},
+        //"sAjaxSource": aJaxURL,
+        "autoWidth": false,
+        "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+        	if(!empty(total)){
+	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	            for ( var i = 0 ; i < aaData.length ; i++ )
+	            {
+	            	for ( var j = 0 ; j < total.length ; j++ )
+	                {
+		                iTotal[j] += aaData[i][total[j]]*1;
+	                }
+	            }
+
+	            var iPage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				for ( var i = iStart ; i < iEnd ; i++ )
+				{
+					for ( var j = 0 ; j < total.length ; j++ )
+	                {
+						iPage[j] += aaData[ aiDisplay[i] ][total[j]]*1;
+	                }
+				}
+
+	            var nCells = nRow.getElementsByTagName('th');
+	            for ( var k = 0 ; k < total.length ; k++ )
+	            {
+	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + '<br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            }
+        	}
+		},
+		"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+            /* Append the grade to the default row class name */
+        	$('td:eq(1)', nRow).attr( 'title', $('td:eq(1)', nRow).text() );
+        	$('td:eq(2)', nRow).attr( 'title', $('td:eq(2)', nRow).text() );
+        	$('td:eq(3)', nRow).attr( 'title', $('td:eq(3)', nRow).text() );
+        	$('td:eq(4)', nRow).attr( 'title', $('td:eq(4)', nRow).text() );
+        	$('td:eq(5)', nRow).attr( 'title', $('td:eq(5)', nRow).text() );
+        	$('td:eq(6)', nRow).attr( 'title', $('td:eq(6)', nRow).text() );
+        	$('td:eq(7)', nRow).attr( 'title', $('td:eq(7)', nRow).text() );
+        	$('td:eq(8)', nRow).attr( 'title', $('td:eq(8)', nRow).text() );
+        	$('td:eq(9)', nRow).attr( 'title', $('td:eq(9)', nRow).text() );
+        	$('td:eq(10)', nRow).attr( 'title', $('td:eq(10)', nRow).text() );
+        	$('td:eq(11)', nRow).attr( 'title', $('td:eq(11)', nRow).text() );
+        	$('td:eq(12)', nRow).attr( 'title', $('td:eq(12)', nRow).text() );
+        },
+        "aoColumnDefs": [
+              { "sClass": "colum_hidden", "bSortable": false, "bSearchable": false, "aTargets": [hidden]}	//hidden collum
+            ],
+        "oLanguage": {																						//Localization
+            "sProcessing": "იტვირთება...",
+            "sLengthMenu": "_MENU_",
+            "sZeroRecords": "ჩანაწერი ვერ მოიძებნა",
+            "sInfo": "_START_-დან _END_-მდე სულ: _TOTAL_",
+            "sInfoEmpty": "0-დან 0-მდე სულ: 0",
+            "sInfoFiltered": "(გაიფილტრა _MAX_-დან _TOTAL_ ჩანაწერი)",
+            "sInfoPostFix": "",
+            "sSearch": "ძიება",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "პირველი",
+                "sPrevious": "წინა",
+                "sNext": "შემდეგი",
+                "sLast": "ბოლო"
+            }
+        }
+    });    
+
+    //new $.fn.dataTable.ColReorder(oTable);
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").keyup(function () {
+    	
+        /* Filter on the column (the index) of this element */
+        oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this));
+    });
+
+    /*
+    * Support functions to provide a little bit of 'user friendlyness' to the textboxes in
+    * the footer
+    */
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").each(function (i) {
+        asInitVals[i] = this.value;
+    });
+
+    $("#"+tname+" thead input,  .dataTables_scrollFoot .dataTable tfoot input").focus(function () {
+        if (this.className == "search_init") {
+            this.className = "";
+            this.value = "";
+        }
+    });
+
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").blur(function (i) {
+        if (this.value == "") {
+            this.className = "search_init";
+            this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this)];
+        }
+    });
+
+    $(".DTTT_button").hover(
+		  function () {
+		    $(this).addClass("ui-state-hover");
+		  },
+		  function () {
+		    $(this).removeClass("ui-state-hover");
+		  }
+    );	
+}
+
 function onhovercolor(color){
 	var next_color = '';
 	$( ".display tbody tr" )

@@ -84,24 +84,75 @@ switch ($action) {
 		}
 		
 		if($status != 1){
-	  	$rResult = mysql_query("SELECT  outgoing_campaign_detail.`id`,
-                                        outgoing_campaign_detail.`id`,
-                                        outgoing_campaign_detail.update_date,
-                                        phone_base_detail.`note`,
-	  	                                phone_base_detail.phone1,
-	  	                                phone_base_detail.info1,
-                                        phone_base_detail.`client_name`,
-                                        CONCAT(outgoing_campaign_detail_contact.fname,' ',outgoing_campaign_detail_contact.lname),
-                                        outgoing_campaign_detail_contact.`person_position`,
-                                        outgoing_campaign_detail.`call_res`,
-                                        outgoing_campaign_detail.call_comment,
-                                        CONCAT('<p style=\"padding: 3px 0;\" onclick=\"play(\'',DATE_FORMAT(asterisk_outgoing.call_datetime,'%Y/%m/%d/'),asterisk_outgoing.file_name,'\')\">მოსმენა</p>') AS `file`
-                                FROM `outgoing_campaign`
-                                JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
-                                LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
-                                JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
-                                LEFT JOIN asterisk_outgoing ON phone_base_detail.phone1 = asterisk_outgoing.phone
-                                WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter");
+// 	  	$rResult = mysql_query("SELECT  outgoing_campaign_detail.`id`,
+//                                         outgoing_campaign_detail.`id`,
+//                                         outgoing_campaign_detail.update_date,
+//                                         phone_base_detail.`note`,
+// 	  	                                phone_base_detail.phone1,
+// 	  	                                phone_base_detail.info1,
+//                                         phone_base_detail.`client_name`,
+//                                         CONCAT(outgoing_campaign_detail_contact.fname,' ',outgoing_campaign_detail_contact.lname),
+//                                         outgoing_campaign_detail_contact.`person_position`,
+//                                         outgoing_campaign_detail.`call_res`,
+//                                         outgoing_campaign_detail.call_comment,
+//                                         CONCAT('<p style=\"padding: 3px 0;\" onclick=\"play(\'',DATE_FORMAT(asterisk_outgoing.call_datetime,'%Y/%m/%d/'),asterisk_outgoing.file_name,'\')\">მოსმენა</p>') AS `file`
+//                                 FROM `outgoing_campaign`
+//                                 JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+//                                 LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
+//                                 JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+//                                 LEFT JOIN asterisk_outgoing ON phone_base_detail.phone1 = asterisk_outgoing.phone
+//                                 WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter");
+	  	
+	  	// DB table to use
+	  	$table = 'outgoing_campaign';
+	  	
+	  	// Table's primary key
+	  	$primaryKey = '`outgoing_campaign_detail`.`id`';
+	  	
+	  	// Array of database columns which should be read and sent back to DataTables.
+	  	// The `db` parameter represents the column name in the database, while the `dt`
+	  	// parameter represents the DataTables column identifier. In this case simple
+	  	// indexes
+	  	
+	  	$columns = array(
+	  	    array( 'db' => 'outgoing_campaign_detail.`id`', 		        'dt' => 0 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.`id`', 		        'dt' => 1 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.update_date',  		'dt' => 2 ),
+	  	    array( 'db' => 'phone_base_detail.`note`',  			        'dt' => 3 ),
+	  	    array( 'db' => 'phone_base_detail.phone1',  	                'dt' => 4 ),
+	  	    array( 'db' => 'phone_base_detail.info1',                       'dt' => 5 ),
+	  	    array( 'db' => 'phone_base_detail.`client_name`',     		    'dt' => 6 ),
+	  	    array( 'db' => 'CONCAT(outgoing_campaign_detail_contact.fname," ",outgoing_campaign_detail_contact.lname)',	            'dt' => 7 ),
+	  	    array( 'db' => 'outgoing_campaign_detail_contact.`person_position`',		        'dt' => 8 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.`call_res`',	        'dt' => 9 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.call_comment',	        'dt' => 10 ),
+	  	    array( 'db' => 'concat("<p style=\"padding: 3px 0;\" onclick=play(","\"",date_format(cast(`asterisk_outgoing`.`call_datetime` AS date),"%Y/%m/%d/"),`asterisk_outgoing`.`file_name`,"\"",")>მოსმენა</p>") AS `file`',	    'dt' => 11 )
+	  	
+	  	);
+	  	
+	  	// SQL server connection information
+	  	$sql_details = array(
+	  	    'user' => 'root',
+	  	    'pass' => 'Gl-1114',
+	  	    'db'   => 'callapp_1_0',
+	  	    'host' => '212.72.155.176'
+	  	);
+	  	
+	  	
+	  	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	  	 * If you just want to use the basic configuration for DataTables with PHP
+	  	 * server-side, there is no need to edit below this line.
+	  	*/
+	  	//mysql_close();
+	  	require( '../../../includes/ssp.class.php' );
+	  	
+	  	$where_param = "JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+                        LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
+                        JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
+                        LEFT JOIN asterisk_outgoing ON phone_base_detail.phone1 = asterisk_outgoing.phone
+                        WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $operator_fillter";
+	  	//echo($columns);
+	  	$data = SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns, $where_param, "");
 		}else{
 		    $rResult = mysql_query("SELECT 	project.`id`,
                                 		    project.`id`,
@@ -110,28 +161,28 @@ switch ($action) {
                                 	FROM   `project`
                         		    JOIN outgoing_campaign ON project.id = outgoing_campaign.project_id
                         		    GROUP BY project.id");
-		}
-		$data = array(
-				"aaData"	=> array()
-		);
-
-		while ( $aRow = mysql_fetch_array( $rResult ) )
-		{
-			$row = array();
-			for ( $i = 0 ; $i < $count ; $i++ )
-			{
-				/* General output */
-				$row[] = $aRow[$i];
-				if($i == ($count - 1)){
-				    $row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
-                              </div>';
-				}
-			}
-			$data['aaData'][] = $row;
-		}
-	
+		
+    		$data = array(
+    				"aaData"	=> array()
+    		);
+    
+    		while ( $aRow = mysql_fetch_array( $rResult ) )
+    		{
+    			$row = array();
+    			for ( $i = 0 ; $i < $count ; $i++ )
+    			{
+    				/* General output */
+    				$row[] = $aRow[$i];
+    				if($i == ($count - 1)){
+    				    $row[] = '<div class="callapp_checkbox">
+                                      <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                      <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                                  </div>';
+    				}
+    			}
+    			$data['aaData'][] = $row;
+    		}
+	    }
 	    break;
     case 'send_sms':
         $page		= GetSmsSendPage();
