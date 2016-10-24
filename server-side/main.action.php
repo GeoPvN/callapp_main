@@ -115,7 +115,7 @@ switch ($action) {
                                                 				`sl_procent`
                                                      FROM 		`sl_content`"));
         $sl = mysql_fetch_assoc(mysql_query("SELECT     
-                                    					ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100) AS `percent`,
+                                    					IF(ISNULL(ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100)),0,ROUND((SUM(IF(asterisk_incomming.wait_time<$sl_content[sl_min], 1, 0)) / COUNT(*) ) * 100)) AS `percent`,
                                     					COUNT(asterisk_incomming.wait_time ) AS `num`
                                              FROM       `asterisk_incomming`
                                              WHERE      DATE(asterisk_incomming.call_datetime) = DATE(NOW()) AND asterisk_incomming.disconnect_cause != 'ABANDON'"));
@@ -124,9 +124,9 @@ switch ($action) {
         $data['sl']['sl_procent'] = $sl_content['sl_procent'];
         break;
     case 'asa':
-        $asa = mysql_fetch_assoc(mysql_query("  SELECT  TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_avg`,
-                                        				TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_min`,
-                                        				TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_max`
+        $asa = mysql_fetch_assoc(mysql_query("  SELECT  IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_avg`,
+                                                        IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_min`,
+                                                        IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_max`
                                                 FROM    `asterisk_incomming`
                                                 WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())
                                                 AND     asterisk_incomming.duration > 0"));
@@ -135,9 +135,9 @@ switch ($action) {
         $data['asa']['wait_time_max'] = $asa['wait_time_max'];
         break;
     case 'hold_avg_time':
-        $hold_avg = mysql_fetch_assoc(mysql_query(" SELECT  TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_avg`,
-                                            				TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_min`,
-                                            				TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s') AS `wait_time_max`
+        $hold_avg = mysql_fetch_assoc(mysql_query(" SELECT  IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(AVG(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_avg`,
+                                                            IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MIN(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_min`,
+                                                            IF(ISNULL(TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')),0,TIME_FORMAT(SEC_TO_TIME(MAX(asterisk_incomming.wait_time)),'%i:%s')) AS `wait_time_max`
                                                     FROM    `asterisk_incomming`
                                                     WHERE   DATE(asterisk_incomming.datetime) = DATE(NOW())"));
         $data['hold_avg_time']['wait_time_avg'] = $hold_avg['wait_time_avg'];
