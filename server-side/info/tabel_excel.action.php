@@ -25,14 +25,14 @@ if ($group_id != 0) {
 switch ($action) {
 	case 'excel' :
         $excel_res = mysql_query("  SELECT    worker_action.id,
-                                              persons.`name`,
+                                              user_info.`name`,
                                               DATE(worker_action.start_date),
                                               TIME(`worker_action`.`start_date`),
                                               TIME(worker_action.end_date),
                                               IF(worker_action_break.comment_start = '','',GROUP_CONCAT(worker_action_break.comment_start,' - ',worker_action_break.comment_end separator ';'))
                                     FROM      worker_action 
-                                    JOIN      users ON users.id=worker_action.person_id
-                                    JOIN      persons ON persons.id = users.person_id
+
+                                    JOIN      user_info ON user_info.user_id = worker_action.person_id
                                     LEFT JOIN worker_action_break ON worker_action_break.worker_action_id=worker_action.id
                                     LEFT JOIN person_work_graphic AS PWG ON DATE(worker_action.start_date) = DATE(PWG.`start`) AND worker_action.person_id = PWG.person_id AND PWG.actived = 1
                                     WHERE     DATE(worker_action.start_date) BETWEEN '$start_time' AND '$end_time' AND users.group_id!=5 AND users.id !=1 $filt_group

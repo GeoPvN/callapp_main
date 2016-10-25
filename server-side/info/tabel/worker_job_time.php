@@ -36,15 +36,14 @@
 
     	   $rResult = mysql_query(" SELECT 		WA.id AS `id`,
                                                 DATE(WA.start_date) AS `date`,
-                                                persons.`name` AS `person`,
+                                                user_info.`name` AS `person`,
     	                                        `group`.`name`,
                                                 IF(ISNULL(TIMEDIFF(work_shift.`end_date`,work_shift.`start_date`)),'00:00:00',TIMEDIFF(TIMEDIFF(work_shift.`end_date`,work_shift.`start_date`),TIMEDIFF(work_real_break.`end_break`,work_real_break.`start_break`))) AS `r`,
                                                 SEC_TO_TIME(SUM(IF(TIME_TO_SEC(IF(TIME(IFNULL(WA.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WA.end_date)))< TIME_TO_SEC(TIME(WA.start_date)),((24*60*60)-(TIME_TO_SEC(TIME(WA.start_date))))+TIME_TO_SEC(IF(TIME(IFNULL(WA.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WA.end_date))),TIME_TO_SEC(IF(TIME(IFNULL(WA.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WA.end_date)))-TIME_TO_SEC(TIME(WA.start_date))))) AS `real_work`,
                                                 IF(ISNULL(TIMEDIFF(work_real_break.`end_break`,work_real_break.`start_break`)),'00:00:00',TIMEDIFF(work_real_break.`end_break`,work_real_break.`start_break`)) AS `r2`,
                                                 IFNULL(SEC_TO_TIME(SUM(IF(TIME_TO_SEC(IF(TIME(IFNULL(WAB.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WAB.end_date)))< TIME_TO_SEC(TIME(WAB.start_date)),((24*60*60)-(TIME_TO_SEC(TIME(WAB.start_date))))+TIME_TO_SEC(IF(TIME(IFNULL(WAB.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WAB.end_date))),TIME_TO_SEC(IF(TIME(IFNULL(WAB.end_date,'00:00:00'))=0,TIME(NOW()),TIME(WAB.end_date)))-TIME_TO_SEC(TIME(WAB.start_date))))),'00:00:00') AS `real_break_time`
                                     FROM 		`worker_action` AS `WA`
-                                    JOIN       	users ON users.id = WA.person_id
-                                    JOIN       	persons ON persons.id = users.person_id
+                                    JOIN       	user_info ON user_info.id = WA.person_id
     	                            JOIN        `group` ON users.group_id = `group`.id
                                     LEFT JOIN   worker_action_break AS `WAB` ON WA.id = WAB.worker_action_id
                                     LEFT JOIN   work_real ON DATE(WA.start_date) = DATE(work_real.date) AND users.id = work_real.user_id
