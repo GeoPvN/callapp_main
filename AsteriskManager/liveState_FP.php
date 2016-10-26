@@ -163,17 +163,7 @@ foreach($filter_queues as $qn) {
 
 	foreach($queues[$qn]['calls'] as $key=>$val) {
 		if($position==1) {
-		    echo "<BR><h2>".$lang[$language]['calls_waiting_detail']."</h2><BR>";
-			echo "<table width='450' cellpadding=3 cellspacing=3 border=0 class='sortable' id='box-table-b' >\n";
-			echo "<thead>";
-			echo "<tr>";
-			echo "<th>".$lang[$language]['queue']."</th>";
-			echo "<th>".$lang[$language]['position']."</th>";
-			echo "<th>".$lang[$language]['callerid']."</th>";
-			echo "<th>".$lang[$language]['wait_time']."</th>";
-			echo "</tr>\n";
-			echo "</thead>\n";
-			echo "<tbody>\n";
+
 		}
 
 		if($position%2) {
@@ -191,8 +181,7 @@ foreach($filter_queues as $qn) {
 	}
 			
 	if($position>1) {
-	echo "</tbody>\n";
-	echo "</table>\n";
+
 	}
 }
 
