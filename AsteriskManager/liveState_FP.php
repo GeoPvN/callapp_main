@@ -98,7 +98,7 @@ foreach($filter_queues  as $qn) {
 			} else {
 				if($contador==1) {
 				    ////////////////////////////---------------------------------------------------------------------
-					echo "<table id='flesh_table'>\n";
+					echo "<table id='flesh_table' queue='$qn'>\n";
 					echo "<thead>";
 					echo "<tr>";
 					echo "<th>რიგი</th>";
