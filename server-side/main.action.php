@@ -271,7 +271,7 @@ switch ($action) {
                             JOIN    `user_info` ON users.id = user_info.user_id
                             WHERE   `actived` = 1");
         
-        $option.='<option value="0">----</option>';
+        $option.='<option value="0">ყველა ოპერატორი</option>';
         while ($res = mysql_fetch_assoc($req)){
             $option.='<option value="'.$res[id].'">'.$res[name].'</option>';
         }
