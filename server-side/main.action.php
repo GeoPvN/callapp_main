@@ -289,8 +289,7 @@ switch ($action) {
                                                     JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                     WHERE `project_id` = $_REQUEST[project_id]
                                                     AND `outgoing_campaign_detail`.`status` = 2
-                                                    AND $date >= '$_REQUEST[start_date]'
-                                                    AND $date <= '$_REQUEST[end_date]'"));
+                                                    "));
         $mimdinare = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                             `task_status`.`name`
                                                     FROM `outgoing_campaign`
@@ -298,8 +297,7 @@ switch ($action) {
                                                     JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                     WHERE `project_id` = $_REQUEST[project_id]
                                                     AND `outgoing_campaign_detail`.`status` = 3
-                                                    AND $date >= '$_REQUEST[start_date]'
-                                                    AND $date <= '$_REQUEST[end_date]'"));
+                                                    "));
         $ardainteresda = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                                 `task_status`.`name`
                                                         FROM `outgoing_campaign`
@@ -307,8 +305,7 @@ switch ($action) {
                                                         JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                         WHERE `project_id` = $_REQUEST[project_id]
                                                         AND `outgoing_campaign_detail`.`status` = 4
-                                                        AND $date >= '$_REQUEST[start_date]'
-                                                        AND $date <= '$_REQUEST[end_date]'"));
+                                                        "));
         $potenciuriklienti = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                                     `task_status`.`name`
                                                             FROM `outgoing_campaign`
@@ -316,8 +313,7 @@ switch ($action) {
                                                             JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                             WHERE `project_id` = $_REQUEST[project_id]
                                                             AND `outgoing_campaign_detail`.`status` = 5
-                                                            AND $date >= '$_REQUEST[start_date]'
-                                                            AND $date <= '$_REQUEST[end_date]'"));
+                                                            "));
         $klientebi = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                             `task_status`.`name`
                                                     FROM `outgoing_campaign`
@@ -325,8 +321,7 @@ switch ($action) {
                                                     JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                     WHERE `project_id` = $_REQUEST[project_id]
                                                     AND `outgoing_campaign_detail`.`status` = 6
-                                                    AND $date >= '$_REQUEST[start_date]'
-                                                    AND $date <= '$_REQUEST[end_date]'"));
+                                                    "));
         $gauqmebuli = mysql_fetch_array(mysql_query("   SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                                 `task_status`.`name`
                                                         FROM `outgoing_campaign`
@@ -334,8 +329,7 @@ switch ($action) {
                                                         JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                         WHERE `project_id` = $_REQUEST[project_id]
                                                         AND `outgoing_campaign_detail`.`status` = 9
-                                                        AND $date >= '$_REQUEST[start_date]'
-                                                        AND $date <= '$_REQUEST[end_date]'"));
+                                                        "));
         $gadasarekiaukan = mysql_fetch_array(mysql_query("  SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                                     `task_status`.`name`
                                                             FROM `outgoing_campaign`
@@ -343,8 +337,7 @@ switch ($action) {
                                                             JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                             WHERE `project_id` = $_REQUEST[project_id]
                                                             AND `outgoing_campaign_detail`.`status` = 14
-                                                            AND $date >= '$_REQUEST[start_date]'
-                                                            AND $date <= '$_REQUEST[end_date]'"));
+                                                            "));
         $danishnuliashexvedra = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                                         `task_status`.`name`
                                                                 FROM `outgoing_campaign`
@@ -352,8 +345,7 @@ switch ($action) {
                                                                 JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
                                                                 WHERE `project_id` = $_REQUEST[project_id]
                                                                 AND `outgoing_campaign_detail`.`status` = 15
-                                                                AND $date >= '$_REQUEST[start_date]'
-                                                                AND $date <= '$_REQUEST[end_date]'"));
+                                                                "));
         
         $data['s2'] = $pirveladi[0];
         $data['s3'] = $mimdinare[0];
