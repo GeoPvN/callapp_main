@@ -106,7 +106,7 @@ foreach($filter_queues  as $qn) {
                                     				        LEFT JOIN file ON users.id = file.users_id
                                     				        LEFT JOIN department ON user_info.dep_id = department.id
                                     				        WHERE users.extension_id = '$myExt[1]'"));
-					echo '<table id="flesh_table"  queue="'.$qn.'" dep="'.$rr[2].'" ext="'.$myExt[1].'" user="'.$rr[0].'" state="'.$color[$aval].'">';
+					echo '<table id="flesh_table"  >';
 					echo "<thead>";
 					echo "<tr>";
 					echo "<th>რიგი</th>";
