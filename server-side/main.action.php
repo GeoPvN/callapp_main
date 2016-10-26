@@ -295,7 +295,11 @@ switch ($action) {
             $date = '';
         }else{
             $date = " AND `outgoing_campaign_detail`.`responsible_person_id` = $date_checker";
+            $user_checker = " AND user_id = $date_checker";
         }
+        $date_now = date("Y-m-d");
+        $date_start = $_REQUEST['start_date'];
+        if($date_now == $date_start){
         $pirveladi = mysql_fetch_array(mysql_query("SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
                                                             `task_status`.`name`
                                                     FROM `outgoing_campaign`
@@ -360,6 +364,64 @@ switch ($action) {
                                                                 WHERE `project_id` = $_REQUEST[project_id]
                                                                 AND `outgoing_campaign_detail`.`status` = 15 $date
                                                                 "));
+        }else{
+            $pirveladi = mysql_fetch_array(mysql_query("SELECT SUM(count)
+                                                        FROM `out_report`
+                                                        WHERE `project_id` = $_REQUEST[project_id]
+                                                        AND `status` = 2
+                                                        AND DATE(date) >= '$_REQUEST[start_date]'
+                                                        AND DATE(date) <= '$_REQUEST[start_date]'
+                                                        $user_checker"));
+            $mimdinare = mysql_fetch_array(mysql_query("SELECT SUM(count)
+                                                        FROM `out_report`
+                                                        WHERE `project_id` = $_REQUEST[project_id]
+                                                        AND `status` = 3
+                                                        AND DATE(date) >= '$_REQUEST[start_date]'
+                                                        AND DATE(date) <= '$_REQUEST[start_date]'
+                                                        $user_checker"));
+            $ardainteresda = mysql_fetch_array(mysql_query("SELECT SUM(count)
+                                                            FROM `out_report`
+                                                            WHERE `project_id` = $_REQUEST[project_id]
+                                                            AND `status` = 4
+                                                            AND DATE(date) >= '$_REQUEST[start_date]'
+                                                            AND DATE(date) <= '$_REQUEST[start_date]'
+                                                            $user_checker"));
+            $potenciuriklienti = mysql_fetch_array(mysql_query("SELECT SUM(count)
+                                                                FROM `out_report`
+                                                                WHERE `project_id` = $_REQUEST[project_id]
+                                                                AND `status` = 5
+                                                                AND DATE(date) >= '$_REQUEST[start_date]'
+                                                                AND DATE(date) <= '$_REQUEST[start_date]'
+                                                                $user_checker"));
+            $klientebi = mysql_fetch_array(mysql_query("SELECT SUM(count)
+                                                        FROM `out_report`
+                                                        WHERE `project_id` = $_REQUEST[project_id]
+                                                        AND `status` = 6
+                                                        AND DATE(date) >= '$_REQUEST[start_date]'
+                                                        AND DATE(date) <= '$_REQUEST[start_date]'
+                                                        $user_checker"));
+            $gauqmebuli = mysql_fetch_array(mysql_query("   SELECT SUM(count)
+                                                            FROM `out_report`
+                                                            WHERE `project_id` = $_REQUEST[project_id]
+                                                            AND `status` = 9
+                                                            AND DATE(date) >= '$_REQUEST[start_date]'
+                                                            AND DATE(date) <= '$_REQUEST[start_date]'
+                                                            $user_checker"));
+            $gadasarekiaukan = mysql_fetch_array(mysql_query("  SELECT SUM(count)
+                                                                FROM `out_report`
+                                                                WHERE `project_id` = $_REQUEST[project_id]
+                                                                AND `status` = 14
+                                                                AND DATE(date) >= '$_REQUEST[start_date]'
+                                                                AND DATE(date) <= '$_REQUEST[start_date]'
+                                                                $user_checker"));
+            $danishnuliashexvedra = mysql_fetch_array(mysql_query(" SELECT SUM(count)
+                                                                    FROM `out_report`
+                                                                    WHERE `project_id` = $_REQUEST[project_id]
+                                                                    AND `status` = 15
+                                                                    AND DATE(date) >= '$_REQUEST[start_date]'
+                                                                    AND DATE(date) <= '$_REQUEST[start_date]'
+                                                                    $user_checker"));
+        }
         
         $data['s2'] = $pirveladi[0];
         $data['s3'] = $mimdinare[0];
