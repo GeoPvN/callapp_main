@@ -273,7 +273,7 @@ switch ($action) {
         
         $option.='<option value="0">----</option>';
         while ($res = mysql_fetch_assoc($req)){
-            $option.='<option value="'.$res[user_id].'">'.$res[name].'</option>';
+            $option.='<option value="'.$res[id].'">'.$res[name].'</option>';
         }
         $data['option'] = $option;
         break;
