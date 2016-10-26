@@ -117,7 +117,7 @@ require_once("AsteriskManager/config.php");
 </style>
 
 <body>	
-<div id="tabs" style="width:1900px;">
+<div id="tabs" style="height:1900px;">
 <div class="callapp_head">Flesh Panel<hr class="callapp_head_hr"></div>	
     <div id="my_div">
         <div id="my_selector">
