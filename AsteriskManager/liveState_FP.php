@@ -99,7 +99,7 @@ foreach($filter_queues  as $qn) {
 				if($contador==1) {
 				    ////////////////////////////---------------------------------------------------------------------
 				    
-					echo '<table id="flesh_table"  >';
+					echo "<table id='flesh_table'>\n";
 					echo "<thead>";
 					echo "<tr>";
 					echo "<th>რიგი</th>";
