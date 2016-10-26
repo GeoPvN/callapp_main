@@ -38,7 +38,7 @@ require_once("AsteriskManager/config.php");
 					$("#jq").html(data);
 					if($("#queue").val() != 0){
 						$("tbody tr").css('display','none');
-					    $("tbody tr[queue="+$("#queue").val()+"]").css('display','');
+					    $("table[queue="+$("#queue").val()+"]").css('display','');
 					}
 					if($("#department").val() != 0){
 						$("tbody tr").css('display','none');
