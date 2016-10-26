@@ -98,7 +98,18 @@ foreach($filter_queues  as $qn) {
 			} else {
 				if($contador==1) {
 				    ////////////////////////////---------------------------------------------------------------------
-
+					echo "<table id='flesh_table'>\n";
+					echo "<thead>";
+					echo "<tr>";
+					echo "<th>რიგი</th>";
+					echo "<th>განყოფილება</th>";
+					echo "<th>შიდა ნომერი</th>";
+					echo "<th>თანამშრომელი</th>";
+					echo "<th>მდგომარეობა</th>";
+					echo "<th>დრო</th>";
+					echo "<th>აბონენტი</th>";
+					echo "</tr>\n";
+					echo "</thead><tbody>\n";
 				}
 
 				if($contador%2) {
@@ -149,7 +160,8 @@ foreach($filter_queues  as $qn) {
 			}
 			}
 		if($contador>1) {
-
+		echo "</tbody>";
+		echo "</table><br/>\n";
 		}
 	}
 }
@@ -163,7 +175,17 @@ foreach($filter_queues as $qn) {
 
 	foreach($queues[$qn]['calls'] as $key=>$val) {
 		if($position==1) {
-
+		    echo "<BR><h2>".$lang[$language]['calls_waiting_detail']."</h2><BR>";
+			echo '<table id="tb" >';
+			echo "<thead>";
+			echo "<tr>";
+			echo "<th>რიგი</th>";
+			echo "<th>პოზიცია</th>";
+			echo "<th>ნომერი</th>";
+			echo "<th>ლოდინის დრო</th>";
+			echo "</tr>\n";
+			echo "</thead>\n";
+			echo "<tbody>\n";
 		}
 
 		if($position%2) {
@@ -181,7 +203,8 @@ foreach($filter_queues as $qn) {
 	}
 			
 	if($position>1) {
-
+	echo "</tbody>\n";
+	echo "</table>\n";
 	}
 }
 

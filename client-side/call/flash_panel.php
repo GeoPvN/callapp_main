@@ -35,7 +35,7 @@ require_once("AsteriskManager/config.php");
 			    beforeSend: false,
 	            complete: false,
 		        success: function(data) {
-					$("#jq table tbody").html(data);
+					$("#jq").html(data);
 					if($("#queue").val() != 0){
 						$("tbody tr").css('display','none');
 					    $("tbody tr[queue="+$("#queue").val()+"]").css('display','');
@@ -80,24 +80,24 @@ require_once("AsteriskManager/config.php");
 	border-radius: 5px;
     border: 1px solid #BABDBF;
 }
-#flesh_table{
+#flesh_table,#tb{
     width: 98%;
     margin: auto;
 }
-#flesh_table thead tr th{
+#flesh_table thead tr th,#tb thead tr th{
 	text-align: left;
 	padding: 10px;
 }
-#flesh_table tbody tr td{
+#flesh_table tbody tr td,#tb tbody tr td{
 	height: 70px;
 	padding-left: 10px;
 	text-align: left;
 	vertical-align: middle;	
 }
-#flesh_table tbody tr{
+#flesh_table tbody tr,#tb tbody tr{
 	border-top: 1px solid #E5E5E5;
 }
-#flesh_table tbody tr:last-child{
+#flesh_table tbody tr:last-child,#tb tbody tr:last-child{
 	border-bottom: 1px solid #E5E5E5;
 }
 #filter{
@@ -117,7 +117,7 @@ require_once("AsteriskManager/config.php");
 </style>
 
 <body>	
-<div id="tabs" style="height: 1100px;">
+<div id="tabs">
 <div class="callapp_head">Flesh Panel<hr class="callapp_head_hr"></div>	
     <div id="my_div">
         <div id="my_selector">
@@ -128,7 +128,7 @@ require_once("AsteriskManager/config.php");
                 </span>
                 
                 <span>
-                <label>დეპარტამენტი</label>
+                <label>განყოფილება</label>
                 <select id="department" style="width: 165px"></select>
                 </span>
                 
@@ -153,21 +153,6 @@ require_once("AsteriskManager/config.php");
         <div id="my_selector">
             
             <div id="jq">
-            <table id='flesh_table'>
-					<thead>
-					<tr>
-					<th>რიგი</th>
-					<th>განყოფილება</th>
-					<th>შიდა ნომერი</th>
-					<th>თანამშრომელი</th>
-					<th>მდგომარეობა</th>
-					<th>დრო</th>
-					<th>აბონენტი</th>
-					</tr>
-					</thead>
-					<tbody>
-					</tbody>
-					</table>
             </div>
         </div> 
     </div>
