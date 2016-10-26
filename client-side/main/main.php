@@ -307,6 +307,7 @@
 </style>
 <script type="text/javascript">
 $(document).ready(function () {
+	get_user();
 	get_options();
 	get_project();
 	incomming_call();
@@ -395,6 +396,16 @@ function get_options(){
         data: 'act=get_options',
         success: function(data) {
         	$("#select_main").html(data.option);
+        }
+    });
+}
+
+function get_user(){
+	$.ajax({
+        url: "server-side/main.action.php",
+        data: 'act=get_user',
+        success: function(data) {
+        	$("#date_checker").html(data.option);
         }
     });
 }
@@ -935,7 +946,7 @@ function go_sl(){
     <div id="box_content" class="showme2" style="display: none;">
     <div style="margin-bottom: 15px;">
     <select id="project_id" style="width: 150px;margin-right: 15px;"></select>
-    <select id="date_checker" style="width: 150px;"><option value="1">დაფორმირების თარიღი</option><option value="2">დარეკვის თარიღი</option></select>
+    <select id="date_checker" style="width: 150px;"></select>
     <input type="text" id="start_date">-დან
     <input type="text" id="end_date">-მდე
     </div>

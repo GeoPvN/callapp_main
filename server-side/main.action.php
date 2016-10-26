@@ -264,6 +264,18 @@ switch ($action) {
         }
         $data['option'] = $option;
         break;
+    case 'get_user':
+        $req = mysql_query("SELECT 	`user_id`,
+                                    `name`
+                            FROM    `user_info`
+                            WHERE 	`user_id` != 1");
+        
+        $option.='<option value="0">----</option>';
+        while ($res = mysql_fetch_assoc($req)){
+            $option.='<option value="'.$res[user_id].'">'.$res[name].'</option>';
+        }
+        $data['option'] = $option;
+        break;
     case 'get_project':
         $req = mysql_query("SELECT  `id`,
                                     `name`
