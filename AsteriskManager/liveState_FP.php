@@ -98,14 +98,7 @@ foreach($filter_queues  as $qn) {
 			} else {
 				if($contador==1) {
 				    ////////////////////////////---------------------------------------------------------------------
-				    $rr = mysql_fetch_array(mysql_query("   SELECT  `user_info`.`name`,
-                                            				        `file`.`rand_name`,
-                                            				        `department`.`name`
-                                    				        FROM    `users`
-                                    				        JOIN user_info ON users.id = user_info.user_id
-                                    				        LEFT JOIN file ON users.id = file.users_id
-                                    				        LEFT JOIN department ON user_info.dep_id = department.id
-                                    				        WHERE users.extension_id = '$myExt[1]'"));
+				    
 					echo '<table id="flesh_table"  >';
 					echo "<thead>";
 					echo "<tr>";
@@ -133,7 +126,14 @@ foreach($filter_queues  as $qn) {
 				}
 
 				$agent_name = agent_name($aname);
-				
+				$rr = mysql_fetch_array(mysql_query("   SELECT  `user_info`.`name`,
+				    `file`.`rand_name`,
+				    `department`.`name`
+				    FROM    `users`
+				    JOIN user_info ON users.id = user_info.user_id
+				    LEFT JOIN file ON users.id = file.users_id
+				    LEFT JOIN department ON user_info.dep_id = department.id
+				    WHERE users.extension_id = '$myExt[1]'"));
 				echo '<tr '.$odd.' queue="'.$qn.'" dep="'.$rr[2].'" ext="'.$myExt[1].'" user="'.$rr[0].'" state="'.$color[$aval].' >';
 				echo "<td>$qn</td>";
 				echo "<td>$rr[2]</td>";
