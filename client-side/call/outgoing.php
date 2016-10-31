@@ -1342,6 +1342,10 @@ if(fName=='add-edit-form-task'){
 		   });
 	});
 
+    $(document).on("click", ".playthis", function () {
+    	str = $(this).attr('clickvalue');
+    	play(str);
+    });
     $(document).on("change", "#chose_actived_form", function () {
         if($(this).val()==2){
             $('#raodenoba').css('display','none');

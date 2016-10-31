@@ -113,7 +113,7 @@ switch ($action) {
 	  	// The `db` parameter represents the column name in the database, while the `dt`
 	  	// parameter represents the DataTables column identifier. In this case simple
 	  	// indexes
-	  	
+	  	$fff = 'concat("<p class=playthis clickvalue=",date_format(cast(`asterisk_outgoing`.`call_datetime` AS date),"%Y/%m/%d/"),`asterisk_outgoing`.`file_name`,">მოსმენა</p>") AS `file`';
 	  	$columns = array(
 	  	    array( 'db' => 'outgoing_campaign_detail.`id`', 		        'dt' => 0 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.`id`', 		        'dt' => 1 ),
@@ -126,7 +126,7 @@ switch ($action) {
 	  	    array( 'db' => 'outgoing_campaign_detail_contact.`person_position`',		        'dt' => 8 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.`call_res`',	        'dt' => 9 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.call_comment',	        'dt' => 10 ),
-	  	    array( 'db' => 'concat("<p style=\"padding: 3px 0;\" onclick=play(","\"",date_format(cast(`asterisk_outgoing`.`call_datetime` AS date),"%Y/%m/%d/"),`asterisk_outgoing`.`file_name`,"\"",")>მოსმენა</p>") AS `file`',	    'dt' => 11 )
+	  	    array( 'db' => $fff,	    'dt' => 11 )
 	  	
 	  	);
 	  	
