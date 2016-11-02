@@ -74,7 +74,7 @@ switch ($action) {
          
         $get_cycle = mysql_query("  SELECT work_cycle.id,work_cycle.`name`,GROUP_CONCAT(work_cycle_detail.work_shift_id ORDER BY work_cycle_detail.num ASC) AS `shift_id`
                                     FROM `work_cycle`
-                                    JOIN work_cycle_detail ON work_cycle.id = work_cycle_detail.work_cycle_id
+                                    JOIN work_cycle_detail ON work_cycle.id = work_cycle_detail.work_cycle_id AND work_cycle_detail.actived = 1
                                     WHERE work_cycle.project_id = $project_id AND work_cycle.actived = 1
                                     GROUP BY work_cycle_detail.work_cycle_id
                                     ORDER BY work_cycle_detail.work_cycle_id,work_cycle_detail.num ASC");
