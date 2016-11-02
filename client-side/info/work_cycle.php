@@ -98,7 +98,7 @@
 			    							}else{
 			    								LoadTable(1,5,'get_list',change_colum_main,'',1);
 			    								$('#add-edit-form').html('');
-			    				            	$(this).dialog("close");
+			    				            	$('#add-edit-form1').dialog('close');
 			    				            	$("#add_button").click();
 			    							}
 			    						}
