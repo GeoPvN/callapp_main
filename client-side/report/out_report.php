@@ -13,7 +13,7 @@
 		function LoadTable(){
 			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, "get_list", 2, "", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, "get_list", 19, "", 0, "", 1, "desc", "", change_colum_main);
 			setTimeout(function(){
     	    	$('.ColVis, .dataTable_buttons').css('display','none');
   	    	}, 90);
