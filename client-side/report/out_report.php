@@ -51,7 +51,7 @@
 </head>
 
 <body>
-<div id="tabs">
+<div id="tabs" style="width: 155.5%;">
 <div class="callapp_head">გამავალი რეპორტი<hr class="callapp_head_hr"></div>
 
 <table id="table_right_menu">
