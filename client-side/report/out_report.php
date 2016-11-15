@@ -1,17 +1,13 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	= "server-side/view/out_report.action.php";		//server side folder url
+		var aJaxURL	= "server-side/report/out_report.action.php";		//server side folder url
 		var tName	= "example";													//table name
 		var fName	= "add-edit-form";												//form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
 			LoadTable();	
- 						
-			/* Add Button ID, Delete Button ID */
-			GetButtons("add_button", "delete_button");			
-			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL);
 		});
         
 		function LoadTable(){
@@ -57,10 +53,7 @@
 <body>
 <div id="tabs">
 <div class="callapp_head">გამავალი რეპორტი<hr class="callapp_head_hr"></div>
-<div id="button_area">
-	<button id="add_button">დამატება</button>
-	<button id="delete_button">წაშლა</button>
-</div>
+
 <table id="table_right_menu">
 <tr>
 <td ><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
