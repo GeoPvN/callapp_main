@@ -393,7 +393,7 @@ function GetShablon() {
                                 file.rand_name
                         FROM    `mail`
                         LEFT JOIN file ON mail.id = file.mail_id
-                        WHERE 	mail.`actived` = 1 AND id = 2
+                        WHERE 	mail.`actived` = 1 AND mail.id = 2
                         ");
     
     while ($req = mysql_fetch_array($res)){
