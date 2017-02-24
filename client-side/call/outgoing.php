@@ -27,8 +27,9 @@
             data: param,
             success: function(data) {
                 $("#tab_id").html(data.page);
+                $('#tab_sub_id').html(data.sub);
                 $("#operator_id").html(data.user);
-                $('#operator_id,#tab_id').trigger("chosen:updated");
+                $('#operator_id,#tab_id,#tab_sub_id').trigger("chosen:updated");
             }
         }).done(function() {
     	GetButtons("add_button_task","delete_button_task");
@@ -373,6 +374,21 @@ if(fName=='add-edit-form-task'){
             success: function(data) {
                 $('#outgoing_sub_status').html(data.page);
                 $('#outgoing_sub_status').trigger("chosen:updated");
+            }
+        });
+    });
+
+    $(document).on("change", "#tab_id", function () {
+    	param 			          = new Object();
+		param.act		          = "getsubstatus";
+		param.task_status_id      = $(this).val();
+
+		$.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $('#tab_sub_id').html(data.page);
+                $('#tab_sub_id').trigger("chosen:updated");
             }
         });
     });
@@ -1520,6 +1536,8 @@ if(fName=='add-edit-form-task'){
 </span>
 <span>
 <select id="tab_id" style="width: 220px;">
+</select>
+<select id="tab_sub_id" style="width: 220px;">
 </select>
 </span>
 

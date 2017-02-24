@@ -163,13 +163,13 @@ function GetPage($res = '')
 
 	    	<table class="dialog-form-table">
 				<tr>
-					<td style="width: 170px;"><label for="type">ტიპი</label></td>
+					<td style="width: 170px;"><label for="type">შედეგი</label></td>
 					<td>
 						<select id="type">'.getStatusOut($res['task_status_id']).'</select>
 					</td>
 				</tr>
                 <tr>
-					<td style="width: 170px;"><label for="CallType">სახელი</label></td>
+					<td style="width: 170px;"><label for="CallType">შედეგის მიზეზი</label></td>
 					<td>
 						<input type="text" id="name" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['name'] . '" />
 					</td>
