@@ -305,9 +305,10 @@ if(fName=='add-edit-form-task'){
     	setTimeout("$('#table_index_wrapper').css('display','none');", 20);
     });
     
-    $(document).on("change", "#tab_id", function () {
+    $(document).on("change", "#tab_id,#tab_sub_id", function () {
         operator    = $('#operator_id').val();
     	status      = $('#tab_id').val();
+    	sub_status  = $('#sub_status').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
     	$('#operator_id,#tab_id').trigger("chosen:updated");
@@ -330,7 +331,7 @@ if(fName=='add-edit-form-task'){
         		$('#table_index,#table_index_wrapper').css('display','table');
         		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
-        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator,aJaxURL);
+        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator+'&sub_status='+sub_status,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
         	}
     	}
