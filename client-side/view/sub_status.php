@@ -28,6 +28,8 @@
 			
 			/* Dialog Form Selector Name, Buttons Array */
 			GetDialog(fName, 600, "auto", "");
+			$('#type').chosen({ search_contains: true });
+			$('#add-edit-form, .add-edit-form-class').css('overflow','visible');
 		}
 		
 	    // Add - Save
