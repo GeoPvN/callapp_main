@@ -1305,6 +1305,7 @@ if(fName=='add-edit-form-task'){
 		param.call_comment		    = $("#add-edit-form #call_comment").val();
 		param.call_res              = $("#add-edit-form #call_res").val();
 		param.outgoing_status       = $("#add-edit-form #outgoing_status").val();
+		param.outgoing_sub_status   = $("#add-edit-form #outgoing_sub_status").val();
 
 		// Incomming Client Vars
 		param.client_status			= $('#add-edit-form input[name=client_status]:checked').val();

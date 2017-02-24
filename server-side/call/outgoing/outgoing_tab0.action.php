@@ -315,6 +315,7 @@ switch ($action) {
 
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
+		                        `sub_status`='$_REQUEST[outgoing_sub_status]',
                 				`update_date`=NOW(),
                 				`call_comment`='$call_comment',
 		                        `call_res`='$_REQUEST[call_res]',
@@ -547,6 +548,7 @@ function Getincomming($hidden_id)
 	$res = mysql_fetch_assoc(mysql_query("SELECT 	`outgoing_campaign_detail`.`id`,
 	                                                `outgoing_campaign_detail`.`update_date`,
 	                                                `outgoing_campaign_detail`.`status`,
+	                                                `outgoing_campaign_detail`.`sub_status`,
 	                                                `outgoing_campaign_detail`.`call_comment`,
 	                                                `outgoing_campaign_detail`.`call_res`,
 	                                                `outgoing_campaign_detail`.`call_back`,
