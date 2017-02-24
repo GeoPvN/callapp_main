@@ -119,7 +119,7 @@ if(fName=='add-edit-form'){
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
 		$('.info').click();
-		$('#outgoing_status').chosen({ search_contains: true });
+		$('#outgoing_status,#outgoing_sub_status').chosen({ search_contains: true });
 		GetDateTimes("call_back");
 }
 if(fName=='add-edit-form-contact_info'){
@@ -360,6 +360,21 @@ if(fName=='add-edit-form-task'){
         }else{
         	$('#iuridiuli').css('display','none');
         }
+    });
+    
+    $(document).on("change", "#outgoing_status", function () {
+    	param 			          = new Object();
+		param.act		          = "getsubstatus";
+		param.task_status_id      = $(this).val();
+
+		$.ajax({
+            url: aJaxURL,
+            data: param,
+            success: function(data) {
+                $('#outgoing_sub_status').html(data.page);
+                $('#outgoing_sub_status').trigger("chosen:updated");
+            }
+        });
     });
     
     $(document).on("click", "#save-dialog-contact_info", function () {

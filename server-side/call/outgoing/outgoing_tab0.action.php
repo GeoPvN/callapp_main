@@ -72,6 +72,10 @@ switch ($action) {
                             'user'  => $user);
     
         break;
+    case 'getsubstatus':
+        $page 		= getSubStatusOut($_REQUEST[task_status_id],'');
+        $data		= array('page'	=> $page);
+        break;
 	case 'get_list':
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
@@ -381,11 +385,11 @@ function getSubStatusOut($id,$sub_id){
                                     `task_sub_status`.`name`
                             FROM    `task_status`
                             JOIN    `task_sub_status` ON task_status.id = task_sub_status.task_status_id AND task_sub_status.`actived` = 1
-                            WHERE   `task_status`.`actived` = 1 AND `task_status`.`type` = 1 AND `task_status`.id != 1");
+                            WHERE   `task_status`.`actived` = 1 AND `task_status`.`type` = 1 AND `task_status`.id = $id");
 
     $data .= '';
     while( $res = mysql_fetch_assoc($req)){
-        if($res['id'] == $id){
+        if($res['id'] == $sub_id){
             $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
         } else {
             $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
@@ -720,10 +724,10 @@ function GetPage($res)
 	               <td><input style="width: 156px;" id="call_back" type="text" value="'.$res['call_back'].'" ></td>
 	           </tr>
 	           <tr>
-	               <td colspan="2" style="width: 150px;"><label for="incomming_id">შედეგი მიზეზი</label></td>
+	               <td colspan="2" style="width: 150px;"><label for="outgoing_sub_status">შედეგის მიზეზი</label></td>
     	       </tr>
 	           <tr>
-	               <td><select id="outgoing_status" style="width: 100%;">'.getSubStatusOut($res['status'],$res['sub_status']).'</select></td>
+	               <td><select id="outgoing_sub_status" style="width: 100%;">'.getSubStatusOut($res['status'],$res['sub_status']).'</select></td>
 	           </tr>
     	       <tr>
 	               <td colspan="2" style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
