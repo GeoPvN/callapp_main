@@ -102,8 +102,8 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 100%;">შედეგი</th>
-                <th style="width: 100%;">შედეგის მიზეზი</th>
+                <th style="width: 50%;">შედეგი</th>
+                <th style="width: 50%;">შედეგის მიზეზი</th>
             	<th class="check">#</th>
             </tr>
         </thead>
