@@ -68,8 +68,10 @@ switch ($action) {
     case 'ststus':
         $page 		= getStatus($type_id,$user_id);
         $user 		= getUser($user_id);
+        $sub        = getSubStatusOut(2,'');
         $data		= array('page'	=> $page,
-                            'user'  => $user);
+                            'user'  => $user,
+                            'sub'   => $sub);
     
         break;
     case 'getsubstatus':
@@ -388,7 +390,7 @@ function getSubStatusOut($id,$sub_id){
                             JOIN    `task_sub_status` ON task_status.id = task_sub_status.task_status_id AND task_sub_status.`actived` = 1
                             WHERE   `task_status`.`actived` = 1 AND `task_status`.`type` = 1 AND `task_status`.id = $id");
 
-    $data .= '';
+    $data .= '<option value="0" selected="selected"></option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $sub_id){
             $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';

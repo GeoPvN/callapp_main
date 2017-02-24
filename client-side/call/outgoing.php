@@ -44,7 +44,7 @@
     		gg('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
     	}
-    	$('#operator_id,#tab_id,#task_type').chosen({ search_contains: true });
+    	$('#operator_id,#tab_id,#task_type,#tab_sub_id').chosen({ search_contains: true });
     	$('.callapp_filter_body').css('display','none');
     	GetDate('start_date');
     	GetDate('end_date');
