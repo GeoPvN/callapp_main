@@ -239,6 +239,7 @@ function GetDataTableSD(tname, aJaxURL, action, count, data, hidden, length, sor
 				d.start_date = data.start_date;
 				d.end_date = data.end_date;
 				d.status = data.status;
+				d.sub_status = data.sub_status;
 				d.operator = data.operator;
 
 				$("#table_index tbody").html("<tr><td colspan=11 style=\"font-size:16px;color: red;font-weight:bold;\">იტვირთება......</td></tr>");

@@ -60,6 +60,7 @@
     	param.start_date=$('#start_date').val();
     	param.end_date=$('#end_date').val();
     	param.status=$('#tab_id').val();
+    	param.sub_status=$('#tab_sub_id').val();
     	param.operator=<?php echo $_SESSION['USERID'];?>;
 
     	GetDataTableSD(tName+tbl,
