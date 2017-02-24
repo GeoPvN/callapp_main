@@ -375,6 +375,26 @@ function getStatusOut($id){
     return $data;
 }
 
+function getSubStatusOut($id,$sub_id){
+
+    $req = mysql_query("    SELECT 	`task_sub_status`.`id`,
+                                    `task_sub_status`.`name`
+                            FROM    `task_status`
+                            JOIN    `task_sub_status` ON task_status.id = task_sub_status.task_status_id AND task_sub_status.`actived` = 1
+                            WHERE   `task_status`.`actived` = 1 AND `task_status`.`type` = 1 AND `task_status`.id != 1");
+
+    $data .= '';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+
+    return $data;
+}
+
 function getStatusTask(){
 
     $req = mysql_query("    SELECT 	`id`,
@@ -692,13 +712,19 @@ function GetPage($res)
 	       </table> 
 	       <table class="dialog-form-table">
 	           <tr>
-	               <td style="width: 250px;"><label for="outgoing_status">სტატუსი</label></td>
+	               <td style="width: 250px;"><label for="outgoing_status">შედეგი</label></td>
 	               <td><label for="call_back">გადასარეკია უკან</label></td>
     	       </tr>
 	           <tr>
 	               <td><select id="outgoing_status" style="width: 100%;">'.getStatusOut($res['status']).'</select></td>
 	               <td><input style="width: 156px;" id="call_back" type="text" value="'.$res['call_back'].'" ></td>
-	           </tr>	           
+	           </tr>
+	           <tr>
+	               <td colspan="2" style="width: 150px;"><label for="incomming_id">შედეგი მიზეზი</label></td>
+    	       </tr>
+	           <tr>
+	               <td><select id="outgoing_status" style="width: 100%;">'.getSubStatusOut($res['status'],$res['sub_status']).'</select></td>
+	           </tr>
     	       <tr>
 	               <td colspan="2" style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
     	       </tr>
