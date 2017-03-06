@@ -14,7 +14,7 @@
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 12;
+    var colum_number      = 19;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 
@@ -1325,6 +1325,14 @@ if(fName=='add-edit-form-task'){
 		param.outgoing_status       = $("#add-edit-form #outgoing_status").val();
 		param.outgoing_sub_status   = $("#add-edit-form #outgoing_sub_status").val();
 
+		param.sc_ivr			= $('#add-edit-form input[name=sc_ivr]:checked').val();
+		param.sc_phone			= $('#add-edit-form input[name=sc_phone]:checked').val();
+		param.sc_mail			= $('#add-edit-form input[name=sc_mail]:checked').val();
+		param.sc_chat			= $('#add-edit-form input[name=sc_chat]:checked').val();
+		param.sc_social			= $('#add-edit-form input[name=sc_social]:checked').val();
+		param.sc_callcenter		= $('#add-edit-form input[name=sc_callcenter]:checked').val();
+		param.sc_other          = $("#add-edit-form #sc_other").val();
+
 		// Incomming Client Vars
 		param.client_status			= $('#add-edit-form input[name=client_status]:checked').val();
 		param.client_person_number	= $("#add-edit-form #client_person_number").val();
@@ -1520,7 +1528,7 @@ if(fName=='add-edit-form-task'){
 	background: #2681DC;
 }
 #table_index_wrapper{
-	width: 1500px;
+	width: 1800px;
 }
 </style>
 </head>
@@ -1577,7 +1585,7 @@ if(fName=='add-edit-form-task'){
 </tr>
 </table>
 <div id="table_index_div" style="display:none;width: 1050px; overflow-x: scroll;">
-<table class="display" id="table_index" style="width: 1500px !important;">
+<table class="display" id="table_index" style="width: 1800px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
@@ -1591,6 +1599,14 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">თანამდებობა</th>
             <th style="width: 100%;">დარეკვის შედეგი</th>
             <th style="width: 100%;">კომენტარი</th>
+            <th style="width: 100%;">IVR</th>
+            <th style="width: 100%;">ტელეფონი</th>
+            <th style="width: 100%;">ელ-ფოსტა</th>
+            <th style="width: 100%;">ვებ-ჩატი</th>
+            <th style="width: 100%;">სოც. ქსელი</th>
+            <th style="width: 100%;">სხვა</th>
+            <th style="width: 100%;">ქოლ-ცენტრი</th>
+            <th style="width: 100%;">ხანგრძლივობა</th>
             <th style="width: 100%;">მოსმენა</th>
         </tr>
     </thead>
@@ -1605,6 +1621,30 @@ if(fName=='add-edit-form-task'){
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>    
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>                         
+            <th>
+                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>

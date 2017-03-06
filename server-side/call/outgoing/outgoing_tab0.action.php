@@ -134,9 +134,17 @@ switch ($action) {
 	  	    array( 'db' => 'phone_base_detail.`client_name`',     		    'dt' => 6 ),
 	  	    array( 'db' => 'CONCAT(outgoing_campaign_detail_contact.fname," ",outgoing_campaign_detail_contact.lname)',	            'dt' => 7 ),
 	  	    array( 'db' => 'outgoing_campaign_detail_contact.`person_position`',		        'dt' => 8 ),
-	  	    array( 'db' => 'outgoing_campaign_detail.`call_res`',	        'dt' => 9 ),
-	  	    array( 'db' => 'outgoing_campaign_detail.call_comment',	        'dt' => 10 ),
-	  	    array( 'db' => $fff,	    'dt' => 11 )
+	  	    array( 'db' => 'outgoing_campaign_detail.call_res',	        'dt' => 9 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.call_comment',	    'dt' => 10 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_ivr=1,"კი",IF(outgoing_campaign_detail.sc_ivr=2,"არა",""))',	        'dt' => 11 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_phone=1,"კი",IF(outgoing_campaign_detail.sc_phone=2,"არა",""))',	        'dt' => 12 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_mail=1,"კი",IF(outgoing_campaign_detail.sc_mail=2,"არა",""))',	        'dt' => 13 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_chat=1,"კი",IF(outgoing_campaign_detail.sc_chat=2,"არა",""))',	        'dt' => 14 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_social=1,"კი",IF(outgoing_campaign_detail.sc_social=2,"არა",""))',	    'dt' => 15 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_other',	        'dt' => 16 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_callcenter=1,"კი",IF(outgoing_campaign_detail.sc_callcenter=2,"არა",""))',	'dt' => 17 ),	  	    
+	  	    array( 'db' => 'SEC_TO_TIME(asterisk_outgoing.duration)',	    'dt' => 18 ),
+	  	    array( 'db' => $fff,	    'dt' => 19 )
 	  	
 	  	);
 	  	
@@ -325,7 +333,14 @@ switch ($action) {
                 				`update_date`=NOW(),
                 				`call_comment`='$call_comment',
 		                        `call_res`='$_REQUEST[call_res]',
-		                        `call_back`='$_REQUEST[call_back]'
+		                        `call_back`='$_REQUEST[call_back]',
+                    		    sc_ivr='$_REQUEST[sc_ivr]',
+                    		    sc_phone='$_REQUEST[sc_phone]',
+                    		    sc_mail='$_REQUEST[sc_mail]',
+                    		    sc_chat='$_REQUEST[sc_chat]',
+                    		    sc_social='$_REQUEST[sc_social]',
+                    		    sc_other='$_REQUEST[sc_other]',
+                    		    sc_callcenter='$_REQUEST[sc_callcenter]'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -561,6 +576,13 @@ function Getincomming($hidden_id)
                                                     `outgoing_campaign`.`project_id`,
                                                     `outgoing_campaign`.`scenario_id`,
                                                     `outgoing_campaign`.`create_date`,
+	                                                sc_ivr,
+                                            	    sc_phone,
+                                            	    sc_mail,
+                                            	    sc_chat,
+                                            	    sc_social,
+                                            	    sc_other,
+                                            	    sc_callcenter,
                                                     `phone_base_detail`.`phone1`,
                                                     `phone_base_detail`.`phone2`,
                                                     `phone_base_detail`.`firstname`,
@@ -689,6 +711,7 @@ function GetPage($res)
                            <td '.(($res['lastname'] == '')?'style="display:none;"':'').'><input style="width: 185px;" id="client_person_fname" type="text" value="'.$res['lastname'].'"></td>
                         </tr>
 	                </table>';
+        
     }
 	$data  .= '
 	<div id="dialog-form">
@@ -771,6 +794,32 @@ function GetPage($res)
         	    <div id="pers">
 	               '.$table.'
         	    </div>
+	                   <fieldset style="display:block;" id="info">
+	                   <legend>კომუნიკაცია</legend>
+	                   <table>
+	                   <tr>
+	                   <td>IVR</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ivr" '.(($res['sc_ivr'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ivr" '.(($res['sc_ivr'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                   <td>ტელეფონი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_phone" '.(($res['sc_phone'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_phone" '.(($res['sc_phone'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                   <td>ელ-ფოსტა</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_mail" '.(($res['sc_mail'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_mail" '.(($res['sc_mail'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                   <td>ვებ-ჩატი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_chat" '.(($res['sc_chat'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_chat" '.(($res['sc_chat'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                   <td>სოც.ქსელი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_social" '.(($res['sc_social'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_social" '.(($res['sc_social'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                   <td>სხვა</td><td colspan=2><input type="text" id="sc_other" value="'.$res[sc_other].'"></td>
+	                   </tr>
+	                   <tr>
+	                   <td>ქოლ-ცენტრი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   </table>
+	                   </fieldset>
 	            <div style="margin-top: 20px;'.$display.'">
     	           <div id="button_area">
                         <button id="add_contact_info">დამატება</button>
