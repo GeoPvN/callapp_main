@@ -14,7 +14,7 @@
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 19;
+    var colum_number      = 27;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 
@@ -1333,6 +1333,32 @@ if(fName=='add-edit-form-task'){
 		param.sc_callcenter		= $('#add-edit-form input[name=sc_callcenter]:checked').val();
 		param.sc_other          = $("#add-edit-form #sc_other").val();
 
+		if ($('#sc_printer').is(':checked')) {
+		    param.sc_printer = 1;
+		}else{
+			param.sc_printer = 2;
+		}
+		if ($('#sc_laser').is(':checked')) {
+		    param.sc_laser = 1;
+		}else{
+			param.sc_laser = 2;
+		}
+		if ($('#sc_inkjet').is(':checked')) {
+		    param.sc_inkjet = 1;
+		}else{
+			param.sc_inkjet = 2;
+		}
+		param.sc_other_print      = $("#add-edit-form #sc_other_print").val();
+		param.sc_cartrij          = $("#add-edit-form #sc_cartrij").val();
+		param.sc_charging         = $('#add-edit-form input[name=sc_charging]:checked').val();
+		param.sc_who_charging     = $("#add-edit-form #sc_who_charging").val();
+		if ($('#sc_buying_new').is(':checked')) {
+		    param.sc_buying_new = 1;
+		}else{
+		    param.sc_buying_new = 2;
+		}
+		param.sc_provided         = $("#add-edit-form #sc_provided").val();
+
 		// Incomming Client Vars
 		param.client_status			= $('#add-edit-form input[name=client_status]:checked').val();
 		param.client_person_number	= $("#add-edit-form #client_person_number").val();
@@ -1528,7 +1554,7 @@ if(fName=='add-edit-form-task'){
 	background: #2681DC;
 }
 #table_index_wrapper{
-	width: 1800px;
+	width: 2800px;
 }
 </style>
 </head>
@@ -1585,7 +1611,7 @@ if(fName=='add-edit-form-task'){
 </tr>
 </table>
 <div id="table_index_div" style="display:none;width: 1050px; overflow-x: scroll;">
-<table class="display" id="table_index" style="width: 1800px !important;">
+<table class="display" id="table_index" style="width: 2800px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
@@ -1606,6 +1632,15 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">სოც. ქსელი</th>
             <th style="width: 100%;">სხვა</th>
             <th style="width: 100%;">ქოლ-ცენტრი</th>
+            <th style="width: 100%;">პრინტერების რ-ბა</th>
+            <th style="width: 100%;">ლაზერული</th>
+            <th style="width: 100%;">ჭავლური</th>
+            <th style="width: 100%;">სხვა</th>
+            <th style="width: 100%;">კარტრიჯების რ-ბა/თვე</th>
+            <th style="width: 100%;">დატენვა</th>
+            <th style="width: 100%;">ვინ უტენის</th>
+            <th style="width: 100%;">ახალს ყიდულობენ</th>
+            <th style="width: 100%;">მომწოდებელი</th>
             <th style="width: 100%;">ხანგრძლივობა</th>
             <th style="width: 100%;">მოსმენა</th>
         </tr>
@@ -1621,6 +1656,33 @@ if(fName=='add-edit-form-task'){
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>    
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>                         
+            <th>
+                <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
             </th>

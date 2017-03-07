@@ -142,9 +142,18 @@ switch ($action) {
 	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_chat=1,"კი",IF(outgoing_campaign_detail.sc_chat=2,"არა",""))',	        'dt' => 14 ),
 	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_social=1,"კი",IF(outgoing_campaign_detail.sc_social=2,"არა",""))',	    'dt' => 15 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.sc_other',	        'dt' => 16 ),
-	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_callcenter=1,"კი",IF(outgoing_campaign_detail.sc_callcenter=2,"არა",""))',	'dt' => 17 ),	  	    
-	  	    array( 'db' => 'SEC_TO_TIME(asterisk_outgoing.duration)',	    'dt' => 18 ),
-	  	    array( 'db' => $fff,	    'dt' => 19 )
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_callcenter=1,"კი",IF(outgoing_campaign_detail.sc_callcenter=2,"არა",""))',	'dt' => 17 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_printer',	'dt' => 18 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_laser=1,"კი","")',	'dt' => 19 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_inkjet=1,"კი","")',	'dt' => 20 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_other_print',	'dt' => 21 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_cartrij',	'dt' => 22 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_charging=1,"თვითონ ტენიან",IF(outgoing_campaign_detail.sc_charging=2,"სხვა უტენის",""))',	'dt' => 23 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_who_charging',	'dt' => 24 ),
+	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_buying_new=1,"კი","")',	'dt' => 25 ),
+	  	    array( 'db' => 'outgoing_campaign_detail.sc_provided',	'dt' => 26 ),
+	  	    array( 'db' => 'SEC_TO_TIME(asterisk_outgoing.duration)',	    'dt' => 27 ),
+	  	    array( 'db' => $fff,	    'dt' => 28 )
 	  	
 	  	);
 	  	
@@ -340,7 +349,16 @@ switch ($action) {
                     		    sc_chat='$_REQUEST[sc_chat]',
                     		    sc_social='$_REQUEST[sc_social]',
                     		    sc_other='$_REQUEST[sc_other]',
-                    		    sc_callcenter='$_REQUEST[sc_callcenter]'
+                    		    sc_callcenter='$_REQUEST[sc_callcenter]',
+                    		    sc_printer='$_REQUEST[sc_printer]',
+                        	    sc_laser='$_REQUEST[sc_laser]',
+                        	    sc_inkjet='$_REQUEST[sc_inkjet]',
+                        	    sc_other_print='$_REQUEST[sc_other_print]',
+                        	    sc_cartrij='$_REQUEST[sc_cartrij]',
+                        	    sc_charging='$_REQUEST[sc_charging]',
+                        	    sc_who_charging='$_REQUEST[sc_who_charging]',
+                        	    sc_buying_new='$_REQUEST[sc_buying_new]',
+                        	    sc_provided='$_REQUEST[sc_provided]'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -583,6 +601,15 @@ function Getincomming($hidden_id)
                                             	    sc_social,
                                             	    sc_other,
                                             	    sc_callcenter,
+                                            	    sc_printer,
+                                            	    sc_laser,
+                                            	    sc_inkjet,
+                                            	    sc_other_print,
+                                            	    sc_cartrij,
+                                            	    sc_charging,
+                                            	    sc_who_charging,
+                                            	    sc_buying_new,
+                                            	    sc_provided,
                                                     `phone_base_detail`.`phone1`,
                                                     `phone_base_detail`.`phone2`,
                                                     `phone_base_detail`.`firstname`,
@@ -794,7 +821,7 @@ function GetPage($res)
         	    <div id="pers">
 	               '.$table.'
         	    </div>
-	                   <fieldset style="display:block;" id="info">
+	                   <fieldset style="display:block;width: 251px;float:left;margin-right: 15px" id="info">
 	                   <legend>კომუნიკაცია</legend>
 	                   <table>
 	                   <tr>
@@ -818,6 +845,55 @@ function GetPage($res)
 	                   <tr>
 	                   <td>ქოლ-ცენტრი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 2)?'checked':'').' value="2">არა</td>
 	                   </tr>
+	                   </table>
+	                   </fieldset>
+	                   <fieldset style="display:block;width: 287px;" id="info">
+	                   <legend>რინტერები/კატრიჯები</legend>
+	                   <table>
+	                   <tr>
+	                       <td style="width: 145px;">პრინტერების რ-ბა</td>
+	                   </tr>
+                       <tr>
+                           <td><input style="width: 95px;" min="0" type="number" id="sc_printer" value="'.$res[sc_printer].'"></td>
+                       </tr>
+                       <tr>
+	                       <td><span style="float: left;">ლაზერული</span><input style="float: left;margin-top: -3px;" type="checkbox" id="sc_laser" '.(($res['sc_laser'] == 1)?'checked':'').' value="1"></td>
+	                       <td><span style="float: left;">ჭავლური</span><input style="float: left;margin-top: -3px;" type="checkbox" id="sc_inkjet" '.(($res['sc_inkjet'] == 1)?'checked':'').' value="1"></td>
+	                   </tr>
+                       <tr>
+                       <tr>
+	                       <td colspan=2>სხვა</td>
+	                   </tr>
+                       <tr>
+                           <td colspan=2><input style="width: 269px;" type="text" id="sc_other_print" value="'.$res[sc_other_print].'"></td>
+                       </tr>
+                       <tr>
+	                       <td>კარტრიჯების რ-ბა/თვე</td>
+	                   </tr>
+                       <tr>
+                           <td><input style="width: 95px;" min="0" type="number" id="sc_cartrij" value="'.$res[sc_cartrij].'"></td>
+                       </tr>
+	                   <tr>
+	                       <td><span style="float: left;">თვითონ ტენიან</span><input style="float: left;margin-top: -3px;" type="radio" name="sc_charging" '.(($res['sc_charging'] == 1)?'checked':'').' value="1"></td>
+	                       <td><span style="float: left;">სხვა უტენის</span><input style="float: left;margin-top: -3px;" type="radio" name="sc_charging" '.(($res['sc_charging'] == 2)?'checked':'').' value="2"></td>
+	                   </tr>
+                       <tr>
+	                       <td colspan=2>ვინ უტენის</td>
+	                   </tr>
+                       <tr>
+                           <td colspan=2><input style="width: 269px;" type="text" id="sc_who_charging" value="'.$res[sc_who_charging].'"></td>
+                       </tr>
+                       
+                       <tr>
+	                       <td colspan=2><span style="float: left;">ახალს ყიდულობენ</span><input style="float: left;margin-top: -3px;" type="checkbox" id="sc_buying_new" '.(($res['sc_buying_new'] == 1)?'checked':'').' value="1"></td>
+	                   </tr>
+                       <tr>
+	                       <td colspan=2>მომწოდებელი</td>
+	                   </tr>
+                       <tr>
+                           <td colspan=2><input style="width: 269px;" type="text" id="sc_provided" value="'.$res[sc_provided].'"></td>
+                       </tr>
+                       
 	                   </table>
 	                   </fieldset>
 	            <div style="margin-top: 20px;'.$display.'">
