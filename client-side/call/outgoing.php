@@ -14,7 +14,7 @@
     var aJaxURL_send_sms  = "includes/sendsms.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 27;
+    var colum_number      = 28;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 
@@ -1642,6 +1642,7 @@ if(fName=='add-edit-form-task'){
             <th style="width: 100%;">ვინ უტენის</th>
             <th style="width: 100%;">ახალს ყიდულობენ</th>
             <th style="width: 100%;">მომწოდებელი</th>
+            <th style="width: 100%;">ოპერატორი</th>
             <th style="width: 100%;">ხანგრძლივობა</th>
             <th style="width: 100%;">მოსმენა</th>
         </tr>
@@ -1674,7 +1675,10 @@ if(fName=='add-edit-form-task'){
             </th>
             <th>
                 <input type="text" name="search_date" value="ფილტრი" class="search_init" />
-            </th>                         
+            </th>    
+            <th>
+                <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+            </th>                     
             <th>
                 <input type="text" name="search_category" value="ფილტრი" class="search_init" />
             </th>

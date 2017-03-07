@@ -152,8 +152,9 @@ switch ($action) {
 	  	    array( 'db' => 'outgoing_campaign_detail.sc_who_charging',	'dt' => 24 ),
 	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_buying_new=1,"კი","")',	'dt' => 25 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.sc_provided',	'dt' => 26 ),
-	  	    array( 'db' => 'SEC_TO_TIME(asterisk_outgoing.duration)',	    'dt' => 27 ),
-	  	    array( 'db' => $fff,	    'dt' => 28 )
+	  	    array( 'db' => 'user_info.`name`',	'dt' => 27 ),
+	  	    array( 'db' => 'SEC_TO_TIME(asterisk_outgoing.duration)',	    'dt' => 28 ),
+	  	    array( 'db' => $fff,	    'dt' => 29 )
 	  	
 	  	);
 	  	
@@ -174,6 +175,7 @@ switch ($action) {
 	  	require( '../../../includes/ssp.class.php' );
 	  	
 	  	$where_param = "JOIN outgoing_campaign_detail ON outgoing_campaign.id = outgoing_campaign_detail.outgoing_campaign_id
+	  	                JOIN user_info ON outgoing_campaign_detail.responsible_person_id = user_info.user_id
                         LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
                         JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
                         LEFT JOIN asterisk_outgoing ON phone_base_detail.phone1 = asterisk_outgoing.phone
