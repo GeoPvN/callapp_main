@@ -364,6 +364,14 @@ switch ($action) {
                                                                 WHERE `project_id` = $_REQUEST[project_id]
                                                                 AND `outgoing_campaign_detail`.`status` = 15 $date
                                                                 "));
+        $mdivanisbarieri = mysql_fetch_array(mysql_query("  SELECT  COUNT(outgoing_campaign_detail.id) AS `count`,
+                                                                    `task_status`.`name`
+                                                            FROM `outgoing_campaign`
+                                                            JOIN `outgoing_campaign_detail` ON `outgoing_campaign`.`id` = `outgoing_campaign_detail`.`outgoing_campaign_id`
+                                                            JOIN `task_status` ON `outgoing_campaign_detail`.`status` = `task_status`.`id`
+                                                            WHERE `project_id` = $_REQUEST[project_id]
+                                                            AND `outgoing_campaign_detail`.`status` = 16 $date
+                                                            "));
         }else{
             $pirveladi = mysql_fetch_array(mysql_query("SELECT SUM(count)
                                                         FROM `out_report`
@@ -421,6 +429,13 @@ switch ($action) {
                                                                     AND DATE(date) >= '$_REQUEST[start_date]'
                                                                     AND DATE(date) <= '$_REQUEST[start_date]'
                                                                     $user_checker"));
+            $mdivanisbarieri = mysql_fetch_array(mysql_query("  SELECT SUM(count)
+                                                                FROM `out_report`
+                                                                WHERE `project_id` = $_REQUEST[project_id]
+                                                                AND `status` = 16
+                                                                AND DATE(date) >= '$_REQUEST[start_date]'
+                                                                AND DATE(date) <= '$_REQUEST[start_date]'
+                                                                $user_checker"));
         }
         
         $data['s2'] = $pirveladi[0];
@@ -431,6 +446,7 @@ switch ($action) {
         $data['s9'] = $gauqmebuli[0];
         $data['s14'] = $gadasarekiaukan[0];
         $data['s15'] = $danishnuliashexvedra[0];
+        $data['s16'] = $mdivanisbarieri[0];
         break;
     default:
        $error = 'Action is Null';

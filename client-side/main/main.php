@@ -298,7 +298,7 @@
     display: block;
   }
 }
-#status_id_2,#status_id_3,#status_id_4,#status_id_5,#status_id_6,#status_id_9,#status_id_14,#status_id_15{
+#status_id_2,#status_id_3,#status_id_4,#status_id_5,#status_id_6,#status_id_9,#status_id_14,#status_id_15,#status_id_16{
 	font-size: 45px;
     font-weight: bold;
     text-align: center;
@@ -382,6 +382,7 @@ function get_status_content(){
         	$('#status_id_9').html(data.s9);
         	$('#status_id_14').html(data.s14);
         	$('#status_id_15').html(data.s15);
+        	$('#status_id_16').html(data.s16);
         }
     });
 }
@@ -975,7 +976,7 @@ function go_sl(){
             </div>
         </div>
         <div class="box_main">
-            <div class="box_head">პოტენციური კლიენტები</div>
+            <div class="box_head">პროგრესი</div>
             <div class="box_body">
                 <div>
                      <div id="status_id_5" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
@@ -1011,6 +1012,14 @@ function go_sl(){
             <div class="box_body">
                 <div>
                      <div id="status_id_15" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="box_main">
+            <div class="box_head">მდივნის ბარიერი</div>
+            <div class="box_body">
+                <div>
+                     <div id="status_id_16" style="min-width: 250px; max-width: 250px; height: 150px;margin: 0 auto;">0</div>
                 </div>
             </div>
         </div>
