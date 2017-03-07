@@ -919,6 +919,10 @@ if(fName=='add-edit-form-task'){
 			});
     
     function listen(file){ 
+    	$('audio').each(function(){
+    	    this.pause(); // Stop playing
+    	    this.currentTime = 0; // Reset time
+    	}); 
         var url = 'http://'+location.hostname+':8000/' + file;
         $("audio source").attr('src',url);
         $("audio").load();
