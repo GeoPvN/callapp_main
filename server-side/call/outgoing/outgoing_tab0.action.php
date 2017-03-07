@@ -870,7 +870,7 @@ function GetPage($res)
 	                   </table>
 	                   </fieldset>
 	                   <fieldset style="display:block;width: 287px;" id="info">
-	                   <legend>რინტერები/კატრიჯები</legend>
+	                   <legend>პრინტერები/კარტრიჯები</legend>
 	                   <table>
 	                   <tr>
 	                       <td style="width: 145px;">პრინტერების რ-ბა</td>
