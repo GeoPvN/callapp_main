@@ -121,7 +121,7 @@ if(fName=='add-edit-form'){
 		$('#next_quest, #back_quest').button();
 		$('#back_quest').prop('disabled',true);
 		$('.info').click();
-		$('#outgoing_status,#outgoing_sub_status').chosen({ search_contains: true });
+		$('#outgoing_status,#outgoing_sub_status,#permeability_id').chosen({ search_contains: true });
 		GetDateTimes("call_back");
 }
 if(fName=='add-edit-form-contact_info'){
@@ -1332,6 +1332,7 @@ if(fName=='add-edit-form-task'){
 		param.sc_social			= $('#add-edit-form input[name=sc_social]:checked').val();
 		param.sc_callcenter		= $('#add-edit-form input[name=sc_callcenter]:checked').val();
 		param.sc_other          = $("#add-edit-form #sc_other").val();
+		param.permeability_id   = $("#add-edit-form #permeability_id").val();
 
 		if ($('#sc_printer').is(':checked')) {
 		    param.sc_printer = 1;

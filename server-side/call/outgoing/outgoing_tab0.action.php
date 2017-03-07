@@ -358,7 +358,8 @@ switch ($action) {
                         	    sc_charging='$_REQUEST[sc_charging]',
                         	    sc_who_charging='$_REQUEST[sc_who_charging]',
                         	    sc_buying_new='$_REQUEST[sc_buying_new]',
-                        	    sc_provided='$_REQUEST[sc_provided]'
+                        	    sc_provided='$_REQUEST[sc_provided]',
+		                        permeability_id='$_REQUEST[permeability_id]'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -581,6 +582,24 @@ function gethandbook($id,$done_id){
     return $data;
 
 }
+function getpermeability($id,$done_id){
+    $req = mysql_query("SELECT `id`,
+                               `name`
+                        FROM   `permeability`
+                        WHERE  `actived` = 1");
+
+    $data .= '<option value="0" >----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $done_id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+
+    return $data;
+
+}
 
 function Getincomming($hidden_id)
 {
@@ -610,6 +629,7 @@ function Getincomming($hidden_id)
                                             	    sc_who_charging,
                                             	    sc_buying_new,
                                             	    sc_provided,
+	                                                permeability_id,
                                                     `phone_base_detail`.`phone1`,
                                                     `phone_base_detail`.`phone2`,
                                                     `phone_base_detail`.`firstname`,
@@ -782,10 +802,12 @@ function GetPage($res)
 	               <td><input style="width: 156px;" id="call_back" type="text" value="'.$res['call_back'].'" ></td>
 	           </tr>
 	           <tr>
-	               <td colspan="2" style="width: 150px;"><label for="outgoing_sub_status">შედეგის მიზეზი</label></td>
+	               <td style="width: 150px;"><label for="outgoing_sub_status">შედეგის მიზეზი</label></td>
+	               <td style="width: 150px;"><label for="permeability_id">შეღწევადობა</label></td>
     	       </tr>
 	           <tr>
 	               <td><select id="outgoing_sub_status" style="width: 100%;">'.getSubStatusOut($res['status'],$res['sub_status']).'</select></td>
+	               <td><select id="permeability_id" style="width: 100%;">'.getpermeability($res['permeability_id']).'</select></td>
 	           </tr>
     	       <tr>
 	               <td colspan="2" style="width: 150px;"><label for="incomming_id">ზარის შესახებ</label></td>
