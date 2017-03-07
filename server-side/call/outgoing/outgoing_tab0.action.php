@@ -1381,7 +1381,7 @@ function show_record($res){
     }
     
     $data = '  <div style="margin-top: 10px;">
-                    <audio controls autoplay style="margin-left: 145px;">
+                    <audio controls autoplay style="margin-left: 145px;" id="auau">
                       <source src="" type="audio/wav">
                       Your browser does not support the audio element.
                     </audio>
