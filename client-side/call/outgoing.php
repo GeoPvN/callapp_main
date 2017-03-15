@@ -1620,7 +1620,7 @@ if(fName=='add-edit-form-task'){
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
-            <th style="width: 100%;" id="first_th">№</th>
+            <th style="width: 66%;" id="first_th">№</th>
             <th style="width: 100%;">თარიღი</th>
             <th style="width: 100%;">საქმიანობის სფერო</th>
             <th style="width: 100%;">ტელეფონი 1</th>
