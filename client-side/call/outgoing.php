@@ -1559,7 +1559,7 @@ if(fName=='add-edit-form-task'){
 	background: #2681DC;
 }
 #table_index_wrapper{
-	width: 2800px;
+	width: 3800px;
 }
 </style>
 </head>
@@ -1616,7 +1616,7 @@ if(fName=='add-edit-form-task'){
 </tr>
 </table>
 <div id="table_index_div" style="display:none;width: 1050px; overflow-x: scroll;">
-<table class="display" id="table_index" style="width: 2800px !important;">
+<table class="display" id="table_index" style="width: 3800px !important;">
     <thead>
         <tr id="datatable_header">
             <th>ID</th>
