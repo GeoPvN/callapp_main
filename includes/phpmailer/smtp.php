@@ -1,8 +1,9 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
 
 require_once('PHPMailerAutoload.php');
 require_once('../../includes/classes/core.php');
+
+header('Content-Type: text/html; charset=utf-8');
 
 $sent_mail_id 	 	= $_REQUEST['source_id'];
 $incomming_call_id	= $_REQUEST['incomming_call_id'];
