@@ -876,10 +876,8 @@ function GetPage($res)
 	                   <td>IP-ტელეფონი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ipphone" '.(($res['sc_ipphone'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ipphone" '.(($res['sc_ipphone'] == 2)?'checked':'').' value="2">არა</td>
 	                   </tr>
 	                   <tr>
-	                       <td style="width: 145px;">თანამშრომლების (ექსთ) რ-ბა</td>
-	                   </tr>
-                       <tr>
-                           <td><input style="width: 95px;" min="0" type="number" id="sc_ext" value="'.$res[sc_ext].'"></td>
+	                       <td>თანამშრომლების (ექსთ) რ-ბა</td>
+                           <td colspan=2><input style="width: 95px;" min="0" type="number" id="sc_ext" value="'.$res[sc_ext].'"></td>
                        </tr>
 	                   </table>
 	                   </fieldset>
