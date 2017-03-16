@@ -27,7 +27,7 @@ $res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `r
                       WHERE	mail_id = $mail_shabl_id");
 
 //Create a new PHPMailer instance
-$mail = new PHPMailer;
+$mail = new PHPMailer(true);
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
 //Enable SMTP debugging
@@ -86,7 +86,7 @@ while ($row1 = mysql_fetch_assoc($res1)) {
     $mail->addAttachment($row1[rand_name]);
 
 }
-
+$mail->CharSet = 'UTF-8';
 //send the message, check for errors
 if (!$mail->send()) {
     //echo "Mailer Error: " . $mail->ErrorInfo;
