@@ -351,6 +351,8 @@ switch ($action) {
                     		    sc_mail='$_REQUEST[sc_mail]',
                     		    sc_chat='$_REQUEST[sc_chat]',
                     		    sc_social='$_REQUEST[sc_social]',
+		                        sc_ext='$_REQUEST[sc_ext]',
+		                        sc_ipphone='$_REQUEST[sc_ipphone]',
                     		    sc_other='$_REQUEST[sc_other]',
                     		    sc_callcenter='$_REQUEST[sc_callcenter]',
                     		    sc_printer='$_REQUEST[sc_printer]',
@@ -870,6 +872,15 @@ function GetPage($res)
 	                   <tr>
 	                   <td>ქოლ-ცენტრი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 2)?'checked':'').' value="2">არა</td>
 	                   </tr>
+                       <tr>
+	                   <td>IP-ტელეფონი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ipphone" '.(($res['sc_ipphone'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_ipphone" '.(($res['sc_ipphone'] == 2)?'checked':'').' value="2">არა</td>
+	                   </tr>
+	                   <tr>
+	                       <td style="width: 145px;">თანამშრომლების (ექსთ) რ-ბა</td>
+	                   </tr>
+                       <tr>
+                           <td><input style="width: 95px;" min="0" type="number" id="sc_ext" value="'.$res[sc_ext].'"></td>
+                       </tr>
 	                   </table>
 	                   </fieldset>
 	                   <fieldset style="display:block;width: 287px;" id="info">

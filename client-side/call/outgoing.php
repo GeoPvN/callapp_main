@@ -1331,6 +1331,8 @@ if(fName=='add-edit-form-task'){
 
 		param.sc_ivr			= $('#add-edit-form input[name=sc_ivr]:checked').val();
 		param.sc_phone			= $('#add-edit-form input[name=sc_phone]:checked').val();
+		param.sc_ipphone		= $('#add-edit-form input[name=sc_ipphone]:checked').val();
+		param.sc_ext            = $('#add-edit-form #sc_ext').val();
 		param.sc_mail			= $('#add-edit-form input[name=sc_mail]:checked').val();
 		param.sc_chat			= $('#add-edit-form input[name=sc_chat]:checked').val();
 		param.sc_social			= $('#add-edit-form input[name=sc_social]:checked').val();
