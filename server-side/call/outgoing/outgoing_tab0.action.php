@@ -867,7 +867,7 @@ function GetPage($res)
 	                   <td>სოც.ქსელი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_social" '.(($res['sc_social'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_social" '.(($res['sc_social'] == 2)?'checked':'').' value="2">არა</td>
 	                   </tr>
 	                   <tr>
-	                   <td>სხვა</td><td colspan=2><input type="text" id="sc_other" value="'.$res[sc_other].'"></td>
+	                   <td>სხვა</td><td colspan=2><input style="width: 96px" type="text" id="sc_other" value="'.$res[sc_other].'"></td>
 	                   </tr>
 	                   <tr>
 	                   <td>ქოლ-ცენტრი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 1)?'checked':'').' value="1">კი</td><td><input style="float: left;margin-top: -3px;" type="radio" name="sc_callcenter" '.(($res['sc_callcenter'] == 2)?'checked':'').' value="2">არა</td>
