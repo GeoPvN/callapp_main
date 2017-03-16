@@ -31,6 +31,7 @@ $res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `r
 $mail = new PHPMailer;
 //UTF-8
 $mail->CharSet = 'UTF-8';
+$mail->Encoding = '16bit';
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
 //Enable SMTP debugging
@@ -77,7 +78,7 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML(utf8_decode($body));
+$mail->msgHTML(($body));
 
 while ($row = mysql_fetch_assoc($res)) {
 
