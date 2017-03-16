@@ -1,9 +1,7 @@
 <?php
-
+header('Content-Type: text/html; charset=utf-8');
 require_once('PHPMailerAutoload.php');
 require_once('../../includes/classes/core.php');
-
-header('Content-Type: text/html; charset=utf-8');
 
 $sent_mail_id 	 	= $_REQUEST['source_id'];
 $incomming_call_id	= $_REQUEST['incomming_call_id'];
@@ -65,7 +63,6 @@ $mail->addReplyTo('service@tdgroup.ge', 'TDGroup');
 // //Attach an image file
 // $mail->addAttachment('images/phpmailer_mini.png');
 
-
 $mail->addAddress($address);
 
 $mail->AddCC($bcc_address);
@@ -76,7 +73,7 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML(($body));
+$mail->msgHTML($body);
 
 while ($row = mysql_fetch_assoc($res)) {
 
@@ -89,8 +86,7 @@ while ($row1 = mysql_fetch_assoc($res1)) {
     $mail->addAttachment($row1[rand_name]);
 
 }
-//UTF-8
-$mail->CharSet = 'UTF-8';
+
 //send the message, check for errors
 if (!$mail->send()) {
     //echo "Mailer Error: " . $mail->ErrorInfo;
