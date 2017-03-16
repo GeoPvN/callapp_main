@@ -73,7 +73,38 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML($body);
+$mail->msgHTML('მოგესალმებით!
+<br><br>
+გთავაზობთ, მარკეტინგული კომუნიკაციის საშუალებას, რომელიც სრულიადახალია ქართულ ბაზარზე.
+<br><br>
+გთხოვთ, იხილოთ მიმაგრებული ფაილი.
+<br><br>
+ინფორმაცია ტარიფების შესახებ იხილეთ ლინკზე https://callapp.ge/webcall/  
+<br><br>
+სერვისის დემონსტრირებისთვის ვებ-გვერდზე დაკლიკეთ ღილაკს "დაკავშირება"
+<br><br><br><br>
+
+
+პატივისცემით,
+<br><br>
+Nino Sheliava
+<br><br>
+Sales Agent
+<br><br>
+=====================================
+<br><br>
+Adress: Politkovskaya A. 10, 0186, Tbilisi, Georgia
+<br><br>
+Tel: 2 500 055
+<br><br>
+Web Call : https://callapp.ge/webcall/  
+<br><br>
+E-mail: d_kiknadze@tdgroup.ge
+<br><br>
+Web: www.callapp.ge
+<br><br>
+
+=====================================');
 
 while ($row = mysql_fetch_assoc($res)) {
 
