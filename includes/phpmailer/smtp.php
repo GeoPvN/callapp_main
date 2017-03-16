@@ -77,7 +77,7 @@ $mail->IsHTML(true);
 
 $mail->Subject = $subject;
 
-$mail->msgHTML($body);
+$mail->msgHTML(utf8_decode($body));
 
 while ($row = mysql_fetch_assoc($res)) {
 
