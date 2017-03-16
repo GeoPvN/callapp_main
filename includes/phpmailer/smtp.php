@@ -30,7 +30,7 @@ $res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `r
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
 //UTF-8
-$mail->CharSet="UTF-8";
+$mail->CharSet = 'UTF-8';
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
 //Enable SMTP debugging
