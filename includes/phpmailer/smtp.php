@@ -27,7 +27,7 @@ $res1  = mysql_query("SELECT	concat('../../media/uploads/file/',rand_name) AS `r
                       WHERE	mail_id = $mail_shabl_id");
 
 //Create a new PHPMailer instance
-$mail = new PHPMailer(true);
+$mail = new PHPMailer;
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
 //Enable SMTP debugging
