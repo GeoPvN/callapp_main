@@ -1142,7 +1142,7 @@ if(fName=='add-edit-form-task'){
         });
     }
 
-    function SaveToDisk(fileURL, fileName) {
+    function SaveToDisk(filename, text) {
 //         // for non-IE
 //         if (!window.ActiveXObject) {
 //             var save = document.createElement('a');
@@ -1162,11 +1162,23 @@ if(fName=='add-edit-form-task'){
 //             _window.document.execCommand('SaveAs', true, fileName || fileURL)
 //             _window.close();
 //         }
-    	var iframe = document.createElement("iframe"); 
-        iframe.src = fileURL; 
-        iframe.style.display = "none"; 
-        document.body.appendChild(iframe);
-        return false;
+    	var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+
+        if (document.createEvent) {
+            var event = document.createEvent('MouseEvents');
+            event.initEvent('click', true, true);
+            pom.dispatchEvent(event);
+        }
+        else {
+            pom.click();
+        }
+//     	var iframe = document.createElement("iframe"); 
+//         iframe.src = fileURL; 
+//         iframe.style.display = "none"; 
+//         document.body.appendChild(iframe);
+//         return false;
     }
 
     $(document).on("click", "#send_sms", function (fName) {
