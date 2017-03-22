@@ -1163,7 +1163,7 @@ if(fName=='add-edit-form-task'){
 //             _window.close();
 //         }
     	var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(filename));
+        pom.setAttribute('href',  filename);
         pom.setAttribute('download', text);
 
         if (document.createEvent) {
