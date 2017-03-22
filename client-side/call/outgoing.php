@@ -1092,7 +1092,7 @@ if(fName=='add-edit-form-task'){
     });
 
     function download_file(file,original_name){
-        var download_file	= "media/uploads/file/"+file;
+        var download_file	= "media/uploads/file/";
     	var download_name 	= file;
     	SaveToDisk(download_file, download_name);
     }
