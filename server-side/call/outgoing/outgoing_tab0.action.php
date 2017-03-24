@@ -18,28 +18,28 @@ $hidden_id                  = $_REQUEST['id'];
 $incomming_id               = $_REQUEST['incomming_id'];
 $incomming_date             = $_REQUEST['incomming_date'];
 $incomming_date_up          = $_REQUEST['incomming_date_up'];
-$call_comment               = $_REQUEST['call_comment'];
+$call_comment               = mysql_real_escape_string($_REQUEST['call_comment']);
 
 
-$client_status              = $_REQUEST['client_status'];
-$client_person_number       = $_REQUEST['client_person_number'];
-$client_person_lname        = $_REQUEST['client_person_lname'];
-$client_person_fname        = $_REQUEST['client_person_fname'];
-$client_person_phone1       = $_REQUEST['client_person_phone1'];
-$client_person_phone2       = $_REQUEST['client_person_phone2'];
-$client_person_mail1        = $_REQUEST['client_person_mail1'];
-$client_person_mail2        = $_REQUEST['client_person_mail2'];
-$client_person_addres1      = $_REQUEST['client_person_addres1'];
-$client_person_addres2      = $_REQUEST['client_person_addres2'];
-$client_person_note         = $_REQUEST['client_person_note'];
+$client_status              = mysql_real_escape_string($_REQUEST['client_status']);
+$client_person_number       = mysql_real_escape_string($_REQUEST['client_person_number']);
+$client_person_lname        = mysql_real_escape_string($_REQUEST['client_person_lname']);
+$client_person_fname        = mysql_real_escape_string($_REQUEST['client_person_fname']);
+$client_person_phone1       = mysql_real_escape_string($_REQUEST['client_person_phone1']);
+$client_person_phone2       = mysql_real_escape_string($_REQUEST['client_person_phone2']);
+$client_person_mail1        = mysql_real_escape_string($_REQUEST['client_person_mail1']);
+$client_person_mail2        = mysql_real_escape_string($_REQUEST['client_person_mail2']);
+$client_person_addres1      = mysql_real_escape_string($_REQUEST['client_person_addres1']);
+$client_person_addres2      = mysql_real_escape_string($_REQUEST['client_person_addres2']);
+$client_person_note         = mysql_real_escape_string($_REQUEST['client_person_note']);
 
-$client_number              = $_REQUEST['client_number'];
-$client_name                = $_REQUEST['client_name'];
-$client_phone1              = $_REQUEST['client_phone1'];
-$client_phone2              = $_REQUEST['client_phone2'];
-$client_mail1               = $_REQUEST['client_mail1'];
-$client_mail2               = $_REQUEST['client_mail2'];
-$client_note                = $_REQUEST['client_note'];
+$client_number              = mysql_real_escape_string($_REQUEST['client_number']);
+$client_name                = mysql_real_escape_string($_REQUEST['client_name']);
+$client_phone1              = mysql_real_escape_string($_REQUEST['client_phone1']);
+$client_phone2              = mysql_real_escape_string($_REQUEST['client_phone2']);
+$client_mail1               = mysql_real_escape_string($_REQUEST['client_mail1']);
+$client_mail2               = mysql_real_escape_string($_REQUEST['client_mail2']);
+$client_note                = mysql_real_escape_string($_REQUEST['client_note']);
 
 $task_type_id			= $_REQUEST['task_type_id'];
 $task_start_date		= $_REQUEST['task_start_date'];
@@ -49,8 +49,8 @@ $task_recipient_id		= $_REQUEST['task_recipient_id'];
 $task_priority_id		= $_REQUEST['task_priority_id'];
 $task_controler_id		= $_REQUEST['task_controler_id'];
 $task_status_id		    = $_REQUEST['task_status_id'];
-$task_description		= $_REQUEST['task_description'];
-$task_note			    = $_REQUEST['task_note'];
+$task_description		= mysql_real_escape_string($_REQUEST['task_description']);
+$task_note			    = mysql_real_escape_string($_REQUEST['task_note']);
 
 $type_id = $_REQUEST['type_id'];
 
@@ -339,32 +339,53 @@ switch ($action) {
 		        ('$user_id', '$inc_id', '1', '$quest_id', '$answer_id', '$val')");
 		}
 
+		$call_res = mysql_real_escape_string($_REQUEST[call_res]);
+		$call_back = mysql_real_escape_string($_REQUEST[call_back]);
+		$sc_ivr = mysql_real_escape_string($_REQUEST[sc_ivr]);
+		$sc_phone = mysql_real_escape_string($_REQUEST[sc_phone]);
+		$sc_mail = mysql_real_escape_string($_REQUEST[sc_mail]);
+		$sc_chat = mysql_real_escape_string($_REQUEST[sc_chat]);
+		$sc_social = mysql_real_escape_string($_REQUEST[sc_social]);
+		$sc_ext = mysql_real_escape_string($_REQUEST[sc_ext]);
+		$sc_ipphone = mysql_real_escape_string($_REQUEST[sc_ipphone]);
+		$sc_other = mysql_real_escape_string($_REQUEST[sc_other]);
+		$sc_callcenter = mysql_real_escape_string($_REQUEST[sc_callcenter]);
+		$sc_printer = mysql_real_escape_string($_REQUEST[sc_printer]);
+		$sc_laser = mysql_real_escape_string($_REQUEST[sc_laser]);
+		$sc_inkjet = mysql_real_escape_string($_REQUEST[sc_inkjet]);
+		$sc_other_print = mysql_real_escape_string($_REQUEST[sc_other_print]);
+		$sc_cartrij = mysql_real_escape_string($_REQUEST[sc_cartrij]);
+		$sc_charging = mysql_real_escape_string($_REQUEST[sc_charging]);
+		$sc_who_charging = mysql_real_escape_string($_REQUEST[sc_who_charging]);
+		$sc_buying_new = mysql_real_escape_string($_REQUEST[sc_buying_new]);
+		$sc_provided = mysql_real_escape_string($_REQUEST[sc_provided]);
+		$permeability_id = mysql_real_escape_string($_REQUEST[permeability_id]);
 		mysql_query("UPDATE 	`outgoing_campaign_detail` SET
                 				`status`='$outgoing_status',
 		                        `sub_status`='$_REQUEST[outgoing_sub_status]',
                 				`update_date`=NOW(),
                 				`call_comment`='$call_comment',
-		                        `call_res`='$_REQUEST[call_res]',
-		                        `call_back`='$_REQUEST[call_back]',
-                    		    sc_ivr='$_REQUEST[sc_ivr]',
-                    		    sc_phone='$_REQUEST[sc_phone]',
-                    		    sc_mail='$_REQUEST[sc_mail]',
-                    		    sc_chat='$_REQUEST[sc_chat]',
-                    		    sc_social='$_REQUEST[sc_social]',
-		                        sc_ext='$_REQUEST[sc_ext]',
-		                        sc_ipphone='$_REQUEST[sc_ipphone]',
-                    		    sc_other='$_REQUEST[sc_other]',
-                    		    sc_callcenter='$_REQUEST[sc_callcenter]',
-                    		    sc_printer='$_REQUEST[sc_printer]',
-                        	    sc_laser='$_REQUEST[sc_laser]',
-                        	    sc_inkjet='$_REQUEST[sc_inkjet]',
-                        	    sc_other_print='$_REQUEST[sc_other_print]',
-                        	    sc_cartrij='$_REQUEST[sc_cartrij]',
-                        	    sc_charging='$_REQUEST[sc_charging]',
-                        	    sc_who_charging='$_REQUEST[sc_who_charging]',
-                        	    sc_buying_new='$_REQUEST[sc_buying_new]',
-                        	    sc_provided='$_REQUEST[sc_provided]',
-		                        permeability_id='$_REQUEST[permeability_id]'
+		                        `call_res`='$call_res',
+		                        `call_back`='$call_back',
+                    		    sc_ivr='$sc_ivr',
+                    		    sc_phone='$sc_phone',
+                    		    sc_mail='$sc_mail',
+                    		    sc_chat='$sc_chat',
+                    		    sc_social='$sc_social',
+		                        sc_ext='$sc_ext',
+		                        sc_ipphone='$sc_ipphone',
+                    		    sc_other='$sc_other',
+                    		    sc_callcenter='$sc_callcenter',
+                    		    sc_printer='$sc_printer',
+                        	    sc_laser='$sc_laser',
+                        	    sc_inkjet='$sc_inkjet',
+                        	    sc_other_print='$sc_other_print',
+                        	    sc_cartrij='$sc_cartrij',
+                        	    sc_charging='$sc_charging',
+                        	    sc_who_charging='$sc_who_charging',
+                        	    sc_buying_new='$sc_buying_new',
+                        	    sc_provided='$sc_provided',
+		                        permeability_id='$permeability_id'
                      WHERE 	    `id`='$incomming_id'");
 		
 		if($task_type_id > 0){
@@ -374,22 +395,35 @@ switch ($action) {
             		    ('$user_id', '$incomming_id', '$task_recipient_id', '$task_controler_id', NOW(), '$task_start_date', '$task_end_date', '$task_departament_id', '$task_type_id', '$task_priority_id', '$task_description', '$task_note', '$task_status_id');");
 		}
 		
+		$client_person_fname = mysql_real_escape_string($_REQUEST[client_person_fname]);
+		$client_person_lname = mysql_real_escape_string($_REQUEST[client_person_lname]);
+		$client_person_number = mysql_real_escape_string($_REQUEST[client_person_number]);
+		$client_person_phone1 = mysql_real_escape_string($_REQUEST[client_person_phone1]);
+		$client_person_phone2 = mysql_real_escape_string($_REQUEST[client_person_phone2]);
+		$client_person_mail1 = mysql_real_escape_string($_REQUEST[client_person_mail1]);
+		$client_person_mail2 = mysql_real_escape_string($_REQUEST[client_person_mail2]);
+		$client_person_addres1 = mysql_real_escape_string($_REQUEST[client_person_addres1]);
+		$client_person_addres2 = mysql_real_escape_string($_REQUEST[client_person_addres2]);
+		$client_number = mysql_real_escape_string($_REQUEST[client_number]);
+		$client_name = mysql_real_escape_string($_REQUEST[client_name]);
+		$client_person_note = mysql_real_escape_string($_REQUEST[client_person_note]);
+		$info1 = mysql_real_escape_string($_REQUEST[info1]);
 		
 		$base = mysql_fetch_array(mysql_query("SELECT phone_base_detail_id FROM `outgoing_campaign_detail` WHERE id = $incomming_id"));
 		mysql_query("UPDATE `phone_base_detail` SET
-                            `firstname`='$_REQUEST[client_person_fname]',
-                            `lastname`='$_REQUEST[client_person_lname]',
-                            `pid`='$_REQUEST[client_person_number]',
-                            `phone1`='$_REQUEST[client_person_phone1]',
-                            `phone2`='$_REQUEST[client_person_phone2]',
-                            `mail1`='$_REQUEST[client_person_mail1]',
-                            `mail2`='$_REQUEST[client_person_mail2]',
-                            `address1`='$_REQUEST[client_person_addres1]',
-                            `address2`='$_REQUEST[client_person_addres2]',
-                            `id_code`='$_REQUEST[client_number]',
-                            `client_name`='$_REQUEST[client_name]',
-                            `note`='$_REQUEST[client_person_note]',
-		                    `info1`='$_REQUEST[info1]'
+                            `firstname`='$client_person_fname',
+                            `lastname`='$client_person_lname',
+                            `pid`='$client_person_number',
+                            `phone1`='$client_person_phone1',
+                            `phone2`='$client_person_phone2',
+                            `mail1`='$client_person_mail1',
+                            `mail2`='$client_person_mail2',
+                            `address1`='$client_person_addres1',
+                            `address2`='$client_person_addres2',
+                            `id_code`='$client_number',
+                            `client_name`='$client_name',
+                            `note`='$client_person_note',
+		                    `info1`='$info1'
                      WHERE  `id`='$base[0]';");
         break;
 	default:
