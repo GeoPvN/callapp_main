@@ -152,9 +152,7 @@ switch ($action) {
 	  	    array( 'db' => 'outgoing_campaign_detail.sc_who_charging',	'dt' => 24 ),
 	  	    array( 'db' => 'IF(outgoing_campaign_detail.sc_buying_new=1,"კი","")',	'dt' => 25 ),
 	  	    array( 'db' => 'outgoing_campaign_detail.sc_provided',	'dt' => 26 ),
-	  	    array( 'db' => 'user_info.`name`',	'dt' => 27 ),
-	  	    array( 'db' => 'outgoing_campaign_detail.`id`',	    'dt' => 28 ),
-	  	    array( 'db' => 'outgoing_campaign_detail.`id`',	    'dt' => 29 )
+	  	    array( 'db' => 'user_info.`name`',	'dt' => 27 )
 	  	
 	  	);
 	  	
