@@ -1351,12 +1351,8 @@ if(fName=='add-edit-form-task'){
 		param.sc_callcenter		= $('#add-edit-form input[name=sc_callcenter]:checked').val();
 		param.sc_other          = $("#add-edit-form #sc_other").val();
 		param.permeability_id   = $("#add-edit-form #permeability_id").val();
+	    param.sc_printer        = $("#add-edit-form #sc_printer").val();
 
-		if ($('#sc_printer').is(':checked')) {
-		    param.sc_printer = 1;
-		}else{
-			param.sc_printer = 2;
-		}
 		if ($('#sc_laser').is(':checked')) {
 		    param.sc_laser = 1;
 		}else{
