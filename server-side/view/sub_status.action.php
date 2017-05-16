@@ -55,17 +55,17 @@ switch ($action) {
 		$type               = $_REQUEST['type'];
 		
 		if($department_name != ''){
-			if(!CheckdepartmentExist($department_name, $department_id)){
+// 			if(!CheckdepartmentExist($department_name, $department_id)){
 				if ($department_id == '') {
 					Adddepartment( $department_id, $department_name, $type);
 				}else {
 					Savedepartment($department_id, $department_name, $type);
 				}
 								
-			} else {
-				$error = '"' . $department_name . '" უკვე არის სიაში!';
+// 			} else {
+// 				$error = '"' . $department_name . '" უკვე არის სიაში!';
 				
-			}
+// 			}
 		}
 		
 		break;
