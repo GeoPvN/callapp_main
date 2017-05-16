@@ -241,6 +241,7 @@ function GetDataTableSD(tname, aJaxURL, action, count, data, hidden, length, sor
 				d.status = data.status;
 				d.sub_status = data.sub_status;
 				d.operator = data.operator;
+				d.scenar_id = data.scenar_id;
 
 				$("#table_index tbody").html("<tr><td colspan=11 style=\"font-size:16px;color: red;font-weight:bold;\">იტვირთება......</td></tr>");
         	}
