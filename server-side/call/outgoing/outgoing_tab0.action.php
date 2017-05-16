@@ -184,7 +184,7 @@ switch ($action) {
                         LEFT JOIN outgoing_campaign_detail_contact ON outgoing_campaign_detail.id = outgoing_campaign_detail_contact.outgoing_campaign_detail_id AND outgoing_campaign_detail_contact.person_gmpiri = 1
                         JOIN phone_base_detail ON outgoing_campaign_detail.phone_base_detail_id = phone_base_detail.id
                         
-                        WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $sub_s $operator_fillter
+                        WHERE outgoing_campaign_detail.actived = 1 AND  outgoing_campaign_detail.`status` = $status $sub_s $operator_fillter $scenar
 	  	                GROUP BY outgoing_campaign_detail.id";
 	  	//echo($columns);
 	  	$data = SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns, $where_param, "");
