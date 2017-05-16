@@ -29,6 +29,7 @@
                 $("#tab_id").html(data.page);
                 $('#tab_sub_id').html(data.sub);
                 $("#operator_id").html(data.user);
+                $("#tab_scenar").html(data.scenar);
                 $('#operator_id,#tab_id,#tab_sub_id').trigger("chosen:updated");
             }
         }).done(function() {
@@ -44,7 +45,7 @@
     		gg('index',colum_number,main_act,change_colum_main,'status=2&operator='+<?php echo $_SESSION['USERID'];?>,aJaxURL);
         	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
     	}
-    	$('#operator_id,#tab_id,#task_type,#tab_sub_id').chosen({ search_contains: true });
+    	$('#operator_id,#tab_id,#task_type,#tab_sub_id,#tab_scenar').chosen({ search_contains: true });
     	$('.callapp_filter_body').css('display','none');
     	GetDate('start_date');
     	GetDate('end_date');
@@ -61,6 +62,7 @@
     	param.end_date=$('#end_date').val();
     	param.status=$('#tab_id').val();
     	param.sub_status=$('#tab_sub_id').val();
+    	param.scenar_id=$('#tab_scenar').val();
     	param.operator=<?php echo $_SESSION['USERID'];?>;
 
     	GetDataTableSD(tName+tbl,
@@ -306,10 +308,11 @@ if(fName=='add-edit-form-task'){
     	setTimeout("$('#table_index_wrapper').css('display','none');", 20);
     });
     
-    $(document).on("change", "#tab_id,#tab_sub_id", function () {
+    $(document).on("change", "#tab_id,#tab_sub_id,#tab_scenar", function () {
         operator    = $('#operator_id').val();
     	status      = $('#tab_id').val();
     	sub_status  = $('#sub_status').val();
+    	scenar_id   = $('#tab_scenar').val();
     	start_date  = $('#start_date').val();
     	end_date    = $('#end_date').val();
     	$('#operator_id,#tab_id').trigger("chosen:updated");
@@ -332,7 +335,7 @@ if(fName=='add-edit-form-task'){
         		$('#table_index,#table_index_wrapper').css('display','table');
         		$('#table_index_div').css('display','block');
         		$('#table_actived,#table_actived_wrapper').css('display','none');
-        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator+'&sub_status='+sub_status,aJaxURL);
+        		gg('index',colum_number,main_act,change_colum_main,'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&operator='+operator+'&sub_status='+sub_status+'&scenar_id='+scenar_id,aJaxURL);
             	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL);
         	}
     	}
@@ -1589,6 +1592,8 @@ if(fName=='add-edit-form-task'){
 <select id="tab_id" style="width: 220px;">
 </select>
 <select id="tab_sub_id" style="width: 220px;">
+</select>
+<select id="tab_scenar" style="width: 220px;">
 </select>
 </span>
 

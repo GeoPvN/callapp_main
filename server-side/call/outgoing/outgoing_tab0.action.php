@@ -68,10 +68,12 @@ switch ($action) {
     case 'ststus':
         $page 		= getStatus($type_id,$user_id);
         $user 		= getUser($user_id);
+        $scenar 	= getScenar();
         $sub        = getSubStatusOut(2,'');
         $data		= array('page'	=> $page,
                             'user'  => $user,
-                            'sub'   => $sub);
+                            'sub'   => $sub,
+                            'scenar'=> $scenar);
     
         break;
     case 'getsubstatus':
@@ -82,6 +84,7 @@ switch ($action) {
         $count = 		$_REQUEST['count'];
 		$hidden = 		$_REQUEST['hidden'];
 		$operator = $_REQUEST['operator'];
+		$scenar_id= $_REQUEST['scenar_id'];
 		$gr = $_SESSION['USERGR'];
 		if($operator == 0 || $operator == '' || $gr == 1){
 		    $operator_fillter = '';
@@ -91,6 +94,10 @@ switch ($action) {
 		$sub_status = $_REQUEST[sub_status];
 		if($sub_status != 0){
 		    $sub_s = " AND  outgoing_campaign_detail.`sub_status` = $sub_status";
+		}
+		$scenar='';
+		if($scenar_id != 0){
+		    $scenar = "AND outgoing_campaign.scenario_id = $scenar_id";
 		}
 		
 		if($status != 1){
@@ -519,6 +526,16 @@ function GetDepartament(){
         $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
     }
 
+    return $data;
+}
+
+function getScenar(){
+    $req = mysql_query("SELECT id,`name` FROM `scenario` WHERE actived = 1");
+    $data .= '<option value="0">-----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+    }
+    
     return $data;
 }
 
