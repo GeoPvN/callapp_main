@@ -895,9 +895,9 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
         if(event.which=="17"){
         	cntrlIsPressed = true;
         }
-        if(event.which=="46"){
-        	$("#" + dis).click();
-        }
+//        if(event.which=="46"){
+//        	$("#" + dis).click();
+//        }
     });
 
     $(document).keyup(function(){
